@@ -1,0 +1,144 @@
+---
+/**
+ * GymCard Component
+ * Reusable card for displaying gym listings in grids
+ */
+import OptimizedImage from './OptimizedImage.astro';
+import { IMAGE_SIZES } from '../utils/imageUtils';
+
+interface Props {
+  gym: {
+    id: number;
+    name: string;
+    slug: string;
+    city: string;
+    region: string;
+    photo: string;
+    rating: number;
+    climbing_types: string;
+    amenities: string;
+    day_pass_price_local: number;
+    description_short: string;
+    beginner_friendly: boolean;
+  };
+  showCity?: boolean; // Show city name (useful on state pages)
+}
+
+const { gym, showCity = true } = Astro.props;
+
+// Parse climbing types
+const climbingTypes = gym.climbing_types?.split('|') || [];
+const climbingTypesDisplay = climbingTypes
+  .map(type => type.replace(/_/g, ' '))
+  .join(', ');
+
+// Parse amenities (show first 3)
+const amenitiesList = gym.amenities?.split('|').slice(0, 3) || [];
+
+// Format price
+const priceDisplay = gym.day_pass_price_local
+  ? `$${gym.day_pass_price_local}`
+  : 'View pricing';
+---
+
+<article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+  <!-- Image -->
+  <a href={`/gyms/${gym.slug}`} class="block relative h-48 overflow-hidden">
+    <OptimizedImage
+      src={gym.photo}
+      alt={`${gym.name} climbing gym in ${gym.city}`}
+      width={IMAGE_SIZES.CARD_THUMBNAIL.width}
+      height={IMAGE_SIZES.CARD_THUMBNAIL.height}
+      srcsetSizes={IMAGE_SIZES.CARD_THUMBNAIL.sizes}
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      quality={IMAGE_SIZES.CARD_THUMBNAIL.quality}
+      loading="lazy"
+      class="hover:scale-105 transition-transform duration-300"
+    />
+    {gym.beginner_friendly && (
+      <span class="absolute top-3 right-3 bg-sage text-white px-3 py-1 rounded-full text-sm font-medium z-10">
+        Beginner Friendly
+      </span>
+    )}
+  </a>
+
+  <!-- Content -->
+  <div class="p-5">
+    <!-- Title & Location -->
+    <a href={`/gyms/${gym.slug}`} class="block">
+      <h3 class="text-xl font-bold text-granite hover:text-sage transition-colors mb-1">
+        {gym.name}
+      </h3>
+    </a>
+    {showCity && (
+      <p class="text-sm text-gray-600 mb-3">
+        {gym.city}, {gym.region}
+      </p>
+    )}
+
+    <!-- Rating -->
+    <div class="flex items-center gap-2 mb-3">
+      <div class="flex items-center">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <svg
+            class={`w-4 h-4 ${i < Math.floor(gym.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+        ))}
+      </div>
+      <span class="text-sm font-medium text-gray-700">{gym.rating}</span>
+    </div>
+
+    <!-- Description -->
+    <p class="text-sm text-gray-600 mb-4 line-clamp-2">
+      {gym.description_short}
+    </p>
+
+    <!-- Climbing Types -->
+    {climbingTypesDisplay && (
+      <div class="mb-3">
+        <p class="text-xs font-semibold text-granite uppercase tracking-wide mb-1">
+          Climbing Types
+        </p>
+        <p class="text-sm text-gray-600 capitalize">{climbingTypesDisplay}</p>
+      </div>
+    )}
+
+    <!-- Amenities Tags -->
+    {amenitiesList.length > 0 && (
+      <div class="flex flex-wrap gap-2 mb-4">
+        {amenitiesList.map(amenity => (
+          <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+            {amenity.replace(/_/g, ' ')}
+          </span>
+        ))}
+      </div>
+    )}
+
+    <!-- Footer: Price & CTA -->
+    <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+      <div>
+        <p class="text-xs text-gray-500 uppercase tracking-wide">Day Pass</p>
+        <p class="text-lg font-bold text-sage">{priceDisplay}</p>
+      </div>
+      <a
+        href={`/gyms/${gym.slug}`}
+        class="bg-sage text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+      >
+        View Gym
+      </a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+/**
+ * RelatedPosts Component
+ * Shows related blog posts from the same category
+ */
+
+import BlogCard from './BlogCard.astro';
+
+interface Post {
+  slug: string;
+  data: {
+    title: string;
+    description: string;
+    publishedDate: Date;
+    author: string;
+    category: string;
+    heroImage: string;
+    heroImageAlt: string;
+    readingTime?: number;
+  };
+}
+
+interface Props {
+  posts: Post[];
+  currentSlug: string;
+}
+
+const { posts, currentSlug } = Astro.props;
+
+// Filter out current post
+const relatedPosts = posts.filter(post => post.slug !== currentSlug).slice(0, 3);
+---
+
+{relatedPosts.length > 0 && (
+  <section class="mt-16 pt-8 border-t border-gray-200">
+    <h2 class="text-2xl font-bold text-granite mb-6">Related Articles</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {relatedPosts.map((post) => (
+        <BlogCard
+          slug={post.slug}
+          title={post.data.title}
+          description={post.data.description}
+          publishedDate={post.data.publishedDate}
+          author={post.data.author}
+          category={post.data.category}
+          heroImage={post.data.heroImage}
+          heroImageAlt={post.data.heroImageAlt}
+          readingTime={post.data.readingTime}
+        />
+      ))}
+    </div>
+  </section>
+)}

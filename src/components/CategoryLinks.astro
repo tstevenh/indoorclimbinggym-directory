@@ -1,0 +1,76 @@
+---
+/**
+ * CategoryLinks Component
+ * Displays relevant category links as pills/tags based on gym data
+ */
+
+interface Props {
+  gym: {
+    amenities?: string;
+    beginner_friendly?: boolean;
+    climbing_types?: string;
+    day_pass_price_local?: number;
+  };
+}
+
+const { gym } = Astro.props;
+
+// Map gym features to category pages
+const categoryLinks: { label: string; url: string }[] = [];
+
+// Check for beginner friendly
+if (gym.beginner_friendly) {
+  categoryLinks.push({
+    label: 'Best for Beginners',
+    url: '/categories/best-climbing-gyms-for-beginners',
+  });
+}
+
+// Check for sauna
+if (gym.amenities?.includes('sauna')) {
+  categoryLinks.push({
+    label: 'Gyms with Sauna',
+    url: '/categories/climbing-gyms-with-sauna',
+  });
+}
+
+// Check for kids zone
+if (gym.amenities?.includes('kids_zone')) {
+  categoryLinks.push({
+    label: 'Gyms with Kids Zone',
+    url: '/categories/climbing-gyms-with-kids-zone',
+  });
+}
+
+// Check for bouldering
+if (gym.climbing_types?.includes('bouldering')) {
+  categoryLinks.push({
+    label: 'Best Bouldering Gyms',
+    url: '/categories/best-bouldering-climbing-gyms',
+  });
+}
+
+// Check for affordable (under $22)
+if (gym.day_pass_price_local && gym.day_pass_price_local <= 22) {
+  categoryLinks.push({
+    label: 'Affordable Gyms',
+    url: '/categories/affordable-climbing-gyms',
+  });
+}
+---
+
+{categoryLinks.length > 0 && (
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h3 class="font-bold text-granite mb-3">Relevant Categories</h3>
+    <div class="flex flex-wrap gap-2">
+      {categoryLinks.map((link) => (
+        <a
+          href={link.url}
+          class="inline-block bg-sage/10 text-sage px-4 py-2 rounded-full text-sm font-medium hover:bg-sage hover:text-white transition-colors"
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+)}

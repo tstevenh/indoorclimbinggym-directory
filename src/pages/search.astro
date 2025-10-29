@@ -1,0 +1,300 @@
+---
+/**
+ * Search Page
+ * Comprehensive search and filtering page for climbing gyms
+ * Supports URL parameter-based filtering for shareable links
+ */
+
+// Disable prerendering to make this a dynamic page
+export const prerender = false;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GymCard from '../components/GymCard.astro';
+import FilterSidebar from '../components/FilterSidebar.astro';
+import gyms from '../data/gyms.json';
+
+// Get URL search parameters
+const searchParams = Astro.url.searchParams;
+
+// State code to full name mapping
+const stateMap: Record<string, string> = {
+  wa: 'Washington',
+  tx: 'Texas',
+  co: 'Colorado',
+  ny: 'New York',
+  ca: 'California',
+};
+
+// Start with all gyms
+let filteredGyms = [...gyms];
+
+// Track active filters for display
+const activeFilters: Array<{ label: string; param: string; value: string }> = [];
+
+// Text search filter
+const query = searchParams.get('q');
+if (query && query.trim()) {
+  const searchTerm = query.toLowerCase().trim();
+  filteredGyms = filteredGyms.filter(
+    (g) =>
+      g.name.toLowerCase().includes(searchTerm) ||
+      g.city.toLowerCase().includes(searchTerm) ||
+      g.amenities?.toLowerCase().includes(searchTerm) ||
+      g.description_short.toLowerCase().includes(searchTerm)
+  );
+  activeFilters.push({ label: `Search: "${query}"`, param: 'q', value: query });
+}
+
+// State filter
+const stateParam = searchParams.get('state');
+if (stateParam) {
+  const stateFullName = stateMap[stateParam.toLowerCase()] || stateParam;
+  filteredGyms = filteredGyms.filter((g) => g.region === stateFullName);
+  activeFilters.push({ label: `State: ${stateFullName}`, param: 'state', value: stateParam });
+}
+
+// City filter
+const cityParam = searchParams.get('city');
+if (cityParam) {
+  filteredGyms = filteredGyms.filter(
+    (g) => g.city.toLowerCase() === cityParam.toLowerCase()
+  );
+  // Capitalize city name for display
+  const cityDisplay = cityParam.charAt(0).toUpperCase() + cityParam.slice(1).toLowerCase();
+  activeFilters.push({ label: `City: ${cityDisplay}`, param: 'city', value: cityParam });
+}
+
+// Climbing types filter (comma-separated)
+const climbingTypesParam = searchParams.get('climbing_types');
+if (climbingTypesParam) {
+  const types = climbingTypesParam.split(',').map((t) => t.trim());
+  filteredGyms = filteredGyms.filter((g) =>
+    types.some((type) => g.climbing_types?.includes(type))
+  );
+  const typesDisplay = types.map((t) => t.replace(/_/g, ' ')).join(', ');
+  activeFilters.push({ label: `Type: ${typesDisplay}`, param: 'climbing_types', value: climbingTypesParam });
+}
+
+// Amenities filter (comma-separated, must have ALL)
+const amenitiesParam = searchParams.get('amenities');
+if (amenitiesParam) {
+  const amenityList = amenitiesParam.split(',').map((a) => a.trim());
+  filteredGyms = filteredGyms.filter((g) =>
+    amenityList.every((amenity) => g.amenities?.includes(amenity))
+  );
+  const amenitiesDisplay = amenityList.map((a) => a.replace(/_/g, ' ')).join(', ');
+  activeFilters.push({ label: `Amenities: ${amenitiesDisplay}`, param: 'amenities', value: amenitiesParam });
+}
+
+// Price range filters
+const minPriceParam = searchParams.get('min_price');
+const maxPriceParam = searchParams.get('max_price');
+
+if (minPriceParam) {
+  const minPrice = parseInt(minPriceParam);
+  filteredGyms = filteredGyms.filter((g) => g.day_pass_price_local >= minPrice);
+  activeFilters.push({ label: `Min Price: $${minPrice}`, param: 'min_price', value: minPriceParam });
+}
+
+if (maxPriceParam) {
+  const maxPrice = parseInt(maxPriceParam);
+  filteredGyms = filteredGyms.filter((g) => g.day_pass_price_local <= maxPrice);
+  activeFilters.push({ label: `Max Price: $${maxPrice}`, param: 'max_price', value: maxPriceParam });
+}
+
+// Min rating filter
+const minRatingParam = searchParams.get('min_rating');
+if (minRatingParam) {
+  const minRating = parseFloat(minRatingParam);
+  filteredGyms = filteredGyms.filter((g) => g.rating >= minRating);
+  activeFilters.push({ label: `Rating: ${minRating}+ stars`, param: 'min_rating', value: minRatingParam });
+}
+
+// Boolean filters
+const beginnerFriendlyParam = searchParams.get('beginner_friendly');
+if (beginnerFriendlyParam === 'true') {
+  filteredGyms = filteredGyms.filter((g) => g.beginner_friendly);
+  activeFilters.push({ label: 'Beginner Friendly', param: 'beginner_friendly', value: 'true' });
+}
+
+const studentDiscountParam = searchParams.get('student_discount');
+if (studentDiscountParam === 'true') {
+  filteredGyms = filteredGyms.filter((g) => g.student_discount);
+  activeFilters.push({ label: 'Student Discount', param: 'student_discount', value: 'true' });
+}
+
+// SEO setup
+const hasFilters = activeFilters.length > 0;
+const resultsCount = filteredGyms.length;
+const totalCount = gyms.length;
+
+const title = hasFilters
+  ? `${resultsCount} Climbing Gyms Found | Indoor Climbing Gym`
+  : 'Search Climbing Gyms | Find Indoor Climbing Near You';
+
+const description = hasFilters
+  ? `Browse ${resultsCount} indoor climbing gyms matching your criteria. Find the perfect climbing gym with our advanced search and filtering tools.`
+  : 'Search and filter indoor climbing gyms by location, amenities, price, climbing type, and more. Find the perfect climbing gym near you.';
+
+// Only index the base search page (no parameters)
+const noindex = hasFilters;
+
+const breadcrumbs = [
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
+  { label: 'Search', url: 'https://www.indoorclimbinggym.com/search' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  noindex={noindex}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Breadcrumb Navigation -->
+  <nav aria-label="Breadcrumb" class="mb-6">
+    <ol class="flex items-center space-x-2 text-sm text-gray-600">
+      <li>
+        <a href="/" class="hover:text-sage transition-colors">Home</a>
+      </li>
+      <li>
+        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+            clip-rule="evenodd"></path>
+        </svg>
+      </li>
+      <li>
+        <span class="text-granite font-medium">Search</span>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold text-granite mb-3">
+      {hasFilters ? 'Search Results' : 'Search Climbing Gyms'}
+    </h1>
+    <p class="text-lg text-gray-600">
+      {hasFilters
+        ? `Found ${resultsCount} ${resultsCount === 1 ? 'gym' : 'gyms'} matching your criteria`
+        : `Browse all ${totalCount} climbing gyms or use filters to refine your search`}
+    </p>
+  </header>
+
+  <!-- Active Filters Display -->
+  {
+    activeFilters.length > 0 && (
+      <section class="mb-6 bg-white rounded-lg shadow-sm p-4">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-sm font-semibold text-granite">Active Filters:</span>
+            {activeFilters.map((filter) => (
+              <button
+                data-param={filter.param}
+                data-value={filter.value}
+                class="filter-tag inline-flex items-center gap-2 bg-sage text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90 transition-colors"
+              >
+                <span>{filter.label}</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            ))}
+          </div>
+          <a
+            href="/search"
+            class="text-sm text-sage hover:text-opacity-80 font-medium transition-colors"
+          >
+            Clear All Filters
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Main Content: Sidebar + Results Grid -->
+  <div class="flex flex-col lg:flex-row gap-8">
+    <!-- Left Sidebar: Filters -->
+    <aside class="w-full lg:w-1/4">
+      <FilterSidebar />
+    </aside>
+
+    <!-- Right: Results Grid -->
+    <main class="w-full lg:w-3/4">
+      {
+        filteredGyms.length > 0 ? (
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {filteredGyms.map((gym) => (
+              <GymCard gym={gym} showCity={true} />
+            ))}
+          </div>
+        ) : (
+          <div class="bg-white rounded-lg shadow-md p-12 text-center">
+            <svg
+              class="w-16 h-16 text-gray-400 mx-auto mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <h2 class="text-2xl font-bold text-granite mb-2">No gyms found</h2>
+            <p class="text-gray-600 mb-6">
+              We couldn't find any climbing gyms matching your criteria. Try adjusting your
+              filters.
+            </p>
+            <a
+              href="/search"
+              class="inline-block bg-sage text-white px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+            >
+              Clear All Filters
+            </a>
+          </div>
+        )
+      }
+    </main>
+  </div>
+</BaseLayout>
+
+<script>
+  // Handle filter tag removal (remove individual filter)
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterTags = document.querySelectorAll('.filter-tag');
+
+    filterTags.forEach((tag) => {
+      tag.addEventListener('click', (e) => {
+        const param = (e.currentTarget as HTMLElement).getAttribute('data-param');
+        const value = (e.currentTarget as HTMLElement).getAttribute('data-value');
+
+        if (param) {
+          const url = new URL(window.location.href);
+          url.searchParams.delete(param);
+          window.location.href = url.toString();
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  /* Ensure filter tags are interactive */
+  .filter-tag {
+    cursor: pointer;
+  }
+
+  .filter-tag:hover svg {
+    transform: scale(1.1);
+  }
+</style>

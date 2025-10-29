@@ -1,0 +1,449 @@
+---
+/**
+ * City Landing Page
+ * SEO-optimized pages for "[city] climbing gym" keywords
+ * 1,500-2,000 words with filterable gym listings
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GymCard from '../../components/GymCard.astro';
+import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
+import { generateCityTitle, generateCityDescription } from '../../utils/seo';
+import gyms from '../../data/gyms.json';
+
+export const prerender = true;
+
+// State abbreviation mapping
+const stateMap: { [key: string]: string } = {
+  'wa': 'Washington',
+  'tx': 'Texas',
+  'co': 'Colorado',
+  'ny': 'New York',
+  'ca': 'California',
+};
+
+export async function getStaticPaths() {
+  // Define reverseStateMap inside the function to ensure proper scope
+  const reverseStateMap: { [key: string]: string } = {
+    'Washington': 'wa',
+    'Texas': 'tx',
+    'Colorado': 'co',
+    'New York': 'ny',
+    'California': 'ca',
+  };
+
+  // Get unique city/state combinations
+  const cityStatePairs = [...new Set(gyms.map(g => `${g.region}|${g.city}`))];
+
+  return cityStatePairs.map(pair => {
+    const [region, city] = pair.split('|');
+    const stateAbbr = reverseStateMap[region] || region.toLowerCase().replace(/\s+/g, '-');
+    const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+
+    return {
+      params: { state: stateAbbr, city: citySlug },
+      props: { region, city },
+    };
+  });
+}
+
+const { region, city } = Astro.props;
+const { state: stateAbbr, city: citySlug } = Astro.params;
+
+// Get gyms for this city
+const cityGyms = gyms.filter(g => g.city === city && g.region === region);
+
+// Calculate stats
+const avgRating = (cityGyms.reduce((sum, g) => sum + g.rating, 0) / cityGyms.length).toFixed(1);
+const minPrice = Math.min(...cityGyms.map(g => g.day_pass_price_local));
+const maxPrice = Math.max(...cityGyms.map(g => g.day_pass_price_local));
+
+// Get top rated gyms
+const topRated = [...cityGyms].sort((a, b) => b.rating - a.rating).slice(0, 5);
+
+// Get beginner friendly gyms
+const beginnerFriendly = cityGyms.filter(g => g.beginner_friendly).slice(0, 3);
+
+// Get bouldering gyms
+const boulderingGyms = cityGyms.filter(g => g.climbing_types?.includes('bouldering')).slice(0, 3);
+
+// Generate SEO data
+const title = generateCityTitle(city, region);
+const description = generateCityDescription(city, region, cityGyms.length, parseFloat(avgRating));
+const pageUrl = `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}`;
+
+// Generate schemas
+const itemListSchema = generateItemListSchema(
+  cityGyms,
+  `Climbing Gyms in ${city}, ${region}`,
+  pageUrl
+);
+
+// Generate FAQ
+const faqs = [
+  {
+    question: `How many climbing gyms are in ${city}?`,
+    answer: `There are ${cityGyms.length} indoor climbing gyms in ${city}, ${region}. These facilities offer a variety of climbing styles including bouldering, top rope, and lead climbing.`,
+  },
+  {
+    question: `What's the average day pass price in ${city}?`,
+    answer: `Day pass prices in ${city} range from $${minPrice} to $${maxPrice}, with an average of around $${Math.round((minPrice + maxPrice) / 2)}. Many gyms also offer monthly memberships and student discounts.`,
+  },
+  {
+    question: `Which ${city} gym is best for beginners?`,
+    answer: beginnerFriendly.length > 0
+      ? `For beginners, we recommend ${beginnerFriendly.map(g => g.name).join(', ')}. These gyms are specifically marked as beginner-friendly with introductory classes and easier routes.`
+      : `All gyms in ${city} welcome climbers of all skill levels. Check individual gym pages for class schedules and beginner programs.`,
+  },
+  {
+    question: `Are there 24-hour climbing gyms in ${city}?`,
+    answer: cityGyms.some(g => g.working_hour?.includes('00:00-23:59'))
+      ? `Yes, ${city} has 24-hour climbing gyms. Check the hours listed on individual gym pages for details.`
+      : `Most climbing gyms in ${city} have extended hours, typically from early morning to late evening. Check individual gym pages for specific hours.`,
+  },
+  {
+    question: `Which ${city} gyms have saunas?`,
+    answer: cityGyms.filter(g => g.amenities?.includes('sauna')).length > 0
+      ? `${cityGyms.filter(g => g.amenities?.includes('sauna')).map(g => g.name).join(', ')} in ${city} feature saunas as part of their amenities.`
+      : `Check individual gym pages for the most up-to-date amenity information.`,
+  },
+  {
+    question: `What's the cheapest climbing gym in ${city}?`,
+    answer: `The most affordable day pass in ${city} is $${minPrice}. Compare prices across all ${cityGyms.length} gyms below to find the best value for your budget.`,
+  },
+  {
+    question: `Do ${city} gyms offer student discounts?`,
+    answer: cityGyms.filter(g => g.student_discount).length > 0
+      ? `Yes! ${cityGyms.filter(g => g.student_discount).length} gyms in ${city} offer student discounts. Bring your valid student ID to take advantage of these savings.`
+      : `Student discount availability varies by gym. Contact gyms directly or check their websites for current promotions.`,
+  },
+  {
+    question: `Where can I boulder in ${city}?`,
+    answer: boulderingGyms.length > 0
+      ? `Popular bouldering spots in ${city} include ${boulderingGyms.map(g => g.name).join(', ')}. ${boulderingGyms.length} of ${cityGyms.length} gyms offer bouldering.`
+      : `Many gyms in ${city} offer bouldering. Check the climbing types filter below to find gyms with bouldering walls.`,
+  },
+  {
+    question: `What's the best climbing gym in ${city}?`,
+    answer: `Based on ratings, ${topRated[0]?.name} is the highest-rated climbing gym in ${city} with a ${topRated[0]?.rating}★ rating. However, the "best" gym depends on your preferences for climbing style, location, and amenities.`,
+  },
+  {
+    question: `Which ${city} gyms have kids zones?`,
+    answer: cityGyms.filter(g => g.amenities?.includes('kids_zone')).length > 0
+      ? `${cityGyms.filter(g => g.amenities?.includes('kids_zone')).map(g => g.name).join(', ')} offer dedicated kids zones, making them great family-friendly options in ${city}.`
+      : `Check individual gym pages for family-friendly amenities and kids programs.`,
+  },
+];
+
+const faqSchema = generateFAQSchema(faqs);
+const combinedSchema = [itemListSchema, faqSchema];
+
+// Breadcrumbs
+const breadcrumbs = [
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
+  { label: region, url: `https://www.indoorclimbinggym.com/${stateAbbr}` },
+  { label: city, url: pageUrl },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  schema={combinedSchema}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Breadcrumb Navigation -->
+  <nav class="text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+    <ol class="flex items-center gap-2">
+      {breadcrumbs.map((crumb, index) => (
+        <li class="flex items-center gap-2">
+          {index > 0 && <span class="text-gray-400">/</span>}
+          {index === breadcrumbs.length - 1 ? (
+            <span class="text-granite font-medium">{crumb.label}</span>
+          ) : (
+            <a href={crumb.url} class="hover:text-sage">{crumb.label}</a>
+          )}
+        </li>
+      ))}
+    </ol>
+  </nav>
+
+  <!-- Header -->
+  <header class="mb-8">
+    <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">
+      Best Climbing Gyms in {city}, {region}
+    </h1>
+    <p class="text-xl text-gray-700 leading-relaxed mb-6">
+      Discover {cityGyms.length} indoor climbing and bouldering facilities in {city}.
+      Compare prices, hours, amenities, and ratings to find your perfect climbing spot.
+    </p>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-sage/10 rounded-lg p-6">
+      <div class="text-center">
+        <div class="text-3xl font-bold text-sage">{cityGyms.length}</div>
+        <div class="text-sm text-gray-600">Gyms</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-sage">{avgRating}★</div>
+        <div class="text-sm text-gray-600">Avg Rating</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-sage">${minPrice}-${maxPrice}</div>
+        <div class="text-sm text-gray-600">Day Pass Range</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-sage">
+          {cityGyms.filter(g => g.beginner_friendly).length}
+        </div>
+        <div class="text-sm text-gray-600">Beginner Friendly</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Top Rated Gyms -->
+  <section class="mb-12">
+    <h2 class="text-3xl font-bold text-granite mb-6">
+      Top Rated Climbing Gyms in {city}
+    </h2>
+    <p class="text-gray-700 mb-6">
+      These are the highest-rated climbing gyms in {city} based on climber reviews.
+      Each facility offers unique features, from world-class route setting to comprehensive training areas.
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {topRated.map(gym => (
+        <GymCard gym={gym} showCity={false} />
+      ))}
+    </div>
+  </section>
+
+  <!-- All Gyms Grid -->
+  <section class="mb-12">
+    <h2 class="text-3xl font-bold text-granite mb-6">
+      All Climbing Gyms in {city}
+    </h2>
+    <p class="text-gray-700 mb-6">
+      Browse all {cityGyms.length} climbing facilities in {city}. Filter by climbing type, amenities,
+      price range, and more to find the gym that matches your preferences.
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {cityGyms.map(gym => (
+        <GymCard gym={gym} showCity={false} />
+      ))}
+    </div>
+  </section>
+
+  <!-- Best for Beginners -->
+  {beginnerFriendly.length > 0 && (
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-granite mb-6">
+        Best Climbing Gyms for Beginners in {city}
+      </h2>
+      <p class="text-gray-700 mb-6">
+        New to climbing? These {city} gyms are specifically marked as beginner-friendly,
+        offering intro classes, patient staff, and routes designed for those just starting their climbing journey.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {beginnerFriendly.map(gym => (
+          <GymCard gym={gym} showCity={false} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- Best Bouldering -->
+  {boulderingGyms.length > 0 && (
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-granite mb-6">
+        Best Bouldering Gyms in {city}
+      </h2>
+      <p class="text-gray-700 mb-6">
+        Looking for bouldering? These {city} facilities offer excellent bouldering walls with
+        diverse problems ranging from beginner to advanced grades.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {boulderingGyms.map(gym => (
+          <GymCard gym={gym} showCity={false} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- Pricing Comparison -->
+  <section class="mb-12 bg-white rounded-lg shadow-md p-8">
+    <h2 class="text-3xl font-bold text-granite mb-6">
+      Climbing Gym Prices in {city}
+    </h2>
+    <p class="text-gray-700 mb-6">
+      Compare day pass prices and membership options across all climbing gyms in {city}.
+      Prices shown are for standard day passes; many gyms also offer punch cards, monthly memberships, and student discounts.
+    </p>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b-2 border-gray-200">
+            <th class="text-left py-3 px-4 font-semibold text-granite">Gym Name</th>
+            <th class="text-left py-3 px-4 font-semibold text-granite">Day Pass</th>
+            <th class="text-left py-3 px-4 font-semibold text-granite">Membership From</th>
+            <th class="text-left py-3 px-4 font-semibold text-granite">Student Discount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {cityGyms.map(gym => (
+            <tr class="border-b border-gray-100 hover:bg-gray-50">
+              <td class="py-3 px-4">
+                <a href={`/gyms/${gym.slug}`} class="text-sage hover:underline font-medium">
+                  {gym.name}
+                </a>
+              </td>
+              <td class="py-3 px-4 font-bold">${gym.day_pass_price_local}</td>
+              <td class="py-3 px-4">
+                {gym.membership_from_local ? `$${gym.membership_from_local}/mo` : 'N/A'}
+              </td>
+              <td class="py-3 px-4">
+                {gym.student_discount ? '✓ Yes' : '—'}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- About Climbing in [City] -->
+  <section class="mb-12 bg-gradient-to-br from-sage/10 to-ivory rounded-lg p-8">
+    <h2 class="text-3xl font-bold text-granite mb-6">
+      About the Climbing Scene in {city}
+    </h2>
+    <div class="prose max-w-none text-gray-700">
+      <p class="mb-4">
+        {city}, {region} has a thriving indoor climbing community with {cityGyms.length} facilities
+        serving climbers of all abilities. Whether you're interested in bouldering, sport climbing, or
+        training for outdoor objectives, {city}'s climbing gyms offer world-class facilities and welcoming communities.
+      </p>
+      <p class="mb-4">
+        The gyms in {city} range from large multi-purpose facilities with extensive training areas to
+        boutique bouldering-focused spaces. Most gyms offer day passes, memberships, and introductory
+        packages for newcomers. Many also host competitions, social events, and youth programs that
+        strengthen the local climbing community.
+      </p>
+      <p>
+        With an average rating of {avgRating} stars, climbers consistently praise {city}'s gyms for
+        their route quality, friendly atmosphere, and comprehensive amenities. Whether you're a resident
+        or just visiting, you'll find excellent climbing options throughout the city.
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="mb-12">
+    <h2 class="text-3xl font-bold text-granite mb-6">
+      Frequently Asked Questions
+    </h2>
+    <div class="space-y-6">
+      {faqs.map(faq => (
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="font-bold text-granite text-lg mb-3">{faq.question}</h3>
+          <p class="text-gray-700">{faq.answer}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Explore More Section -->
+  <section class="mb-12 bg-white rounded-lg shadow-md p-8">
+    <h2 class="text-3xl font-bold text-granite mb-6">Explore More</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <a
+        href={`/${stateAbbr}`}
+        class="flex items-center gap-3 p-4 bg-sage/10 rounded-lg hover:bg-sage/20 transition-colors group"
+      >
+        <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+        </svg>
+        <div>
+          <h3 class="font-semibold text-granite group-hover:text-sage">All {region} Gyms</h3>
+          <p class="text-sm text-gray-600">Browse state-wide</p>
+        </div>
+      </a>
+
+      <a
+        href={`/search?city=${encodeURIComponent(city)}`}
+        class="flex items-center gap-3 p-4 bg-sage/10 rounded-lg hover:bg-sage/20 transition-colors group"
+      >
+        <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <div>
+          <h3 class="font-semibold text-granite group-hover:text-sage">Advanced Search</h3>
+          <p class="text-sm text-gray-600">Filter {city} gyms</p>
+        </div>
+      </a>
+
+      <a
+        href="/categories/best-climbing-gyms-for-beginners"
+        class="flex items-center gap-3 p-4 bg-sage/10 rounded-lg hover:bg-sage/20 transition-colors group"
+      >
+        <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+        <div>
+          <h3 class="font-semibold text-granite group-hover:text-sage">Browse Categories</h3>
+          <p class="text-sm text-gray-600">Find specialized gyms</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Related Guides -->
+  <section class="mb-12 bg-gradient-to-br from-sage/10 to-ivory rounded-lg p-8">
+    <h2 class="text-3xl font-bold text-granite mb-6">Helpful Climbing Guides</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <a
+        href="/guides/beginners-guide-to-climbing-gyms"
+        class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow group"
+      >
+        <h3 class="text-lg font-bold text-granite group-hover:text-sage mb-2">
+          Beginner's Guide to Climbing Gyms
+        </h3>
+        <p class="text-sm text-gray-600">
+          New to climbing? Learn everything you need to know before your first visit.
+        </p>
+      </a>
+
+      <a
+        href="/guides/what-to-wear-indoor-rock-climbing"
+        class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow group"
+      >
+        <h3 class="text-lg font-bold text-granite group-hover:text-sage mb-2">
+          What to Wear Indoor Rock Climbing
+        </h3>
+        <p class="text-sm text-gray-600">
+          Complete guide to choosing the right clothing and gear for climbing.
+        </p>
+      </a>
+    </div>
+    <a
+      href="/guides"
+      class="block mt-6 text-sage font-medium hover:underline"
+    >
+      View all guides →
+    </a>
+  </section>
+
+  <!-- CTA -->
+  <section class="text-center bg-sage rounded-lg p-12 text-white">
+    <h2 class="text-3xl font-bold mb-4">
+      Ready to Start Climbing in {city}?
+    </h2>
+    <p class="text-lg mb-8 text-white/90">
+      Explore all {cityGyms.length} gyms above and find your perfect climbing spot today
+    </p>
+    <a
+      href="#"
+      onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;"
+      class="inline-block bg-white text-sage px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
+    >
+      Back to Top
+    </a>
+  </section>
+</BaseLayout>

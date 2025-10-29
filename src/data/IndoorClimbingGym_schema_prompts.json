@@ -1,0 +1,406 @@
+{
+  "schema_name": "Climbspot Directory Data Schema with Web Enrichment Prompts",
+  "version": "1.0",
+  "generated_at": "2025-10-28T15:02:25.830536Z",
+  "placeholders": {
+    "name": "{{name}}",
+    "address": "{{address}}"
+  },
+  "fields": [
+    {
+      "name": "id",
+      "description": "Unique stable identifier for the gym row.",
+      "type": "integer",
+      "desired_return": "Integer (e.g., 1).",
+      "prompt": "Assign a unique integer ID for this row. Output integer only. If no reliable logic applies, return 'null'."
+    },
+    {
+      "name": "name",
+      "description": "Official public-facing name of the climbing gym.",
+      "type": "string",
+      "desired_return": "Title Case string (e.g., 'Vertical Ascent').",
+      "prompt": "Using web search with the business name '{{name}}' and full address '{{address}}', identify the official public-facing gym name as used on signage, homepage, or Google Business Profile. Remove suffixes like LLC/Inc/PT unless part of branding. Output Title Case. If unsure, return 'null'."
+    },
+    {
+      "name": "slug",
+      "description": "URL-safe identifier built from name and city.",
+      "type": "string",
+      "desired_return": "kebab-case ASCII (e.g., 'vertical-ascent-seattle').",
+      "prompt": "Using the name '{{name}}' and city from '{{address}}', generate a kebab-case slug (lowercase, hyphen-separated). Append the city if duplicates exist. Output slug only or 'null'."
+    },
+    {
+      "name": "verified",
+      "description": "Whether the gym is verified on Google or official listings.",
+      "type": "boolean",
+      "desired_return": "TRUE or FALSE.",
+      "prompt": "Search Google Maps and official sources for '{{name}}' at '{{address}}' to confirm verification status. Output TRUE, FALSE, or 'null' if unclear."
+    },
+    {
+      "name": "status",
+      "description": "Operational status of the gym.",
+      "type": "enum",
+      "desired_return": "One of: open | temporarily_closed | permanently_closed.",
+      "prompt": "For '{{name}}' at '{{address}}', determine operational status. Output one of: open|temporarily_closed|permanently_closed. If uncertain, return 'null'.",
+      "allowed_values": [
+        "open",
+        "temporarily_closed",
+        "permanently_closed"
+      ]
+    },
+    {
+      "name": "full_address",
+      "description": "Complete formatted address as used publicly.",
+      "type": "string",
+      "desired_return": "Single-line address string.",
+      "prompt": "Return the complete formatted address for '{{name}}' as shown on Google Maps or the official site in a single line. If not found, return 'null'."
+    },
+    {
+      "name": "postal_code",
+      "description": "Postal/ZIP code.",
+      "type": "string",
+      "desired_return": "String preserving leading zeros (e.g., '02139').",
+      "prompt": "Extract the postal/ZIP code for '{{name}}' from the address. Preserve leading zeros. If missing, return 'null'."
+    },
+    {
+      "name": "latitude",
+      "description": "Latitude of the entrance in decimal degrees.",
+      "type": "number",
+      "desired_return": "Decimal with dot separator (e.g., -6.2607).",
+      "prompt": "Find the latitude (decimal degrees) for '{{name}}' at '{{address}}'. Output number only or 'null'."
+    },
+    {
+      "name": "longtitude",
+      "description": "Longitude of the entrance in decimal degrees (field name kept as provided).",
+      "type": "number",
+      "desired_return": "Decimal with dot separator (e.g., 106.7816).",
+      "prompt": "Find the longitude (decimal degrees) for '{{name}}' at '{{address}}'. Output number only or 'null'."
+    },
+    {
+      "name": "city",
+      "description": "City/locality of the gym.",
+      "type": "string",
+      "desired_return": "Title Case (e.g., 'Austin').",
+      "prompt": "From '{{address}}', extract the city/locality for '{{name}}'. Output Title Case or 'null'."
+    },
+    {
+      "name": "region",
+      "description": "State/province/region of the gym.",
+      "type": "string",
+      "desired_return": "Title Case (e.g., 'California').",
+      "prompt": "From '{{address}}', extract the state/province/region for '{{name}}'. Output Title Case or 'null'."
+    },
+    {
+      "name": "country",
+      "description": "Country of the gym.",
+      "type": "string",
+      "desired_return": "ISO-3166-1 alpha-2 code (e.g., 'US').",
+      "prompt": "From '{{address}}', return the ISO-2 country code for '{{name}}' (e.g., US, ID). If unknown, return 'null'."
+    },
+    {
+      "name": "timezone",
+      "description": "Local IANA timezone.",
+      "type": "string",
+      "desired_return": "Area/City format (e.g., 'America/Los_Angeles').",
+      "prompt": "Return the IANA timezone (Area/City) for '{{name}}' at '{{address}}'. If indeterminate, return 'null'."
+    },
+    {
+      "name": "phone",
+      "description": "Public contact phone.",
+      "type": "string",
+      "desired_return": "E.164 format (e.g., '+1-310-555-2134').",
+      "prompt": "Find the public phone for '{{name}}' at '{{address}}'. Format in E.164. If not available, return 'null'."
+    },
+    {
+      "name": "website",
+      "description": "Official website URL.",
+      "type": "url",
+      "desired_return": "HTTPS URL (e.g., 'https://example.com').",
+      "prompt": "Find the official HTTPS website for '{{name}}' at '{{address}}'. Return main homepage URL or 'null'."
+    },
+    {
+      "name": "location_link",
+      "description": "Google Maps place URL.",
+      "type": "url",
+      "desired_return": "Full maps URL.",
+      "prompt": "Return the Google Maps place URL for '{{name}}' at '{{address}}'. If not found, return 'null'."
+    },
+    {
+      "name": "street_view",
+      "description": "Google Street View URL focused on entrance.",
+      "type": "url",
+      "desired_return": "Street View URL or null.",
+      "prompt": "Return the Google Street View URL for '{{name}}' at '{{address}}' if available, else 'null'."
+    },
+    {
+      "name": "photo",
+      "description": "Primary hero photo URL.",
+      "type": "url",
+      "desired_return": "Direct HTTPS image URL (≥1600px preferred).",
+      "prompt": "Find the best primary photo URL (≥1600px) for '{{name}}'. Return direct HTTPS image URL or 'null'."
+    },
+    {
+      "name": "logo",
+      "description": "Official logo image URL.",
+      "type": "url",
+      "desired_return": "Direct HTTPS SVG/PNG URL.",
+      "prompt": "Find the official logo (SVG/PNG) for '{{name}}'. Return direct HTTPS image URL or 'null'."
+    },
+    {
+      "name": "amenities",
+      "description": "Comfort and convenience facilities available.",
+      "type": "pipe_list",
+      "desired_return": "Pipe-delimited allowed values: showers|lockers|cafe|wifi|parking|sauna|kids_zone|pro_shop.",
+      "prompt": "List confirmed amenities for '{{name}}' using allowed values: showers|lockers|cafe|wifi|parking|sauna|kids_zone|pro_shop. Output pipe-delimited or 'null'.",
+      "allowed_values": [
+        "showers",
+        "lockers",
+        "cafe",
+        "wifi",
+        "parking",
+        "sauna",
+        "kids_zone",
+        "pro_shop"
+      ]
+    },
+    {
+      "name": "working_hour",
+      "description": "Weekly opening hours.",
+      "type": "string",
+      "desired_return": "Pipe-delimited day/time pairs, 24h: mon:07:00-22:00|tue:07:00-22:00|...",
+      "prompt": "Extract weekly opening hours for '{{name}}'. Format as mon:07:00-22:00|tue:07:00-22:00|... using 24h local time. If unknown, return 'null'."
+    },
+    {
+      "name": "rating",
+      "description": "Average Google rating.",
+      "type": "number",
+      "desired_return": "Decimal 0–5 (one decimal if available).",
+      "prompt": "Return the average Google rating (0–5, 1 decimal) for '{{name}}' at '{{address}}', or 'null' if not listed."
+    },
+    {
+      "name": "description_short",
+      "description": "One-line summary for cards.",
+      "type": "string",
+      "desired_return": "≤140 chars; no emojis/hashtags.",
+      "prompt": "Write ≤140-char one-line summary for '{{name}}' describing type and key amenities. No emojis/hashtags. If insufficient info, return 'null'."
+    },
+    {
+      "name": "description_long",
+      "description": "2–4 sentence overview of vibe, facilities, audience.",
+      "type": "string",
+      "desired_return": "240–480 chars, plain text.",
+      "prompt": "Write a 2–4 sentence (240–480 chars) overview of '{{name}}' covering vibe, facilities, and audience. Avoid hype/unverified prices. If none, return 'null'."
+    },
+    {
+      "name": "climbing_types",
+      "description": "Disciplines available at the venue.",
+      "type": "pipe_list",
+      "desired_return": "Pipe-delimited allowed: bouldering|top_rope|lead|speed.",
+      "prompt": "Identify available disciplines for '{{name}}'. Allowed: bouldering|top_rope|lead|speed. Output pipe-delimited or 'null'.",
+      "allowed_values": [
+        "bouldering",
+        "top_rope",
+        "lead",
+        "speed"
+      ]
+    },
+    {
+      "name": "grade_system",
+      "description": "Grading systems used on-site.",
+      "type": "pipe_list",
+      "desired_return": "Pipe-delimited allowed: V|Font|YDS.",
+      "prompt": "Identify grading systems used at '{{name}}'. Allowed: V|Font|YDS. Output pipe-delimited or 'null'.",
+      "allowed_values": [
+        "V",
+        "Font",
+        "YDS"
+      ]
+    },
+    {
+      "name": "route_style",
+      "description": "Dominant setting styles.",
+      "type": "pipe_list",
+      "desired_return": "Pipe-delimited allowed: coordination|comp|traditional.",
+      "prompt": "Identify dominant setting style at '{{name}}'. Allowed: coordination|comp|traditional. Output pipe-delimited or 'null'.",
+      "allowed_values": [
+        "coordination",
+        "comp",
+        "traditional"
+      ]
+    },
+    {
+      "name": "route_reset_frequency",
+      "description": "Typical route/problem reset cadence.",
+      "type": "enum",
+      "desired_return": "One of: weekly|biweekly|monthly|quarterly|varies.",
+      "prompt": "Determine reset cadence for '{{name}}'. Allowed: weekly|biweekly|monthly|quarterly|varies. If unknown, 'null'.",
+      "allowed_values": [
+        "weekly",
+        "biweekly",
+        "monthly",
+        "quarterly",
+        "varies"
+      ]
+    },
+    {
+      "name": "total_problems",
+      "description": "Approximate count of active boulder problems.",
+      "type": "integer",
+      "desired_return": "Integer ≥ 0 (0 if rope-only).",
+      "prompt": "Return approximate number of boulder problems at '{{name}}'. Output integer or 'null'."
+    },
+    {
+      "name": "wall_height_meters",
+      "description": "Maximum wall height.",
+      "type": "number",
+      "desired_return": "Meters as decimal (e.g., 15.0).",
+      "prompt": "Return max wall height for '{{name}}' in meters (convert feet×0.3048). Output decimal or 'null'."
+    },
+    {
+      "name": "crowd_peak_notes",
+      "description": "Peak/quiet time summary.",
+      "type": "string",
+      "desired_return": "≤120 chars; example: 'Peak 18:00–21:00 weekdays; quiet mornings.'",
+      "prompt": "Summarize busy/quiet hours for '{{name}}' using Popular Times/reviews. ≤120 chars, or 'null'."
+    },
+    {
+      "name": "training_facilities",
+      "description": "Training tools and zones available.",
+      "type": "pipe_list",
+      "desired_return": "Pipe-delimited allowed: hangboard|campus_board|treadwall|weights|spray_wall.",
+      "prompt": "List training tools at '{{name}}'. Allowed: hangboard|campus_board|treadwall|weights|spray_wall. Pipe-delimited or 'null'."
+    },
+    {
+      "name": "gear_rental",
+      "description": "Rental gear offered on-site.",
+      "type": "pipe_list",
+      "desired_return": "Pipe-delimited allowed: shoes|harness|belay_device|chalk_bag.",
+      "prompt": "List rental gear at '{{name}}'. Allowed: shoes|harness|belay_device|chalk_bag. Pipe-delimited or 'null'."
+    },
+    {
+      "name": "beginner_friendly",
+      "description": "Beginner suitability based on classes/rentals.",
+      "type": "boolean",
+      "desired_return": "TRUE or FALSE.",
+      "prompt": "Return TRUE if '{{name}}' offers intro classes or rentals; FALSE if not; 'null' if unclear."
+    },
+    {
+      "name": "access_notes",
+      "description": "Arrival/transport/parking notes.",
+      "type": "string",
+      "desired_return": "≤180 chars; 1–2 sentences.",
+      "prompt": "Write ≤180-char transport/parking note for '{{name}}' at '{{address}}'. If unknown, 'null'."
+    },
+    {
+      "name": "day_pass_price_local",
+      "description": "Adult day-pass price in local currency.",
+      "type": "number",
+      "desired_return": "Numeric only; no currency symbol.",
+      "prompt": "Find adult day-pass price for '{{name}}'. Output numeric only (no symbol) or 'null'."
+    },
+    {
+      "name": "student_discount",
+      "description": "Whether standing student discount exists.",
+      "type": "boolean",
+      "desired_return": "TRUE or FALSE.",
+      "prompt": "Return TRUE if standing student discount exists at '{{name}}'; FALSE if not; 'null' if unclear."
+    },
+    {
+      "name": "membership_from_local",
+      "description": "Lowest standard monthly membership.",
+      "type": "number",
+      "desired_return": "Numeric only; no symbol.",
+      "prompt": "Return lowest standard adult monthly price for '{{name}}'. Numeric only or 'null'."
+    },
+    {
+      "name": "price_type",
+      "description": "Type for the pricing record (if applicable).",
+      "type": "enum",
+      "desired_return": "One of: day_pass|ten_pass|membership|student|family|child.",
+      "prompt": "Classify pricing record type for '{{name}}'. Allowed: day_pass|ten_pass|membership|student|family|child. Output enum or 'null'.",
+      "allowed_values": [
+        "day_pass",
+        "ten_pass",
+        "membership",
+        "student",
+        "family",
+        "child"
+      ]
+    },
+    {
+      "name": "label",
+      "description": "Customer-facing name of the offer.",
+      "type": "string",
+      "desired_return": "Short phrase (e.g., 'Monthly Membership').",
+      "prompt": "Return customer-facing price label for '{{name}}' (e.g., 'Monthly Membership'). Output short phrase or 'null'."
+    },
+    {
+      "name": "amount_local",
+      "description": "Price amount for the offer.",
+      "type": "number",
+      "desired_return": "Numeric only; no symbol.",
+      "prompt": "Return numeric price amount (no symbol) for the offer at '{{name}}', or 'null'."
+    },
+    {
+      "name": "conditions",
+      "description": "Eligibility/notes for the offer.",
+      "type": "string",
+      "desired_return": "Short phrase (e.g., 'Student ID required').",
+      "prompt": "Summarize eligibility/notes for the offer at '{{name}}' (e.g., 'Student ID required'). Short phrase or 'null'."
+    },
+    {
+      "name": "section",
+      "description": "Named area/zone inside the gym.",
+      "type": "string",
+      "desired_return": "Short label (e.g., 'Main Comp Wall').",
+      "prompt": "Return a section/area name for '{{name}}' (e.g., 'Main Comp Wall'). Short label or 'null'."
+    },
+    {
+      "name": "discipline",
+      "description": "Discipline for this section.",
+      "type": "enum",
+      "desired_return": "One of: bouldering|top_rope|lead|speed.",
+      "prompt": "Return discipline for section at '{{name}}'. Allowed: bouldering|top_rope|lead|speed. Enum or 'null'.",
+      "allowed_values": [
+        "bouldering",
+        "top_rope",
+        "lead",
+        "speed"
+      ]
+    },
+    {
+      "name": "grade_range",
+      "description": "Displayed grade span for the section.",
+      "type": "string",
+      "desired_return": "Range text (e.g., 'V0–V9' or '5.6–5.13b').",
+      "prompt": "Return displayed grade range at '{{name}}' (e.g., 'V0–V9'). Text or 'null'."
+    },
+    {
+      "name": "problems_or_routes",
+      "description": "Count of problems or rope routes in section.",
+      "type": "integer",
+      "desired_return": "Integer ≥ 0.",
+      "prompt": "Return count of problems/routes in section at '{{name}}'. Integer or 'null'."
+    },
+    {
+      "name": "last_reset_date",
+      "description": "Most recent reset date for the section.",
+      "type": "date",
+      "desired_return": "ISO date YYYY-MM-DD.",
+      "prompt": "Return most recent reset date for '{{name}}' as YYYY-MM-DD, or 'null'."
+    },
+    {
+      "name": "next_reset_expectation",
+      "description": "Expected cadence to next reset.",
+      "type": "enum",
+      "desired_return": "One of: weekly|biweekly|monthly|quarterly|varies.",
+      "prompt": "Return expected reset cadence for '{{name}}': weekly|biweekly|monthly|quarterly|varies, or 'null'.",
+      "allowed_values": [
+        "weekly",
+        "biweekly",
+        "monthly",
+        "quarterly",
+        "varies"
+      ]
+    }
+  ]
+}

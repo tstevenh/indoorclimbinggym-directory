@@ -1,0 +1,215 @@
+---
+/**
+ * BaseLayout
+ * Foundation layout for all pages with comprehensive SEO meta tags and schema markup
+ */
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+  keywords?: string[];
+  noindex?: boolean;
+  nofollow?: boolean;
+  schema?: any; // JSON-LD schema object(s)
+  breadcrumbs?: Array<{ label: string; url: string }>;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  ogImage = 'https://www.indoorclimbinggym.com/og-default.jpg',
+  ogType = 'website',
+  keywords = [],
+  noindex = false,
+  nofollow = false,
+  schema,
+  breadcrumbs,
+} = Astro.props;
+
+// Build canonical URL
+const siteUrl = 'https://www.indoorclimbinggym.com';
+const canonicalURL = canonical || new URL(Astro.url.pathname, siteUrl).href;
+
+// Ensure title is under 60 characters
+const finalTitle = title.length > 60 ? title.substring(0, 57) + '...' : title;
+
+// Ensure description is under 160 characters
+const finalDescription =
+  description.length > 160 ? description.substring(0, 157) + '...' : description;
+
+// Construct robots meta
+const robotsDirectives = [];
+if (noindex) robotsDirectives.push('noindex');
+if (nofollow) robotsDirectives.push('nofollow');
+const robots =
+  robotsDirectives.length > 0 ? robotsDirectives.join(', ') : 'index, follow';
+
+// Generate breadcrumb schema if provided
+let breadcrumbSchema = null;
+if (breadcrumbs && breadcrumbs.length > 0) {
+  breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbs.map((crumb, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: crumb.label,
+      item: crumb.url,
+    })),
+  };
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
+    <title>{finalTitle}</title>
+    <meta name="title" content={finalTitle} />
+    <meta name="description" content={finalDescription} />
+    {keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
+    <meta name="robots" content={robots} />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={finalTitle} />
+    <meta property="og:description" content={finalDescription} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="IndoorClimbingGym" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={finalTitle} />
+    <meta property="twitter:description" content={finalDescription} />
+    <meta property="twitter:image" content={ogImage} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+
+    <!-- JSON-LD Structured Data -->
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+    {
+      breadcrumbSchema && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(breadcrumbSchema)}
+        />
+      )
+    }
+  </head>
+  <body class="min-h-screen bg-ivory text-granite antialiased">
+    <!-- Skip to main content link for accessibility -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-sage focus:text-white focus:px-4 focus:py-2 focus:rounded"
+    >
+      Skip to main content
+    </a>
+
+    <!-- Header will go here -->
+    <header class="bg-white shadow-sm">
+      <div class="container mx-auto px-4 py-4">
+        <nav class="flex items-center justify-between">
+          <a href="/" class="text-2xl font-bold text-sage">
+            IndoorClimbingGym
+          </a>
+          <div class="flex gap-6">
+            <a href="/search" class="text-granite hover:text-sage">Search</a>
+            <a href="/guides" class="text-granite hover:text-sage">Guides</a>
+            <a href="/about" class="text-granite hover:text-sage">About</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main content area -->
+    <main id="main-content" class="container mx-auto px-4 py-8">
+      <slot />
+    </main>
+
+    <!-- Footer will go here -->
+    <footer class="bg-granite text-ivory mt-16">
+      <div class="container mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <h3 class="font-bold text-lg mb-4">IndoorClimbingGym</h3>
+            <p class="text-sm">Find your next climb.</p>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-3">Explore</h4>
+            <ul class="space-y-2 text-sm">
+              <li><a href="/search" class="hover:text-sage">Search Gyms</a></li>
+              <li><a href="/guides" class="hover:text-sage">Guides</a></li>
+              <li><a href="/best-bouldering-gyms" class="hover:text-sage">Best Bouldering</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-3">Popular Cities</h4>
+            <ul class="space-y-2 text-sm">
+              <li><a href="/wa/seattle" class="hover:text-sage">Seattle</a></li>
+              <li><a href="/tx/austin" class="hover:text-sage">Austin</a></li>
+              <li><a href="/co/denver" class="hover:text-sage">Denver</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-3">About</h4>
+            <ul class="space-y-2 text-sm">
+              <li><a href="/about" class="hover:text-sage">About Us</a></li>
+              <li><a href="/contact" class="hover:text-sage">Contact</a></li>
+              <li><a href="/privacy" class="hover:text-sage">Privacy</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-t border-gray-600 mt-8 pt-8 text-center text-sm">
+          <p>© {new Date().getFullYear()} IndoorClimbingGym. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  /* Custom color classes for TailwindCSS */
+  .text-sage {
+    color: #98a48b;
+  }
+  .bg-sage {
+    background-color: #98a48b;
+  }
+  .text-granite {
+    color: #555;
+  }
+  .bg-granite {
+    background-color: #555;
+  }
+  .text-ivory {
+    color: #f8f8f5;
+  }
+  .bg-ivory {
+    background-color: #f8f8f5;
+  }
+  .hover\:text-sage:hover {
+    color: #98a48b;
+  }
+</style>

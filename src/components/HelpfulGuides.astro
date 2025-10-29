@@ -1,0 +1,78 @@
+---
+/**
+ * HelpfulGuides Component
+ * Links to relevant blog posts based on context
+ */
+
+interface Props {
+  beginner_friendly?: boolean;
+  includeAll?: boolean;
+}
+
+const { beginner_friendly = false, includeAll = false } = Astro.props;
+
+// Define helpful guide links
+const guides = [
+  {
+    title: "Beginner's Guide to Climbing Gyms",
+    url: '/guides/beginners-guide-to-climbing-gyms',
+    showIf: beginner_friendly || includeAll,
+  },
+  {
+    title: 'What to Wear Indoor Rock Climbing',
+    url: '/guides/what-to-wear-indoor-rock-climbing',
+    showIf: true,
+  },
+  {
+    title: 'Is Climbing Gym Membership Worth It?',
+    url: '/guides/is-climbing-gym-membership-worth-it',
+    showIf: true,
+  },
+  {
+    title: 'Bouldering vs Rope Climbing',
+    url: '/guides/bouldering-vs-rope-climbing',
+    showIf: includeAll,
+  },
+];
+
+const visibleGuides = guides.filter(g => g.showIf).slice(0, 3);
+---
+
+{visibleGuides.length > 0 && (
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <h3 class="font-bold text-granite mb-4">Helpful Guides</h3>
+    <div class="space-y-3">
+      {visibleGuides.map((guide) => (
+        <a
+          href={guide.url}
+          class="block p-3 bg-gray-50 rounded-lg hover:bg-sage/10 transition-colors group"
+        >
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium text-granite group-hover:text-sage">
+              {guide.title}
+            </span>
+            <svg
+              class="w-4 h-4 text-gray-400 group-hover:text-sage"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </div>
+        </a>
+      ))}
+    </div>
+    <a
+      href="/guides"
+      class="block mt-4 text-sage text-sm font-medium hover:underline"
+    >
+      View all guides →
+    </a>
+  </div>
+)}

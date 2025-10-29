@@ -1,0 +1,8 @@
+# robots.txt for IndoorClimbingGym.com
+# Allow all crawlers to index the site
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://www.indoorclimbinggym.com/sitemap-index.xml

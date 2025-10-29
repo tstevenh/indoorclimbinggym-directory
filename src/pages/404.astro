@@ -1,0 +1,283 @@
+---
+/**
+ * 404 Not Found Page
+ * Custom error page with search functionality and helpful navigation
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+export const prerender = true;
+import SearchBar from '../components/SearchBar.astro';
+
+const pageTitle = 'Page Not Found | IndoorClimbingGym';
+const pageDescription =
+  "Oops! The page you're looking for doesn't exist. Search for climbing gyms or browse our popular locations.";
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  noindex={true}
+>
+  <div class="max-w-4xl mx-auto text-center py-12">
+    <!-- Error Status -->
+    <div class="mb-8">
+      <h1 class="text-8xl font-bold text-sage mb-4">404</h1>
+      <h2 class="text-3xl font-bold text-granite mb-4">Page Not Found</h2>
+      <p class="text-lg text-gray-600 mb-8">
+        Sorry, we couldn't find the page you're looking for. It may have been moved or deleted.
+      </p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="mb-12 max-w-2xl mx-auto">
+      <h3 class="text-xl font-semibold text-granite mb-4">
+        Looking for a climbing gym?
+      </h3>
+      <SearchBar large={true} placeholder="Search by city, state, or gym name..." />
+    </div>
+
+    <!-- Popular Links -->
+    <div class="grid md:grid-cols-2 gap-8 mb-12">
+      <!-- Browse Section -->
+      <div class="bg-white rounded-lg shadow-md p-6 text-left">
+        <h3 class="text-xl font-semibold text-granite mb-4">Browse Gyms</h3>
+        <ul class="space-y-3">
+          <li>
+            <a
+              href="/"
+              class="text-sage hover:underline font-medium flex items-center"
+            >
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                ></path>
+              </svg>
+              Homepage
+            </a>
+          </li>
+          <li>
+            <a
+              href="/search"
+              class="text-sage hover:underline font-medium flex items-center"
+            >
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+              Search All Gyms
+            </a>
+          </li>
+          <li>
+            <a
+              href="/states"
+              class="text-sage hover:underline font-medium flex items-center"
+            >
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                ></path>
+              </svg>
+              Browse by State
+            </a>
+          </li>
+          <li>
+            <a
+              href="/best-bouldering-gyms"
+              class="text-sage hover:underline font-medium flex items-center"
+            >
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                ></path>
+              </svg>
+              Best Bouldering Gyms
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Popular Cities & Resources -->
+      <div class="bg-white rounded-lg shadow-md p-6 text-left">
+        <h3 class="text-xl font-semibold text-granite mb-4">
+          Popular Locations
+        </h3>
+        <ul class="space-y-3 mb-6">
+          <li>
+            <a
+              href="/wa/seattle"
+              class="text-sage hover:underline font-medium flex items-center"
+            >
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+              </svg>
+              Seattle, WA
+            </a>
+          </li>
+          <li>
+            <a
+              href="/tx/austin"
+              class="text-sage hover:underline font-medium flex items-center"
+            >
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+              </svg>
+              Austin, TX
+            </a>
+          </li>
+          <li>
+            <a
+              href="/co/denver"
+              class="text-sage hover:underline font-medium flex items-center"
+            >
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                ></path>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                ></path>
+              </svg>
+              Denver, CO
+            </a>
+          </li>
+        </ul>
+
+        <h4 class="text-lg font-semibold text-granite mb-3 mt-6">Resources</h4>
+        <ul class="space-y-3">
+          <li>
+            <a
+              href="/guides"
+              class="text-sage hover:underline font-medium flex items-center"
+            >
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                ></path>
+              </svg>
+              Climbing Guides & Tips
+            </a>
+          </li>
+          <li>
+            <a
+              href="/about"
+              class="text-sage hover:underline font-medium flex items-center"
+            >
+              <svg
+                class="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              About Us
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Additional Help -->
+    <div class="bg-sage bg-opacity-10 rounded-lg p-6 text-center">
+      <h3 class="text-lg font-semibold text-granite mb-2">Still need help?</h3>
+      <p class="text-gray-600 mb-4">
+        If you believe this is an error or need assistance, please contact us.
+      </p>
+      <a
+        href="/contact"
+        class="inline-block px-6 py-3 bg-sage text-white font-medium rounded-lg hover:bg-opacity-90 transition-colors"
+      >
+        Contact Support
+      </a>
+    </div>
+  </div>
+</BaseLayout>

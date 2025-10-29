@@ -1,0 +1,459 @@
+---
+/**
+ * Gym Detail Page
+ * Dynamic page for each gym with rich content (800-1200 words) and full schema markup
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GymCard from '../../components/GymCard.astro';
+import CategoryLinks from '../../components/CategoryLinks.astro';
+import HelpfulGuides from '../../components/HelpfulGuides.astro';
+import OptimizedImage from '../../components/OptimizedImage.astro';
+import { generateGymSchema, serializeSchema } from '../../utils/schema';
+import { generateGymTitle, generateGymDescription, generateGymKeywords } from '../../utils/seo';
+import { IMAGE_SIZES } from '../../utils/imageUtils';
+import gyms from '../../data/gyms.json';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return gyms.map(gym => ({
+    params: { slug: gym.slug },
+    props: { gym },
+  }));
+}
+
+const { gym } = Astro.props;
+
+// Parse pipe-delimited fields
+const climbingTypes = gym.climbing_types?.split('|') || [];
+const amenitiesList = gym.amenities?.split('|') || [];
+const trainingFacilities = gym.training_facilities?.split('|') || [];
+const gearRental = gym.gear_rental?.split('|') || [];
+
+// Parse hours
+const hours = gym.working_hour?.split('|').map(entry => {
+  const colonIndex = entry.indexOf(':');
+  const day = entry.substring(0, colonIndex);
+  const timeRange = entry.substring(colonIndex + 1);
+  const [opens, closes] = timeRange.split('-');
+  return { day, opens, closes };
+}) || [];
+
+// Get state abbreviation for URL
+const stateAbbr = {
+  'Washington': 'wa',
+  'Texas': 'tx',
+  'Colorado': 'co',
+  'New York': 'ny',
+  'California': 'ca',
+}[gym.region] || gym.region.toLowerCase().replace(/\s+/g, '-');
+
+// Build breadcrumbs
+const breadcrumbs = [
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
+  { label: gym.region, url: `https://www.indoorclimbinggym.com/${stateAbbr}` },
+  { label: gym.city, url: `https://www.indoorclimbinggym.com/${stateAbbr}/${gym.city.toLowerCase().replace(/\s+/g, '-')}` },
+  { label: gym.name, url: `https://www.indoorclimbinggym.com/gyms/${gym.slug}` },
+];
+
+// Generate SEO data
+const title = generateGymTitle(gym.name, gym.city, gym.region);
+const description = generateGymDescription(gym.name, gym.city, climbingTypes, gym.rating);
+const keywords = generateGymKeywords(gym.name, gym.city, climbingTypes);
+const pageUrl = `https://www.indoorclimbinggym.com/gyms/${gym.slug}`;
+
+// Generate schema
+const gymSchema = generateGymSchema(gym, pageUrl);
+
+// Get related gyms (same city, then same state if needed)
+let relatedGyms = gyms.filter(g => g.city === gym.city && g.id !== gym.id);
+if (relatedGyms.length < 3) {
+  const stateGyms = gyms.filter(g => g.region === gym.region && g.id !== gym.id && g.city !== gym.city);
+  relatedGyms = [...relatedGyms, ...stateGyms].slice(0, 3);
+} else {
+  relatedGyms = relatedGyms.slice(0, 3);
+}
+
+// Generate FAQ data
+const faqs = [
+  {
+    question: `What types of climbing does ${gym.name} offer?`,
+    answer: `${gym.name} offers ${climbingTypes.map(t => t.replace(/_/g, ' ')).join(', ')} climbing. ${gym.beginner_friendly ? 'The gym is beginner-friendly with routes for all skill levels.' : 'Routes range from beginner to advanced levels.'}`,
+  },
+  {
+    question: `What are the hours of operation for ${gym.name}?`,
+    answer: `${gym.name} is open ${hours[0]?.day} through ${hours[hours.length - 1]?.day}. Hours vary by day - check the schedule below for details.`,
+  },
+  {
+    question: `How much is a day pass at ${gym.name}?`,
+    answer: `A day pass at ${gym.name} costs $${gym.day_pass_price_local}. ${gym.student_discount ? 'Student discounts are available with valid ID.' : ''}`,
+  },
+  {
+    question: `What amenities are available at ${gym.name}?`,
+    answer: `${gym.name} features ${amenitiesList.slice(0, 5).map(a => a.replace(/_/g, ' ')).join(', ')}, and more. Check the full amenities list below.`,
+  },
+  {
+    question: `Is ${gym.name} good for beginners?`,
+    answer: gym.beginner_friendly
+      ? `Yes! ${gym.name} is beginner-friendly with introductory classes, easy routes, and staff ready to help newcomers get started with climbing.`
+      : `${gym.name} welcomes climbers of all levels. While not specifically marked as beginner-focused, the gym offers routes across various difficulty levels.`,
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  keywords={keywords}
+  schema={gymSchema}
+  breadcrumbs={breadcrumbs}
+  ogImage={gym.photo}
+>
+  <!-- Breadcrumb Navigation -->
+  <nav class="text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+    <ol class="flex items-center gap-2 flex-wrap">
+      {breadcrumbs.map((crumb, index) => (
+        <li class="flex items-center gap-2">
+          {index > 0 && <span class="text-gray-400">/</span>}
+          {index === breadcrumbs.length - 1 ? (
+            <span class="text-granite font-medium">{crumb.label}</span>
+          ) : (
+            <a href={crumb.url} class="hover:text-sage">{crumb.label}</a>
+          )}
+        </li>
+      ))}
+    </ol>
+  </nav>
+
+  <!-- Hero Image -->
+  <div class="relative h-96 rounded-lg overflow-hidden mb-8">
+    <OptimizedImage
+      src={gym.photo}
+      alt={`${gym.name} climbing gym in ${gym.city}, ${gym.region}`}
+      width={IMAGE_SIZES.HERO.width}
+      height={IMAGE_SIZES.HERO.height}
+      srcsetSizes={IMAGE_SIZES.HERO.sizes}
+      sizes="100vw"
+      quality={IMAGE_SIZES.HERO.quality}
+      loading="eager"
+      class=""
+    />
+    {gym.beginner_friendly && (
+      <span class="absolute top-4 right-4 bg-sage text-white px-4 py-2 rounded-full font-medium shadow-lg z-10">
+        Beginner Friendly
+      </span>
+    )}
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Content (Left 2/3) -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Title & Rating -->
+      <header>
+        <h1 class="text-4xl font-bold text-granite mb-3">{gym.name}</h1>
+        <div class="flex items-center gap-4 mb-4">
+          <div class="flex items-center gap-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <svg
+                class={`w-5 h-5 ${i < Math.floor(gym.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+            ))}
+            <span class="text-lg font-bold text-granite">{gym.rating}</span>
+            <span class="text-gray-600">({gym.review_count || 0} reviews)</span>
+          </div>
+        </div>
+        <p class="text-xl text-gray-700 leading-relaxed">{gym.description_long}</p>
+      </header>
+
+      <!-- About Section -->
+      <section class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold text-granite mb-4">About {gym.name}</h2>
+        <div class="prose max-w-none">
+          <p class="text-gray-700 leading-relaxed mb-4">
+            Located in {gym.city}, {gym.region}, {gym.name} is a premier indoor climbing facility offering
+            world-class climbing experiences for enthusiasts of all skill levels. {gym.beginner_friendly
+              ? 'Whether you\'re just starting your climbing journey or you\'re a seasoned climber, our facility welcomes everyone with open arms.'
+              : 'Our facility caters to climbers looking to push their limits and improve their skills.'}
+          </p>
+          <p class="text-gray-700 leading-relaxed mb-4">
+            The gym features {climbingTypes.map(t => t.replace(/_/g, ' ')).join(', ')} climbing across
+            {gym.total_problems || 'numerous'} routes and problems. With walls reaching up to {gym.wall_height_meters}
+            meters high, climbers can experience everything from technical boulder problems to challenging lead routes.
+          </p>
+          <p class="text-gray-700 leading-relaxed">
+            {gym.crowd_peak_notes ? `Pro tip: ${gym.crowd_peak_notes}` : `Visit during off-peak hours for the best climbing experience.`}
+          </p>
+        </div>
+      </section>
+
+      <!-- Climbing Types & Grades -->
+      <section class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold text-granite mb-4">Climbing Types & Grades</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="font-semibold text-granite mb-3">Available Climbing Styles</h3>
+            <ul class="space-y-2">
+              {climbingTypes.map(type => (
+                <li class="flex items-center gap-2">
+                  <svg class="w-5 h-5 text-sage" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  <span class="capitalize">{type.replace(/_/g, ' ')}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold text-granite mb-3">Grading Systems</h3>
+            <p class="text-gray-700 mb-2">
+              <strong>Grade System:</strong> {gym.grade_system?.replace(/\|/g, ', ')}
+            </p>
+            <p class="text-gray-700 mb-2">
+              <strong>Route Style:</strong> {gym.route_style?.split('|').join(', ')}
+            </p>
+            <p class="text-gray-700 mb-2">
+              <strong>Total Routes:</strong> {gym.total_problems || 'N/A'} problems/routes
+            </p>
+            <p class="text-gray-700">
+              <strong>Route Setting:</strong> Routes reset {gym.route_reset_frequency || 'regularly'}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Amenities -->
+      <section class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold text-granite mb-4">Amenities & Facilities</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {amenitiesList.map(amenity => (
+            <div class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
+              <svg class="w-5 h-5 text-sage flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <span class="text-sm capitalize">{amenity.replace(/_/g, ' ')}</span>
+            </div>
+          ))}
+        </div>
+
+        {trainingFacilities.length > 0 && (
+          <div class="mt-6">
+            <h3 class="font-semibold text-granite mb-3">Training Facilities</h3>
+            <p class="text-gray-700">
+              {trainingFacilities.map(f => f.replace(/_/g, ' ')).join(', ')}
+            </p>
+          </div>
+        )}
+
+        {gearRental.length > 0 && (
+          <div class="mt-4">
+            <h3 class="font-semibold text-granite mb-3">Gear Rental Available</h3>
+            <p class="text-gray-700">
+              {gearRental.map(g => g.replace(/_/g, ' ')).join(', ')}
+            </p>
+          </div>
+        )}
+      </section>
+
+      <!-- Pricing -->
+      <section class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold text-granite mb-4">Pricing</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b-2 border-gray-200">
+                <th class="text-left py-3 px-4 font-semibold text-granite">Pass Type</th>
+                <th class="text-left py-3 px-4 font-semibold text-granite">Price</th>
+                <th class="text-left py-3 px-4 font-semibold text-granite">Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-gray-100">
+                <td class="py-3 px-4">Day Pass</td>
+                <td class="py-3 px-4 font-bold text-sage">${gym.day_pass_price_local}</td>
+                <td class="py-3 px-4 text-sm text-gray-600">Valid for one day</td>
+              </tr>
+              {gym.membership_from_local && (
+                <tr class="border-b border-gray-100">
+                  <td class="py-3 px-4">Monthly Membership</td>
+                  <td class="py-3 px-4 font-bold text-sage">From ${gym.membership_from_local}/mo</td>
+                  <td class="py-3 px-4 text-sm text-gray-600">Unlimited access</td>
+                </tr>
+              )}
+              {gym.student_discount && (
+                <tr class="border-b border-gray-100">
+                  <td class="py-3 px-4">Student Discount</td>
+                  <td class="py-3 px-4 font-bold text-sage">Available</td>
+                  <td class="py-3 px-4 text-sm text-gray-600">Valid student ID required</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <p class="text-sm text-gray-600 mt-4">
+          * Prices subject to change. Contact {gym.name} directly for current rates and membership options.
+        </p>
+      </section>
+
+      <!-- FAQ Section -->
+      <section class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold text-granite mb-6">Frequently Asked Questions</h2>
+        <div class="space-y-6">
+          {faqs.map((faq, index) => (
+            <div class="border-b border-gray-200 pb-6 last:border-0 last:pb-0">
+              <h3 class="font-semibold text-granite mb-2">{faq.question}</h3>
+              <p class="text-gray-700">{faq.answer}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+
+    <!-- Sidebar (Right 1/3) -->
+    <aside class="space-y-6">
+      <!-- Quick Info Card -->
+      <div class="bg-sage/10 rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-bold text-granite mb-4">Visit {gym.name}</h2>
+
+        <!-- Address -->
+        <div class="mb-4">
+          <h3 class="font-semibold text-granite mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Location
+          </h3>
+          <p class="text-gray-700">{gym.full_address}</p>
+          {gym.access_notes && (
+            <p class="text-sm text-gray-600 mt-2">{gym.access_notes}</p>
+          )}
+        </div>
+
+        <!-- Phone -->
+        <div class="mb-4">
+          <h3 class="font-semibold text-granite mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            Phone
+          </h3>
+          <a href={`tel:${gym.phone}`} class="text-sage font-medium hover:underline">
+            {gym.phone}
+          </a>
+        </div>
+
+        <!-- Hours -->
+        <div class="mb-6">
+          <h3 class="font-semibold text-granite mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Hours
+          </h3>
+          <div class="space-y-1 text-sm">
+            {hours.map(h => (
+              <div class="flex justify-between">
+                <span class="capitalize text-gray-600">{h.day}:</span>
+                <span class="font-medium">{h.opens} - {h.closes}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- CTAs -->
+        <div class="space-y-3">
+          <a
+            href={gym.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block w-full bg-sage text-white text-center py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+          >
+            Visit Website
+          </a>
+          <a
+            href={gym.location_link}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block w-full bg-white border-2 border-sage text-sage text-center py-3 rounded-lg font-medium hover:bg-sage/10 transition-colors"
+          >
+            Get Directions
+          </a>
+        </div>
+      </div>
+
+      <!-- Category Links -->
+      <CategoryLinks gym={gym} />
+
+      <!-- Helpful Guides -->
+      <HelpfulGuides beginner_friendly={gym.beginner_friendly} />
+
+      <!-- Related Gyms -->
+      {relatedGyms.length > 0 && (
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h3 class="font-bold text-granite mb-4">
+            {relatedGyms.some(g => g.city === gym.city)
+              ? `Other Climbing Gyms in ${gym.city}`
+              : `Other Climbing Gyms in ${gym.region}`}
+          </h3>
+          <div class="space-y-4">
+            {relatedGyms.map(relatedGym => (
+              <a href={`/gyms/${relatedGym.slug}`} class="block group">
+                <div class="flex gap-3">
+                  <div class="w-20 h-20 flex-shrink-0">
+                    <OptimizedImage
+                      src={relatedGym.photo}
+                      alt={relatedGym.name}
+                      width={IMAGE_SIZES.SIDEBAR_THUMBNAIL.width}
+                      height={IMAGE_SIZES.SIDEBAR_THUMBNAIL.height}
+                      srcsetSizes={IMAGE_SIZES.SIDEBAR_THUMBNAIL.sizes}
+                      sizes="80px"
+                      quality={IMAGE_SIZES.SIDEBAR_THUMBNAIL.quality}
+                      loading="lazy"
+                      class="rounded-lg"
+                    />
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-granite group-hover:text-sage transition-colors mb-1">
+                      {relatedGym.name}
+                    </h4>
+                    <div class="flex items-center gap-1 mb-1">
+                      <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <span class="text-sm font-medium">{relatedGym.rating}</span>
+                    </div>
+                    <p class="text-xs text-gray-600">${relatedGym.day_pass_price_local} day pass</p>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+          <a href={`/search?city=${encodeURIComponent(gym.city)}`} class="block mt-4 text-sage font-medium text-sm hover:underline">
+            View all gyms in {gym.city} →
+          </a>
+        </div>
+      )}
+    </aside>
+  </div>
+
+  <!-- Related Gyms Section (after FAQ, before footer) -->
+  {relatedGyms.length > 0 && (
+    <section class="mt-12">
+      <h2 class="text-3xl font-bold text-granite mb-6">
+        {relatedGyms.some(g => g.city === gym.city)
+          ? `Other Climbing Gyms in ${gym.city}`
+          : `Other Climbing Gyms in ${gym.region}`}
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {relatedGyms.map(relatedGym => (
+          <GymCard gym={relatedGym} showCity={relatedGym.city !== gym.city} />
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>

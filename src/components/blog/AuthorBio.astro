@@ -1,0 +1,33 @@
+---
+/**
+ * AuthorBio Component
+ * Displays author information
+ */
+
+interface Props {
+  author: string;
+  bio?: string;
+  avatar?: string;
+}
+
+const {
+  author,
+  bio = `${author} is a passionate climber and contributor to IndoorClimbingGym.com, sharing insights and experiences from the climbing community.`,
+  avatar = '/images/default-avatar.jpg',
+} = Astro.props;
+---
+
+<div class="bg-gray-50 rounded-lg p-6 my-8">
+  <div class="flex items-start gap-4">
+    <img
+      src={avatar}
+      alt={author}
+      class="w-16 h-16 rounded-full object-cover flex-shrink-0"
+      loading="lazy"
+    />
+    <div>
+      <h3 class="font-bold text-lg text-granite mb-1">About {author}</h3>
+      <p class="text-gray-600 text-sm leading-relaxed">{bio}</p>
+    </div>
+  </div>
+</div>

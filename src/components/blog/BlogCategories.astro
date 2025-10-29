@@ -1,0 +1,38 @@
+---
+/**
+ * BlogCategories Component
+ * Category filter tabs for blog posts
+ */
+
+interface Props {
+  currentCategory?: string;
+}
+
+const { currentCategory = 'all' } = Astro.props;
+
+const categories = [
+  { slug: 'all', label: 'All Articles', href: '/guides' },
+  { slug: 'guides', label: 'Guides', href: '/guides/guides' },
+  { slug: 'tips', label: 'Tips', href: '/guides/tips' },
+  { slug: 'gear', label: 'Gear', href: '/guides/gear' },
+  { slug: 'reviews', label: 'Reviews', href: '/guides/reviews' },
+  { slug: 'industry', label: 'Industry', href: '/guides/industry' },
+];
+---
+
+<nav class="mb-8 overflow-x-auto">
+  <div class="flex gap-2 min-w-max pb-2">
+    {categories.map((cat) => (
+      <a
+        href={cat.href}
+        class={`px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap ${
+          currentCategory === cat.slug
+            ? 'bg-sage text-white'
+            : 'bg-white text-granite hover:bg-gray-100 border border-gray-200'
+        }`}
+      >
+        {cat.label}
+      </a>
+    ))}
+  </div>
+</nav>

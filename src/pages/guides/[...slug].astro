@@ -1,0 +1,296 @@
+---
+/**
+ * Blog Post Template
+ * Dynamic routing for individual blog posts
+ */
+
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AuthorBio from '../../components/blog/AuthorBio.astro';
+import RelatedPosts from '../../components/blog/RelatedPosts.astro';
+import SocialShare from '../../components/blog/SocialShare.astro';
+import TableOfContents from '../../components/blog/TableOfContents.astro';
+import { generateArticleSchema, generateBreadcrumbSchema } from '../../utils/schema';
+import { generateBlogPostTitle, generateBlogKeywords } from '../../utils/seo';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog');
+  return blogEntries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await entry.render();
+
+// Get related posts from same category
+const allPosts = await getCollection('blog');
+const relatedPosts = allPosts.filter(
+  (post) => post.data.category === entry.data.category && post.slug !== entry.slug
+);
+
+// SEO setup
+const pageUrl = `https://www.indoorclimbinggym.com/guides/${entry.slug}`;
+const title = generateBlogPostTitle(entry.data.title);
+const keywords = generateBlogKeywords(entry.data.tags, entry.data.category);
+
+// Format dates for schema
+const publishedDate = entry.data.publishedDate.toISOString();
+const updatedDate = (entry.data.updatedDate || entry.data.publishedDate).toISOString();
+
+// Generate schemas
+const articleSchema = generateArticleSchema(
+  {
+    title: entry.data.title,
+    description: entry.data.description,
+    author: entry.data.author,
+    publishedDate,
+    updatedDate,
+    heroImage: entry.data.heroImage,
+    wordCount: entry.data.wordCount,
+    tags: entry.data.tags,
+  },
+  pageUrl
+);
+
+const breadcrumbs = [
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com' },
+  { label: 'Guides', url: 'https://www.indoorclimbinggym.com/guides' },
+  {
+    label: entry.data.category.charAt(0).toUpperCase() + entry.data.category.slice(1),
+    url: `https://www.indoorclimbinggym.com/guides/${entry.data.category}`,
+  },
+  { label: entry.data.title, url: pageUrl },
+];
+
+const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbs);
+
+// Combine schemas
+const schemas = [articleSchema, breadcrumbSchema];
+
+// Format published date
+const formattedDate = entry.data.publishedDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// Category colors
+const categoryColors: { [key: string]: string } = {
+  guides: 'bg-blue-100 text-blue-800',
+  tips: 'bg-green-100 text-green-800',
+  reviews: 'bg-purple-100 text-purple-800',
+  industry: 'bg-orange-100 text-orange-800',
+  gear: 'bg-red-100 text-red-800',
+};
+const categoryColor = categoryColors[entry.data.category] || 'bg-gray-100 text-gray-800';
+---
+
+<BaseLayout
+  title={title}
+  description={entry.data.description}
+  canonical={pageUrl}
+  ogImage={entry.data.heroImage}
+  ogType="article"
+  keywords={keywords}
+  schema={schemas}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Article Header -->
+  <article class="max-w-4xl mx-auto">
+    <!-- Breadcrumb Navigation -->
+    <nav class="text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+      <ol class="flex flex-wrap items-center gap-2">
+        <li><a href="/" class="hover:text-sage">Home</a></li>
+        <li>/</li>
+        <li><a href="/guides" class="hover:text-sage">Guides</a></li>
+        <li>/</li>
+        <li>
+          <a href={`/guides/${entry.data.category}`} class="hover:text-sage">
+            {entry.data.category.charAt(0).toUpperCase() + entry.data.category.slice(1)}
+          </a>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Category & Reading Time -->
+    <div class="flex items-center gap-3 mb-4">
+      <span class={`text-sm font-semibold px-3 py-1 rounded-full ${categoryColor}`}>
+        {entry.data.category.charAt(0).toUpperCase() + entry.data.category.slice(1)}
+      </span>
+      {entry.data.readingTime && (
+        <span class="text-sm text-gray-500">{entry.data.readingTime} min read</span>
+      )}
+    </div>
+
+    <!-- Title -->
+    <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4 leading-tight">
+      {entry.data.title}
+    </h1>
+
+    <!-- Meta Info -->
+    <div class="flex items-center gap-4 text-gray-600 mb-8">
+      <span class="font-medium">{entry.data.author}</span>
+      <span>•</span>
+      <time datetime={entry.data.publishedDate.toISOString()}>{formattedDate}</time>
+      {entry.data.updatedDate && (
+        <>
+          <span>•</span>
+          <span class="text-sm">
+            Updated{' '}
+            {entry.data.updatedDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })}
+          </span>
+        </>
+      )}
+    </div>
+
+    <!-- Hero Image -->
+    <div class="aspect-video w-full overflow-hidden rounded-lg mb-8">
+      <img
+        src={entry.data.heroImage}
+        alt={entry.data.heroImageAlt}
+        class="w-full h-full object-cover"
+      />
+    </div>
+
+    <!-- Table of Contents -->
+    <TableOfContents headings={headings} />
+
+    <!-- Article Content -->
+    <div class="prose prose-lg max-w-none mb-8">
+      <Content />
+    </div>
+
+    <!-- Tags -->
+    {entry.data.tags.length > 0 && (
+      <div class="flex flex-wrap gap-2 mb-8">
+        {entry.data.tags.map((tag) => (
+          <span class="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full">#{tag}</span>
+        ))}
+      </div>
+    )}
+
+    <!-- Social Share -->
+    <SocialShare title={entry.data.title} url={pageUrl} />
+
+    <!-- Author Bio -->
+    <AuthorBio author={entry.data.author} />
+
+    <!-- Related Posts -->
+    <RelatedPosts posts={relatedPosts} currentSlug={entry.slug} />
+  </article>
+</BaseLayout>
+
+<style is:global>
+  /* Prose styling for markdown content */
+  .prose {
+    color: #555;
+  }
+
+  .prose h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: #555;
+    scroll-margin-top: 100px;
+  }
+
+  .prose h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: #555;
+    scroll-margin-top: 100px;
+  }
+
+  .prose p {
+    margin-bottom: 1.25rem;
+    line-height: 1.75;
+  }
+
+  .prose a {
+    color: #98a48b;
+    text-decoration: underline;
+  }
+
+  .prose a:hover {
+    color: #7a8670;
+  }
+
+  .prose ul,
+  .prose ol {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+  }
+
+  .prose li {
+    margin-bottom: 0.5rem;
+  }
+
+  .prose img {
+    border-radius: 0.5rem;
+    margin: 2rem 0;
+  }
+
+  .prose blockquote {
+    border-left: 4px solid #98a48b;
+    padding-left: 1rem;
+    font-style: italic;
+    color: #666;
+    margin: 2rem 0;
+  }
+
+  .prose code {
+    background-color: #f4f4f4;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+  }
+
+  .prose pre {
+    background-color: #2d2d2d;
+    color: #f8f8f2;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  .prose pre code {
+    background-color: transparent;
+    padding: 0;
+    color: inherit;
+  }
+
+  .prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+  }
+
+  .prose th,
+  .prose td {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: left;
+  }
+
+  .prose th {
+    background-color: #f8f8f5;
+    font-weight: bold;
+  }
+</style>

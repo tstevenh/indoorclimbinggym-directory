@@ -1,0 +1,28 @@
+/**
+ * Content Collections Configuration
+ * Defines schema for blog posts using Astro Content Collections
+ */
+
+import { defineCollection, z } from 'astro:content';
+
+const blogCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string().max(160, 'Description must be 160 characters or less for SEO'),
+    publishedDate: z.date(),
+    updatedDate: z.date().optional(),
+    author: z.string(),
+    category: z.enum(['guides', 'tips', 'reviews', 'industry', 'gear']),
+    tags: z.array(z.string()),
+    featured: z.boolean().default(false),
+    heroImage: z.string(),
+    heroImageAlt: z.string(),
+    wordCount: z.number().optional(),
+    readingTime: z.number().optional(), // in minutes
+  }),
+});
+
+export const collections = {
+  blog: blogCollection,
+};

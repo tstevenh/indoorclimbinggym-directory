@@ -1,0 +1,39 @@
+---
+/**
+ * TableOfContents Component
+ * Auto-generates a table of contents from markdown headings
+ */
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+
+// Filter to only show H2 and H3 headings
+const filteredHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
+---
+
+{filteredHeadings.length > 0 && (
+  <nav class="bg-gray-50 rounded-lg p-6 mb-8">
+    <h2 class="text-lg font-bold text-granite mb-4">Table of Contents</h2>
+    <ul class="space-y-2">
+      {filteredHeadings.map((heading) => (
+        <li class={heading.depth === 3 ? 'ml-4' : ''}>
+          <a
+            href={`#${heading.slug}`}
+            class="text-sm text-gray-600 hover:text-sage transition-colors"
+          >
+            {heading.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}

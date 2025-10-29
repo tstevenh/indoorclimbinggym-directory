@@ -22,3 +22,19 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Vercel
+.vercel/
+
+# Test files
+test-*.mjs
+test-*.js
+test-*.cjs
+test-screenshots/
+visual-test.mjs
+
+# Temporary documentation files
+*OPTIMIZATION*.md
+*OPTIMIZATION*.txt
+*VERIFICATION*.md
+*CHECKLIST*.md
