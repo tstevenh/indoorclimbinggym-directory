@@ -8,7 +8,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import GymCard from '../../components/GymCard.astro';
 import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
 import { generateStateTitle, generateStateDescription } from '../../utils/seo';
-import gyms from '../../data/gyms.json';
+import { fetchGyms } from '../../config/api';
 
 export const prerender = true;
 
@@ -22,6 +22,9 @@ const stateMap: { [key: string]: string } = {
 };
 
 export async function getStaticPaths() {
+  // Fetch gyms from API
+  const gyms = await fetchGyms();
+
   // State mapping for URL generation
   const reverseStateMap: { [key: string]: string } = {
     'Washington': 'wa',
@@ -36,18 +39,17 @@ export async function getStaticPaths() {
 
   return states.map(region => {
     const stateAbbr = reverseStateMap[region] || region.toLowerCase().replace(/\s+/g, '-');
+    const stateGyms = gyms.filter(g => g.region === region);
+
     return {
       params: { state: stateAbbr },
-      props: { region },
+      props: { region, stateGyms },
     };
   });
 }
 
-const { region } = Astro.props;
+const { region, stateGyms } = Astro.props;
 const { state: stateAbbr } = Astro.params;
-
-// Get gyms for this state
-const stateGyms = gyms.filter(g => g.region === region);
 
 // Get unique cities
 const cities = [...new Set(stateGyms.map(g => g.city))].sort();
@@ -57,8 +59,13 @@ const avgRating = (stateGyms.reduce((sum, g) => sum + g.rating, 0) / stateGyms.l
 const minPrice = Math.min(...stateGyms.map(g => g.day_pass_price_local));
 const maxPrice = Math.max(...stateGyms.map(g => g.day_pass_price_local));
 
-// Get top rated gyms
-const featured = [...stateGyms].sort((a, b) => b.rating - a.rating).slice(0, 10);
+// Get featured gyms only (sorted by rating, then alphabetically)
+const featuredGyms = stateGyms
+  .filter(g => g.featured === true)
+  .sort((a, b) => {
+    if (a.rating !== b.rating) return b.rating - a.rating;
+    return a.name.localeCompare(b.name);
+  });
 
 // Generate SEO data
 const title = generateStateTitle(region);
@@ -84,7 +91,7 @@ const faqs = [
   },
   {
     question: `What's the best climbing gym in ${region}?`,
-    answer: `The highest-rated climbing gym in ${region} is ${featured[0]?.name} with a ${featured[0]?.rating}★ rating. However, the "best" gym depends on your location, climbing style preferences, and desired amenities.`,
+    answer: `The highest-rated climbing gym in ${region} is ${[...stateGyms].sort((a, b) => b.rating - a.rating)[0]?.name} with a ${[...stateGyms].sort((a, b) => b.rating - a.rating)[0]?.rating}★ rating. However, the "best" gym depends on your location, climbing style preferences, and desired amenities.`,
   },
   {
     question: `How much does it cost to climb in ${region}?`,
@@ -185,25 +192,27 @@ const breadcrumbs = [
   </section>
 
   <!-- Featured Gyms -->
-  <section class="mb-12">
-    <h2 class="text-3xl font-bold text-granite mb-6">
-      Top Rated Climbing Gyms in {region}
-    </h2>
-    <p class="text-gray-700 mb-6">
-      These are the highest-rated climbing facilities across {region}, chosen by climbers for their
-      excellent route setting, comprehensive amenities, and welcoming communities.
-    </p>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {featured.slice(0, 9).map(gym => (
-        <GymCard gym={gym} showCity={true} />
-      ))}
-    </div>
-    <div class="text-center mt-8">
-      <p class="text-gray-600">
-        Showing top {Math.min(9, featured.length)} of {stateGyms.length} gyms in {region}
+  {featuredGyms.length > 0 && (
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-granite mb-6">
+        Featured Gyms in {region}
+      </h2>
+      <p class="text-gray-700 mb-6">
+        These premium climbing facilities in {region} offer exceptional experiences with
+        excellent route setting, comprehensive amenities, and welcoming communities.
       </p>
-    </div>
-  </section>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {featuredGyms.slice(0, 9).map(gym => (
+          <GymCard gym={gym} showCity={true} />
+        ))}
+      </div>
+      <div class="text-center mt-8">
+        <p class="text-gray-600">
+          Showing {Math.min(9, featuredGyms.length)} featured {Math.min(9, featuredGyms.length) === 1 ? 'gym' : 'gyms'} in {region}
+        </p>
+      </div>
+    </section>
+  )}
 
   <!-- About Climbing in [State] -->
   <section class="mb-12 bg-white rounded-lg shadow-md p-8">

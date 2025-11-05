@@ -62,7 +62,7 @@ export function generateGymSchema(gym: Gym, pageUrl: string) {
     openingHoursSpecification: openingHours,
     aggregateRating: {
       '@type': 'AggregateRating',
-      ratingValue: gym.rating,
+      ratingValue: gym.rating_overall || gym.rating,
       reviewCount: gym.review_count || 0,
       bestRating: 5,
       worstRating: 1,
@@ -73,6 +73,9 @@ export function generateGymSchema(gym: Gym, pageUrl: string) {
       value: true,
     })),
     sport: 'Rock Climbing',
+    ...(gym.why_climbers_like_it && gym.why_climbers_like_it.length > 0 && {
+      knowsAbout: gym.why_climbers_like_it
+    }),
   };
 }
 
@@ -262,8 +265,10 @@ function parseOpeningHours(hoursString: string) {
   };
 
   return hoursString.split('|').map(entry => {
-    const [day, hours] = entry.split(':');
-    const [opens, closes] = hours.split('-');
+    const colonIndex = entry.indexOf(':');
+    const day = entry.substring(0, colonIndex);
+    const timeRange = entry.substring(colonIndex + 1);
+    const [opens, closes] = timeRange.split('-');
 
     return {
       '@type': 'OpeningHoursSpecification',

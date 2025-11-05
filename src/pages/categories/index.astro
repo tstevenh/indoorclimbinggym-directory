@@ -7,9 +7,19 @@
  */
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import gymsData from '../../data/gyms.json';
+import { fetchGyms } from '../../config/api';
+import gymsJsonData from '../../data/gyms.json';
 
 export const prerender = true;
+
+// Fetch gyms from API (with JSON fallback)
+let gymsData;
+try {
+  gymsData = await fetchGyms();
+} catch (error) {
+  console.log('API unavailable, using local JSON data');
+  gymsData = gymsJsonData;
+}
 
 /**
  * Helper: Get icon for amenity type
@@ -256,11 +266,78 @@ const schema = {
     </div>
   </header>
 
-  <!-- Category Grid -->
+  <!-- Special Features Section -->
   <section class="mb-16">
-    <h2 class="text-3xl font-bold text-granite mb-8">All Categories</h2>
+    <h2 class="text-3xl font-bold text-granite mb-6">Special Features</h2>
+    <p class="text-gray-700 mb-6 leading-relaxed">
+      Discover climbing gyms with unique characteristics and specialized offerings that cater to specific climbing preferences and skill levels.
+    </p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {categories.map(category => (
+      {categories.filter(cat => ['experience', 'value', 'specialty'].includes(cat.category)).map(category => (
+        <a
+          href={`/categories/${category.slug}`}
+          class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-sage group"
+        >
+          <div class="flex items-start gap-4">
+            <div class="text-4xl flex-shrink-0">{category.icon}</div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-granite group-hover:text-sage mb-2 transition-colors">
+                {category.name}
+              </h3>
+              <p class="text-sm text-gray-600 mb-3">{category.description}</p>
+              <div class="flex items-center justify-between">
+                <span class="text-sage font-bold text-lg">{category.count} gyms</span>
+                <span class="text-sage text-sm group-hover:translate-x-1 transition-transform inline-block">
+                  View →
+                </span>
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- By Climbing Type Section -->
+  <section class="mb-16">
+    <h2 class="text-3xl font-bold text-granite mb-6">By Climbing Type</h2>
+    <p class="text-gray-700 mb-6 leading-relaxed">
+      Find gyms specializing in your preferred climbing discipline, whether you're into top rope, lead climbing, or speed climbing.
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {categories.filter(cat => cat.category === 'climbing-type').map(category => (
+        <a
+          href={`/categories/${category.slug}`}
+          class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-sage group"
+        >
+          <div class="flex items-start gap-4">
+            <div class="text-4xl flex-shrink-0">{category.icon}</div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-granite group-hover:text-sage mb-2 transition-colors">
+                {category.name}
+              </h3>
+              <p class="text-sm text-gray-600 mb-3">{category.description}</p>
+              <div class="flex items-center justify-between">
+                <span class="text-sage font-bold text-lg">{category.count} gyms</span>
+                <span class="text-sage text-sm group-hover:translate-x-1 transition-transform inline-block">
+                  View →
+                </span>
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- By Amenities Section -->
+  <section class="mb-16">
+    <h2 class="text-3xl font-bold text-granite mb-6">By Amenities</h2>
+    <p class="text-gray-700 mb-6 leading-relaxed">
+      Browse gyms based on the amenities that matter most to you, from recovery facilities like saunas to convenience features like cafes and parking.
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {categories.filter(cat => cat.category === 'amenity').map(category => (
         <a
           href={`/categories/${category.slug}`}
           class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-sage group"

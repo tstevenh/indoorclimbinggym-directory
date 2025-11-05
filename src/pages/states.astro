@@ -1,0 +1,351 @@
+---
+/**
+ * States Index Page (Power Page)
+ * Directory of all states with climbing gyms
+ * Shows states in grid format with gym counts
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { generateSEO } from '../utils/seo';
+import { generateItemListSchema } from '../utils/schema';
+import { fetchGyms } from '../config/api';
+
+export const prerender = true;
+
+// Fetch all gyms
+const gymsData = await fetchGyms();
+
+// State code to full name mapping
+const stateCodeToName: Record<string, string> = {
+  'wa': 'Washington',
+  'tx': 'Texas',
+  'co': 'Colorado',
+  'ny': 'New York',
+  'ca': 'California',
+};
+
+// State name to code mapping (for URL generation)
+const stateNameToCode: Record<string, string> = {
+  'washington': 'wa',
+  'texas': 'tx',
+  'colorado': 'co',
+  'new york': 'ny',
+  'california': 'ca',
+};
+
+// Count gyms by state (region field)
+const stateCounts: Record<string, number> = {};
+gymsData.forEach(gym => {
+  const region = gym.region?.trim();
+  if (region) {
+    stateCounts[region] = (stateCounts[region] || 0) + 1;
+  }
+});
+
+// Convert to array and sort by count DESC
+const statesArray = Object.entries(stateCounts)
+  .map(([stateName, count]) => {
+    const stateNameLower = stateName.toLowerCase();
+    return {
+      name: stateCodeToName[stateNameLower] || stateName,
+      code: stateNameToCode[stateNameLower] || stateNameLower.replace(/\s+/g, '-'),
+      count
+    };
+  })
+  .sort((a, b) => b.count - a.count);
+
+// Calculate total stats
+const totalGyms = gymsData.length;
+const totalStates = statesArray.length;
+
+// Generate SEO
+const title = 'Climbing Gyms by State | Indoor Climbing Directory';
+const description = 'Browse climbing gyms and bouldering facilities across all US states. Find the perfect indoor climbing gym near you.';
+const pageUrl = 'https://www.indoorclimbinggym.com/states';
+
+const seo = generateSEO({
+  title,
+  description,
+  canonical: pageUrl,
+  keywords: [
+    'climbing gyms by state',
+    'indoor climbing directory',
+    'bouldering gyms',
+    'rock climbing gyms',
+    'climbing facilities',
+    'state climbing guide',
+  ],
+});
+
+// Generate ItemList schema showing all states
+const itemListSchema = generateItemListSchema(
+  statesArray.map(state => ({
+    id: state.code,
+    name: state.name,
+    slug: state.code,
+    city: '',
+    region: state.name,
+    rating: 0,
+  })) as any,
+  'Climbing Gyms by State',
+  pageUrl
+);
+
+// Breadcrumbs
+const breadcrumbs = [
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
+  { label: 'States', url: pageUrl },
+];
+---
+
+<BaseLayout
+  title={seo.title}
+  description={seo.description}
+  schema={itemListSchema}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Breadcrumb -->
+  <nav class="text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+    <ol class="flex items-center gap-2">
+      <li><a href="/" class="hover:text-sage">Home</a></li>
+      <li class="flex items-center gap-2">
+        <span class="text-gray-400">/</span>
+        <span class="text-granite font-medium">States</span>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="mb-12 text-center">
+    <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">
+      Climbing Gyms by State
+    </h1>
+    <p class="text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto">
+      Find indoor rock climbing and bouldering gyms across the United States.
+      Browse {totalGyms} facilities in {totalStates} states to find your perfect climbing destination.
+    </p>
+  </header>
+
+  <!-- Quick Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-4 bg-sage/10 rounded-lg p-6 mb-12 max-w-4xl mx-auto">
+    <div class="text-center">
+      <div class="text-3xl font-bold text-sage">{totalStates}</div>
+      <div class="text-sm text-gray-600">States</div>
+    </div>
+    <div class="text-center">
+      <div class="text-3xl font-bold text-sage">{totalGyms}</div>
+      <div class="text-sm text-gray-600">Total Gyms</div>
+    </div>
+    <div class="text-center col-span-2 md:col-span-1">
+      <div class="text-3xl font-bold text-sage">{Math.round(totalGyms / totalStates)}</div>
+      <div class="text-sm text-gray-600">Avg per State</div>
+    </div>
+  </div>
+
+  <!-- States Grid Section -->
+  <section class="mb-12">
+    <h2 class="text-3xl font-bold text-granite mb-6">
+      Browse by State
+    </h2>
+    <p class="text-gray-700 mb-8">
+      Select a state below to explore all climbing gyms, compare prices and amenities,
+      and find the perfect facility for your climbing needs.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {statesArray.map(state => (
+        <a
+          href={`/${state.code}/`}
+          class="block p-6 bg-white border border-gray-200 rounded-lg hover:border-sage hover:shadow-lg transition-all duration-300 group"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-xl font-bold text-granite group-hover:text-sage transition-colors">
+              {state.name}
+            </h2>
+            <span class="px-2 py-1 text-xs font-medium bg-sage/10 text-sage rounded-full uppercase">
+              {state.code}
+            </span>
+          </div>
+          <p class="text-gray-600">
+            {state.count} {state.count === 1 ? 'Climbing Gym' : 'Climbing Gyms'}
+          </p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Why Climb Indoor Section -->
+  <section class="mb-12 bg-white rounded-lg shadow-md p-8">
+    <h2 class="text-3xl font-bold text-granite mb-6">
+      Why Choose Indoor Climbing?
+    </h2>
+    <div class="prose max-w-none text-gray-700 space-y-4">
+      <p>
+        Indoor climbing gyms offer a safe, controlled environment to learn and practice climbing skills
+        year-round, regardless of weather conditions. Whether you're a complete beginner or an experienced
+        climber training for outdoor objectives, indoor gyms provide the perfect setting to improve your
+        technique, build strength, and connect with a supportive climbing community.
+      </p>
+      <p>
+        Modern climbing facilities feature diverse terrain including bouldering walls, top rope routes,
+        and lead climbing areas. Many gyms also offer training facilities with campus boards, systems walls,
+        and fitness equipment to help you develop specific climbing skills. With professional route setters
+        regularly updating problems and routes, you'll always find fresh challenges to keep you engaged
+        and progressing.
+      </p>
+      <p>
+        Beyond the climbing walls, most gyms foster welcoming communities where climbers of all levels
+        can share beta, encourage each other, and build lasting friendships. Many facilities also offer
+        classes, youth programs, and competitive opportunities, making climbing accessible and engaging
+        for everyone from families to serious athletes.
+      </p>
+    </div>
+  </section>
+
+  <!-- Popular Features Section -->
+  <section class="mb-12">
+    <h2 class="text-3xl font-bold text-granite mb-6">
+      What to Look for in a Climbing Gym
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="w-12 h-12 bg-sage/10 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+        </div>
+        <h3 class="font-bold text-granite text-lg mb-2">Climbing Types</h3>
+        <p class="text-gray-600 text-sm">
+          Look for gyms offering bouldering, top rope, and lead climbing to match your preferred style
+          and give you variety in your training.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="w-12 h-12 bg-sage/10 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 class="font-bold text-granite text-lg mb-2">Pricing Options</h3>
+        <p class="text-gray-600 text-sm">
+          Compare day passes, monthly memberships, and punch cards to find the pricing structure
+          that best fits your climbing frequency and budget.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="w-12 h-12 bg-sage/10 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+        </div>
+        <h3 class="font-bold text-granite text-lg mb-2">Amenities</h3>
+        <p class="text-gray-600 text-sm">
+          Consider gyms with showers, lockers, cafes, and training areas to enhance your
+          climbing experience and make visits more convenient.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="w-12 h-12 bg-sage/10 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <h3 class="font-bold text-granite text-lg mb-2">Community</h3>
+        <p class="text-gray-600 text-sm">
+          Choose gyms with welcoming atmospheres, social events, and engaged communities
+          where you can meet fellow climbers and make friends.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="w-12 h-12 bg-sage/10 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </div>
+        <h3 class="font-bold text-granite text-lg mb-2">Classes & Programs</h3>
+        <p class="text-gray-600 text-sm">
+          Many gyms offer beginner classes, youth programs, and coaching to help you learn
+          proper technique and accelerate your progress.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="w-12 h-12 bg-sage/10 rounded-lg flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 class="font-bold text-granite text-lg mb-2">Hours & Location</h3>
+        <p class="text-gray-600 text-sm">
+          Find gyms with convenient hours that fit your schedule and locations that are
+          easy to access from your home or work.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Helpful Links Section -->
+  <section class="mb-12 bg-white rounded-lg shadow-md p-8">
+    <h2 class="text-3xl font-bold text-granite mb-6">Helpful Resources</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <a
+        href="/guides/beginners-guide-to-climbing-gyms"
+        class="flex items-center gap-3 p-4 bg-sage/10 rounded-lg hover:bg-sage/20 transition-colors group"
+      >
+        <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <div>
+          <h3 class="font-semibold text-granite group-hover:text-sage">Beginner's Guide</h3>
+          <p class="text-sm text-gray-600">New to climbing gyms?</p>
+        </div>
+      </a>
+
+      <a
+        href="/guides/sample-post"
+        class="flex items-center gap-3 p-4 bg-sage/10 rounded-lg hover:bg-sage/20 transition-colors group"
+      >
+        <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <h3 class="font-semibold text-granite group-hover:text-sage">Gym Costs</h3>
+          <p class="text-sm text-gray-600">What to expect for pricing</p>
+        </div>
+      </a>
+
+      <a
+        href="/categories/best-climbing-gyms-for-beginners"
+        class="flex items-center gap-3 p-4 bg-sage/10 rounded-lg hover:bg-sage/20 transition-colors group"
+      >
+        <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+        <div>
+          <h3 class="font-semibold text-granite group-hover:text-sage">Best for Beginners</h3>
+          <p class="text-sm text-gray-600">Beginner-friendly gyms</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="text-center bg-gradient-to-r from-sage to-sage/80 rounded-lg p-12 text-white">
+    <h2 class="text-3xl font-bold mb-4">
+      Ready to Start Climbing?
+    </h2>
+    <p class="text-lg mb-8 text-white/90">
+      Browse {totalGyms} climbing gyms across {totalStates} states to find your perfect match
+    </p>
+    <a
+      href="#"
+      onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;"
+      class="inline-block bg-white text-sage px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
+    >
+      Browse States
+    </a>
+  </section>
+</BaseLayout>

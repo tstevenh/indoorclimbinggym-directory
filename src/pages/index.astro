@@ -7,14 +7,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import GymCard from '../components/GymCard.astro';
 import SearchBar from '../components/SearchBar.astro';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../utils/schema';
-import gyms from '../data/gyms.json';
+import { fetchGyms } from '../config/api';
 
 export const prerender = true;
 
+// Fetch gyms from API at build time
+const gyms = await fetchGyms();
+
 // Get top rated gyms for featured section
-const featuredGyms = gyms
-  .sort((a, b) => b.rating - a.rating)
-  .slice(0, 6);
+const featuredGyms = gyms.sort((a, b) => {
+  // Featured gyms first
+  if (a.featured !== b.featured) return b.featured ? 1 : -1;
+  // Then by rating (highest first)
+  if (a.rating !== b.rating) return b.rating - a.rating;
+  // Then alphabetically
+  return a.name.localeCompare(b.name);
+}).slice(0, 6);
 
 // Get unique cities
 const cities = [...new Set(gyms.map(g => ({ city: g.city, region: g.region, slug: g.slug })))];

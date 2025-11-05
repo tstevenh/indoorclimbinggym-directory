@@ -8,7 +8,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import GymCard from '../../components/GymCard.astro';
 import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
 import { generateCityTitle, generateCityDescription } from '../../utils/seo';
-import gyms from '../../data/gyms.json';
+import { fetchGyms } from '../../config/api';
 
 export const prerender = true;
 
@@ -22,6 +22,9 @@ const stateMap: { [key: string]: string } = {
 };
 
 export async function getStaticPaths() {
+  // Fetch gyms from API
+  const gyms = await fetchGyms();
+
   // Define reverseStateMap inside the function to ensure proper scope
   const reverseStateMap: { [key: string]: string } = {
     'Washington': 'wa',
@@ -38,30 +41,37 @@ export async function getStaticPaths() {
     const [region, city] = pair.split('|');
     const stateAbbr = reverseStateMap[region] || region.toLowerCase().replace(/\s+/g, '-');
     const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+    const cityGyms = gyms.filter(g => g.city === city && g.region === region);
 
     return {
       params: { state: stateAbbr, city: citySlug },
-      props: { region, city },
+      props: { region, city, cityGyms },
     };
   });
 }
 
-const { region, city } = Astro.props;
+const { region, city, cityGyms } = Astro.props;
 const { state: stateAbbr, city: citySlug } = Astro.params;
-
-// Get gyms for this city
-const cityGyms = gyms.filter(g => g.city === city && g.region === region);
 
 // Calculate stats
 const avgRating = (cityGyms.reduce((sum, g) => sum + g.rating, 0) / cityGyms.length).toFixed(1);
 const minPrice = Math.min(...cityGyms.map(g => g.day_pass_price_local));
 const maxPrice = Math.max(...cityGyms.map(g => g.day_pass_price_local));
 
-// Get top rated gyms
-const topRated = [...cityGyms].sort((a, b) => b.rating - a.rating).slice(0, 5);
+// Get featured gyms only (sorted by rating, then alphabetically)
+const featuredGyms = cityGyms
+  .filter(g => g.featured === true)
+  .sort((a, b) => {
+    if (a.rating !== b.rating) return b.rating - a.rating;
+    return a.name.localeCompare(b.name);
+  });
 
 // Get beginner friendly gyms
-const beginnerFriendly = cityGyms.filter(g => g.beginner_friendly).slice(0, 3);
+const beginnerFriendly = cityGyms.filter(g => g.beginner_friendly).sort((a, b) => {
+  if (a.featured !== b.featured) return b.featured ? 1 : -1;
+  if (a.rating !== b.rating) return b.rating - a.rating;
+  return a.name.localeCompare(b.name);
+}).slice(0, 3);
 
 // Get bouldering gyms
 const boulderingGyms = cityGyms.filter(g => g.climbing_types?.includes('bouldering')).slice(0, 3);
@@ -124,7 +134,7 @@ const faqs = [
   },
   {
     question: `What's the best climbing gym in ${city}?`,
-    answer: `Based on ratings, ${topRated[0]?.name} is the highest-rated climbing gym in ${city} with a ${topRated[0]?.rating}★ rating. However, the "best" gym depends on your preferences for climbing style, location, and amenities.`,
+    answer: `Based on ratings, ${[...cityGyms].sort((a, b) => b.rating - a.rating)[0]?.name} is the highest-rated climbing gym in ${city} with a ${[...cityGyms].sort((a, b) => b.rating - a.rating)[0]?.rating}★ rating. However, the "best" gym depends on your preferences for climbing style, location, and amenities.`,
   },
   {
     question: `Which ${city} gyms have kids zones?`,
@@ -200,21 +210,23 @@ const breadcrumbs = [
     </div>
   </header>
 
-  <!-- Top Rated Gyms -->
-  <section class="mb-12">
-    <h2 class="text-3xl font-bold text-granite mb-6">
-      Top Rated Climbing Gyms in {city}
-    </h2>
-    <p class="text-gray-700 mb-6">
-      These are the highest-rated climbing gyms in {city} based on climber reviews.
-      Each facility offers unique features, from world-class route setting to comprehensive training areas.
-    </p>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {topRated.map(gym => (
-        <GymCard gym={gym} showCity={false} />
-      ))}
-    </div>
-  </section>
+  <!-- Featured Gyms -->
+  {featuredGyms.length > 0 && (
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-granite mb-6">
+        Featured Gyms in {city}
+      </h2>
+      <p class="text-gray-700 mb-6">
+        These premium climbing facilities in {city} offer exceptional experiences with
+        world-class route setting, comprehensive training areas, and welcoming communities.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {featuredGyms.map(gym => (
+          <GymCard gym={gym} showCity={false} />
+        ))}
+      </div>
+    </section>
+  )}
 
   <!-- All Gyms Grid -->
   <section class="mb-12">
@@ -226,7 +238,11 @@ const breadcrumbs = [
       price range, and more to find the gym that matches your preferences.
     </p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {cityGyms.map(gym => (
+      {[...cityGyms].sort((a, b) => {
+        if (a.featured !== b.featured) return b.featured ? 1 : -1;
+        if (a.rating !== b.rating) return b.rating - a.rating;
+        return a.name.localeCompare(b.name);
+      }).map(gym => (
         <GymCard gym={gym} showCity={false} />
       ))}
     </div>

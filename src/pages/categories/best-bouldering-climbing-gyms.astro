@@ -11,7 +11,10 @@ export const prerender = true;
 import GymCard from '../../components/GymCard.astro';
 import { generateSEO } from '../../utils/seo';
 import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
-import gymsData from '../../data/gyms.json';
+import { fetchGyms } from '../../config/api';
+
+// Fetch gyms from API
+const gymsData = await fetchGyms();
 
 // Filter gyms that offer bouldering
 const bouldingGyms = gymsData.filter(gym =>

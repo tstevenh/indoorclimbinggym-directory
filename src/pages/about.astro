@@ -1,0 +1,281 @@
+---
+/**
+ * About Us Page
+ * Learn about IndoorClimbingGym's mission to connect climbers with the best climbing gyms
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+export const prerender = true;
+
+// SEO configuration
+const title = 'About Us - IndoorClimbingGym';
+const description = 'Learn about IndoorClimbingGym\'s mission to connect climbers with the best indoor climbing gyms across the United States.';
+const keywords = ['about', 'climbing gym directory', 'mission', 'indoor climbing', 'climbing community'];
+const canonical = 'https://www.indoorclimbinggym.com/about';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  keywords={keywords}
+  canonical={canonical}
+>
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-sage/20 to-ivory py-16 md:py-20 -mx-4 px-4 mb-12">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-granite mb-6">
+        About IndoorClimbingGym
+      </h1>
+      <p class="text-xl md:text-2xl text-gray-700">
+        Your trusted guide to finding the perfect climbing gym
+      </p>
+    </div>
+  </section>
+
+  <!-- Mission Section -->
+  <section class="max-w-4xl mx-auto mb-16">
+    <h2 class="text-3xl font-bold text-granite mb-6">Our Mission</h2>
+    <div class="space-y-4 text-gray-700 leading-relaxed">
+      <p>
+        At IndoorClimbingGym, we believe that everyone should have access to the incredible world of indoor rock climbing.
+        Whether you're a seasoned climber searching for your next challenge or a complete beginner taking your first steps
+        on the wall, finding the right climbing gym can make all the difference in your climbing journey. The right gym
+        doesn't just provide walls to climb—it offers a supportive community, expert instruction, and the perfect environment
+        to push your limits and achieve your goals.
+      </p>
+      <p>
+        Our mission is simple: to connect climbers with the best indoor climbing facilities across the United States.
+        We provide comprehensive, accurate, and up-to-date information about climbing gyms so you can make informed
+        decisions about where to climb. From pricing and hours to amenities and climbing types, we've done the research
+        so you don't have to. Every gym listing includes detailed information about routes, difficulty levels, special
+        programs, equipment rentals, and unique features that make each facility special.
+      </p>
+      <p>
+        We're passionate about growing the climbing community by making it easier for people to discover and access
+        climbing facilities. Indoor climbing has exploded in popularity over the past decade, and we're proud to be
+        part of that growth. We also support climbing gym owners by providing them with a platform to showcase their
+        facilities to a targeted audience of climbers actively searching for their next gym. By connecting climbers
+        with great gyms, we help strengthen local climbing communities across the country.
+      </p>
+    </div>
+  </section>
+
+  <!-- What We Do Section -->
+  <section class="bg-white rounded-lg shadow-md p-8 md:p-12 mb-16">
+    <h2 class="text-3xl font-bold text-granite mb-8 text-center">What We Do</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="flex gap-4">
+        <div class="flex-shrink-0">
+          <div class="w-12 h-12 bg-sage/20 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+        </div>
+        <div>
+          <h3 class="font-bold text-granite text-lg mb-2">Comprehensive Gym Directory</h3>
+          <p class="text-gray-700 text-sm">
+            We maintain a detailed database of climbing gyms across the United States, complete with addresses,
+            contact information, hours, pricing, and facility details.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex gap-4">
+        <div class="flex-shrink-0">
+          <div class="w-12 h-12 bg-sage/20 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+            </svg>
+          </div>
+        </div>
+        <div>
+          <h3 class="font-bold text-granite text-lg mb-2">Honest Reviews & Ratings</h3>
+          <p class="text-gray-700 text-sm">
+            We aggregate ratings and reviews to help you understand what makes each gym special, from friendly
+            staff to challenging routes to excellent amenities.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex gap-4">
+        <div class="flex-shrink-0">
+          <div class="w-12 h-12 bg-sage/20 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+        </div>
+        <div>
+          <h3 class="font-bold text-granite text-lg mb-2">Location-Based Search</h3>
+          <p class="text-gray-700 text-sm">
+            Find climbing gyms near you with our advanced search and filtering tools. Search by city, state,
+            or even specific amenities and climbing types.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex gap-4">
+        <div class="flex-shrink-0">
+          <div class="w-12 h-12 bg-sage/20 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+        </div>
+        <div>
+          <h3 class="font-bold text-granite text-lg mb-2">Featured Listings for Gym Owners</h3>
+          <p class="text-gray-700 text-sm">
+            Climbing gym owners can feature their facilities to reach climbers actively searching for a new
+            gym. Increase visibility and attract new members to your climbing community.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us Section -->
+  <section class="max-w-4xl mx-auto mb-16">
+    <h2 class="text-3xl font-bold text-granite mb-8 text-center">Why Choose IndoorClimbingGym</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-gradient-to-br from-sage/10 to-ivory rounded-lg p-6">
+        <h3 class="font-bold text-granite text-lg mb-3">Always Up-to-Date</h3>
+        <p class="text-gray-700 text-sm">
+          We regularly update our database to ensure you have the most current information about hours, pricing,
+          and amenities. No more showing up to a closed gym or outdated rates.
+        </p>
+      </div>
+
+      <div class="bg-gradient-to-br from-sage/10 to-ivory rounded-lg p-6">
+        <h3 class="font-bold text-granite text-lg mb-3">Climber-Focused</h3>
+        <p class="text-gray-700 text-sm">
+          Built by climbers for climbers. We understand what information matters most when choosing a gym,
+          from route quality to crowd levels to community vibe.
+        </p>
+      </div>
+
+      <div class="bg-gradient-to-br from-sage/10 to-ivory rounded-lg p-6">
+        <h3 class="font-bold text-granite text-lg mb-3">Comprehensive Coverage</h3>
+        <p class="text-gray-700 text-sm">
+          From major metropolitan areas to smaller cities, we're building the most complete directory of
+          climbing gyms in the United States. Can't find your gym? Let us know!
+        </p>
+      </div>
+
+      <div class="bg-gradient-to-br from-sage/10 to-ivory rounded-lg p-6">
+        <h3 class="font-bold text-granite text-lg mb-3">Educational Resources</h3>
+        <p class="text-gray-700 text-sm">
+          New to climbing? Our guides section provides everything you need to know, from what to wear to
+          understanding climbing grades to gym etiquette and safety tips.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Story Section -->
+  <section class="bg-white rounded-lg shadow-md p-8 md:p-12 mb-16">
+    <h2 class="text-3xl font-bold text-granite mb-6 text-center">Our Story</h2>
+    <div class="max-w-3xl mx-auto space-y-4 text-gray-700 leading-relaxed">
+      <p>
+        IndoorClimbingGym was born from a simple frustration: finding the right climbing gym shouldn't be this hard.
+        As climbers ourselves, we experienced the challenge of researching gyms when traveling or relocating—piecing
+        together information from outdated websites, conflicting Google reviews, and incomplete social media pages.
+        We'd spend hours trying to answer basic questions: What are the hours? Do they have bouldering? Is it
+        beginner-friendly? How much does a day pass cost? There had to be a better way.
+      </p>
+      <p>
+        We realized that the climbing community needed a centralized, reliable resource for discovering and comparing
+        climbing gyms. So we built it. What started as a small database of our favorite local gyms has grown into
+        a comprehensive directory serving climbers across the United States. We've partnered with gym owners,
+        interviewed climbers, and visited hundreds of facilities to build the most accurate and complete climbing
+        gym directory available today.
+      </p>
+      <p>
+        Today, we're proud to help thousands of climbers find their perfect gym, whether they're looking for
+        world-class bouldering walls, beginner-friendly facilities, or a community-focused space to train and
+        make friends. We're committed to growing with the climbing community and continuously improving our
+        platform to serve climbers and gym owners alike. Every month we add new gyms, update facility information,
+        and expand our educational resources to help more people discover the incredible sport of indoor climbing.
+      </p>
+      <p>
+        Our vision extends beyond just being a directory. We want to be the central hub for the indoor climbing
+        community—a place where climbers can discover new gyms, share their experiences, learn climbing techniques,
+        and connect with fellow enthusiasts. As the sport of climbing continues to grow (it's now an Olympic sport!),
+        we're excited to help new climbers find their way into this amazing community.
+      </p>
+    </div>
+  </section>
+
+  <!-- Values Section -->
+  <section class="max-w-4xl mx-auto mb-16">
+    <h2 class="text-3xl font-bold text-granite mb-8 text-center">Our Values</h2>
+    <div class="space-y-6">
+      <div class="flex gap-4 items-start">
+        <div class="flex-shrink-0 w-10 h-10 bg-sage/20 rounded-full flex items-center justify-center font-bold text-sage">
+          1
+        </div>
+        <div>
+          <h3 class="font-bold text-granite text-lg mb-2">Community First</h3>
+          <p class="text-gray-700">
+            We believe climbing is better together. Every feature we build is designed to strengthen connections
+            between climbers and the gyms that serve them.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex gap-4 items-start">
+        <div class="flex-shrink-0 w-10 h-10 bg-sage/20 rounded-full flex items-center justify-center font-bold text-sage">
+          2
+        </div>
+        <div>
+          <h3 class="font-bold text-granite text-lg mb-2">Accuracy & Transparency</h3>
+          <p class="text-gray-700">
+            We're committed to providing accurate, unbiased information. We never compromise data quality for
+            commercial interests.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex gap-4 items-start">
+        <div class="flex-shrink-0 w-10 h-10 bg-sage/20 rounded-full flex items-center justify-center font-bold text-sage">
+          3
+        </div>
+        <div>
+          <h3 class="font-bold text-granite text-lg mb-2">Accessibility & Inclusion</h3>
+          <p class="text-gray-700">
+            Climbing should be accessible to everyone. We highlight gyms with adaptive programs, beginner-friendly
+            environments, and inclusive communities.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex gap-4 items-start">
+        <div class="flex-shrink-0 w-10 h-10 bg-sage/20 rounded-full flex items-center justify-center font-bold text-sage">
+          4
+        </div>
+        <div>
+          <h3 class="font-bold text-granite text-lg mb-2">Supporting Local Gyms</h3>
+          <p class="text-gray-700">
+            We partner with climbing gyms of all sizes to help them reach new climbers and grow their communities.
+            Local gyms are the heart of climbing culture.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="text-center bg-sage rounded-lg p-12 text-white">
+    <h2 class="text-3xl font-bold mb-4">Ready to Find Your Next Climb?</h2>
+    <p class="text-lg mb-8 text-white/90">
+      Explore our directory of climbing gyms and start your adventure today
+    </p>
+    <a
+      href="/search"
+      class="inline-block bg-white text-sage px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
+    >
+      Search Gyms
+    </a>
+  </section>
+</BaseLayout>

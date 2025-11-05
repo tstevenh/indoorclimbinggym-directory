@@ -11,11 +11,13 @@ import OptimizedImage from '../../components/OptimizedImage.astro';
 import { generateGymSchema, serializeSchema } from '../../utils/schema';
 import { generateGymTitle, generateGymDescription, generateGymKeywords } from '../../utils/seo';
 import { IMAGE_SIZES } from '../../utils/imageUtils';
-import gyms from '../../data/gyms.json';
+import { fetchGyms } from '../../config/api';
 
 export const prerender = true;
 
 export async function getStaticPaths() {
+  const gyms = await fetchGyms();
+
   return gyms.map(gym => ({
     params: { slug: gym.slug },
     props: { gym },
@@ -27,6 +29,7 @@ const { gym } = Astro.props;
 // Parse pipe-delimited fields
 const climbingTypes = gym.climbing_types?.split('|') || [];
 const amenitiesList = gym.amenities?.split('|') || [];
+const customAmenitiesList = gym.custom_amenities?.split('|').filter(Boolean) || [];
 const trainingFacilities = gym.training_facilities?.split('|') || [];
 const gearRental = gym.gear_rental?.split('|') || [];
 
@@ -66,9 +69,10 @@ const pageUrl = `https://www.indoorclimbinggym.com/gyms/${gym.slug}`;
 const gymSchema = generateGymSchema(gym, pageUrl);
 
 // Get related gyms (same city, then same state if needed)
-let relatedGyms = gyms.filter(g => g.city === gym.city && g.id !== gym.id);
+const allGyms = await fetchGyms();
+let relatedGyms = allGyms.filter(g => g.city === gym.city && g.id !== gym.id);
 if (relatedGyms.length < 3) {
-  const stateGyms = gyms.filter(g => g.region === gym.region && g.id !== gym.id && g.city !== gym.city);
+  const stateGyms = allGyms.filter(g => g.region === gym.region && g.id !== gym.id && g.city !== gym.city);
   relatedGyms = [...relatedGyms, ...stateGyms].slice(0, 3);
 } else {
   relatedGyms = relatedGyms.slice(0, 3);
@@ -138,6 +142,11 @@ const faqs = [
       loading="eager"
       class=""
     />
+    {gym.featured && (
+      <span class="absolute top-4 left-4 bg-sage text-white px-4 py-2 rounded-full font-medium shadow-lg z-10">
+        Featured
+      </span>
+    )}
     {gym.beginner_friendly && (
       <span class="absolute top-4 right-4 bg-sage text-white px-4 py-2 rounded-full font-medium shadow-lg z-10">
         Beginner Friendly
@@ -151,22 +160,45 @@ const faqs = [
     <div class="lg:col-span-2 space-y-8">
       <!-- Title & Rating -->
       <header>
-        <h1 class="text-4xl font-bold text-granite mb-3">{gym.name}</h1>
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <h1 class="text-4xl font-bold text-granite">{gym.name}</h1>
+            {(gym.verified || gym.claimed) && (
+              <span class="bg-sage text-white px-4 py-2 rounded-full text-sm font-medium">
+                Verified
+              </span>
+            )}
+          </div>
+
+          <!-- Favorite Button (Right Side) -->
+          <a
+            href={`http://localhost:3000/dashboard/favorites/add?gym_id=${gym.id}&return_url=${encodeURIComponent(`http://localhost:4321/gyms/${gym.slug}`)}`}
+            class="flex items-center gap-2 px-4 py-2 border-2 border-sage text-sage rounded-full hover:bg-sage transition-colors group"
+            title="Save to favorites"
+          >
+            <svg class="w-5 h-5 group-hover:stroke-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            <span class="text-sm font-medium hidden sm:inline group-hover:text-white transition-colors">Save to Favorites</span>
+          </a>
+        </div>
         <div class="flex items-center gap-4 mb-4">
           <div class="flex items-center gap-2">
             {Array.from({ length: 5 }).map((_, i) => (
               <svg
-                class={`w-5 h-5 ${i < Math.floor(gym.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
+                class={`w-5 h-5 ${i < Math.floor(gym.rating_overall || gym.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
             ))}
-            <span class="text-lg font-bold text-granite">{gym.rating}</span>
-            <span class="text-gray-600">({gym.review_count || 0} reviews)</span>
+            <span class="text-lg font-bold text-granite">
+              {(gym.rating_overall || gym.rating || 0).toFixed(1)}
+            </span>
           </div>
         </div>
+
         <p class="text-xl text-gray-700 leading-relaxed">{gym.description_long}</p>
       </header>
 
@@ -174,22 +206,237 @@ const faqs = [
       <section class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-2xl font-bold text-granite mb-4">About {gym.name}</h2>
         <div class="prose max-w-none">
-          <p class="text-gray-700 leading-relaxed mb-4">
-            Located in {gym.city}, {gym.region}, {gym.name} is a premier indoor climbing facility offering
-            world-class climbing experiences for enthusiasts of all skill levels. {gym.beginner_friendly
-              ? 'Whether you\'re just starting your climbing journey or you\'re a seasoned climber, our facility welcomes everyone with open arms.'
-              : 'Our facility caters to climbers looking to push their limits and improve their skills.'}
-          </p>
-          <p class="text-gray-700 leading-relaxed mb-4">
-            The gym features {climbingTypes.map(t => t.replace(/_/g, ' ')).join(', ')} climbing across
-            {gym.total_problems || 'numerous'} routes and problems. With walls reaching up to {gym.wall_height_meters}
-            meters high, climbers can experience everything from technical boulder problems to challenging lead routes.
-          </p>
-          <p class="text-gray-700 leading-relaxed">
-            {gym.crowd_peak_notes ? `Pro tip: ${gym.crowd_peak_notes}` : `Visit during off-peak hours for the best climbing experience.`}
-          </p>
+          {gym.about ? (
+            <!-- Use custom about text if available -->
+            <p class="text-gray-700 leading-relaxed whitespace-pre-line">{gym.about}</p>
+          ) : (
+            <!-- Fallback to templated content -->
+            <>
+              <p class="text-gray-700 leading-relaxed mb-4">
+                Located in {gym.city}, {gym.region}, {gym.name} is a premier indoor climbing facility offering
+                world-class climbing experiences for enthusiasts of all skill levels. {gym.beginner_friendly
+                  ? 'Whether you\'re just starting your climbing journey or you\'re a seasoned climber, our facility welcomes everyone with open arms.'
+                  : 'Our facility caters to climbers looking to push their limits and improve their skills.'}
+              </p>
+              <p class="text-gray-700 leading-relaxed mb-4">
+                The gym features {climbingTypes.map(t => t.replace(/_/g, ' ')).join(', ')} climbing across
+                {gym.total_routes || 'numerous'} routes and problems. With walls reaching up to {gym.wall_height_meters}
+                meters high, climbers can experience everything from technical boulder problems to challenging lead routes.
+              </p>
+              <p class="text-gray-700 leading-relaxed">
+                {gym.crowd_peak_notes ? `Pro tip: ${gym.crowd_peak_notes}` : `Visit during off-peak hours for the best climbing experience.`}
+              </p>
+            </>
+          )}
         </div>
       </section>
+
+      <!-- Why Climbers Like It Section -->
+      {gym.why_climbers_like_it && gym.why_climbers_like_it.length > 0 && (
+        <section class="bg-sage/5 rounded-lg shadow-md p-6 border-l-4 border-sage">
+          <h2 class="text-2xl font-bold text-granite mb-4">
+            Why Climbers Love {gym.name}
+          </h2>
+          <ul class="space-y-3">
+            {gym.why_climbers_like_it.map((reason: string) => (
+              <li class="flex items-start gap-3">
+                <svg class="w-6 h-6 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-gray-700 leading-relaxed text-lg">{reason}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <!-- Rating Breakdown - Only show if detailed ratings exist -->
+      {(gym.rating_route_quality > 0 || gym.rating_cleanliness > 0) && (
+        <section class="bg-gray-50 rounded-lg shadow-md p-6">
+          <h2 class="text-2xl font-bold text-granite mb-4">Our Expert Evaluation</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {gym.rating_route_quality > 0 && (
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Route Quality:</span>
+                <div class="flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => {
+                    const rating = gym.rating_route_quality;
+                    const fillPercentage = Math.min(100, Math.max(0, (rating - i) * 100));
+
+                    return (
+                      <svg class="w-4 h-4" viewBox="0 0 20 20">
+                        <defs>
+                          <linearGradient id={`star-gradient-route-${i}`}>
+                            <stop offset={`${fillPercentage}%`} stop-color="#FCD34D" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#D1D5DB" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          fill={`url(#star-gradient-route-${i})`}
+                          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                        />
+                      </svg>
+                    )
+                  })}
+                  <span class="text-sm font-medium text-granite ml-1">{gym.rating_route_quality.toFixed(1)}</span>
+                </div>
+              </div>
+            )}
+            {gym.rating_cleanliness > 0 && (
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Cleanliness:</span>
+                <div class="flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => {
+                    const rating = gym.rating_cleanliness;
+                    const fillPercentage = Math.min(100, Math.max(0, (rating - i) * 100));
+
+                    return (
+                      <svg class="w-4 h-4" viewBox="0 0 20 20">
+                        <defs>
+                          <linearGradient id={`star-gradient-clean-${i}`}>
+                            <stop offset={`${fillPercentage}%`} stop-color="#FCD34D" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#D1D5DB" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          fill={`url(#star-gradient-clean-${i})`}
+                          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                        />
+                      </svg>
+                    )
+                  })}
+                  <span class="text-sm font-medium text-granite ml-1">{gym.rating_cleanliness.toFixed(1)}</span>
+                </div>
+              </div>
+            )}
+            {gym.rating_staff_friendliness > 0 && (
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Staff Friendliness:</span>
+                <div class="flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => {
+                    const rating = gym.rating_staff_friendliness;
+                    const fillPercentage = Math.min(100, Math.max(0, (rating - i) * 100));
+
+                    return (
+                      <svg class="w-4 h-4" viewBox="0 0 20 20">
+                        <defs>
+                          <linearGradient id={`star-gradient-staff-${i}`}>
+                            <stop offset={`${fillPercentage}%`} stop-color="#FCD34D" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#D1D5DB" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          fill={`url(#star-gradient-staff-${i})`}
+                          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                        />
+                      </svg>
+                    )
+                  })}
+                  <span class="text-sm font-medium text-granite ml-1">{gym.rating_staff_friendliness.toFixed(1)}</span>
+                </div>
+              </div>
+            )}
+            {gym.rating_facilities > 0 && (
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Facilities:</span>
+                <div class="flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => {
+                    const rating = gym.rating_facilities;
+                    const fillPercentage = Math.min(100, Math.max(0, (rating - i) * 100));
+
+                    return (
+                      <svg class="w-4 h-4" viewBox="0 0 20 20">
+                        <defs>
+                          <linearGradient id={`star-gradient-facilities-${i}`}>
+                            <stop offset={`${fillPercentage}%`} stop-color="#FCD34D" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#D1D5DB" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          fill={`url(#star-gradient-facilities-${i})`}
+                          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                        />
+                      </svg>
+                    )
+                  })}
+                  <span class="text-sm font-medium text-granite ml-1">{gym.rating_facilities.toFixed(1)}</span>
+                </div>
+              </div>
+            )}
+            {gym.rating_value_for_money > 0 && (
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Value for Money:</span>
+                <div class="flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => {
+                    const rating = gym.rating_value_for_money;
+                    const fillPercentage = Math.min(100, Math.max(0, (rating - i) * 100));
+
+                    return (
+                      <svg class="w-4 h-4" viewBox="0 0 20 20">
+                        <defs>
+                          <linearGradient id={`star-gradient-value-${i}`}>
+                            <stop offset={`${fillPercentage}%`} stop-color="#FCD34D" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#D1D5DB" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          fill={`url(#star-gradient-value-${i})`}
+                          d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                        />
+                      </svg>
+                    )
+                  })}
+                  <span class="text-sm font-medium text-granite ml-1">{gym.rating_value_for_money.toFixed(1)}</span>
+                </div>
+              </div>
+            )}
+
+            <!-- Overall Average - Outstanding Display -->
+            <div class="col-span-full mt-6 pt-6 border-t-2 border-sage/20">
+              <div class="bg-sage/10 rounded-lg p-6 border-l-4 border-sage">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-1">Overall Rating</p>
+                    <div class="flex items-center gap-3">
+                      {/* Show 5 stars with gradient fill for overall rating */}
+                      <div class="flex items-center gap-1">
+                        {Array.from({ length: 5 }).map((_, i) => {
+                          const rating = gym.rating_overall;
+                          const fillPercentage = Math.min(100, Math.max(0, (rating - i) * 100));
+
+                          return (
+                            <svg class="w-8 h-8" viewBox="0 0 20 20">
+                              <defs>
+                                <linearGradient id={`star-gradient-overall-${i}`}>
+                                  <stop offset={`${fillPercentage}%`} stop-color="#FCD34D" />
+                                  <stop offset={`${fillPercentage}%`} stop-color="#D1D5DB" />
+                                </linearGradient>
+                              </defs>
+                              <path
+                                fill={`url(#star-gradient-overall-${i})`}
+                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                              />
+                            </svg>
+                          )
+                        })}
+                      </div>
+                      <span class="text-4xl font-bold text-sage">{gym.rating_overall.toFixed(1)}</span>
+                      <span class="text-gray-500 text-lg">/ 5.0</span>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-xs text-gray-500 uppercase tracking-wide">Based on</p>
+                    <p class="text-2xl font-bold text-granite">5 Categories</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-4 italic border-t border-gray-200 pt-4">
+            We evaluate climbing gyms using detailed ratings across route quality, cleanliness, staff friendliness, facilities, and value. Ratings are based on climber reviews, expert assessments, and facility inspections.
+          </p>
+        </section>
+      )}
 
       <!-- Climbing Types & Grades -->
       <section class="bg-white rounded-lg shadow-md p-6">
@@ -211,13 +458,10 @@ const faqs = [
           <div>
             <h3 class="font-semibold text-granite mb-3">Grading Systems</h3>
             <p class="text-gray-700 mb-2">
-              <strong>Grade System:</strong> {gym.grade_system?.replace(/\|/g, ', ')}
+              <strong>Grade System:</strong> {gym.difficulty_grades?.replace(/\|/g, ', ') || 'N/A'}
             </p>
             <p class="text-gray-700 mb-2">
-              <strong>Route Style:</strong> {gym.route_style?.split('|').join(', ')}
-            </p>
-            <p class="text-gray-700 mb-2">
-              <strong>Total Routes:</strong> {gym.total_problems || 'N/A'} problems/routes
+              <strong>Total Routes:</strong> {gym.total_routes || 'N/A'} problems/routes
             </p>
             <p class="text-gray-700">
               <strong>Route Setting:</strong> Routes reset {gym.route_reset_frequency || 'regularly'}
@@ -255,6 +499,22 @@ const faqs = [
             <p class="text-gray-700">
               {gearRental.map(g => g.replace(/_/g, ' ')).join(', ')}
             </p>
+          </div>
+        )}
+
+        {customAmenitiesList.length > 0 && (
+          <div class="mt-4">
+            <h3 class="font-semibold text-granite mb-3">Additional Amenities</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {customAmenitiesList.map(amenity => (
+                <div class="flex items-center gap-2 p-3 bg-blue-50 rounded-lg">
+                  <svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  <span class="text-sm capitalize">{amenity}</span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </section>
@@ -303,7 +563,7 @@ const faqs = [
       <section class="bg-white rounded-lg shadow-md p-6">
         <h2 class="text-2xl font-bold text-granite mb-6">Frequently Asked Questions</h2>
         <div class="space-y-6">
-          {faqs.map((faq, index) => (
+          {(gym.faq && gym.faq.length > 0 ? gym.faq : faqs).map((faq: any, index: number) => (
             <div class="border-b border-gray-200 pb-6 last:border-0 last:pb-0">
               <h3 class="font-semibold text-granite mb-2">{faq.question}</h3>
               <p class="text-gray-700">{faq.answer}</p>
@@ -383,6 +643,15 @@ const faqs = [
           >
             Get Directions
           </a>
+          {/* Claim This Listing Button - Only show if not claimed and published */}
+          {!gym.claimed && gym.status === 'published' && (
+            <button
+              id="claim-listing-btn"
+              class="block w-full bg-white border-2 border-sage text-sage text-center py-3 rounded-lg font-medium hover:bg-sage hover:!text-white transition-colors"
+            >
+              Claim This Listing
+            </button>
+          )}
         </div>
       </div>
 
@@ -455,5 +724,79 @@ const faqs = [
         ))}
       </div>
     </section>
+  )}
+
+  {/* Claim Listing Modal */}
+  {!gym.claimed && gym.status === 'published' && (
+    <div id="claim-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-lg max-w-md w-full p-6 relative">
+        {/* Close Button */}
+        <button id="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        {/* Modal Content */}
+        <h2 class="text-2xl font-bold text-granite mb-4">Claim this gym</h2>
+        <div class="space-y-4 mb-6">
+          <p class="text-gray-700">
+            Own or manage this gym? Claim your listing to update hours, pricing, photos, and mark it as Verified.
+          </p>
+          <p class="text-gray-700">
+            You'll just need a work email (like name@yourgym.com).
+          </p>
+        </div>
+
+        {/* CTA Button */}
+        <div class="flex gap-3">
+          <button id="maybe-later" class="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+            Maybe Later
+          </button>
+          <a
+            href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard/claim-listing?gym_id=${gym.id}`}
+            class="flex-1 px-4 py-3 bg-sage text-white text-center rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+          >
+            Continue to Claim
+          </a>
+        </div>
+      </div>
+    </div>
+  )}
+
+  {/* Modal Script */}
+  {!gym.claimed && gym.status === 'published' && (
+    <script>
+      const claimBtn = document.getElementById('claim-listing-btn');
+      const modal = document.getElementById('claim-modal');
+      const closeBtn = document.getElementById('close-modal');
+      const maybeLaterBtn = document.getElementById('maybe-later');
+
+      claimBtn?.addEventListener('click', () => {
+        modal?.classList.remove('hidden');
+      });
+
+      closeBtn?.addEventListener('click', () => {
+        modal?.classList.add('hidden');
+      });
+
+      maybeLaterBtn?.addEventListener('click', () => {
+        modal?.classList.add('hidden');
+      });
+
+      // Close on outside click
+      modal?.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+        }
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal?.classList.contains('hidden')) {
+          modal.classList.add('hidden');
+        }
+      });
+    </script>
   )}
 </BaseLayout>

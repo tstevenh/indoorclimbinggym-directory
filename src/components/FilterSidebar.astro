@@ -20,12 +20,24 @@ const {
   showRatingFilter = true,
 } = Astro.props;
 
-// Import gym data to get unique values for filters
-import gyms from '../data/gyms.json';
+// Import API helper
+import { fetchGyms, extractGymMetadata } from '../config/api';
 
-// Get unique cities and states
-const cities = [...new Set(gyms.map(g => g.city))].sort();
-const states = [...new Set(gyms.map(g => g.region))].sort();
+// Fetch gyms and extract metadata for filters
+let cities: string[] = [];
+let states: string[] = [];
+
+try {
+  const gyms = await fetchGyms();
+  const metadata = extractGymMetadata(gyms);
+  cities = metadata.cities;
+  states = metadata.states;
+} catch (error) {
+  console.error('Failed to fetch gym metadata:', error);
+  // Fallback to hardcoded values if API fails
+  cities = ['Austin', 'Denver', 'Los Angeles', 'New York', 'Seattle'];
+  states = ['California', 'Colorado', 'New York', 'Texas', 'Washington'];
+}
 
 // State to code mapping
 const stateToCode: Record<string, string> = {

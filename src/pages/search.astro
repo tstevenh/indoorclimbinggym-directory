@@ -11,7 +11,18 @@ export const prerender = false;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GymCard from '../components/GymCard.astro';
 import FilterSidebar from '../components/FilterSidebar.astro';
-import gyms from '../data/gyms.json';
+import { fetchGyms } from '../config/api';
+
+// Fetch gyms from API
+let gyms: any[] = [];
+let apiError = false;
+
+try {
+  gyms = await fetchGyms();
+} catch (error) {
+  console.error('Failed to fetch gyms:', error);
+  apiError = true;
+}
 
 // Get URL search parameters
 const searchParams = Astro.url.searchParams;
@@ -183,6 +194,21 @@ const breadcrumbs = [
     </p>
   </header>
 
+  <!-- API Error Alert -->
+  {apiError && (
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+        <div>
+          <h3 class="font-semibold text-red-800">Unable to load gym data</h3>
+          <p class="text-sm text-red-700">Please make sure the API server is running and try again.</p>
+        </div>
+      </div>
+    </div>
+  )}
+
   <!-- Active Filters Display -->
   {
     activeFilters.length > 0 && (
@@ -222,7 +248,7 @@ const breadcrumbs = [
   <!-- Main Content: Sidebar + Results Grid -->
   <div class="flex flex-col lg:flex-row gap-8">
     <!-- Left Sidebar: Filters -->
-    <aside class="w-full lg:w-1/4">
+    <aside class="w-full lg:w-1/4 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:scrollbar-thin lg:scrollbar-thumb-sage lg:scrollbar-track-gray-100">
       <FilterSidebar />
     </aside>
 
@@ -296,5 +322,30 @@ const breadcrumbs = [
 
   .filter-tag:hover svg {
     transform: scale(1.1);
+  }
+
+  /* Custom scrollbar styling for filter sidebar */
+  aside::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  aside::-webkit-scrollbar-track {
+    background: #f3f4f6;
+    border-radius: 4px;
+  }
+
+  aside::-webkit-scrollbar-thumb {
+    background: #98a48b;
+    border-radius: 4px;
+  }
+
+  aside::-webkit-scrollbar-thumb:hover {
+    background: #87937a;
+  }
+
+  /* Firefox scrollbar styling */
+  aside {
+    scrollbar-width: thin;
+    scrollbar-color: #98a48b #f3f4f6;
   }
 </style>

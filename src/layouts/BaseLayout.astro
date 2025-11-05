@@ -4,6 +4,8 @@
  * Foundation layout for all pages with comprehensive SEO meta tags and schema markup
  */
 import '../styles/global.css';
+import { createClient } from '../lib/supabase';
+import { fetchGyms } from '../config/api';
 
 interface Props {
   title: string;
@@ -30,6 +32,67 @@ const {
   schema,
   breadcrumbs,
 } = Astro.props;
+
+// Check auth state
+// Note: On localhost with different ports (3000 vs 4321), cookies won't share
+// In production with same domain, this will work automatically
+const supabase = createClient(Astro);
+const { data: { user } } = await supabase.auth.getUser();
+
+// Fetch gyms to calculate top 5 states dynamically
+const gymsData = await fetchGyms();
+
+// Map full state names to state codes
+const stateNameToCode: Record<string, string> = {
+  'washington': 'wa',
+  'texas': 'tx',
+  'colorado': 'co',
+  'new york': 'ny',
+  'california': 'ca',
+  'florida': 'fl',
+  'oregon': 'or',
+  'arizona': 'az',
+  'utah': 'ut',
+  'north carolina': 'nc',
+  'nevada': 'nv',
+  'georgia': 'ga',
+  'illinois': 'il',
+  'massachusetts': 'ma',
+  'pennsylvania': 'pa',
+  // Handle state codes that might be in the data
+  'wa': 'wa',
+  'tx': 'tx',
+  'co': 'co',
+  'ny': 'ny',
+  'ca': 'ca',
+  'fl': 'fl',
+  'or': 'or',
+  'az': 'az',
+  'ut': 'ut',
+  'nc': 'nc',
+  'ak': 'ak',
+};
+
+// Count gyms by state (normalize to full name)
+const stateCounts: Record<string, number> = {};
+gymsData.forEach(gym => {
+  const region = gym.region?.trim();
+  if (region) {
+    // Use the region as-is (it's already the full state name)
+    stateCounts[region] = (stateCounts[region] || 0) + 1;
+  }
+});
+
+// Sort by count DESC and take top 5
+const top5States = Object.entries(stateCounts)
+  .sort(([,a], [,b]) => b - a)
+  .slice(0, 5);
+
+// Map state names to state codes (for URLs)
+const stateToCode = (stateName: string): string => {
+  const code = stateNameToCode[stateName.toLowerCase()];
+  return code || stateName.toLowerCase().replace(/\s+/g, '-');
+};
 
 // Build canonical URL
 const siteUrl = 'https://www.indoorclimbinggym.com';
@@ -134,11 +197,140 @@ if (breadcrumbs && breadcrumbs.length > 0) {
           <a href="/" class="text-2xl font-bold text-sage">
             IndoorClimbingGym
           </a>
-          <div class="flex gap-6">
-            <a href="/search" class="text-granite hover:text-sage">Search</a>
-            <a href="/guides" class="text-granite hover:text-sage">Guides</a>
-            <a href="/about" class="text-granite hover:text-sage">About</a>
+
+          <!-- Desktop Navigation -->
+          <div class="hidden md:flex items-center gap-6">
+            <a href="/search" class="text-granite hover:text-sage transition-colors">Search</a>
+
+            <!-- Categories Dropdown -->
+            <div class="relative group">
+              <button class="flex items-center gap-1 text-granite hover:text-sage transition-colors cursor-pointer">
+                Categories
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div class="py-2">
+                  <a href="/categories/best-bouldering-climbing-gyms/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                    Best Bouldering Gyms
+                  </a>
+                  <a href="/categories/best-climbing-gyms-for-beginners/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                    For Beginners
+                  </a>
+                  <a href="/categories/affordable-climbing-gyms/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                    Affordable Gyms
+                  </a>
+                  <a href="/categories/climbing-gyms-with-sauna/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                    With Sauna
+                  </a>
+                  <a href="/categories/climbing-gyms-with-kids-zone/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                    With Kids Zone
+                  </a>
+                  <div class="border-t border-gray-200 my-1"></div>
+                  <a href="/categories" class="block px-4 py-2 text-sm text-gray-500 hover:bg-sage/10 hover:text-sage transition-colors">
+                    View All Categories →
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- States Dropdown -->
+            <div class="relative group">
+              <button class="flex items-center gap-1 text-granite hover:text-sage transition-colors cursor-pointer">
+                States
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div class="py-2">
+                  {top5States.map(([stateName]) => {
+                    const stateCode = stateToCode(stateName);
+                    return (
+                      <a
+                        href={`/${stateCode}`}
+                        class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+                      >
+                        {stateName}
+                      </a>
+                    );
+                  })}
+                  <div class="border-t border-gray-200 my-1"></div>
+                  <a href="/states" class="block px-4 py-2 text-sm text-gray-500 hover:bg-sage/10 hover:text-sage transition-colors">
+                    View All States →
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <a href="/guides" class="text-granite hover:text-sage transition-colors">Guides</a>
+            <a href="/about" class="text-granite hover:text-sage transition-colors">About</a>
+
+            {user ? (
+              <!-- Logged In: Show Email Dropdown -->
+              <div class="relative group">
+                <button class="flex items-center gap-2 text-granite hover:text-sage transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span class="max-w-[150px] truncate">{user.email}</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div class="py-2">
+                    <a href="http://localhost:3000/dashboard" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                      Dashboard
+                    </a>
+                    <a href="http://localhost:3000/dashboard/favorites" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                      My Favorites
+                    </a>
+                    <div class="border-t border-gray-200 my-2"></div>
+                    <form method="POST" action="http://localhost:3000/api/auth/signout">
+                      <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                        Sign Out
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <!-- Logged Out: Show Login/Sign Up -->
+              <>
+                <a href="http://localhost:3000/login" class="text-granite hover:text-sage transition-colors">Login</a>
+                <a href="http://localhost:3000/signup" class="bg-sage text-white px-6 py-2 rounded hover:bg-sage/90 transition-colors">
+                  Sign Up
+                </a>
+              </>
+            )}
           </div>
+
+          <!-- Mobile Hamburger Button -->
+          <button
+            id="mobile-menu-button"
+            type="button"
+            class="md:hidden p-2 text-granite hover:text-sage transition-colors"
+            aria-label="Open menu"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>
         </nav>
       </div>
     </header>
@@ -151,33 +343,78 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     <!-- Footer will go here -->
     <footer class="bg-granite text-ivory mt-16">
       <div class="container mx-auto px-4 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          <!-- Column 1: Brand + Social -->
           <div>
             <h3 class="font-bold text-lg mb-4">IndoorClimbingGym</h3>
-            <p class="text-sm">Find your next climb.</p>
+            <p class="text-sm mb-4">Find your next climb.</p>
+
+            <!-- Social Media Icons -->
+            <div class="flex gap-4">
+              <a href="https://twitter.com/indoorclimbinggym" target="_blank" rel="noopener noreferrer" class="text-ivory hover:text-sage transition-colors" aria-label="Twitter">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
+                </svg>
+              </a>
+              <a href="https://instagram.com/indoorclimbinggym" target="_blank" rel="noopener noreferrer" class="text-ivory hover:text-sage transition-colors" aria-label="Instagram">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke-width="2"></rect>
+                  <path stroke-width="2" d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke-width="2" stroke-linecap="round"></line>
+                </svg>
+              </a>
+              <a href="https://facebook.com/indoorclimbinggym" target="_blank" rel="noopener noreferrer" class="text-ivory hover:text-sage transition-colors" aria-label="Facebook">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                </svg>
+              </a>
+            </div>
           </div>
+
+          <!-- Column 2: Explore -->
           <div>
             <h4 class="font-semibold mb-3">Explore</h4>
             <ul class="space-y-2 text-sm">
               <li><a href="/search" class="hover:text-sage">Search Gyms</a></li>
               <li><a href="/guides" class="hover:text-sage">Guides</a></li>
-              <li><a href="/best-bouldering-gyms" class="hover:text-sage">Best Bouldering</a></li>
+              <li><a href="/categories/best-bouldering-climbing-gyms/" class="hover:text-sage">Best Bouldering</a></li>
+              <li><a href="/categories" class="hover:text-sage">All Categories</a></li>
             </ul>
           </div>
+
+          <!-- Column 3: Top Categories (NEW) -->
+          <div>
+            <h4 class="font-semibold mb-3">Top Categories</h4>
+            <ul class="space-y-2 text-sm">
+              <li><a href="/categories/best-bouldering-climbing-gyms/" class="hover:text-sage">Bouldering Gyms</a></li>
+              <li><a href="/categories/best-climbing-gyms-for-beginners/" class="hover:text-sage">For Beginners</a></li>
+              <li><a href="/categories/best-lead-climbing-gyms/" class="hover:text-sage">Lead Climbing</a></li>
+              <li><a href="/categories/affordable-climbing-gyms/" class="hover:text-sage">Affordable Gyms</a></li>
+              <li><a href="/categories/climbing-gyms-with-sauna/" class="hover:text-sage">With Sauna</a></li>
+              <li><a href="/categories/climbing-gyms-with-kids-zone/" class="hover:text-sage">With Kids Zone</a></li>
+            </ul>
+          </div>
+
+          <!-- Column 4: Popular Cities (Expanded) -->
           <div>
             <h4 class="font-semibold mb-3">Popular Cities</h4>
             <ul class="space-y-2 text-sm">
-              <li><a href="/wa/seattle" class="hover:text-sage">Seattle</a></li>
-              <li><a href="/tx/austin" class="hover:text-sage">Austin</a></li>
-              <li><a href="/co/denver" class="hover:text-sage">Denver</a></li>
+              <li><a href="/wa/seattle" class="hover:text-sage">Seattle, WA</a></li>
+              <li><a href="/tx/austin" class="hover:text-sage">Austin, TX</a></li>
+              <li><a href="/co/denver" class="hover:text-sage">Denver, CO</a></li>
+              <li><a href="/ny/new-york" class="hover:text-sage">New York, NY</a></li>
+              <li><a href="/ca/los-angeles" class="hover:text-sage">Los Angeles, CA</a></li>
             </ul>
           </div>
+
+          <!-- Column 5: Company (Renamed from "About") -->
           <div>
-            <h4 class="font-semibold mb-3">About</h4>
+            <h4 class="font-semibold mb-3">Company</h4>
             <ul class="space-y-2 text-sm">
               <li><a href="/about" class="hover:text-sage">About Us</a></li>
               <li><a href="/contact" class="hover:text-sage">Contact</a></li>
               <li><a href="/privacy" class="hover:text-sage">Privacy</a></li>
+              <li><a href="/terms" class="hover:text-sage">Terms</a></li>
             </ul>
           </div>
         </div>
@@ -186,6 +423,231 @@ if (breadcrumbs && breadcrumbs.length > 0) {
         </div>
       </div>
     </footer>
+
+    <!-- Mobile Menu Overlay -->
+    <div
+      id="mobile-menu"
+      class="fixed inset-0 bg-black/50 z-50 hidden"
+      aria-hidden="true"
+    >
+      <div class="fixed right-0 top-0 h-full w-4/5 max-w-sm bg-white shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out">
+        <!-- Close Button -->
+        <button
+          id="mobile-menu-close"
+          type="button"
+          class="absolute top-4 right-4 p-2 text-granite hover:text-sage transition-colors"
+          aria-label="Close menu"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+
+        {user ? (
+          <!-- Logged In User Section -->
+          <>
+            <!-- User Email Display -->
+            <div class="mx-6 mt-6 mb-4 px-6 py-3 bg-sage/10 rounded-lg">
+              <div class="flex items-center gap-2 text-granite">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="text-sm font-medium truncate">{user.email}</span>
+              </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="border-t border-gray-200"></div>
+
+            <!-- Navigation Links -->
+            <nav class="py-2">
+              <a
+                href="http://localhost:3000/dashboard"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                Dashboard
+              </a>
+              <a
+                href="http://localhost:3000/dashboard/favorites"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                My Favorites
+              </a>
+              <a
+                href="/search"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                Search
+              </a>
+              <a
+                href="/states"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                Browse States
+              </a>
+              <a
+                href="/categories"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                Browse Categories
+              </a>
+              <a
+                href="/guides"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                Guides
+              </a>
+              <a
+                href="/about"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                About
+              </a>
+            </nav>
+
+            <!-- Divider -->
+            <div class="border-t border-gray-200"></div>
+
+            <!-- Sign Out -->
+            <div class="py-2">
+              <form method="POST" action="http://localhost:3000/api/auth/signout">
+                <button type="submit" class="block w-full text-left px-6 py-4 text-red-600 hover:bg-red-50 transition-colors">
+                  Sign Out
+                </button>
+              </form>
+            </div>
+          </>
+        ) : (
+          <!-- Logged Out Section -->
+          <>
+            <!-- Sign Up Button -->
+            <a
+              href="http://localhost:3000/signup"
+              class="block mx-6 mt-6 mb-4 px-6 py-3 bg-sage text-white text-center rounded-lg font-medium hover:bg-sage/90 transition-colors"
+            >
+              Sign Up
+            </a>
+
+            <!-- Divider -->
+            <div class="border-t border-gray-200"></div>
+
+            <!-- Navigation Links -->
+            <nav class="py-2">
+              <a
+                href="/search"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                Search
+              </a>
+              <a
+                href="/states"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                Browse States
+              </a>
+              <a
+                href="/categories"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                Browse Categories
+              </a>
+              <a
+                href="/guides"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                Guides
+              </a>
+              <a
+                href="/about"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                About
+              </a>
+              <a
+                href="http://localhost:3000/login"
+                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+              >
+                Login
+              </a>
+            </nav>
+          </>
+        )}
+
+        <!-- Divider -->
+        <div class="border-t border-gray-200"></div>
+
+        <!-- Additional Link -->
+        <nav class="py-2">
+          <a
+            href="/contact"
+            class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+          >
+            Contact
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <script>
+      // Mobile menu toggle functionality
+      const menuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const closeButton = document.getElementById('mobile-menu-close');
+      const menuPanel = mobileMenu?.querySelector('div');
+
+      function openMenu() {
+        if (mobileMenu && menuPanel) {
+          mobileMenu.classList.remove('hidden');
+          // Force reflow to ensure transition works
+          void menuPanel.offsetWidth;
+          menuPanel.classList.remove('translate-x-full');
+          menuPanel.classList.add('translate-x-0');
+          document.body.style.overflow = 'hidden'; // Prevent body scroll
+        }
+      }
+
+      function closeMenu() {
+        if (mobileMenu && menuPanel) {
+          menuPanel.classList.add('translate-x-full');
+          menuPanel.classList.remove('translate-x-0');
+          setTimeout(() => {
+            mobileMenu.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore body scroll
+          }, 300); // Wait for animation to complete
+        }
+      }
+
+      // Open menu on button click
+      menuButton?.addEventListener('click', openMenu);
+
+      // Close menu on close button click
+      closeButton?.addEventListener('click', closeMenu);
+
+      // Close menu on backdrop click
+      mobileMenu?.addEventListener('click', (e) => {
+        if (e.target === mobileMenu) {
+          closeMenu();
+        }
+      });
+
+      // Close menu on ESC key press (accessibility)
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileMenu && !mobileMenu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    </script>
   </body>
 </html>
 
@@ -211,5 +673,11 @@ if (breadcrumbs && breadcrumbs.length > 0) {
   }
   .hover\:text-sage:hover {
     color: #98a48b;
+  }
+  .hover\:bg-sage\/90:hover {
+    background-color: rgba(152, 164, 139, 0.9);
+  }
+  .hover\:bg-sage\/10:hover {
+    background-color: rgba(152, 164, 139, 0.1);
   }
 </style>
