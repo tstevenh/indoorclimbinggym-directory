@@ -14,19 +14,117 @@ export const prerender = true;
 // Fetch gyms from API at build time
 const gyms = await fetchGyms();
 
-// Get top rated gyms for featured section
-const featuredGyms = gyms.sort((a, b) => {
-  // Featured gyms first
-  if (a.featured !== b.featured) return b.featured ? 1 : -1;
-  // Then by rating (highest first)
+// Get featured gyms (if any)
+const allFeaturedGyms = gyms.filter(g => g.featured);
+
+// Get top-rated gyms as fallback
+const topRatedGyms = [...gyms].sort((a, b) => {
+  // By rating (highest first)
   if (a.rating !== b.rating) return b.rating - a.rating;
   // Then alphabetically
   return a.name.localeCompare(b.name);
-}).slice(0, 6);
+});
+
+// Show featured if we have 3+, otherwise show top-rated
+const displayGyms = allFeaturedGyms.length >= 3
+  ? allFeaturedGyms.slice(0, 6)
+  : topRatedGyms.slice(0, 6);
+
+const sectionTitle = allFeaturedGyms.length >= 3
+  ? "Featured Climbing Gyms"
+  : "Top Rated Climbing Gyms";
+
+// Calculate states by gym count
+const stateCounts = gyms.reduce((acc, gym) => {
+  const state = gym.region?.toLowerCase();
+  if (state) {
+    acc[state] = (acc[state] || 0) + 1;
+  }
+  return acc;
+}, {} as Record<string, number>);
+
+// Get top 9 states sorted by gym count
+const topStates = Object.entries(stateCounts)
+  .sort(([, countA], [, countB]) => countB - countA)
+  .slice(0, 9)
+  .map(([state, count]) => ({ state, count }));
 
 // Get unique cities
 const cities = [...new Set(gyms.map(g => ({ city: g.city, region: g.region, slug: g.slug })))];
 const popularCities = cities.slice(0, 6);
+
+// Define top 8 curated categories with gym counts
+const topCategories = [
+  {
+    name: 'Best Bouldering Gyms',
+    slug: 'best-bouldering-climbing-gyms',
+    count: gyms.filter(g => g.climbing_types?.includes('bouldering')).length
+  },
+  {
+    name: 'For Beginners',
+    slug: 'best-climbing-gyms-for-beginners',
+    count: gyms.filter(g => g.beginner_friendly).length
+  },
+  {
+    name: 'Best Lead Climbing Gyms',
+    slug: 'best-lead-climbing-gyms',
+    count: gyms.filter(g => g.climbing_types?.includes('lead')).length
+  },
+  {
+    name: 'Best Top Rope Gyms',
+    slug: 'best-top-rope-climbing-gyms',
+    count: gyms.filter(g => g.climbing_types?.includes('top_rope')).length
+  },
+  {
+    name: 'Affordable Gyms',
+    slug: 'affordable-climbing-gyms',
+    count: gyms.filter(g => g.day_pass_price_local && g.day_pass_price_local <= 20).length
+  },
+  {
+    name: 'With Sauna',
+    slug: 'climbing-gyms-with-sauna',
+    count: gyms.filter(g => g.amenities?.includes('sauna')).length
+  },
+  {
+    name: 'With Kids Zone',
+    slug: 'climbing-gyms-with-kids-zone',
+    count: gyms.filter(g => g.amenities?.includes('kids_zone')).length
+  },
+  {
+    name: 'With WiFi',
+    slug: 'climbing-gyms-with-wifi',
+    count: gyms.filter(g => g.amenities?.includes('wifi')).length
+  },
+];
+
+// State code to full name mapping
+const stateNames: Record<string, string> = {
+  'wa': 'Washington',
+  'tx': 'Texas',
+  'co': 'Colorado',
+  'ny': 'New York',
+  'ca': 'California',
+  'washington': 'Washington',
+  'texas': 'Texas',
+  'colorado': 'Colorado',
+  'new york': 'New York',
+  'california': 'California',
+  'ak': 'Alaska',
+  'alaska': 'Alaska',
+  'az': 'Arizona',
+  'arizona': 'Arizona'
+};
+
+// State codes mapping (full name lowercase to code)
+const stateToCode: Record<string, string> = {
+  'washington': 'wa',
+  'texas': 'tx',
+  'colorado': 'co',
+  'new york': 'ny',
+  'california': 'ca',
+  'alaska': 'ak',
+  'arizona': 'az'
+};
 
 // Generate homepage schemas
 const orgSchema = generateOrganizationSchema();
@@ -44,35 +142,37 @@ const description = 'Discover the best indoor climbing gyms near you. Search by 
   schema={combinedSchema}
 >
   <!-- Hero Section -->
-  <section class="bg-gradient-to-br from-sage/20 to-ivory py-16 md:py-24 -mx-4 px-4 mb-12">
-    <div class="max-w-4xl mx-auto text-center">
-      <h1 class="text-4xl md:text-6xl font-bold text-granite mb-6">
-        Find the Best Indoor Climbing Gyms Near You
-      </h1>
-      <p class="text-xl md:text-2xl text-gray-700 mb-8">
-        Your complete guide to indoor climbing gyms across America. Search by location, amenities, and climbing type.
-      </p>
+  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] min-h-[600px] bg-gradient-to-br from-sage/30 via-ivory to-sage/10 py-16 md:py-24 mb-12">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto text-center">
+        <h1 class="text-4xl md:text-6xl font-bold text-granite mb-6">
+          Find the Best Indoor Climbing Gyms Near You
+        </h1>
+        <p class="text-xl md:text-2xl text-granite mb-8">
+          Your complete guide to indoor climbing gyms across America. Search by location, amenities, and climbing type.
+        </p>
 
-      <!-- Hero Search Bar -->
-      <div class="max-w-2xl mx-auto">
-        <SearchBar large={true} placeholder="Search by city, state, or gym name..." />
-      </div>
+        <!-- Hero Search Bar -->
+        <div class="max-w-2xl mx-auto">
+          <SearchBar large={true} placeholder="Search by city, state, or gym name..." />
+        </div>
 
-      <!-- Quick Stats -->
-      <div class="grid grid-cols-3 gap-4 mt-12 max-w-2xl mx-auto">
-        <div class="text-center">
-          <div class="text-3xl font-bold text-sage">{gyms.length}</div>
-          <div class="text-sm text-gray-600">Gyms</div>
-        </div>
-        <div class="text-center">
-          <div class="text-3xl font-bold text-sage">{cities.length}</div>
-          <div class="text-sm text-gray-600">Cities</div>
-        </div>
-        <div class="text-center">
-          <div class="text-3xl font-bold text-sage">
-            {[...new Set(gyms.map(g => g.region))].length}
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-3 gap-4 mt-12 max-w-2xl mx-auto">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-sage">{gyms.length}</div>
+            <div class="text-sm text-granite">Gyms</div>
           </div>
-          <div class="text-sm text-gray-600">States</div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-sage">{cities.length}</div>
+            <div class="text-sm text-granite">Cities</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-sage">
+              {[...new Set(gyms.map(g => g.region))].length}
+            </div>
+            <div class="text-sm text-granite">States</div>
+          </div>
         </div>
       </div>
     </div>
@@ -82,8 +182,12 @@ const description = 'Discover the best indoor climbing gyms near you. Search by 
   <section class="mb-16">
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h2 class="text-3xl font-bold text-granite mb-2">Top Rated Climbing Gyms</h2>
-        <p class="text-gray-600">Highly rated gyms from climbers like you</p>
+        <h2 class="text-3xl font-bold text-granite mb-2">{sectionTitle}</h2>
+        <p class="text-gray-600">
+          {allFeaturedGyms.length >= 3
+            ? "Premium climbing gyms featured on our platform"
+            : "Highly rated gyms from climbers like you"}
+        </p>
       </div>
       <a href="/search" class="text-sage font-medium hover:underline">
         View All →
@@ -91,7 +195,7 @@ const description = 'Discover the best indoor climbing gyms near you. Search by 
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {featuredGyms.map(gym => (
+      {displayGyms.map(gym => (
         <GymCard gym={gym} />
       ))}
     </div>
@@ -169,26 +273,44 @@ const description = 'Discover the best indoor climbing gyms near you. Search by 
     </div>
   </section>
 
-  <!-- Popular Cities Section -->
+  <!-- Browse by State Section -->
   <section class="mb-16">
-    <div class="mb-8">
-      <h2 class="text-3xl font-bold text-granite mb-2">Browse by City</h2>
-      <p class="text-gray-600">Explore climbing gyms in popular climbing destinations across America</p>
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h2 class="text-3xl font-bold text-granite mb-2">Browse by State</h2>
+        <p class="text-gray-600">Find climbing gyms across America by state</p>
+      </div>
+      <a href="/states" class="text-sage hover:text-sage/80 font-medium flex items-center gap-2">
+        View All States
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-      {popularCities.map(city => {
-        const gymCount = gyms.filter(g => g.city === city.city).length;
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {topStates.map(({ state, count }) => {
+        // Get state code (convert full name to code if needed)
+        const stateCode = stateToCode[state] || state;
+        // Get full state name
+        const fullName = stateNames[state] || stateNames[stateCode] || state.charAt(0).toUpperCase() + state.slice(1);
+
         return (
           <a
-            href={`/search?city=${encodeURIComponent(city.city)}`}
-            class="bg-white rounded-lg shadow-md p-6 text-center hover:shadow-xl transition-shadow duration-300 group"
+            href={`/${stateCode}`}
+            class="block p-6 bg-white border border-gray-200 rounded-lg hover:border-sage hover:shadow-lg transition-all duration-300 group"
           >
-            <h3 class="font-bold text-granite group-hover:text-sage transition-colors">
-              {city.city}
-            </h3>
-            <p class="text-sm text-gray-600 mt-1">{city.region}</p>
-            <p class="text-xs text-sage font-medium mt-2">{gymCount} {gymCount === 1 ? 'gym' : 'gyms'}</p>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-xl font-bold text-granite group-hover:text-sage transition-colors">
+                {fullName}
+              </h3>
+              <span class="px-2 py-1 text-xs font-medium bg-sage/10 text-sage rounded-full uppercase">
+                {stateCode}
+              </span>
+            </div>
+            <p class="text-gray-600">
+              {count} {count === 1 ? 'Climbing Gym' : 'Climbing Gyms'}
+            </p>
           </a>
         );
       })}
@@ -197,59 +319,31 @@ const description = 'Discover the best indoor climbing gyms near you. Search by 
 
   <!-- Categories Section -->
   <section class="mb-16">
-    <div class="mb-8">
-      <h2 class="text-3xl font-bold text-granite mb-2">Browse by Category</h2>
-      <p class="text-gray-600">Find gyms that match your specific needs</p>
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h2 class="text-3xl font-bold text-granite mb-2">Browse by Category</h2>
+        <p class="text-gray-600">Find gyms that match your specific needs</p>
+      </div>
+      <a href="/categories" class="text-sage hover:text-sage/80 font-medium flex items-center gap-2">
+        View All Categories
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <a
-        href="/categories/best-climbing-gyms-for-beginners"
-        class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 group"
-      >
-        <h3 class="font-bold text-granite group-hover:text-sage transition-colors mb-2">
-          Best for Beginners
-        </h3>
-        <p class="text-sm text-gray-600">
-          Beginner-friendly gyms with intro classes
-        </p>
-      </a>
-
-      <a
-        href="/categories/best-bouldering-climbing-gyms"
-        class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 group"
-      >
-        <h3 class="font-bold text-granite group-hover:text-sage transition-colors mb-2">
-          Best Bouldering Gyms
-        </h3>
-        <p class="text-sm text-gray-600">
-          Top facilities for bouldering
-        </p>
-      </a>
-
-      <a
-        href="/categories/climbing-gyms-with-sauna"
-        class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 group"
-      >
-        <h3 class="font-bold text-granite group-hover:text-sage transition-colors mb-2">
-          Gyms with Sauna
-        </h3>
-        <p class="text-sm text-gray-600">
-          Recovery amenities included
-        </p>
-      </a>
-
-      <a
-        href="/categories/affordable-climbing-gyms"
-        class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 group"
-      >
-        <h3 class="font-bold text-granite group-hover:text-sage transition-colors mb-2">
-          Affordable Gyms
-        </h3>
-        <p class="text-sm text-gray-600">
-          Budget-friendly options
-        </p>
-      </a>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {topCategories.slice(0, 8).map(category => (
+        <a
+          href={`/categories/${category.slug}`}
+          class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 group border-2 border-transparent hover:border-sage"
+        >
+          <h3 class="font-bold text-granite group-hover:text-sage transition-colors mb-2">
+            {category.name}
+          </h3>
+          <p class="text-xs text-sage font-medium mt-2">{category.count} {category.count === 1 ? 'gym' : 'gyms'}</p>
+        </a>
+      ))}
     </div>
   </section>
 

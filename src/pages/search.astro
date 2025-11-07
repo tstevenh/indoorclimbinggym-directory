@@ -11,6 +11,7 @@ export const prerender = false;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GymCard from '../components/GymCard.astro';
 import FilterSidebar from '../components/FilterSidebar.astro';
+import Pagination from '../components/Pagination.astro';
 import { fetchGyms } from '../config/api';
 
 // Fetch gyms from API
@@ -134,6 +135,19 @@ if (studentDiscountParam === 'true') {
   activeFilters.push({ label: 'Student Discount', param: 'student_discount', value: 'true' });
 }
 
+// Pagination logic
+const GYMS_PER_PAGE = 12;
+const currentPage = parseInt(searchParams.get('page') || '1');
+const totalPages = Math.ceil(filteredGyms.length / GYMS_PER_PAGE);
+const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
+const endIndex = startIndex + GYMS_PER_PAGE;
+const paginatedGyms = filteredGyms.slice(startIndex, endIndex);
+
+// Build baseUrl preserving all search params except page
+const paginationParams = new URLSearchParams(Astro.url.search);
+paginationParams.delete('page'); // Remove page param to build clean baseUrl
+const baseUrl = paginationParams.toString() ? `/search?${paginationParams.toString()}` : '/search';
+
 // SEO setup
 const hasFilters = activeFilters.length > 0;
 const resultsCount = filteredGyms.length;
@@ -256,11 +270,19 @@ const breadcrumbs = [
     <main class="w-full lg:w-3/4">
       {
         filteredGyms.length > 0 ? (
-          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredGyms.map((gym) => (
-              <GymCard gym={gym} showCity={true} />
-            ))}
-          </div>
+          <>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {paginatedGyms.map((gym) => (
+                <GymCard gym={gym} showCity={true} />
+              ))}
+            </div>
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              baseUrl={baseUrl}
+            />
+          </>
         ) : (
           <div class="bg-white rounded-lg shadow-md p-12 text-center">
             <svg

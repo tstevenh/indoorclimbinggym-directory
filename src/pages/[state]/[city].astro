@@ -6,6 +6,7 @@
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import GymCard from '../../components/GymCard.astro';
+import Pagination from '../../components/Pagination.astro';
 import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
 import { generateCityTitle, generateCityDescription } from '../../utils/seo';
 import { fetchGyms } from '../../config/api';
@@ -53,6 +54,14 @@ export async function getStaticPaths() {
 const { region, city, cityGyms } = Astro.props;
 const { state: stateAbbr, city: citySlug } = Astro.params;
 
+// Pagination logic
+const GYMS_PER_PAGE = 12;
+const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
+const totalPages = Math.ceil(cityGyms.length / GYMS_PER_PAGE);
+const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
+const endIndex = startIndex + GYMS_PER_PAGE;
+const paginatedGyms = cityGyms.slice(startIndex, endIndex);
+
 // Calculate stats
 const avgRating = (cityGyms.reduce((sum, g) => sum + g.rating, 0) / cityGyms.length).toFixed(1);
 const minPrice = Math.min(...cityGyms.map(g => g.day_pass_price_local));
@@ -66,15 +75,6 @@ const featuredGyms = cityGyms
     return a.name.localeCompare(b.name);
   });
 
-// Get beginner friendly gyms
-const beginnerFriendly = cityGyms.filter(g => g.beginner_friendly).sort((a, b) => {
-  if (a.featured !== b.featured) return b.featured ? 1 : -1;
-  if (a.rating !== b.rating) return b.rating - a.rating;
-  return a.name.localeCompare(b.name);
-}).slice(0, 3);
-
-// Get bouldering gyms
-const boulderingGyms = cityGyms.filter(g => g.climbing_types?.includes('bouldering')).slice(0, 3);
 
 // Generate SEO data
 const title = generateCityTitle(city, region);
@@ -100,8 +100,8 @@ const faqs = [
   },
   {
     question: `Which ${city} gym is best for beginners?`,
-    answer: beginnerFriendly.length > 0
-      ? `For beginners, we recommend ${beginnerFriendly.map(g => g.name).join(', ')}. These gyms are specifically marked as beginner-friendly with introductory classes and easier routes.`
+    answer: cityGyms.filter(g => g.beginner_friendly).length > 0
+      ? `${cityGyms.filter(g => g.beginner_friendly).length} gyms in ${city} are marked as beginner-friendly. Use the search page to filter by "Beginner Friendly" to find gyms with introductory classes and easier routes.`
       : `All gyms in ${city} welcome climbers of all skill levels. Check individual gym pages for class schedules and beginner programs.`,
   },
   {
@@ -128,9 +128,9 @@ const faqs = [
   },
   {
     question: `Where can I boulder in ${city}?`,
-    answer: boulderingGyms.length > 0
-      ? `Popular bouldering spots in ${city} include ${boulderingGyms.map(g => g.name).join(', ')}. ${boulderingGyms.length} of ${cityGyms.length} gyms offer bouldering.`
-      : `Many gyms in ${city} offer bouldering. Check the climbing types filter below to find gyms with bouldering walls.`,
+    answer: cityGyms.filter(g => g.climbing_types?.includes('bouldering')).length > 0
+      ? `${cityGyms.filter(g => g.climbing_types?.includes('bouldering')).length} of ${cityGyms.length} gyms in ${city} offer bouldering. Use the search page to filter by "Bouldering" to find facilities with bouldering walls.`
+      : `Many gyms in ${city} offer bouldering. Use the search page to filter by climbing type to find gyms with bouldering walls.`,
   },
   {
     question: `What's the best climbing gym in ${city}?`,
@@ -238,7 +238,7 @@ const breadcrumbs = [
       price range, and more to find the gym that matches your preferences.
     </p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[...cityGyms].sort((a, b) => {
+      {[...paginatedGyms].sort((a, b) => {
         if (a.featured !== b.featured) return b.featured ? 1 : -1;
         if (a.rating !== b.rating) return b.rating - a.rating;
         return a.name.localeCompare(b.name);
@@ -246,43 +246,13 @@ const breadcrumbs = [
         <GymCard gym={gym} showCity={false} />
       ))}
     </div>
+
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      baseUrl={`/${stateAbbr}/${citySlug}`}
+    />
   </section>
-
-  <!-- Best for Beginners -->
-  {beginnerFriendly.length > 0 && (
-    <section class="mb-12">
-      <h2 class="text-3xl font-bold text-granite mb-6">
-        Best Climbing Gyms for Beginners in {city}
-      </h2>
-      <p class="text-gray-700 mb-6">
-        New to climbing? These {city} gyms are specifically marked as beginner-friendly,
-        offering intro classes, patient staff, and routes designed for those just starting their climbing journey.
-      </p>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {beginnerFriendly.map(gym => (
-          <GymCard gym={gym} showCity={false} />
-        ))}
-      </div>
-    </section>
-  )}
-
-  <!-- Best Bouldering -->
-  {boulderingGyms.length > 0 && (
-    <section class="mb-12">
-      <h2 class="text-3xl font-bold text-granite mb-6">
-        Best Bouldering Gyms in {city}
-      </h2>
-      <p class="text-gray-700 mb-6">
-        Looking for bouldering? These {city} facilities offer excellent bouldering walls with
-        diverse problems ranging from beginner to advanced grades.
-      </p>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {boulderingGyms.map(gym => (
-          <GymCard gym={gym} showCity={false} />
-        ))}
-      </div>
-    </section>
-  )}
 
   <!-- Pricing Comparison -->
   <section class="mb-12 bg-white rounded-lg shadow-md p-8">

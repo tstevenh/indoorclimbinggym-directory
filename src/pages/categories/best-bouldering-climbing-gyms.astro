@@ -9,6 +9,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export const prerender = true;
 import GymCard from '../../components/GymCard.astro';
+import Pagination from '../../components/Pagination.astro';
 import { generateSEO } from '../../utils/seo';
 import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
 import { fetchGyms } from '../../config/api';
@@ -20,6 +21,14 @@ const gymsData = await fetchGyms();
 const bouldingGyms = gymsData.filter(gym =>
   gym.climbing_types?.includes('bouldering')
 ).sort((a, b) => b.rating - a.rating); // Sort by rating
+
+// Pagination logic
+const GYMS_PER_PAGE = 12;
+const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
+const totalPages = Math.ceil(bouldingGyms.length / GYMS_PER_PAGE);
+const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
+const endIndex = startIndex + GYMS_PER_PAGE;
+const paginatedGyms = bouldingGyms.slice(startIndex, endIndex);
 
 const pageUrl = 'https://www.indoorclimbinggym.com/categories/best-bouldering-climbing-gyms';
 const pageTitle = 'Best Bouldering Climbing Gyms | IndoorClimbingGym.com';
@@ -154,10 +163,17 @@ const avgPrice = Math.round(bouldingGyms.reduce((sum, gym) => sum + gym.day_pass
   <section class="mb-16">
     <h2 class="text-3xl font-bold text-granite mb-6">Top Bouldering Climbing Gyms</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {bouldingGyms.slice(0, 12).map(gym => (
+      {paginatedGyms.map(gym => (
         <GymCard gym={gym} showCity={true} />
       ))}
     </div>
+
+    <!-- Pagination -->
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      baseUrl="/categories/best-bouldering-climbing-gyms"
+    />
   </section>
 
   <!-- About Bouldering Gyms -->

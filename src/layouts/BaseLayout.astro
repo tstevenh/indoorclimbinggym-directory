@@ -18,6 +18,8 @@ interface Props {
   nofollow?: boolean;
   schema?: any; // JSON-LD schema object(s)
   breadcrumbs?: Array<{ label: string; url: string }>;
+  prevUrl?: string; // URL to previous page (for pagination)
+  nextUrl?: string; // URL to next page (for pagination)
 }
 
 const {
@@ -31,6 +33,8 @@ const {
   nofollow = false,
   schema,
   breadcrumbs,
+  prevUrl,
+  nextUrl,
 } = Astro.props;
 
 // Check auth state
@@ -145,6 +149,10 @@ if (breadcrumbs && breadcrumbs.length > 0) {
 
     <!-- Canonical URL -->
     <link rel="canonical" href={canonicalURL} />
+
+    <!-- Pagination Links (SEO) -->
+    {prevUrl && <link rel="prev" href={prevUrl} />}
+    {nextUrl && <link rel="next" href={nextUrl} />}
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content={ogType} />
@@ -336,7 +344,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     </header>
 
     <!-- Main content area -->
-    <main id="main-content" class="container mx-auto px-4 py-8">
+    <main id="main-content" class="container mx-auto px-4 pb-8">
       <slot />
     </main>
 

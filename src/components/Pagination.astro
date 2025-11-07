@@ -1,0 +1,176 @@
+---
+/**
+ * Pagination Component
+ * Reusable pagination UI with page numbers and Previous/Next buttons
+ */
+
+export interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string; // URL without page param (e.g., "/categories/best-bouldering" or "/search?q=seattle")
+}
+
+const { currentPage, totalPages, baseUrl } = Astro.props;
+
+// Don't show pagination if only 1 page
+if (totalPages <= 1) {
+  return null;
+}
+
+/**
+ * Generate pagination URLs
+ * Handles both clean URLs and URLs with existing query params
+ */
+function getPageUrl(page: number): string {
+  if (page === 1) {
+    // Page 1: no page param (canonical URL)
+    return baseUrl.includes('?') ? baseUrl.split('?')[0] : baseUrl;
+  }
+
+  // Check if baseUrl already has query params
+  const separator = baseUrl.includes('?') ? '&' : '?';
+  return `${baseUrl}${separator}page=${page}`;
+}
+
+/**
+ * Generate array of page numbers to display
+ * Smart truncation: [1] ... [4] [5] [6] ... [10]
+ */
+function getPageNumbers(): (number | string)[] {
+  const pages: (number | string)[] = [];
+  const maxVisible = 7; // Max page numbers to show (not counting ellipsis)
+
+  if (totalPages <= maxVisible) {
+    // Show all pages if total is small
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+  } else {
+    // Always show first page
+    pages.push(1);
+
+    if (currentPage <= 3) {
+      // Near start: [1] [2] [3] [4] ... [10]
+      for (let i = 2; i <= Math.min(5, totalPages - 1); i++) {
+        pages.push(i);
+      }
+      pages.push('...');
+      pages.push(totalPages);
+    } else if (currentPage >= totalPages - 2) {
+      // Near end: [1] ... [7] [8] [9] [10]
+      pages.push('...');
+      for (let i = Math.max(totalPages - 4, 2); i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Middle: [1] ... [4] [5] [6] ... [10]
+      pages.push('...');
+      for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+        pages.push(i);
+      }
+      pages.push('...');
+      pages.push(totalPages);
+    }
+  }
+
+  return pages;
+}
+
+const pageNumbers = getPageNumbers();
+const prevPage = currentPage > 1 ? currentPage - 1 : null;
+const nextPage = currentPage < totalPages ? currentPage + 1 : null;
+---
+
+<nav class="flex items-center justify-center gap-2 mt-12 mb-8" aria-label="Pagination">
+  <!-- Previous Button -->
+  {prevPage ? (
+    <a
+      href={getPageUrl(prevPage)}
+      class="flex items-center gap-1 px-4 py-2 border-2 border-sage text-sage rounded-lg font-medium hover:bg-sage hover:!text-white transition-colors"
+      aria-label="Previous page"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      <span class="hidden sm:inline">Previous</span>
+    </a>
+  ) : (
+    <span
+      class="flex items-center gap-1 px-4 py-2 border-2 border-gray-300 text-gray-400 rounded-lg font-medium cursor-not-allowed"
+      aria-label="Previous page (disabled)"
+      aria-disabled="true"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      <span class="hidden sm:inline">Previous</span>
+    </span>
+  )}
+
+  <!-- Page Numbers -->
+  <div class="flex items-center gap-1">
+    {pageNumbers.map((pageNum) => {
+      if (pageNum === '...') {
+        return (
+          <span class="px-3 py-2 text-granite">...</span>
+        );
+      }
+
+      const isActive = pageNum === currentPage;
+
+      return (
+        <a
+          href={getPageUrl(pageNum as number)}
+          class={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            isActive
+              ? 'bg-sage text-white'
+              : 'bg-white border border-gray-300 text-granite hover:border-sage hover:bg-sage/10'
+          }`}
+          aria-label={`Page ${pageNum}`}
+          aria-current={isActive ? 'page' : undefined}
+        >
+          {pageNum}
+        </a>
+      );
+    })}
+  </div>
+
+  <!-- Next Button -->
+  {nextPage ? (
+    <a
+      href={getPageUrl(nextPage)}
+      class="flex items-center gap-1 px-4 py-2 border-2 border-sage text-sage rounded-lg font-medium hover:bg-sage hover:!text-white transition-colors"
+      aria-label="Next page"
+    >
+      <span class="hidden sm:inline">Next</span>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </a>
+  ) : (
+    <span
+      class="flex items-center gap-1 px-4 py-2 border-2 border-gray-300 text-gray-400 rounded-lg font-medium cursor-not-allowed"
+      aria-label="Next page (disabled)"
+      aria-disabled="true"
+    >
+      <span class="hidden sm:inline">Next</span>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </span>
+  )}
+</nav>
+
+<style>
+  /* Mobile: Show only 3-5 page numbers */
+  @media (max-width: 640px) {
+    nav {
+      font-size: 14px;
+    }
+
+    nav a[aria-label^="Page"],
+    nav span {
+      padding: 0.5rem 0.75rem;
+    }
+  }
+</style>

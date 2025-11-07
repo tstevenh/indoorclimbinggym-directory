@@ -8,6 +8,7 @@ import GymCard from '../../components/GymCard.astro';
 import CategoryLinks from '../../components/CategoryLinks.astro';
 import HelpfulGuides from '../../components/HelpfulGuides.astro';
 import OptimizedImage from '../../components/OptimizedImage.astro';
+import GymMap from '../../components/GymMap.astro';
 import { generateGymSchema, serializeSchema } from '../../utils/schema';
 import { generateGymTitle, generateGymDescription, generateGymKeywords } from '../../utils/seo';
 import { IMAGE_SIZES } from '../../utils/imageUtils';
@@ -588,7 +589,18 @@ const faqs = [
             </svg>
             Location
           </h3>
-          <p class="text-gray-700">{gym.full_address}</p>
+          <p class="text-gray-700 mb-3">{gym.full_address}</p>
+
+          {/* Interactive Map */}
+          {gym.latitude && gym.longtitude && gym.latitude !== 0 && gym.longtitude !== 0 && (
+            <GymMap
+              latitude={gym.latitude}
+              longitude={gym.longtitude}
+              gymName={gym.name}
+              address={gym.full_address}
+            />
+          )}
+
           {gym.access_notes && (
             <p class="text-sm text-gray-600 mt-2">{gym.access_notes}</p>
           )}

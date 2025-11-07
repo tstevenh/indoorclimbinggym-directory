@@ -9,6 +9,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export const prerender = true;
 import GymCard from '../../components/GymCard.astro';
+import Pagination from '../../components/Pagination.astro';
 import { generateSEO } from '../../utils/seo';
 import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
 import { fetchGyms } from '../../config/api';
@@ -20,6 +21,14 @@ const gymsData = await fetchGyms();
 const beginnerGyms = gymsData.filter(gym =>
   gym.beginner_friendly === true
 ).sort((a, b) => b.rating - a.rating);
+
+// Pagination logic
+const GYMS_PER_PAGE = 12;
+const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
+const totalPages = Math.ceil(beginnerGyms.length / GYMS_PER_PAGE);
+const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
+const endIndex = startIndex + GYMS_PER_PAGE;
+const paginatedGyms = beginnerGyms.slice(startIndex, endIndex);
 
 const pageUrl = 'https://www.indoorclimbinggym.com/categories/best-climbing-gyms-for-beginners';
 const pageTitle = 'Best Climbing Gyms for Beginners | IndoorClimbingGym.com';
@@ -152,10 +161,17 @@ const withClasses = beginnerGyms.filter(g => g.amenities?.includes('cafe')).leng
   <section class="mb-16">
     <h2 class="text-3xl font-bold text-granite mb-6">Top Beginner-Friendly Climbing Gyms</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {beginnerGyms.slice(0, 12).map(gym => (
+      {paginatedGyms.map(gym => (
         <GymCard gym={gym} showCity={true} />
       ))}
     </div>
+
+    <!-- Pagination -->
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      baseUrl="/categories/best-climbing-gyms-for-beginners"
+    />
   </section>
 
   <!-- About Beginner-Friendly Gyms -->

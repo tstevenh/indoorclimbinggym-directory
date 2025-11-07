@@ -7,6 +7,7 @@
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import GymCard from '../../components/GymCard.astro';
+import Pagination from '../../components/Pagination.astro';
 import { generateSEO } from '../../utils/seo';
 import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
 import { fetchGyms } from '../../config/api';
@@ -17,6 +18,8 @@ export const prerender = true;
  * Generate static paths for all dynamic category pages
  */
 export async function getStaticPaths() {
+  // Pagination settings
+  const GYMS_PER_PAGE = 12;
   // Fetch gyms from API
   const gymsData = await fetchGyms();
 
@@ -41,14 +44,28 @@ export async function getStaticPaths() {
 
     const matchingGyms = gymsData.filter(g => g.amenities?.includes(amenity));
     if (matchingGyms.length >= 3) {
-      categoryPaths.push({
-        params: { category: `climbing-gyms-with-${amenity.replace(/_/g, '-')}` },
-        props: {
-          type: 'amenity',
-          value: amenity,
-          gyms: matchingGyms.sort((a, b) => b.rating - a.rating)
-        }
+      // Sort: featured DESC, rating DESC, name ASC
+      const sortedGyms = matchingGyms.sort((a, b) => {
+        if (a.featured !== b.featured) return b.featured ? 1 : -1;
+        if (a.rating !== b.rating) return b.rating - a.rating;
+        return a.name.localeCompare(b.name);
       });
+
+      const categorySlug = `climbing-gyms-with-${amenity.replace(/_/g, '-')}`;
+      const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
+
+      // Generate pages for this category
+      for (let page = 1; page <= totalPages; page++) {
+        categoryPaths.push({
+          params: { category: categorySlug },
+          props: {
+            type: 'amenity',
+            value: amenity,
+            gyms: sortedGyms,
+            page: page,
+          }
+        });
+      }
     }
   }
 
@@ -58,14 +75,28 @@ export async function getStaticPaths() {
 
     const matchingGyms = gymsData.filter(g => g.climbing_types?.includes(climbingType));
     if (matchingGyms.length >= 3) {
-      categoryPaths.push({
-        params: { category: `best-${climbingType.replace(/_/g, '-')}-climbing-gyms` },
-        props: {
-          type: 'climbing_type',
-          value: climbingType,
-          gyms: matchingGyms.sort((a, b) => b.rating - a.rating)
-        }
+      // Sort: featured DESC, rating DESC, name ASC
+      const sortedGyms = matchingGyms.sort((a, b) => {
+        if (a.featured !== b.featured) return b.featured ? 1 : -1;
+        if (a.rating !== b.rating) return b.rating - a.rating;
+        return a.name.localeCompare(b.name);
       });
+
+      const categorySlug = `best-${climbingType.replace(/_/g, '-')}-climbing-gyms`;
+      const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
+
+      // Generate pages for this category
+      for (let page = 1; page <= totalPages; page++) {
+        categoryPaths.push({
+          params: { category: categorySlug },
+          props: {
+            type: 'climbing_type',
+            value: climbingType,
+            gyms: sortedGyms,
+            page: page,
+          }
+        });
+      }
     }
   }
 
@@ -73,7 +104,16 @@ export async function getStaticPaths() {
 }
 
 // Get props from getStaticPaths
-const { type, value, gyms } = Astro.props;
+const { type, value, gyms, page = 1 } = Astro.props;
+
+// Pagination settings
+const GYMS_PER_PAGE = 12;
+
+// Pagination logic
+const totalPages = Math.ceil(gyms.length / GYMS_PER_PAGE);
+const startIndex = (page - 1) * GYMS_PER_PAGE;
+const endIndex = page * GYMS_PER_PAGE;
+const paginatedGyms = gyms.slice(startIndex, endIndex);
 
 /**
  * Format text (convert underscore to space, capitalize)
@@ -275,10 +315,17 @@ Beyond physical infrastructure, the best ${formattedValue.toLowerCase()} climbin
   <section class="mb-16">
     <h2 class="text-3xl font-bold text-granite mb-6">{pageTitle}</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {gyms.slice(0, 12).map(gym => (
+      {paginatedGyms.map(gym => (
         <GymCard gym={gym} showCity={true} />
       ))}
     </div>
+
+    <!-- Pagination -->
+    <Pagination
+      currentPage={page}
+      totalPages={totalPages}
+      baseUrl={`/categories/${categorySlug}`}
+    />
   </section>
 
   <!-- About Section -->

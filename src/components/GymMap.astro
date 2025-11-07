@@ -1,0 +1,189 @@
+---
+/**
+ * GymMap Component
+ * Displays an interactive map using Leaflet + OpenStreetMap
+ * Shows gym location with a marker that links to directions
+ */
+
+export interface Props {
+  latitude: number;
+  longitude: number;
+  gymName: string;
+  address: string;
+}
+
+const { latitude, longitude, gymName, address } = Astro.props;
+
+// Generate Google Maps directions URL
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+---
+
+<!-- Map Container -->
+<div class="gym-map-container">
+  <div
+    id="gym-map"
+    class="h-64 rounded-lg overflow-hidden border-2 border-gray-200 relative"
+    data-lat={latitude}
+    data-lng={longitude}
+    data-name={gymName}
+    data-directions={directionsUrl}
+  >
+    <!-- Loading state -->
+    <div class="absolute inset-0 bg-gray-100 flex items-center justify-center">
+      <div class="text-gray-400 text-sm">Loading map...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Leaflet CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+
+<!-- Leaflet JS + Map Initialization -->
+<script>
+  // Import Leaflet (runs client-side)
+  import L from 'leaflet';
+
+  // Fix Leaflet default marker icon paths (Webpack/Vite issue workaround)
+  // @ts-ignore
+  delete L.Icon.Default.prototype._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  });
+
+  // Wait for DOM to be ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const mapElement = document.getElementById('gym-map');
+    if (!mapElement) return;
+
+    // Get data attributes
+    const lat = parseFloat(mapElement.dataset.lat || '0');
+    const lng = parseFloat(mapElement.dataset.lng || '0');
+    const name = mapElement.dataset.name || 'Gym';
+    const directionsUrl = mapElement.dataset.directions || '';
+
+    // Validate coordinates
+    if (lat === 0 && lng === 0) {
+      mapElement.innerHTML = '<div class="h-full flex items-center justify-center bg-gray-100 text-gray-500 text-sm">Map location unavailable</div>';
+      return;
+    }
+
+    // Initialize map
+    const map = L.map('gym-map', {
+      center: [lat, lng],
+      zoom: 15,
+      scrollWheelZoom: false, // Prevent accidental zooming while scrolling page
+      dragging: true,
+      zoomControl: true,
+    });
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Custom marker HTML with sage green color
+    const customIcon = L.divIcon({
+      className: 'custom-gym-marker',
+      html: `
+        <div style="
+          background-color: #98a48b;
+          width: 32px;
+          height: 32px;
+          border-radius: 50% 50% 50% 0;
+          transform: rotate(-45deg);
+          border: 3px solid white;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        ">
+          <div style="
+            transform: rotate(45deg);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+          ">📍</div>
+        </div>
+      `,
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -32],
+    });
+
+    // Add marker
+    const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
+
+    // Add popup with gym name and directions link
+    const popupContent = `
+      <div style="text-align: center; min-width: 150px;">
+        <strong style="display: block; margin-bottom: 8px; color: #555;">${name}</strong>
+        <a
+          href="${directionsUrl}"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="
+            display: inline-block;
+            background-color: #98a48b;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+          "
+        >
+          Get Directions →
+        </a>
+      </div>
+    `;
+
+    marker.bindPopup(popupContent);
+
+    // Open popup on marker click
+    marker.on('click', () => {
+      marker.openPopup();
+    });
+
+    // Auto-open popup after short delay (optional)
+    setTimeout(() => {
+      marker.openPopup();
+    }, 500);
+  });
+</script>
+
+<style>
+  /* Custom marker styling */
+  .gym-map-container {
+    position: relative;
+  }
+
+  /* Ensure map renders properly */
+  #gym-map {
+    z-index: 1;
+  }
+
+  /* Override Leaflet popup styles */
+  :global(.leaflet-popup-content-wrapper) {
+    border-radius: 8px;
+    padding: 4px;
+  }
+
+  :global(.leaflet-popup-content) {
+    margin: 8px;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    #gym-map {
+      height: 200px;
+    }
+  }
+</style>

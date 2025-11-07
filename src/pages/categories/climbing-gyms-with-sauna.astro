@@ -9,6 +9,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export const prerender = true;
 import GymCard from '../../components/GymCard.astro';
+import Pagination from '../../components/Pagination.astro';
 import { generateSEO } from '../../utils/seo';
 import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
 import { fetchGyms } from '../../config/api';
@@ -20,6 +21,14 @@ const gymsData = await fetchGyms();
 const saunaGyms = gymsData.filter(gym =>
   gym.amenities?.includes('sauna')
 ).sort((a, b) => b.rating - a.rating);
+
+// Pagination logic
+const GYMS_PER_PAGE = 12;
+const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
+const totalPages = Math.ceil(saunaGyms.length / GYMS_PER_PAGE);
+const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
+const endIndex = startIndex + GYMS_PER_PAGE;
+const paginatedGyms = saunaGyms.slice(startIndex, endIndex);
 
 const pageUrl = 'https://www.indoorclimbinggym.com/categories/climbing-gyms-with-sauna';
 const pageTitle = 'Climbing Gyms with Sauna | Recovery & Wellness Facilities';
@@ -153,10 +162,17 @@ const avgPrice = Math.round(saunaGyms.reduce((sum, gym) => sum + gym.day_pass_pr
   <section class="mb-16">
     <h2 class="text-3xl font-bold text-granite mb-6">Top Climbing Gyms with Sauna</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {saunaGyms.slice(0, 12).map(gym => (
+      {paginatedGyms.map(gym => (
         <GymCard gym={gym} showCity={true} />
       ))}
     </div>
+
+    <!-- Pagination -->
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      baseUrl="/categories/climbing-gyms-with-sauna"
+    />
   </section>
 
   <!-- About Gyms with Sauna -->
