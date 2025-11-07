@@ -275,7 +275,7 @@ const schema = {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {categories.filter(cat => ['experience', 'value', 'specialty'].includes(cat.category)).map(category => (
         <a
-          href={`/categories/${category.slug}`}
+          href={`/categories/${category.slug}/1`}
           class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-sage group"
         >
           <div class="flex items-start gap-4">
@@ -307,7 +307,7 @@ const schema = {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {categories.filter(cat => cat.category === 'climbing-type').map(category => (
         <a
-          href={`/categories/${category.slug}`}
+          href={`/categories/${category.slug}/1`}
           class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-sage group"
         >
           <div class="flex items-start gap-4">
@@ -339,7 +339,7 @@ const schema = {
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {categories.filter(cat => cat.category === 'amenity').map(category => (
         <a
-          href={`/categories/${category.slug}`}
+          href={`/categories/${category.slug}/1`}
           class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-sage group"
         >
           <div class="flex items-start gap-4">
@@ -405,23 +405,23 @@ const schema = {
       Explore climbing gyms in some of the most popular climbing destinations across the United States.
     </p>
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-      <a href="/wa/seattle" class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
+      <a href="/wa/seattle/1" class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
         <p class="font-bold text-granite hover:text-sage">Seattle</p>
         <p class="text-sm text-gray-600">Washington</p>
       </a>
-      <a href="/tx/austin" class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
+      <a href="/tx/austin/1" class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
         <p class="font-bold text-granite hover:text-sage">Austin</p>
         <p class="text-sm text-gray-600">Texas</p>
       </a>
-      <a href="/co/denver" class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
+      <a href="/co/denver/1" class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
         <p class="font-bold text-granite hover:text-sage">Denver</p>
         <p class="text-sm text-gray-600">Colorado</p>
       </a>
-      <a href="/ny/new-york" class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
+      <a href="/ny/new-york/1" class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
         <p class="font-bold text-granite hover:text-sage">New York</p>
         <p class="text-sm text-gray-600">New York</p>
       </a>
-      <a href="/ca/los-angeles" class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
+      <a href="/ca/los-angeles/1" class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow text-center">
         <p class="font-bold text-granite hover:text-sage">Los Angeles</p>
         <p class="text-sm text-gray-600">California</p>
       </a>

@@ -5,7 +5,7 @@
  * Supports URL parameter-based filtering for shareable links
  */
 
-// Disable prerendering to make this a dynamic page
+// Enable SSR for pagination (required for URL param-based page navigation)
 export const prerender = false;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -146,7 +146,9 @@ const paginatedGyms = filteredGyms.slice(startIndex, endIndex);
 // Build baseUrl preserving all search params except page
 const paginationParams = new URLSearchParams(Astro.url.search);
 paginationParams.delete('page'); // Remove page param to build clean baseUrl
-const baseUrl = paginationParams.toString() ? `/search?${paginationParams.toString()}` : '/search';
+const baseUrl = paginationParams.toString()
+  ? `/search?${paginationParams.toString()}&`
+  : '/search?';
 
 // SEO setup
 const hasFilters = activeFilters.length > 0;

@@ -1,15 +1,15 @@
 ---
 /**
- * City Landing Page
+ * City Landing Page with Path-Based Pagination
  * SEO-optimized pages for "[city] climbing gym" keywords
- * 1,500-2,000 words with filterable gym listings
+ * Uses path-based pagination: /[state]/[city]/1, /[state]/[city]/2, etc.
  */
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import GymCard from '../../components/GymCard.astro';
-import Pagination from '../../components/Pagination.astro';
-import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
-import { generateCityTitle, generateCityDescription } from '../../utils/seo';
-import { fetchGyms } from '../../config/api';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import GymCard from '../../../components/GymCard.astro';
+import Pagination from '../../../components/Pagination.astro';
+import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
+import { generateCityTitle, generateCityDescription } from '../../../utils/seo';
+import { fetchGyms } from '../../../config/api';
 
 export const prerender = true;
 
@@ -26,6 +26,9 @@ export async function getStaticPaths() {
   // Fetch gyms from API
   const gyms = await fetchGyms();
 
+  // Pagination settings
+  const GYMS_PER_PAGE = 12;
+
   // Define reverseStateMap inside the function to ensure proper scope
   const reverseStateMap: { [key: string]: string } = {
     'Washington': 'wa',
@@ -38,26 +41,50 @@ export async function getStaticPaths() {
   // Get unique city/state combinations
   const cityStatePairs = [...new Set(gyms.map(g => `${g.region}|${g.city}`))];
 
-  return cityStatePairs.map(pair => {
+  const paths = [];
+
+  for (const pair of cityStatePairs) {
     const [region, city] = pair.split('|');
     const stateAbbr = reverseStateMap[region] || region.toLowerCase().replace(/\s+/g, '-');
     const citySlug = city.toLowerCase().replace(/\s+/g, '-');
     const cityGyms = gyms.filter(g => g.city === city && g.region === region);
 
-    return {
-      params: { state: stateAbbr, city: citySlug },
-      props: { region, city, cityGyms },
-    };
-  });
+    // Sort gyms: featured DESC, rating DESC, name ASC
+    const sortedGyms = cityGyms.sort((a, b) => {
+      if (a.featured !== b.featured) return b.featured ? 1 : -1;
+      if (a.rating !== b.rating) return b.rating - a.rating;
+      return a.name.localeCompare(b.name);
+    });
+
+    const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
+
+    // Generate path for EACH page number
+    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+      paths.push({
+        params: {
+          state: stateAbbr,
+          city: citySlug,
+          page: String(pageNum),
+        },
+        props: {
+          gyms: sortedGyms,
+          currentPage: pageNum,
+          totalPages: totalPages,
+          state: region,
+          city: city,
+        }
+      });
+    }
+  }
+
+  return paths;
 }
 
-const { region, city, cityGyms } = Astro.props;
+const { gyms: cityGyms, currentPage, totalPages, state: region, city } = Astro.props;
 const { state: stateAbbr, city: citySlug } = Astro.params;
 
 // Pagination logic
 const GYMS_PER_PAGE = 12;
-const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
-const totalPages = Math.ceil(cityGyms.length / GYMS_PER_PAGE);
 const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
 const endIndex = startIndex + GYMS_PER_PAGE;
 const paginatedGyms = cityGyms.slice(startIndex, endIndex);
@@ -79,7 +106,9 @@ const featuredGyms = cityGyms
 // Generate SEO data
 const title = generateCityTitle(city, region);
 const description = generateCityDescription(city, region, cityGyms.length, parseFloat(avgRating));
-const pageUrl = `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}`;
+const pageUrl = currentPage === 1
+  ? `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}`
+  : `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/${currentPage}`;
 
 // Generate schemas
 const itemListSchema = generateItemListSchema(
@@ -151,7 +180,7 @@ const combinedSchema = [itemListSchema, faqSchema];
 const breadcrumbs = [
   { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
   { label: region, url: `https://www.indoorclimbinggym.com/${stateAbbr}` },
-  { label: city, url: pageUrl },
+  { label: city, url: `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}` },
 ];
 ---
 
@@ -238,11 +267,7 @@ const breadcrumbs = [
       price range, and more to find the gym that matches your preferences.
     </p>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[...paginatedGyms].sort((a, b) => {
-        if (a.featured !== b.featured) return b.featured ? 1 : -1;
-        if (a.rating !== b.rating) return b.rating - a.rating;
-        return a.name.localeCompare(b.name);
-      }).map(gym => (
+      {paginatedGyms.map(gym => (
         <GymCard gym={gym} showCity={false} />
       ))}
     </div>

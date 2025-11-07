@@ -3,11 +3,12 @@
  * OptimizedImage Component
  * Handles image optimization for both external (Unsplash) and local images
  * Provides lazy loading, responsive images, and prevents layout shift
+ * Automatically falls back to placeholder if image URL is missing/invalid
  */
-import { optimizeUnsplashUrl, generateSrcset } from '../utils/imageUtils';
+import { optimizeUnsplashUrl, generateSrcset, getImageUrl, PLACEHOLDER_IMAGE } from '../utils/imageUtils';
 
 interface Props {
-  src: string;
+  src: string | null | undefined;
   alt: string;
   width: number;
   height: number;
@@ -30,19 +31,23 @@ const {
   srcsetSizes,
 } = Astro.props;
 
+// Get valid image URL (falls back to placeholder if null/undefined/empty)
+const validSrc = getImageUrl(src);
+const isPlaceholder = validSrc === PLACEHOLDER_IMAGE;
+
 // Determine if this is an external URL (Unsplash)
-const isExternal = src.startsWith('http://') || src.startsWith('https://');
-const isUnsplash = src.includes('unsplash.com');
+const isExternal = validSrc.startsWith('http://') || validSrc.startsWith('https://');
+const isUnsplash = validSrc.includes('unsplash.com');
 
 // Optimize the primary image URL if it's Unsplash
 const optimizedSrc = isUnsplash
-  ? optimizeUnsplashUrl(src, width, height, quality)
-  : src;
+  ? optimizeUnsplashUrl(validSrc, width, height, quality)
+  : validSrc;
 
-// Generate srcset if sizes are provided and it's Unsplash
+// Generate srcset if sizes are provided and it's Unsplash (not for placeholder)
 const srcset =
-  isUnsplash && srcsetSizes && srcsetSizes.length > 0
-    ? generateSrcset(src, srcsetSizes, height / width, quality)
+  isUnsplash && srcsetSizes && srcsetSizes.length > 0 && !isPlaceholder
+    ? generateSrcset(validSrc, srcsetSizes, height / width, quality)
     : undefined;
 
 // Calculate aspect ratio for CSS to prevent CLS

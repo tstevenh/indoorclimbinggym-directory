@@ -98,6 +98,30 @@ const stateToCode = (stateName: string): string => {
   return code || stateName.toLowerCase().replace(/\s+/g, '-');
 };
 
+// Count gyms by city
+const cityCounts: Record<string, { count: number; city: string; region: string; slug: string }> = {};
+gymsData.forEach(gym => {
+  const city = gym.city?.trim();
+  const region = gym.region?.trim();
+  if (city && region) {
+    const key = `${city}, ${region}`;
+    if (!cityCounts[key]) {
+      cityCounts[key] = {
+        count: 0,
+        city,
+        region,
+        slug: city.toLowerCase().replace(/\s+/g, '-')
+      };
+    }
+    cityCounts[key].count++;
+  }
+});
+
+// Sort cities by count DESC and take top 5
+const top5Cities = Object.values(cityCounts)
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5);
+
 // Build canonical URL
 const siteUrl = 'https://www.indoorclimbinggym.com';
 const canonicalURL = canonical || new URL(Astro.url.pathname, siteUrl).href;
@@ -170,8 +194,8 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     <meta property="twitter:image" content={ogImage} />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo.svg" />
 
     <!-- Preconnect to external domains for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -220,19 +244,19 @@ if (breadcrumbs && breadcrumbs.length > 0) {
               </button>
               <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div class="py-2">
-                  <a href="/categories/best-bouldering-climbing-gyms/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                  <a href="/categories/best-bouldering-climbing-gyms/1" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                     Best Bouldering Gyms
                   </a>
-                  <a href="/categories/best-climbing-gyms-for-beginners/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                  <a href="/categories/best-climbing-gyms-for-beginners/1" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                     For Beginners
                   </a>
-                  <a href="/categories/affordable-climbing-gyms/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                  <a href="/categories/affordable-climbing-gyms/1" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                     Affordable Gyms
                   </a>
-                  <a href="/categories/climbing-gyms-with-sauna/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                  <a href="/categories/climbing-gyms-with-sauna/1" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                     With Sauna
                   </a>
-                  <a href="/categories/climbing-gyms-with-kids-zone/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                  <a href="/categories/climbing-gyms-with-kids-zone/1" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                     With Kids Zone
                   </a>
                   <div class="border-t border-gray-200 my-1"></div>
@@ -344,7 +368,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     </header>
 
     <!-- Main content area -->
-    <main id="main-content" class="container mx-auto px-4 pb-8">
+    <main id="main-content" class="container mx-auto px-4 py-8">
       <slot />
     </main>
 
@@ -355,25 +379,13 @@ if (breadcrumbs && breadcrumbs.length > 0) {
           <!-- Column 1: Brand + Social -->
           <div>
             <h3 class="font-bold text-lg mb-4">IndoorClimbingGym</h3>
-            <p class="text-sm mb-4">Find your next climb.</p>
+            <p class="text-sm mb-4">Find Your Next Climb.</p>
 
-            <!-- Social Media Icons -->
+            <!-- Social Media -->
             <div class="flex gap-4">
-              <a href="https://twitter.com/indoorclimbinggym" target="_blank" rel="noopener noreferrer" class="text-ivory hover:text-sage transition-colors" aria-label="Twitter">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
-                </svg>
-              </a>
-              <a href="https://instagram.com/indoorclimbinggym" target="_blank" rel="noopener noreferrer" class="text-ivory hover:text-sage transition-colors" aria-label="Instagram">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke-width="2"></rect>
-                  <path stroke-width="2" d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"></path>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke-width="2" stroke-linecap="round"></line>
-                </svg>
-              </a>
-              <a href="https://facebook.com/indoorclimbinggym" target="_blank" rel="noopener noreferrer" class="text-ivory hover:text-sage transition-colors" aria-label="Facebook">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+              <a href="https://reddit.com/r/indoorclimbinggym" target="_blank" rel="noopener noreferrer" class="text-ivory hover:text-sage transition-colors" aria-label="Join our Reddit community">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
                 </svg>
               </a>
             </div>
@@ -385,7 +397,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
             <ul class="space-y-2 text-sm">
               <li><a href="/search" class="hover:text-sage">Search Gyms</a></li>
               <li><a href="/guides" class="hover:text-sage">Guides</a></li>
-              <li><a href="/categories/best-bouldering-climbing-gyms/" class="hover:text-sage">Best Bouldering</a></li>
+              <li><a href="/categories/best-bouldering-climbing-gyms/1" class="hover:text-sage">Best Bouldering</a></li>
               <li><a href="/categories" class="hover:text-sage">All Categories</a></li>
             </ul>
           </div>
@@ -394,24 +406,29 @@ if (breadcrumbs && breadcrumbs.length > 0) {
           <div>
             <h4 class="font-semibold mb-3">Top Categories</h4>
             <ul class="space-y-2 text-sm">
-              <li><a href="/categories/best-bouldering-climbing-gyms/" class="hover:text-sage">Bouldering Gyms</a></li>
-              <li><a href="/categories/best-climbing-gyms-for-beginners/" class="hover:text-sage">For Beginners</a></li>
-              <li><a href="/categories/best-lead-climbing-gyms/" class="hover:text-sage">Lead Climbing</a></li>
-              <li><a href="/categories/affordable-climbing-gyms/" class="hover:text-sage">Affordable Gyms</a></li>
-              <li><a href="/categories/climbing-gyms-with-sauna/" class="hover:text-sage">With Sauna</a></li>
-              <li><a href="/categories/climbing-gyms-with-kids-zone/" class="hover:text-sage">With Kids Zone</a></li>
+              <li><a href="/categories/best-bouldering-climbing-gyms/1" class="hover:text-sage">Bouldering Gyms</a></li>
+              <li><a href="/categories/best-climbing-gyms-for-beginners/1" class="hover:text-sage">For Beginners</a></li>
+              <li><a href="/categories/best-lead-climbing-gyms/1" class="hover:text-sage">Lead Climbing</a></li>
+              <li><a href="/categories/affordable-climbing-gyms/1" class="hover:text-sage">Affordable Gyms</a></li>
+              <li><a href="/categories/climbing-gyms-with-sauna/1" class="hover:text-sage">With Sauna</a></li>
+              <li><a href="/categories/climbing-gyms-with-kids-zone/1" class="hover:text-sage">With Kids Zone</a></li>
             </ul>
           </div>
 
-          <!-- Column 4: Popular Cities (Expanded) -->
+          <!-- Column 4: Popular Cities (Dynamic - Top 5 by gym count) -->
           <div>
             <h4 class="font-semibold mb-3">Popular Cities</h4>
             <ul class="space-y-2 text-sm">
-              <li><a href="/wa/seattle" class="hover:text-sage">Seattle, WA</a></li>
-              <li><a href="/tx/austin" class="hover:text-sage">Austin, TX</a></li>
-              <li><a href="/co/denver" class="hover:text-sage">Denver, CO</a></li>
-              <li><a href="/ny/new-york" class="hover:text-sage">New York, NY</a></li>
-              <li><a href="/ca/los-angeles" class="hover:text-sage">Los Angeles, CA</a></li>
+              {top5Cities.map(({ city, region, slug }) => {
+                const stateCode = stateToCode(region);
+                return (
+                  <li>
+                    <a href={`/${stateCode}/${slug}/1`} class="hover:text-sage">
+                      {city}, {stateCode.toUpperCase()}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 

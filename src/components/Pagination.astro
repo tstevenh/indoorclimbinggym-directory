@@ -19,17 +19,20 @@ if (totalPages <= 1) {
 
 /**
  * Generate pagination URLs
- * Handles both clean URLs and URLs with existing query params
+ * Handles both path-based pagination (/categories/slug/2) and query params (/search?q=test&page=2)
  */
 function getPageUrl(page: number): string {
-  if (page === 1) {
-    // Page 1: no page param (canonical URL)
-    return baseUrl.includes('?') ? baseUrl.split('?')[0] : baseUrl;
+  // Check if baseUrl has query params (search page) or is path-based (category pages)
+  if (baseUrl.includes('?')) {
+    // Query param based (search page): append page as query param
+    if (page === 1) {
+      return baseUrl.split('?')[0]; // Remove page param for page 1
+    }
+    return `${baseUrl}&page=${page}`;
+  } else {
+    // Path-based (category pages): always append page as path segment (including /1 for page 1)
+    return `${baseUrl}/${page}`;
   }
-
-  // Check if baseUrl already has query params
-  const separator = baseUrl.includes('?') ? '&' : '?';
-  return `${baseUrl}${separator}page=${page}`;
 }
 
 /**

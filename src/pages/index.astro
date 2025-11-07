@@ -142,7 +142,7 @@ const description = 'Discover the best indoor climbing gyms near you. Search by 
   schema={combinedSchema}
 >
   <!-- Hero Section -->
-  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] min-h-[600px] bg-gradient-to-br from-sage/30 via-ivory to-sage/10 py-16 md:py-24 mb-12">
+  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 min-h-[600px] bg-gradient-to-br from-sage/30 via-ivory to-sage/10 py-16 md:py-24 mb-12">
     <div class="container mx-auto px-4">
       <div class="max-w-4xl mx-auto text-center">
         <h1 class="text-4xl md:text-6xl font-bold text-granite mb-6">
@@ -335,7 +335,7 @@ const description = 'Discover the best indoor climbing gyms near you. Search by 
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {topCategories.slice(0, 8).map(category => (
         <a
-          href={`/categories/${category.slug}`}
+          href={`/categories/${category.slug}/1`}
           class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 group border-2 border-transparent hover:border-sage"
         >
           <h3 class="font-bold text-granite group-hover:text-sage transition-colors mb-2">
