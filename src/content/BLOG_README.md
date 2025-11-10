@@ -197,3 +197,150 @@ If you have questions about the blog system, check:
 - Content collection config: `/src/content/config.ts`
 - Blog components: `/src/components/blog/`
 - Page templates: `/src/pages/guides/`
+
+
+  Method 1: Using Public Folder (Recommended for Blog)
+
+  Step 1: Add Your Image
+
+  Place your images in the /public/images/blog/ folder:
+
+  /public/
+    /images/
+      /blog/
+        - climbing-technique.jpg
+        - gym-equipment.png
+        - bouldering-tips.jpg
+
+  Step 2: Reference in Markdown
+
+  In your blog post markdown file (e.g., /src/content/blog/my-post.md):
+
+  ---
+  title: "My Blog Post"
+  description: "..."
+  heroImage: "/images/gyms/hero.jpg"  # Hero image at top
+  ---
+
+  This is my blog content.
+
+  ![Climbing technique demonstration](/images/blog/climbing-technique.jpg)
+
+  More text here...
+
+  ![Gym equipment setup](/images/blog/gym-equipment.png)
+
+  Standard Markdown Image Syntax:
+
+  ![Alt text description](/path/to/image.jpg)
+
+  - ![...] = Image syntax
+  - Alt text = Description for accessibility (shows if image fails to load)
+  - /path/to/image.jpg = Path starting from /public/ folder
+
+  Method 2: External Images (Unsplash, etc.)
+
+  You can also use external URLs:
+
+  ![Climber on wall](https://images.unsplash.com/photo-123456789)
+
+  Adding Captions
+
+  For images with captions, use this pattern:
+
+  ![Climbing technique](/images/blog/technique.jpg)
+  *Figure 1: Proper foot placement on small holds*
+
+  The italic text below becomes a caption.
+
+  Image with Link
+
+  Make an image clickable:
+
+  [![Click to see full size](/images/blog/small.jpg)](/images/blog/large.jpg)
+
+  Example: Full Blog Post with Images
+
+  Let me show you a complete example:
+
+  ---
+  title: "5 Essential Bouldering Techniques for Beginners"
+  description: "Master these fundamental bouldering moves to progress faster"
+  publishedDate: 2025-01-15
+  author: "Alex Chen"
+  category: "tips"
+  tags: ["bouldering", "technique", "beginners", "training", "skills"]
+  heroImage: "/images/blog/bouldering-hero.jpg"
+  heroImageAlt: "Climber working on a bouldering problem"
+  ---
+
+  Bouldering is all about technique over strength. Here are 5 essential moves every beginner should master.
+
+  ## 1. Proper Footwork
+
+  Good footwork is the foundation of climbing. Focus on placing your feet deliberately on each hold.
+
+  ![Foot placement technique](/images/blog/foot-placement.jpg)
+  *Precise foot placement saves energy and improves balance*
+
+  Key tips:
+  - Look at the hold before placing your foot
+  - Use the inside edge of your shoe
+  - Keep your heel low for better grip
+
+  ## 2. Hip Movement
+
+  ![Hip positioning](/images/blog/hip-technique.jpg)
+
+  Getting your hips close to the wall shifts your center of gravity and makes moves easier. Practice "flagging" where you extend one leg for balance.
+
+  ## 3. Straight Arms
+
+  ![Straight arm technique](/images/blog/straight-arms.jpg)
+  *Hanging on straight arms conserves energy*
+
+  Bent arms tire quickly. Keep arms straight and hang from your skeleton, not your muscles.
+
+  ---
+
+  Want to practice these techniques? Check out our [best bouldering gyms](/categories/best-bouldering-climbing-gyms).
+
+  Pro Tips:
+
+  1. Image Sizes
+
+  - Hero images: 1200x600px minimum
+  - Inline images: 800-1000px wide
+  - Keep file sizes under 500KB (compress images)
+
+  2. File Naming
+
+  Use descriptive, lowercase names with hyphens:
+  - ✅ climbing-technique-footwork.jpg
+  - ❌ IMG_1234.jpg
+
+  3. Alt Text
+
+  Always write descriptive alt text:
+  - ✅ ![Climber demonstrating drop knee technique on overhang](...)
+  - ❌ ![image](...)
+
+  4. Image Formats
+
+  - Use JPG for photos
+  - Use PNG for graphics/screenshots
+  - Use WebP for best compression (modern browsers)
+
+  Quick Start: Add an Image Now
+
+  1. Create the folder:
+  mkdir -p public/images/blog
+
+  2. Add your image to that folder
+  3. Edit your blog post:
+  ![Your description](/images/blog/your-image.jpg)
+
+  4. Rebuild:
+  npm run build
+
+  That's it! Your images will appear in your blog posts. The /public/ folder is served directly, so /public/images/blog/photo.jpg becomes /images/blog/photo.jpg in your URLs.

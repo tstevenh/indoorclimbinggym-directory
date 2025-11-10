@@ -7,7 +7,7 @@ author: "Indoor Climbing Gym Team"
 category: "gear"
 tags: ["clothing", "beginners", "gear", "shoes", "what to wear"]
 featured: true
-heroImage: "/images/blog/what-to-wear-indoor-rock-climbing-hero.jpg"
+heroImage: "/images/blog/what-to-wear-indoor-rock-climbing-hero.png"
 heroImageAlt: "Climber in appropriate athletic clothing ascending indoor climbing wall"
 wordCount: 1750
 readingTime: 8

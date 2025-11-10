@@ -186,7 +186,11 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-gray-100 text-g
     <SocialShare title={entry.data.title} url={pageUrl} />
 
     <!-- Author Bio -->
-    <AuthorBio author={entry.data.author} />
+    <AuthorBio
+      author={entry.data.author}
+      avatar={entry.data.authorAvatar}
+      bio={entry.data.authorBio}
+    />
 
     <!-- Related Posts -->
     <RelatedPosts posts={relatedPosts} currentSlug={entry.slug} />

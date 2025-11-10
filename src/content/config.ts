@@ -12,7 +12,9 @@ const blogCollection = defineCollection({
     description: z.string().max(160, 'Description must be 160 characters or less for SEO'),
     publishedDate: z.date(),
     updatedDate: z.date().optional(),
-    author: z.string(),
+    author: z.string().optional(), // Defaults to "Indoor Climbing Gym Team"
+    authorAvatar: z.string().optional(), // Path to author profile picture (defaults to logo)
+    authorBio: z.string().optional(), // Custom bio for this author
     category: z.enum(['guides', 'tips', 'reviews', 'industry', 'gear']),
     tags: z.array(z.string()),
     featured: z.boolean().default(false),

@@ -5,15 +5,17 @@
  */
 
 interface Props {
-  author: string;
+  author?: string;
   bio?: string;
   avatar?: string;
 }
 
 const {
-  author,
-  bio = `${author} is a passionate climber and contributor to IndoorClimbingGym.com, sharing insights and experiences from the climbing community.`,
-  avatar = '/images/default-avatar.jpg',
+  author = 'Indoor Climbing Gym Team',
+  bio = author === 'Indoor Climbing Gym Team'
+    ? 'The Indoor Climbing Gym team is dedicated to helping climbers find the perfect gym and improve their climbing skills. We share expert advice, gym reviews, and climbing tips from our community of passionate climbers.'
+    : `${author} is a passionate climber and contributor to IndoorClimbingGym.com, sharing insights and experiences from the climbing community.`,
+  avatar = '/logo.svg',
 } = Astro.props;
 ---
 
