@@ -1,7 +1,28 @@
 # SEO Audit & Enhancement Plan
 **IndoorClimbingGym.com - Comprehensive Analysis**
-**Date:** 2025-11-10
+**Date:** 2025-11-10 (Updated: 2025-11-10)
 **Goal:** Rank #1 for climbing gym keywords within 30 days
+
+---
+
+## 🚨 CRITICAL BUG FIXED (2025-11-10)
+
+**Issue:** Missing canonical URLs on primary pages
+**Status:** ✅ **FIXED**
+
+During user review, a critical SEO bug was discovered: **Homepage, gym detail pages, state pages, and city pages were NOT passing canonical URLs** to the BaseLayout component. While BaseLayout had fallback logic to auto-generate canonicals from `Astro.url.pathname`, explicit canonical tags are essential for:
+- Preventing duplicate content issues
+- Consolidating link equity
+- Proper pagination signals (with rel=prev/next)
+- Avoiding query parameter indexing
+
+**Pages Fixed:**
+- ✅ Homepage (`/src/pages/index.astro`)
+- ✅ Gym Detail Pages (`/src/pages/gyms/[slug].astro`)
+- ✅ State Pages (`/src/pages/[state]/index.astro`)
+- ✅ City Pages (`/src/pages/[state]/[city]/[page].astro`)
+
+**Impact:** This fix immediately improves technical SEO score and prevents potential duplicate content penalties.
 
 ---
 
@@ -9,7 +30,7 @@
 
 This document provides a complete SEO audit of IndoorClimbingGym.com and a comprehensive enhancement plan. The site has a **solid technical foundation** with excellent schema markup, proper meta tags, and good internal linking. However, there are **significant opportunities for improvement** in advanced SEO techniques, content optimization, and technical enhancements.
 
-**Current Status:** ✅ Strong foundation (70% implementation)
+**Current Status:** ✅ Strong foundation (75% implementation - canonical fix applied)
 **Target Status:** 🚀 Elite SEO optimization (95%+ implementation)
 
 ---
