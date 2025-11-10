@@ -13,6 +13,7 @@ import { generateGymSchema, generateFAQSchema, serializeSchema } from '../../uti
 import { generateGymTitle, generateGymDescription, generateGymKeywords } from '../../utils/seo';
 import { IMAGE_SIZES } from '../../utils/imageUtils';
 import { fetchGyms } from '../../config/api';
+import { getStateSlug } from '../../utils/states';
 
 export const prerender = true;
 
@@ -43,20 +44,15 @@ const hours = gym.working_hour?.split('|').map(entry => {
   return { day, opens, closes };
 }) || [];
 
-// Get state abbreviation for URL
-const stateAbbr = {
-  'Washington': 'wa',
-  'Texas': 'tx',
-  'Colorado': 'co',
-  'New York': 'ny',
-  'California': 'ca',
-}[gym.region] || gym.region.toLowerCase().replace(/\s+/g, '-');
+// Get state slug for URL (e.g., "washington", "new-york")
+const stateSlug = getStateSlug(gym.region);
+const citySlug = gym.city.toLowerCase().replace(/\s+/g, '-');
 
 // Build breadcrumbs
 const breadcrumbs = [
   { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
-  { label: gym.region, url: `https://www.indoorclimbinggym.com/${stateAbbr}` },
-  { label: gym.city, url: `https://www.indoorclimbinggym.com/${stateAbbr}/${gym.city.toLowerCase().replace(/\s+/g, '-')}` },
+  { label: gym.region, url: `https://www.indoorclimbinggym.com/${stateSlug}` },
+  { label: gym.city, url: `https://www.indoorclimbinggym.com/${stateSlug}/${citySlug}/1` },
   { label: gym.name, url: `https://www.indoorclimbinggym.com/gyms/${gym.slug}` },
 ];
 
