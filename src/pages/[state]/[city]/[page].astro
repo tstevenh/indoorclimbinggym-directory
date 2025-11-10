@@ -104,7 +104,9 @@ const featuredGyms = cityGyms
 
 
 // Generate SEO data
-const title = generateCityTitle(city, region);
+const title = currentPage > 1
+  ? `${generateCityTitle(city, region)} - Page ${currentPage}`
+  : generateCityTitle(city, region);
 const description = generateCityDescription(city, region, cityGyms.length, parseFloat(avgRating));
 const pageUrl = currentPage === 1
   ? `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}`

@@ -90,7 +90,7 @@ export function generateGymDescription(
   climbingTypes: string[],
   rating: number
 ): string {
-  const types = climbingTypes.join(', ');
+  const types = climbingTypes.slice(0, 3).map(t => t.replace(/_/g, ' ')).join(', ');
   return `${gymName} in ${city} offers ${types}. Rated ${rating}★. View hours, prices, amenities, and directions. Find your next climb.`;
 }
 

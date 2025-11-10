@@ -80,7 +80,7 @@ const canonical = 'https://www.indoorclimbinggym.com/contact';
           Submit or claim your gym
         </p>
         <a
-          href="http://localhost:3000/dashboard"
+          href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard`}
           target="_blank"
           rel="noopener noreferrer"
           class="inline-block bg-sage text-white px-6 py-2 rounded-lg font-medium hover:bg-sage/90 transition-colors"
@@ -96,93 +96,25 @@ const canonical = 'https://www.indoorclimbinggym.com/contact';
     <div class="max-w-2xl mx-auto">
       <h2 class="text-3xl font-bold text-granite mb-8 text-center">Send Us a Message</h2>
 
-      <!-- TODO: Integrate with form service (Formspree, Netlify Forms, or custom API) -->
-      <!-- For now, form shows structure but won't submit -->
-      <form class="bg-white rounded-lg shadow-md p-8 space-y-6" method="POST" action="#">
-        <!-- Name Field -->
-        <div>
-          <label for="name" class="block text-granite font-medium mb-2">
-            Name <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            required
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage focus:border-sage outline-none transition-colors"
-            placeholder="Your full name"
-            aria-required="true"
-          />
-        </div>
+      <!-- Tally Contact Form Embed -->
+      <div class="bg-white rounded-lg shadow-md p-8">
+        <iframe
+          data-tally-src="https://tally.so/embed/lbDllX?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+          loading="lazy"
+          width="100%"
+          height="500"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          title="Contact Form"
+          class="rounded-lg"
+        ></iframe>
+      </div>
 
-        <!-- Email Field -->
-        <div>
-          <label for="email" class="block text-granite font-medium mb-2">
-            Email <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            required
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage focus:border-sage outline-none transition-colors"
-            placeholder="your.email@example.com"
-            aria-required="true"
-          />
-        </div>
-
-        <!-- Subject Field -->
-        <div>
-          <label for="subject" class="block text-granite font-medium mb-2">
-            Subject <span class="text-red-500">*</span>
-          </label>
-          <select
-            id="subject"
-            name="subject"
-            required
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage focus:border-sage outline-none transition-colors bg-white"
-            aria-required="true"
-          >
-            <option value="">Select a subject...</option>
-            <option value="general">General Inquiry</option>
-            <option value="gym-submission">Gym Submission</option>
-            <option value="technical">Technical Issue</option>
-            <option value="partnership">Partnership</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-
-        <!-- Message Field -->
-        <div>
-          <label for="message" class="block text-granite font-medium mb-2">
-            Message <span class="text-red-500">*</span>
-          </label>
-          <textarea
-            id="message"
-            name="message"
-            required
-            rows="6"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sage focus:border-sage outline-none transition-colors resize-y"
-            placeholder="Tell us how we can help..."
-            aria-required="true"
-          ></textarea>
-        </div>
-
-        <!-- Submit Button -->
-        <div>
-          <button
-            type="submit"
-            class="w-full bg-sage text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-sage/90 transition-colors focus:ring-4 focus:ring-sage/30 outline-none"
-          >
-            Send Message
-          </button>
-        </div>
-
-        <!-- Form Note -->
-        <p class="text-sm text-gray-600 text-center">
-          <strong>Note:</strong> This is a static site. For production, integrate with a form service like Formspree, Netlify Forms, or a custom API endpoint.
-        </p>
-      </form>
+      <!-- Tally Embed Script -->
+      <script is:inline>
+        var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}
+      </script>
     </div>
   </section>
 
@@ -194,7 +126,7 @@ const canonical = 'https://www.indoorclimbinggym.com/contact';
       <div class="bg-white rounded-lg shadow-md p-6">
         <h3 class="font-bold text-granite text-lg mb-3">How do I submit a gym to your directory?</h3>
         <p class="text-gray-700">
-          Gym owners can submit their facility through our <a href="http://localhost:3000/dashboard" class="text-sage hover:underline" target="_blank" rel="noopener noreferrer">Gym Owner Portal</a>.
+          Gym owners can submit their facility through our <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard`} class="text-sage hover:underline" target="_blank" rel="noopener noreferrer">Gym Owner Portal</a>.
           Simply create an account, fill out your gym's information (including address, hours, pricing, amenities, and photos),
           and submit for review. Our team will verify the information and publish your listing within 2-3 business days.
           Listing your gym is completely free!
@@ -205,7 +137,7 @@ const canonical = 'https://www.indoorclimbinggym.com/contact';
       <div class="bg-white rounded-lg shadow-md p-6">
         <h3 class="font-bold text-granite text-lg mb-3">How do I claim my gym listing?</h3>
         <p class="text-gray-700">
-          If your gym is already listed on our site, you can claim it by visiting the <a href="http://localhost:3000/dashboard" class="text-sage hover:underline" target="_blank" rel="noopener noreferrer">Gym Owner Portal</a>
+          If your gym is already listed on our site, you can claim it by visiting the <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard`} class="text-sage hover:underline" target="_blank" rel="noopener noreferrer">Gym Owner Portal</a>
           and searching for your gym. Click "Claim This Gym" and provide verification that you're the owner or authorized representative
           (business email, phone number, or documentation). Once verified, you'll have full control to update your gym's information,
           add photos, respond to reviews, and access analytics about your listing's performance.

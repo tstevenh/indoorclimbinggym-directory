@@ -315,14 +315,14 @@ if (breadcrumbs && breadcrumbs.length > 0) {
                 <!-- Dropdown Menu -->
                 <div class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   <div class="py-2">
-                    <a href="http://localhost:3000/dashboard" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                    <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard`} class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                       Dashboard
                     </a>
-                    <a href="http://localhost:3000/dashboard/favorites" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                    <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard/favorites`} class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                       My Favorites
                     </a>
                     <div class="border-t border-gray-200 my-2"></div>
-                    <form method="POST" action="http://localhost:3000/api/auth/signout">
+                    <form method="POST" action={`${import.meta.env.PUBLIC_DASHBOARD_URL}/api/auth/signout`}>
                       <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
                         Sign Out
                       </button>
@@ -333,8 +333,8 @@ if (breadcrumbs && breadcrumbs.length > 0) {
             ) : (
               <!-- Logged Out: Show Login/Sign Up -->
               <>
-                <a href="http://localhost:3000/login" class="text-granite hover:text-sage transition-colors">Login</a>
-                <a href="http://localhost:3000/signup" class="bg-sage text-white px-6 py-2 rounded hover:bg-sage/90 transition-colors">
+                <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/login`} class="text-granite hover:text-sage transition-colors">Login</a>
+                <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/signup`} class="bg-sage text-white px-6 py-2 rounded hover:bg-sage/90 transition-colors">
                   Sign Up
                 </a>
               </>
@@ -498,13 +498,13 @@ if (breadcrumbs && breadcrumbs.length > 0) {
             <!-- Navigation Links -->
             <nav class="py-2">
               <a
-                href="http://localhost:3000/dashboard"
+                href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard`}
                 class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
               >
                 Dashboard
               </a>
               <a
-                href="http://localhost:3000/dashboard/favorites"
+                href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard/favorites`}
                 class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
               >
                 My Favorites
@@ -546,7 +546,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
 
             <!-- Sign Out -->
             <div class="py-2">
-              <form method="POST" action="http://localhost:3000/api/auth/signout">
+              <form method="POST" action={`${import.meta.env.PUBLIC_DASHBOARD_URL}/api/auth/signout`}>
                 <button type="submit" class="block w-full text-left px-6 py-4 text-red-600 hover:bg-red-50 transition-colors">
                   Sign Out
                 </button>
@@ -558,7 +558,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
           <>
             <!-- Sign Up Button -->
             <a
-              href="http://localhost:3000/signup"
+              href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/signup`}
               class="block mx-6 mt-6 mb-4 px-6 py-3 bg-sage text-white text-center rounded-lg font-medium hover:bg-sage/90 transition-colors"
             >
               Sign Up
@@ -600,7 +600,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
                 About
               </a>
               <a
-                href="http://localhost:3000/login"
+                href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/login`}
                 class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
               >
                 Login

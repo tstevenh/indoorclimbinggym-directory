@@ -173,7 +173,7 @@ const faqs = [
 
           <!-- Favorite Button (Right Side) -->
           <a
-            href={`http://localhost:3000/dashboard/favorites/add?gym_id=${gym.id}&return_url=${encodeURIComponent(`http://localhost:4321/gyms/${gym.slug}`)}`}
+            href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard/favorites/add?gym_id=${gym.id}&return_url=${encodeURIComponent(`${import.meta.env.PUBLIC_SITE_URL}/gyms/${gym.slug}`)}`}
             class="flex items-center gap-2 px-4 py-2 border-2 border-sage text-sage rounded-full hover:bg-sage transition-colors group"
             title="Save to favorites"
           >
