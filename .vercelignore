@@ -1,0 +1,26 @@
+# Vercel Ignore File for Astro Directory Site
+
+# Development files
+.DS_Store
+node_modules
+.env
+.env.local
+.env*.local
+
+# Build files
+.astro
+dist
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+Thumbs.db
