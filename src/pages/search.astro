@@ -166,15 +166,19 @@ const description = hasFilters
 // Only index the base search page (no parameters)
 const noindex = hasFilters;
 
+// Canonical URL - always point to base search page (no parameters)
+const canonical = 'https://www.indoorclimbinggym.com/search';
+
 const breadcrumbs = [
   { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
-  { label: 'Search', url: 'https://www.indoorclimbinggym.com/search' },
+  { label: 'Search', url: canonical },
 ];
 ---
 
 <BaseLayout
   title={title}
   description={description}
+  canonical={canonical}
   noindex={noindex}
   breadcrumbs={breadcrumbs}
 >
