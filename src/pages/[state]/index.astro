@@ -9,47 +9,31 @@ import GymCard from '../../components/GymCard.astro';
 import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
 import { generateStateTitle, generateStateDescription } from '../../utils/seo';
 import { fetchGyms } from '../../config/api';
+import { getStateSlug, getStateCode } from '../../utils/states';
 
 export const prerender = true;
-
-// State mapping
-const stateMap: { [key: string]: string } = {
-  'wa': 'Washington',
-  'tx': 'Texas',
-  'co': 'Colorado',
-  'ny': 'New York',
-  'ca': 'California',
-};
 
 export async function getStaticPaths() {
   // Fetch gyms from API
   const gyms = await fetchGyms();
 
-  // State mapping for URL generation
-  const reverseStateMap: { [key: string]: string } = {
-    'Washington': 'wa',
-    'Texas': 'tx',
-    'Colorado': 'co',
-    'New York': 'ny',
-    'California': 'ca',
-  };
-
   // Get unique states
   const states = [...new Set(gyms.map(g => g.region))];
 
   return states.map(region => {
-    const stateAbbr = reverseStateMap[region] || region.toLowerCase().replace(/\s+/g, '-');
+    const stateSlug = getStateSlug(region);
     const stateGyms = gyms.filter(g => g.region === region);
 
     return {
-      params: { state: stateAbbr },
+      params: { state: stateSlug },
       props: { region, stateGyms },
     };
   });
 }
 
 const { region, stateGyms } = Astro.props;
-const { state: stateAbbr } = Astro.params;
+const { state: stateSlug } = Astro.params;
+const stateCode = getStateCode(region); // Get 2-letter code (e.g., "TN", "NJ")
 
 // Get unique cities
 const cities = [...new Set(stateGyms.map(g => g.city))].sort();
@@ -70,7 +54,7 @@ const featuredGyms = stateGyms
 // Generate SEO data
 const title = generateStateTitle(region);
 const description = generateStateDescription(region, cities.length, stateGyms.length);
-const pageUrl = `https://www.indoorclimbinggym.com/${stateAbbr}`;
+const pageUrl = `https://www.indoorclimbinggym.com/${stateSlug}`;
 
 // Generate schemas
 const itemListSchema = generateItemListSchema(
@@ -175,7 +159,7 @@ const breadcrumbs = [
         const citySlug = city.toLowerCase().replace(/\s+/g, '-');
         return (
           <a
-            href={`/${stateAbbr}/${citySlug}/1`}
+            href={`/${stateSlug}/${citySlug}/1`}
             class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 group"
           >
             <h3 class="font-bold text-granite group-hover:text-sage transition-colors text-lg mb-2">
@@ -322,7 +306,7 @@ const breadcrumbs = [
     <h2 class="text-3xl font-bold text-granite mb-6">Explore More</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <a
-        href={`/search?state=${stateAbbr}`}
+        href={`/search?state=${stateCode.toLowerCase()}`}
         class="flex items-center gap-3 p-4 bg-sage/10 rounded-lg hover:bg-sage/20 transition-colors group"
       >
         <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">

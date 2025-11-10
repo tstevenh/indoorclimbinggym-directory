@@ -8,6 +8,7 @@ import GymCard from '../components/GymCard.astro';
 import SearchBar from '../components/SearchBar.astro';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../utils/schema';
 import { fetchGyms } from '../config/api';
+import { getStateCode, getStateSlug, getStateName } from '../utils/states';
 
 export const prerender = true;
 
@@ -97,34 +98,7 @@ const topCategories = [
   },
 ];
 
-// State code to full name mapping
-const stateNames: Record<string, string> = {
-  'wa': 'Washington',
-  'tx': 'Texas',
-  'co': 'Colorado',
-  'ny': 'New York',
-  'ca': 'California',
-  'washington': 'Washington',
-  'texas': 'Texas',
-  'colorado': 'Colorado',
-  'new york': 'New York',
-  'california': 'California',
-  'ak': 'Alaska',
-  'alaska': 'Alaska',
-  'az': 'Arizona',
-  'arizona': 'Arizona'
-};
-
-// State codes mapping (full name lowercase to code)
-const stateToCode: Record<string, string> = {
-  'washington': 'wa',
-  'texas': 'tx',
-  'colorado': 'co',
-  'new york': 'ny',
-  'california': 'ca',
-  'alaska': 'ak',
-  'arizona': 'az'
-};
+// State utilities imported above
 
 // Generate homepage schemas
 const orgSchema = generateOrganizationSchema();
@@ -290,14 +264,14 @@ const description = 'Discover indoor climbing gyms near you. Search by location,
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {topStates.map(({ state, count }) => {
-        // Get state code (convert full name to code if needed)
-        const stateCode = stateToCode[state] || state;
-        // Get full state name
-        const fullName = stateNames[state] || stateNames[stateCode] || state.charAt(0).toUpperCase() + state.slice(1);
+        // Use utility functions for proper state handling
+        const stateCode = getStateCode(state);
+        const stateSlug = getStateSlug(state);
+        const fullName = getStateName(state);
 
         return (
           <a
-            href={`/${stateCode}`}
+            href={`/${stateSlug}`}
             class="block p-6 bg-white border border-gray-200 rounded-lg hover:border-sage hover:shadow-lg transition-all duration-300 group"
           >
             <div class="flex items-center justify-between mb-2">

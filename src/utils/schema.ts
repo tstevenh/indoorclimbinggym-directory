@@ -42,7 +42,7 @@ export function generateGymSchema(gym: Gym, pageUrl: string) {
     '@id': pageUrl,
     name: gym.name,
     image: gym.photo,
-    description: gym.description_short,
+    description: gym.about || gym.description_short,
     address: {
       '@type': 'PostalAddress',
       streetAddress: gym.full_address,
@@ -67,6 +67,46 @@ export function generateGymSchema(gym: Gym, pageUrl: string) {
       bestRating: 5,
       worstRating: 1,
     },
+    // Add detailed rating breakdown as additional properties
+    ...(gym.rating_route_quality > 0 && {
+      additionalProperty: [
+        ...(gym.rating_route_quality > 0 ? [{
+          '@type': 'PropertyValue',
+          name: 'Route Quality Rating',
+          value: gym.rating_route_quality,
+          maxValue: 5,
+          minValue: 0
+        }] : []),
+        ...(gym.rating_cleanliness > 0 ? [{
+          '@type': 'PropertyValue',
+          name: 'Cleanliness Rating',
+          value: gym.rating_cleanliness,
+          maxValue: 5,
+          minValue: 0
+        }] : []),
+        ...(gym.rating_staff_friendliness > 0 ? [{
+          '@type': 'PropertyValue',
+          name: 'Staff Friendliness Rating',
+          value: gym.rating_staff_friendliness,
+          maxValue: 5,
+          minValue: 0
+        }] : []),
+        ...(gym.rating_facilities > 0 ? [{
+          '@type': 'PropertyValue',
+          name: 'Facilities Rating',
+          value: gym.rating_facilities,
+          maxValue: 5,
+          minValue: 0
+        }] : []),
+        ...(gym.rating_value_for_money > 0 ? [{
+          '@type': 'PropertyValue',
+          name: 'Value for Money Rating',
+          value: gym.rating_value_for_money,
+          maxValue: 5,
+          minValue: 0
+        }] : [])
+      ].filter(Boolean)
+    }),
     amenityFeature: amenitiesList.map(amenity => ({
       '@type': 'LocationFeatureSpecification',
       name: amenity.replace(/_/g, ' '),

@@ -9,7 +9,7 @@ import CategoryLinks from '../../components/CategoryLinks.astro';
 import HelpfulGuides from '../../components/HelpfulGuides.astro';
 import OptimizedImage from '../../components/OptimizedImage.astro';
 import GymMap from '../../components/GymMap.astro';
-import { generateGymSchema, serializeSchema } from '../../utils/schema';
+import { generateGymSchema, generateFAQSchema, serializeSchema } from '../../utils/schema';
 import { generateGymTitle, generateGymDescription, generateGymKeywords } from '../../utils/seo';
 import { IMAGE_SIZES } from '../../utils/imageUtils';
 import { fetchGyms } from '../../config/api';
@@ -66,19 +66,6 @@ const description = generateGymDescription(gym.name, gym.city, climbingTypes, gy
 const keywords = generateGymKeywords(gym.name, gym.city, climbingTypes);
 const pageUrl = `https://www.indoorclimbinggym.com/gyms/${gym.slug}`;
 
-// Generate schema
-const gymSchema = generateGymSchema(gym, pageUrl);
-
-// Get related gyms (same city, then same state if needed)
-const allGyms = await fetchGyms();
-let relatedGyms = allGyms.filter(g => g.city === gym.city && g.id !== gym.id);
-if (relatedGyms.length < 3) {
-  const stateGyms = allGyms.filter(g => g.region === gym.region && g.id !== gym.id && g.city !== gym.city);
-  relatedGyms = [...relatedGyms, ...stateGyms].slice(0, 3);
-} else {
-  relatedGyms = relatedGyms.slice(0, 3);
-}
-
 // Generate FAQ data
 const faqs = [
   {
@@ -104,13 +91,28 @@ const faqs = [
       : `${gym.name} welcomes climbers of all levels. While not specifically marked as beginner-focused, the gym offers routes across various difficulty levels.`,
   },
 ];
+
+// Generate schemas
+const gymSchema = generateGymSchema(gym, pageUrl);
+const faqSchema = generateFAQSchema(gym.faq && gym.faq.length > 0 ? gym.faq : faqs);
+const combinedSchema = [gymSchema, faqSchema];
+
+// Get related gyms (same city, then same state if needed)
+const allGyms = await fetchGyms();
+let relatedGyms = allGyms.filter(g => g.city === gym.city && g.id !== gym.id);
+if (relatedGyms.length < 3) {
+  const stateGyms = allGyms.filter(g => g.region === gym.region && g.id !== gym.id && g.city !== gym.city);
+  relatedGyms = [...relatedGyms, ...stateGyms].slice(0, 3);
+} else {
+  relatedGyms = relatedGyms.slice(0, 3);
+}
 ---
 
 <BaseLayout
   title={title}
   description={description}
   keywords={keywords}
-  schema={gymSchema}
+  schema={combinedSchema}
   breadcrumbs={breadcrumbs}
   ogImage={gym.photo}
 >

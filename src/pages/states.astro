@@ -8,29 +8,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { generateSEO } from '../utils/seo';
 import { generateItemListSchema } from '../utils/schema';
 import { fetchGyms } from '../config/api';
+import { getStateCode, getStateSlug, getStateName } from '../utils/states';
 
 export const prerender = true;
 
 // Fetch all gyms
 const gymsData = await fetchGyms();
-
-// State code to full name mapping
-const stateCodeToName: Record<string, string> = {
-  'wa': 'Washington',
-  'tx': 'Texas',
-  'co': 'Colorado',
-  'ny': 'New York',
-  'ca': 'California',
-};
-
-// State name to code mapping (for URL generation)
-const stateNameToCode: Record<string, string> = {
-  'washington': 'wa',
-  'texas': 'tx',
-  'colorado': 'co',
-  'new york': 'ny',
-  'california': 'ca',
-};
 
 // Count gyms by state (region field)
 const stateCounts: Record<string, number> = {};
@@ -44,10 +27,10 @@ gymsData.forEach(gym => {
 // Convert to array and sort by count DESC
 const statesArray = Object.entries(stateCounts)
   .map(([stateName, count]) => {
-    const stateNameLower = stateName.toLowerCase();
     return {
-      name: stateCodeToName[stateNameLower] || stateName,
-      code: stateNameToCode[stateNameLower] || stateNameLower.replace(/\s+/g, '-'),
+      name: getStateName(stateName),      // "California", "Florida"
+      code: getStateCode(stateName),      // "CA", "FL"
+      slug: getStateSlug(stateName),      // "california", "florida"
       count
     };
   })
@@ -79,9 +62,9 @@ const seo = generateSEO({
 // Generate ItemList schema showing all states
 const itemListSchema = generateItemListSchema(
   statesArray.map(state => ({
-    id: state.code,
+    id: state.slug,
     name: state.name,
-    slug: state.code,
+    slug: state.slug,
     city: '',
     region: state.name,
     rating: 0,
@@ -154,7 +137,7 @@ const breadcrumbs = [
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {statesArray.map(state => (
         <a
-          href={`/${state.code}/`}
+          href={`/${state.slug}/`}
           class="block p-6 bg-white border border-gray-200 rounded-lg hover:border-sage hover:shadow-lg transition-all duration-300 group"
         >
           <div class="flex items-center justify-between mb-2">

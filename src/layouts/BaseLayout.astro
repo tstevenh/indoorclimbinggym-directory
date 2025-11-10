@@ -6,6 +6,7 @@
 import '../styles/global.css';
 import { createClient } from '../lib/supabase';
 import { fetchGyms } from '../config/api';
+import { getStateCode, getStateSlug } from '../utils/states';
 
 interface Props {
   title: string;
@@ -46,37 +47,6 @@ const { data: { user } } = await supabase.auth.getUser();
 // Fetch gyms to calculate top 5 states dynamically
 const gymsData = await fetchGyms();
 
-// Map full state names to state codes
-const stateNameToCode: Record<string, string> = {
-  'washington': 'wa',
-  'texas': 'tx',
-  'colorado': 'co',
-  'new york': 'ny',
-  'california': 'ca',
-  'florida': 'fl',
-  'oregon': 'or',
-  'arizona': 'az',
-  'utah': 'ut',
-  'north carolina': 'nc',
-  'nevada': 'nv',
-  'georgia': 'ga',
-  'illinois': 'il',
-  'massachusetts': 'ma',
-  'pennsylvania': 'pa',
-  // Handle state codes that might be in the data
-  'wa': 'wa',
-  'tx': 'tx',
-  'co': 'co',
-  'ny': 'ny',
-  'ca': 'ca',
-  'fl': 'fl',
-  'or': 'or',
-  'az': 'az',
-  'ut': 'ut',
-  'nc': 'nc',
-  'ak': 'ak',
-};
-
 // Count gyms by state (normalize to full name)
 const stateCounts: Record<string, number> = {};
 gymsData.forEach(gym => {
@@ -91,12 +61,6 @@ gymsData.forEach(gym => {
 const top5States = Object.entries(stateCounts)
   .sort(([,a], [,b]) => b - a)
   .slice(0, 5);
-
-// Map state names to state codes (for URLs)
-const stateToCode = (stateName: string): string => {
-  const code = stateNameToCode[stateName.toLowerCase()];
-  return code || stateName.toLowerCase().replace(/\s+/g, '-');
-};
 
 // Count gyms by city
 const cityCounts: Record<string, { count: number; city: string; region: string; slug: string }> = {};
@@ -203,7 +167,11 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
 
     <!-- JSON-LD Structured Data -->
-    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+    {Array.isArray(schema)
+      ? schema.map((s) => (
+          <script type="application/ld+json" set:html={JSON.stringify(s)} />
+        ))
+      : schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
     {
       breadcrumbSchema && (
         <script
@@ -278,10 +246,10 @@ if (breadcrumbs && breadcrumbs.length > 0) {
               <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div class="py-2">
                   {top5States.map(([stateName]) => {
-                    const stateCode = stateToCode(stateName);
+                    const stateSlug = getStateSlug(stateName);
                     return (
                       <a
-                        href={`/${stateCode}`}
+                        href={`/${stateSlug}`}
                         class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors"
                       >
                         {stateName}
@@ -420,11 +388,12 @@ if (breadcrumbs && breadcrumbs.length > 0) {
             <h4 class="font-semibold mb-3">Popular Cities</h4>
             <ul class="space-y-2 text-sm">
               {top5Cities.map(({ city, region, slug }) => {
-                const stateCode = stateToCode(region);
+                const stateCode = getStateCode(region);
+                const stateSlug = getStateSlug(region);
                 return (
                   <li>
-                    <a href={`/${stateCode}/${slug}/1`} class="hover:text-sage">
-                      {city}, {stateCode.toUpperCase()}
+                    <a href={`/${stateSlug}/${slug}/1`} class="hover:text-sage">
+                      {city}, {stateCode}
                     </a>
                   </li>
                 );
