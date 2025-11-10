@@ -10,17 +10,9 @@ import Pagination from '../../../components/Pagination.astro';
 import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
 import { generateCityTitle, generateCityDescription } from '../../../utils/seo';
 import { fetchGyms } from '../../../config/api';
+import { getStateSlug } from '../../../utils/states';
 
 export const prerender = true;
-
-// State abbreviation mapping
-const stateMap: { [key: string]: string } = {
-  'wa': 'Washington',
-  'tx': 'Texas',
-  'co': 'Colorado',
-  'ny': 'New York',
-  'ca': 'California',
-};
 
 export async function getStaticPaths() {
   // Fetch gyms from API
@@ -29,15 +21,6 @@ export async function getStaticPaths() {
   // Pagination settings
   const GYMS_PER_PAGE = 12;
 
-  // Define reverseStateMap inside the function to ensure proper scope
-  const reverseStateMap: { [key: string]: string } = {
-    'Washington': 'wa',
-    'Texas': 'tx',
-    'Colorado': 'co',
-    'New York': 'ny',
-    'California': 'ca',
-  };
-
   // Get unique city/state combinations
   const cityStatePairs = [...new Set(gyms.map(g => `${g.region}|${g.city}`))];
 
@@ -45,7 +28,7 @@ export async function getStaticPaths() {
 
   for (const pair of cityStatePairs) {
     const [region, city] = pair.split('|');
-    const stateAbbr = reverseStateMap[region] || region.toLowerCase().replace(/\s+/g, '-');
+    const stateSlug = getStateSlug(region); // Use utility function for all 50 states
     const citySlug = city.toLowerCase().replace(/\s+/g, '-');
     const cityGyms = gyms.filter(g => g.city === city && g.region === region);
 
@@ -62,7 +45,7 @@ export async function getStaticPaths() {
     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
       paths.push({
         params: {
-          state: stateAbbr,
+          state: stateSlug,
           city: citySlug,
           page: String(pageNum),
         },
