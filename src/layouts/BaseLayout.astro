@@ -43,7 +43,13 @@ const {
 // Note: On localhost with different ports (3000 vs 4321), cookies won't share
 // In production with same domain, this will work automatically
 const supabase = createClient(Astro);
-const { data: { user } } = await supabase.auth.getUser();
+const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+// Debug logging (remove after testing)
+if (authError) {
+  console.error('[Auth Debug] Error getting user:', authError);
+}
+console.log('[Auth Debug] User:', user ? `Logged in as ${user.email}` : 'Not logged in');
 
 // Fetch gyms to calculate top 5 states dynamically
 const gymsData = await fetchGyms();
