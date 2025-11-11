@@ -203,7 +203,13 @@ if (breadcrumbs && breadcrumbs.length > 0) {
       Skip to main content
     </a>
 
-    <!-- Header will go here -->
+    <!-- DEBUG: Remove this after testing -->
+  <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 text-sm" role="alert">
+    <strong>Debug:</strong> User = {user ? `${user.email} (LOGGED IN)` : 'NULL (NOT LOGGED IN)'} |
+    Auth Error = {authError ? authError.message : 'None'}
+  </div>
+
+  <!-- Header will go here -->
     <header class="bg-white shadow-sm">
       <div class="container mx-auto px-4 py-4">
         <nav class="flex items-center justify-between">
