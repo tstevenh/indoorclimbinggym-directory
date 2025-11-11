@@ -44,17 +44,15 @@ const {
 // In production with same domain, this will work automatically
 
 // Debug: Check what cookies we're receiving
-const cookieHeader = Astro.request.headers.get('cookie') || 'None';
-const supabaseCookies = cookieHeader
-  .split(';')
-  .map(c => c.trim())
-  .filter(c => c.startsWith('sb-'))
-  .map(c => {
-    const [name] = c.split('=');
-    return name;
-  });
+const cookieHeader = Astro.request.headers.get('cookie') || '';
+console.log('[Auth Debug] Full cookie header:', cookieHeader ? cookieHeader.substring(0, 200) + '...' : 'EMPTY');
 
-console.log('[Auth Debug] Cookie header present:', cookieHeader !== 'None');
+const allCookieNames = cookieHeader
+  ? cookieHeader.split(';').map(c => c.trim().split('=')[0]).filter(Boolean)
+  : [];
+console.log('[Auth Debug] All cookie names:', allCookieNames.join(', ') || 'None');
+
+const supabaseCookies = allCookieNames.filter(name => name.startsWith('sb-'));
 console.log('[Auth Debug] Supabase cookies found:', supabaseCookies.length > 0 ? supabaseCookies.join(', ') : 'None');
 
 const supabase = createClient(Astro);
