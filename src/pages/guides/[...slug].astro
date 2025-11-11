@@ -14,7 +14,6 @@ import TableOfContents from '../../components/blog/TableOfContents.astro';
 import { generateArticleSchema, generateBreadcrumbSchema } from '../../utils/schema';
 import { generateBlogPostTitle, generateBlogKeywords } from '../../utils/seo';
 
-export const prerender = true;
 
 export async function getStaticPaths() {
   const blogEntries = await getCollection('blog');
