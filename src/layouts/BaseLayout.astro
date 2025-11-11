@@ -40,29 +40,9 @@ const {
 } = Astro.props;
 
 // Check auth state
-// Note: On localhost with different ports (3000 vs 4321), cookies won't share
-// In production with same domain, this will work automatically
-
-// Debug: Check what cookies we're receiving
-const cookieHeader = Astro.request.headers.get('cookie') || '';
-console.log('[Auth Debug] Full cookie header:', cookieHeader ? cookieHeader.substring(0, 200) + '...' : 'EMPTY');
-
-const allCookieNames = cookieHeader
-  ? cookieHeader.split(';').map(c => c.trim().split('=')[0]).filter(Boolean)
-  : [];
-console.log('[Auth Debug] All cookie names:', allCookieNames.join(', ') || 'None');
-
-const supabaseCookies = allCookieNames.filter(name => name.startsWith('sb-'));
-console.log('[Auth Debug] Supabase cookies found:', supabaseCookies.length > 0 ? supabaseCookies.join(', ') : 'None');
-
+// Note: Cross-subdomain authentication works in production (dashboard.* and www.*)
 const supabase = createClient(Astro);
 const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-// Debug logging (remove after testing)
-if (authError) {
-  console.error('[Auth Debug] Error getting user:', authError);
-}
-console.log('[Auth Debug] User:', user ? `Logged in as ${user.email}` : 'Not logged in');
 
 // Fetch gyms to calculate top 5 states dynamically
 const gymsData = await fetchGyms();
@@ -215,13 +195,6 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     >
       Skip to main content
     </a>
-
-    <!-- DEBUG: Remove this after testing -->
-  <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 text-sm" role="alert">
-    <strong>Debug:</strong> User = {user ? `${user.email} (LOGGED IN)` : 'NULL (NOT LOGGED IN)'} |
-    Auth Error = {authError ? authError.message : 'None'} |
-    Cookies = {supabaseCookies.length > 0 ? `${supabaseCookies.length} found (${supabaseCookies.join(', ')})` : 'None found'}
-  </div>
 
   <!-- Header will go here -->
     <header class="bg-white shadow-sm">

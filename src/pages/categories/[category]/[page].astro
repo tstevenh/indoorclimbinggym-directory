@@ -17,6 +17,8 @@ import { fetchGyms } from '../../../config/api';
 /**
  * Generate static paths for all dynamic category pages with pagination
  */
+export const prerender = true;
+
 export async function getStaticPaths() {
   // Pagination settings
   const GYMS_PER_PAGE = 12;

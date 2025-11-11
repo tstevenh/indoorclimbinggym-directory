@@ -15,6 +15,7 @@ import { IMAGE_SIZES } from '../../utils/imageUtils';
 import { fetchGyms } from '../../config/api';
 import { getStateSlug } from '../../utils/states';
 
+export const prerender = true;
 
 export async function getStaticPaths() {
   const gyms = await fetchGyms();
