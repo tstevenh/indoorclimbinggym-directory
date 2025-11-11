@@ -23,9 +23,10 @@ export function createClient(Astro: any) {
             cookies.forEach(cookie => {
               const [name, ...valueParts] = cookie.split('=')
               if (name && valueParts.length > 0) {
+                // Don't decode - cookie values are already decoded by the browser
                 allCookies.push({
                   name: name.trim(),
-                  value: decodeURIComponent(valueParts.join('=').trim())
+                  value: valueParts.join('=').trim()
                 })
               }
             })
