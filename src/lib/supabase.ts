@@ -13,26 +13,23 @@ export function createClient(Astro: any) {
     {
       cookies: {
         getAll() {
-          // Parse cookies from request header (Astro-compatible)
-          const allCookies: { name: string; value: string }[] = []
-          const cookieHeader = Astro.request.headers.get('cookie') || ''
+          // Manual cookie parsing - Astro doesn't have a getAll() method
+          // Cookie values from HTTP headers are already decoded by the browser/HTTP layer
+          const cookieHeader = Astro.request.headers.get('cookie')
+          if (!cookieHeader) return []
 
-          if (cookieHeader) {
-            const cookies = cookieHeader.split(';').map(c => c.trim())
-
-            cookies.forEach(cookie => {
+          return cookieHeader
+            .split(';')
+            .map(cookie => cookie.trim())
+            .filter(cookie => cookie.length > 0)
+            .map(cookie => {
               const [name, ...valueParts] = cookie.split('=')
-              if (name && valueParts.length > 0) {
-                // Don't decode - cookie values are already decoded by the browser
-                allCookies.push({
-                  name: name.trim(),
-                  value: valueParts.join('=').trim()
-                })
+              return {
+                name: name.trim(),
+                value: valueParts.join('=').trim() // Rejoin in case value contains '='
               }
             })
-          }
-
-          return allCookies
+            .filter(cookie => cookie.name && cookie.value)
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {

@@ -42,6 +42,21 @@ const {
 // Check auth state
 // Note: On localhost with different ports (3000 vs 4321), cookies won't share
 // In production with same domain, this will work automatically
+
+// Debug: Check what cookies we're receiving
+const cookieHeader = Astro.request.headers.get('cookie') || 'None';
+const supabaseCookies = cookieHeader
+  .split(';')
+  .map(c => c.trim())
+  .filter(c => c.startsWith('sb-'))
+  .map(c => {
+    const [name] = c.split('=');
+    return name;
+  });
+
+console.log('[Auth Debug] Cookie header present:', cookieHeader !== 'None');
+console.log('[Auth Debug] Supabase cookies found:', supabaseCookies.length > 0 ? supabaseCookies.join(', ') : 'None');
+
 const supabase = createClient(Astro);
 const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -206,7 +221,8 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     <!-- DEBUG: Remove this after testing -->
   <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 text-sm" role="alert">
     <strong>Debug:</strong> User = {user ? `${user.email} (LOGGED IN)` : 'NULL (NOT LOGGED IN)'} |
-    Auth Error = {authError ? authError.message : 'None'}
+    Auth Error = {authError ? authError.message : 'None'} |
+    Cookies = {supabaseCookies.length > 0 ? `${supabaseCookies.length} found (${supabaseCookies.join(', ')})` : 'None found'}
   </div>
 
   <!-- Header will go here -->
