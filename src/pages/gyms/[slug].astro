@@ -170,16 +170,18 @@ if (relatedGyms.length < 3) {
           </div>
 
           <!-- Favorite Button (Right Side) -->
-          <a
-            href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard/favorites/add?gym_id=${gym.id}&return_url=${encodeURIComponent(`${import.meta.env.PUBLIC_SITE_URL}/gyms/${gym.slug}`)}`}
+          <button
+            id="favorite-btn"
+            data-gym-id={gym.id}
+            data-gym-slug={gym.slug}
             class="flex items-center gap-2 px-4 py-2 border-2 border-sage text-sage rounded-full hover:bg-sage transition-colors group"
             title="Save to favorites"
           >
-            <svg class="w-5 h-5 group-hover:stroke-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg id="favorite-icon" class="w-5 h-5 group-hover:stroke-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
-            <span class="text-sm font-medium hidden sm:inline group-hover:text-white transition-colors">Save to Favorites</span>
-          </a>
+            <span id="favorite-text" class="text-sm font-medium hidden sm:inline group-hover:text-white transition-colors">Save to Favorites</span>
+          </button>
         </div>
         <div class="flex items-center gap-4 mb-4">
           <div class="flex items-center gap-2">
@@ -809,4 +811,118 @@ if (relatedGyms.length < 3) {
       });
     </script>
   )}
+
+  {/* Favorite Button Script */}
+  <script define:vars={{
+    dashboardUrl: import.meta.env.PUBLIC_DASHBOARD_URL,
+    supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL,
+    supabaseKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+  }}>
+    (async function() {
+      const favoriteBtn = document.getElementById('favorite-btn');
+      const favoriteIcon = document.getElementById('favorite-icon');
+      const favoriteText = document.getElementById('favorite-text');
+
+      if (!favoriteBtn) return;
+
+      const gymId = favoriteBtn.dataset.gymId;
+      const gymSlug = favoriteBtn.dataset.gymSlug;
+      let isFavorited = false;
+      let userId = null;
+
+      // Get auth cookie
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+      }
+
+      // Check if user is logged in by checking for auth cookie
+      const authCookie = getCookie(`sb-${supabaseUrl.split('//')[1].split('.')[0]}-auth-token`);
+
+      if (!authCookie) {
+        // Not logged in - redirect to login on click
+        favoriteBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.location.href = `${dashboardUrl}/login?redirectTo=${encodeURIComponent(`${window.location.origin}/gyms/${gymSlug}`)}`;
+        });
+        return;
+      }
+
+      // User is logged in - check if gym is favorited
+      try {
+        const response = await fetch(`${dashboardUrl}/api/favorites/check?gym_id=${gymId}`, {
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          isFavorited = data.isFavorited;
+          userId = data.userId;
+
+          // Update UI based on favorite status
+          updateFavoriteUI();
+        }
+      } catch (error) {
+        console.error('Error checking favorite status:', error);
+      }
+
+      function updateFavoriteUI() {
+        if (isFavorited) {
+          // Show filled heart with sage green
+          favoriteIcon.setAttribute('fill', 'currentColor');
+          favoriteIcon.classList.add('text-sage', 'group-hover:text-white');
+          favoriteIcon.classList.remove('group-hover:stroke-white');
+          favoriteText.textContent = 'In Your Favorites';
+          favoriteBtn.title = 'Remove from favorites';
+        } else {
+          // Show empty heart
+          favoriteIcon.setAttribute('fill', 'none');
+          favoriteIcon.classList.remove('text-sage', 'group-hover:text-white');
+          favoriteIcon.classList.add('group-hover:stroke-white');
+          favoriteText.textContent = 'Save to Favorites';
+          favoriteBtn.title = 'Save to favorites';
+        }
+      }
+
+      // Handle favorite toggle
+      favoriteBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!userId) {
+          window.location.href = `${dashboardUrl}/login?redirectTo=${encodeURIComponent(`${window.location.origin}/gyms/${gymSlug}`)}`;
+          return;
+        }
+
+        favoriteBtn.disabled = true;
+
+        try {
+          const url = isFavorited
+            ? `${dashboardUrl}/api/favorites/remove`
+            : `${dashboardUrl}/api/favorites/add`;
+
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gym_id: gymId }),
+            credentials: 'include'
+          });
+
+          if (response.ok) {
+            isFavorited = !isFavorited;
+            updateFavoriteUI();
+          } else {
+            alert('Failed to update favorites. Please try again.');
+          }
+        } catch (error) {
+          console.error('Error toggling favorite:', error);
+          alert('Something went wrong. Please try again.');
+        } finally {
+          favoriteBtn.disabled = false;
+        }
+      });
+    })();
+  </script>
 </BaseLayout>

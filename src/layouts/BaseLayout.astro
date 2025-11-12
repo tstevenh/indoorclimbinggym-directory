@@ -8,6 +8,7 @@ import { createClient } from '../lib/supabase';
 import { fetchGyms } from '../config/api';
 import { getStateCode, getStateSlug } from '../utils/states';
 import SpeedInsights from '@vercel/speed-insights/astro';
+import Analytics from '@vercel/analytics/astro';
 
 interface Props {
   title: string;
@@ -186,6 +187,9 @@ if (breadcrumbs && breadcrumbs.length > 0) {
 
     <!-- Vercel Speed Insights -->
     <SpeedInsights />
+
+    <!-- Vercel Web Analytics -->
+    <Analytics />
   </head>
   <body class="min-h-screen bg-ivory text-granite antialiased">
     <!-- Skip to main content link for accessibility -->
