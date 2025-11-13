@@ -10,6 +10,8 @@ import { generateOrganizationSchema, generateWebSiteSchema } from '../utils/sche
 import { fetchGyms } from '../config/api';
 import { getStateCode, getStateSlug, getStateName } from '../utils/states';
 
+// Enable static site generation (SSG)
+export const prerender = true;
 
 // Fetch gyms from API at build time
 const gyms = await fetchGyms();

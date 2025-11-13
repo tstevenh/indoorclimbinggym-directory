@@ -33,10 +33,18 @@ export function createClient(Astro: any) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
-            Astro.cookies.set(name, value, {
-              ...options,
-              domain: cookieDomain, // Share cookies across subdomains in production
-            })
+            try {
+              Astro.cookies.set(name, value, {
+                ...options,
+                domain: cookieDomain, // Share cookies across subdomains in production
+              })
+            } catch (error) {
+              // Silently ignore ResponseSentError - this is expected when:
+              // - Response already sent (redirects, after SSR)
+              // - Supabase tries to refresh auth tokens after page load
+              // This is normal behavior and doesn't affect functionality
+              return
+            }
           })
         },
       },

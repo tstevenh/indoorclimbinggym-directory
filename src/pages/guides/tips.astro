@@ -11,6 +11,9 @@ import BlogCard from '../../components/blog/BlogCard.astro';
 import BlogCategories from '../../components/blog/BlogCategories.astro';
 import { generateItemListSchema } from '../../utils/schema';
 
+// Enable static site generation (SSG)
+export const prerender = true;
+
 // Get all blog posts in "tips" category
 const allPosts = await getCollection('blog', ({ data }) => data.category === 'tips');
 const sortedPosts = allPosts.sort(

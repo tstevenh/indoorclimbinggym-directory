@@ -11,6 +11,9 @@ import BlogCard from '../../components/blog/BlogCard.astro';
 import BlogCategories from '../../components/blog/BlogCategories.astro';
 import { generateItemListSchema } from '../../utils/schema';
 
+// Enable static site generation (SSG)
+export const prerender = true;
+
 const allPosts = await getCollection('blog', ({ data }) => data.category === 'gear');
 const sortedPosts = allPosts.sort(
   (a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime()

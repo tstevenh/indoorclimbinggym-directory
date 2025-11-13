@@ -4,11 +4,10 @@
  * Foundation layout for all pages with comprehensive SEO meta tags and schema markup
  */
 import '../styles/global.css';
-import { createClient } from '../lib/supabase';
-import { fetchGyms } from '../config/api';
 import { getStateCode, getStateSlug } from '../utils/states';
 import SpeedInsights from '@vercel/speed-insights/astro';
 import Analytics from '@vercel/analytics/astro';
+import { createClient } from '@supabase/supabase-js';
 
 interface Props {
   title: string;
@@ -40,17 +39,24 @@ const {
   nextUrl,
 } = Astro.props;
 
-// Check auth state
-// Note: Cross-subdomain authentication works in production (dashboard.* and www.*)
-const supabase = createClient(Astro);
-const { data: { user }, error: authError } = await supabase.auth.getUser();
+// Fetch gyms directly from Supabase at build time
+const supabase = createClient(
+  import.meta.env.PUBLIC_SUPABASE_URL,
+  import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+);
 
-// Fetch gyms to calculate top 5 states dynamically
-const gymsData = await fetchGyms();
+const { data: gymsData, error } = await supabase
+  .from('gyms')
+  .select('region')
+  .order('rating', { ascending: false });
+
+if (error) {
+  console.error('Error fetching gyms for navigation:', error);
+}
 
 // Count gyms by state (normalize to full name)
 const stateCounts: Record<string, number> = {};
-gymsData.forEach(gym => {
+(gymsData || []).forEach(gym => {
   const region = gym.region?.trim();
   if (region) {
     // Use the region as-is (it's already the full state name)
@@ -277,46 +283,14 @@ if (breadcrumbs && breadcrumbs.length > 0) {
             <a href="/guides" class="text-granite hover:text-sage transition-colors">Guides</a>
             <a href="/about" class="text-granite hover:text-sage transition-colors">About</a>
 
-            {user ? (
-              <!-- Logged In: Show Email Dropdown -->
-              <div class="relative group">
-                <button class="flex items-center gap-2 text-granite hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  <span class="max-w-[150px] truncate">{user.email}</span>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                <!-- Dropdown Menu -->
-                <div class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div class="py-2">
-                    <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard`} class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                      Dashboard
-                    </a>
-                    <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard/favorites`} class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                      My Favorites
-                    </a>
-                    <div class="border-t border-gray-200 my-2"></div>
-                    <form method="POST" action={`${import.meta.env.PUBLIC_DASHBOARD_URL}/api/auth/signout`}>
-                      <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
-                        Sign Out
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <!-- Logged Out: Show Login/Sign Up -->
-              <>
-                <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/login`} class="text-granite hover:text-sage transition-colors">Login</a>
-                <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/signup`} class="bg-sage text-white px-6 py-2 rounded hover:bg-sage/90 transition-colors">
-                  Sign Up
-                </a>
-              </>
-            )}
+            <!-- Auth Section (Updated by client-side JavaScript) -->
+            <div id="desktop-auth-section">
+              <!-- Default: Logged Out -->
+              <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/login`} class="text-granite hover:text-sage transition-colors">Login</a>
+              <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/signup`} class="bg-sage text-white px-6 py-2 rounded hover:bg-sage/90 transition-colors">
+                Sign Up
+              </a>
+            </div>
           </div>
 
           <!-- Mobile Hamburger Button -->
@@ -458,135 +432,60 @@ if (breadcrumbs && breadcrumbs.length > 0) {
           </svg>
         </button>
 
-        {user ? (
-          <!-- Logged In User Section -->
-          <>
-            <!-- User Email Display -->
-            <div class="mx-6 mt-6 mb-4 px-6 py-3 bg-sage/10 rounded-lg">
-              <div class="flex items-center gap-2 text-granite">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <span class="text-sm font-medium truncate">{user.email}</span>
-              </div>
-            </div>
+        <!-- Mobile Auth Section (Updated by client-side JavaScript) -->
+        <div id="mobile-auth-section">
+          <!-- Default: Logged Out -->
+          <!-- Sign Up Button -->
+          <a
+            href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/signup`}
+            class="block mx-6 mt-6 mb-4 px-6 py-3 bg-sage text-white text-center rounded-lg font-medium hover:bg-sage/90 transition-colors"
+          >
+            Sign Up
+          </a>
 
-            <!-- Divider -->
-            <div class="border-t border-gray-200"></div>
+          <!-- Divider -->
+          <div class="border-t border-gray-200"></div>
 
-            <!-- Navigation Links -->
-            <nav class="py-2">
-              <a
-                href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard`}
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Dashboard
-              </a>
-              <a
-                href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard/favorites`}
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                My Favorites
-              </a>
-              <a
-                href="/search"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Search
-              </a>
-              <a
-                href="/states"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Browse States
-              </a>
-              <a
-                href="/categories"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Browse Categories
-              </a>
-              <a
-                href="/guides"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Guides
-              </a>
-              <a
-                href="/about"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                About
-              </a>
-            </nav>
-
-            <!-- Divider -->
-            <div class="border-t border-gray-200"></div>
-
-            <!-- Sign Out -->
-            <div class="py-2">
-              <form method="POST" action={`${import.meta.env.PUBLIC_DASHBOARD_URL}/api/auth/signout`}>
-                <button type="submit" class="block w-full text-left px-6 py-4 text-red-600 hover:bg-red-50 transition-colors">
-                  Sign Out
-                </button>
-              </form>
-            </div>
-          </>
-        ) : (
-          <!-- Logged Out Section -->
-          <>
-            <!-- Sign Up Button -->
+          <!-- Navigation Links -->
+          <nav class="py-2">
             <a
-              href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/signup`}
-              class="block mx-6 mt-6 mb-4 px-6 py-3 bg-sage text-white text-center rounded-lg font-medium hover:bg-sage/90 transition-colors"
+              href="/search"
+              class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
             >
-              Sign Up
+              Search
             </a>
-
-            <!-- Divider -->
-            <div class="border-t border-gray-200"></div>
-
-            <!-- Navigation Links -->
-            <nav class="py-2">
-              <a
-                href="/search"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Search
-              </a>
-              <a
-                href="/states"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Browse States
-              </a>
-              <a
-                href="/categories"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Browse Categories
-              </a>
-              <a
-                href="/guides"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Guides
-              </a>
-              <a
-                href="/about"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                About
-              </a>
-              <a
-                href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/login`}
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Login
-              </a>
-            </nav>
-          </>
-        )}
+            <a
+              href="/states"
+              class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+            >
+              Browse States
+            </a>
+            <a
+              href="/categories"
+              class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+            >
+              Browse Categories
+            </a>
+            <a
+              href="/guides"
+              class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+            >
+              Guides
+            </a>
+            <a
+              href="/about"
+              class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+            >
+              About
+            </a>
+            <a
+              href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/login`}
+              class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+            >
+              Login
+            </a>
+          </nav>
+        </div>
 
         <!-- Divider -->
         <div class="border-t border-gray-200"></div>
@@ -651,6 +550,202 @@ if (breadcrumbs && breadcrumbs.length > 0) {
           closeMenu();
         }
       });
+    </script>
+
+    <script define:vars={{
+      dashboardUrl: import.meta.env.PUBLIC_DASHBOARD_URL,
+      supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL
+    }}>
+      // Client-side auth check and navigation update
+      (async function() {
+        // Helper function to get cookie value
+        function getCookie(name) {
+          const value = `; ${document.cookie}`;
+          const parts = value.split(`; ${name}=`);
+          if (parts.length === 2) return parts.pop().split(';').shift();
+          return null;
+        }
+
+        // Get auth cookie
+        const projectRef = supabaseUrl.split('//')[1].split('.')[0];
+        const authCookie = getCookie(`sb-${projectRef}-auth-token`);
+
+        // If no auth cookie, user is logged out - keep default state
+        if (!authCookie) {
+          return;
+        }
+
+        // User has auth cookie - fetch user data
+        try {
+          const response = await fetch(`${dashboardUrl}/api/user`, {
+            credentials: 'include'
+          });
+
+          if (!response.ok) {
+            // If API call fails, keep logged-out state
+            return;
+          }
+
+          const { user } = await response.json();
+
+          if (!user || !user.email) {
+            return;
+          }
+
+          // Update desktop navigation
+          const desktopAuthSection = document.getElementById('desktop-auth-section');
+          if (desktopAuthSection) {
+            desktopAuthSection.innerHTML = `
+              <div class="relative">
+                <button
+                  id="desktop-user-menu-button"
+                  class="flex items-center gap-2 text-granite hover:text-sage transition-colors"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span class="text-sm font-medium">${user.email}</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                <div
+                  id="desktop-user-dropdown"
+                  class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-50"
+                >
+                  <a
+                    href="${dashboardUrl}/dashboard"
+                    class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+                  >
+                    Dashboard
+                  </a>
+                  <a
+                    href="${dashboardUrl}/dashboard/favorites"
+                    class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+                  >
+                    My Favorites
+                  </a>
+                  <a
+                    href="${dashboardUrl}/dashboard/profile"
+                    class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+                  >
+                    Profile
+                  </a>
+                  <div class="border-t border-gray-200 my-1"></div>
+                  <form method="POST" action="${dashboardUrl}/api/auth/signout">
+                    <button
+                      type="submit"
+                      class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      Sign Out
+                    </button>
+                  </form>
+                </div>
+              </div>
+            `;
+
+            // Add dropdown toggle functionality
+            const menuButton = document.getElementById('desktop-user-menu-button');
+            const dropdown = document.getElementById('desktop-user-dropdown');
+
+            if (menuButton && dropdown) {
+              menuButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('hidden');
+              });
+
+              // Close dropdown when clicking outside
+              document.addEventListener('click', (e) => {
+                if (!dropdown.classList.contains('hidden')) {
+                  dropdown.classList.add('hidden');
+                }
+              });
+            }
+          }
+
+          // Update mobile navigation
+          const mobileAuthSection = document.getElementById('mobile-auth-section');
+          if (mobileAuthSection) {
+            mobileAuthSection.innerHTML = `
+              <!-- User Email Display -->
+              <div class="mx-6 mt-6 mb-4 px-6 py-3 bg-sage/10 rounded-lg">
+                <div class="flex items-center gap-2 text-granite">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span class="text-sm font-medium truncate">${user.email}</span>
+                </div>
+              </div>
+
+              <!-- Divider -->
+              <div class="border-t border-gray-200"></div>
+
+              <!-- Navigation Links -->
+              <nav class="py-2">
+                <a
+                  href="${dashboardUrl}/dashboard"
+                  class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+                >
+                  Dashboard
+                </a>
+                <a
+                  href="${dashboardUrl}/dashboard/favorites"
+                  class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+                >
+                  My Favorites
+                </a>
+                <a
+                  href="/search"
+                  class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+                >
+                  Search
+                </a>
+                <a
+                  href="/states"
+                  class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+                >
+                  Browse States
+                </a>
+                <a
+                  href="/categories"
+                  class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+                >
+                  Browse Categories
+                </a>
+                <a
+                  href="/guides"
+                  class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+                >
+                  Guides
+                </a>
+                <a
+                  href="/about"
+                  class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
+                >
+                  About
+                </a>
+              </nav>
+
+              <!-- Divider -->
+              <div class="border-t border-gray-200"></div>
+
+              <!-- Sign Out -->
+              <div class="py-2">
+                <form method="POST" action="${dashboardUrl}/api/auth/signout">
+                  <button type="submit" class="block w-full text-left px-6 py-4 text-red-600 hover:bg-red-50 transition-colors">
+                    Sign Out
+                  </button>
+                </form>
+              </div>
+            `;
+          }
+
+        } catch (error) {
+          // If any error occurs, keep logged-out state
+          console.error('Auth check failed:', error);
+        }
+      })();
     </script>
   </body>
 </html>

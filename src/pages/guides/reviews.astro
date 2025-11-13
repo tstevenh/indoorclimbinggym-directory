@@ -9,7 +9,10 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogCard from '../../components/blog/BlogCard.astro';
 import BlogCategories from '../../components/blog/BlogCategories.astro';
-import { generateItemListSchema } from '../../utils/schema';
+import { generateItemListSchema} from '../../utils/schema';
+
+// Enable static site generation (SSG)
+export const prerender = true;
 
 const allPosts = await getCollection('blog', ({ data }) => data.category === 'reviews');
 const sortedPosts = allPosts.sort(
