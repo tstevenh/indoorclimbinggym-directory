@@ -70,6 +70,8 @@ export async function fetchGyms(params?: Record<string, string>) {
         featured: isFeaturedActive, // Update featured based on expiration
         rating_overall: gym.rating_overall || calculatedOverall, // Use stored or calculated
         rating: gym.rating_overall || calculatedOverall, // Legacy field for compatibility
+        photo: gym.hero_image || '', // Map hero_image to photo for backwards compatibility
+        longtitude: gym.longitude || 0, // Map longitude to longtitude (legacy misspelling)
       }
     })
 
@@ -158,6 +160,8 @@ export async function fetchGymBySlug(identifier: string) {
       featured: isFeaturedActive,
       rating_overall: gym.rating_overall || calculatedOverall,
       rating: gym.rating_overall || calculatedOverall,
+      photo: gym.hero_image || '', // Map hero_image to photo for backwards compatibility
+      longtitude: gym.longitude || 0, // Map longitude to longtitude (legacy misspelling)
     }
   } catch (error) {
     console.error('Error fetching gym:', error)
