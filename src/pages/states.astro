@@ -7,14 +7,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { generateSEO } from '../utils/seo';
 import { generateItemListSchema } from '../utils/schema';
-import { fetchGyms } from '../config/api';
+import { fetchGymsFromSupabase } from '../config/api';
 import { getStateCode, getStateSlug, getStateName } from '../utils/states';
 
 // Enable static site generation (SSG)
 export const prerender = true;
 
 // Fetch all gyms
-const gymsData = await fetchGyms();
+const gymsData = await fetchGymsFromSupabase();
 
 // Count gyms by state (region field)
 const stateCounts: Record<string, number> = {};

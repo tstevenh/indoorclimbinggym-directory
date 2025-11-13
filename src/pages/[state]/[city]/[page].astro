@@ -9,7 +9,7 @@ import GymCard from '../../../components/GymCard.astro';
 import Pagination from '../../../components/Pagination.astro';
 import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
 import { generateCityTitle, generateCityDescription } from '../../../utils/seo';
-import { fetchGyms } from '../../../config/api';
+import { fetchGymsFromSupabase } from '../../../config/api';
 import { getStateSlug } from '../../../utils/states';
 
 
@@ -17,7 +17,7 @@ export const prerender = true;
 
 export async function getStaticPaths() {
   // Fetch gyms from API
-  const gyms = await fetchGyms();
+  const gyms = await fetchGymsFromSupabase();
 
   // Pagination settings
   const GYMS_PER_PAGE = 12;

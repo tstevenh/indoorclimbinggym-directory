@@ -11,7 +11,7 @@ import GymCard from '../../../components/GymCard.astro';
 import Pagination from '../../../components/Pagination.astro';
 import { generateSEO } from '../../../utils/seo';
 import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
-import { fetchGyms } from '../../../config/api';
+import { fetchGymsFromSupabase } from '../../../config/api';
 
 
 /**
@@ -22,8 +22,8 @@ export const prerender = true;
 export async function getStaticPaths() {
   // Pagination settings
   const GYMS_PER_PAGE = 12;
-  // Fetch gyms from API
-  const gymsData = await fetchGyms();
+  // Fetch gyms from Supabase at build time
+  const gymsData = await fetchGymsFromSupabase();
 
   // Parse all amenities and climbing types from data
   const allAmenities = new Set<string>();

@@ -3,6 +3,8 @@
  * Centralized API calls to Next.js backend
  */
 
+import { createClient } from '@supabase/supabase-js';
+
 export const API_BASE_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
 
 /**
@@ -193,4 +195,34 @@ export function extractGymMetadata(gyms: any[]) {
     amenities,
     climbingTypes,
   };
+}
+
+/**
+ * Fetch gyms directly from Supabase at build time
+ * Use this for SSG pages to avoid API rate limits
+ * @returns Array of gym objects
+ */
+export async function fetchGymsFromSupabase() {
+  try {
+    const supabase = createClient(
+      import.meta.env.PUBLIC_SUPABASE_URL,
+      import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+    );
+
+    const { data: gymsData, error } = await supabase
+      .from('gyms')
+      .select('*')
+      .order('rating', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching gyms from Supabase:', error);
+      return [];
+    }
+
+    // Transform each gym to match expected format
+    return (gymsData || []).map(transformGym);
+  } catch (error) {
+    console.error('Error fetching gyms from Supabase:', error);
+    return [];
+  }
 }

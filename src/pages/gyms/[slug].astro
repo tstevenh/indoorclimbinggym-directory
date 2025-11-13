@@ -12,13 +12,13 @@ import GymMap from '../../components/GymMap.astro';
 import { generateGymSchema, generateFAQSchema, serializeSchema } from '../../utils/schema';
 import { generateGymTitle, generateGymDescription, generateGymKeywords } from '../../utils/seo';
 import { IMAGE_SIZES } from '../../utils/imageUtils';
-import { fetchGyms } from '../../config/api';
+import { fetchGymsFromSupabase } from '../../config/api';
 import { getStateSlug } from '../../utils/states';
 
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const gyms = await fetchGyms();
+  const gyms = await fetchGymsFromSupabase();
 
   return gyms.map(gym => ({
     params: { slug: gym.slug },
@@ -94,7 +94,7 @@ const faqSchema = generateFAQSchema(gym.faq && gym.faq.length > 0 ? gym.faq : fa
 const combinedSchema = [gymSchema, faqSchema];
 
 // Get related gyms (same city, then same state if needed)
-const allGyms = await fetchGyms();
+const allGyms = await fetchGymsFromSupabase();
 let relatedGyms = allGyms.filter(g => g.city === gym.city && g.id !== gym.id);
 if (relatedGyms.length < 3) {
   const stateGyms = allGyms.filter(g => g.region === gym.region && g.id !== gym.id && g.city !== gym.city);

@@ -7,14 +7,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import GymCard from '../components/GymCard.astro';
 import SearchBar from '../components/SearchBar.astro';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../utils/schema';
-import { fetchGyms } from '../config/api';
+import { fetchGymsFromSupabase } from '../config/api';
 import { getStateCode, getStateSlug, getStateName } from '../utils/states';
 
 // Enable static site generation (SSG)
 export const prerender = true;
 
 // Fetch gyms from API at build time
-const gyms = await fetchGyms();
+const gyms = await fetchGymsFromSupabase();
 
 // Get featured gyms (if any)
 const allFeaturedGyms = gyms.filter(g => g.featured);

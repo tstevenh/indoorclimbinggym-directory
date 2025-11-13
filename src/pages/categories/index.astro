@@ -7,7 +7,7 @@
  */
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { fetchGyms } from '../../config/api';
+import { fetchGymsFromSupabase } from '../../config/api';
 import gymsJsonData from '../../data/gyms.json';
 
 // Enable static site generation (SSG)
@@ -16,7 +16,7 @@ export const prerender = true;
 // Fetch gyms from API (with JSON fallback)
 let gymsData;
 try {
-  gymsData = await fetchGyms();
+  gymsData = await fetchGymsFromSupabase();
 } catch (error) {
   console.log('API unavailable, using local JSON data');
   gymsData = gymsJsonData;
