@@ -1,11 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js'
 
 /**
  * API Configuration and Helper Functions
  * Centralized API calls to Next.js backend
  */
 
-export const API_BASE_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+export const API_BASE_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000'
 
 /**
  * Transform API gym object to match Astro site's expected format
@@ -104,7 +104,7 @@ function transformGym(apiGym: any): any {
     rating_staff_friendliness: apiGym.rating_staff_friendliness || 0,
     rating_facilities: apiGym.rating_facilities || 0,
     rating_value_for_money: apiGym.rating_value_for_money || 0,
-  };
+  }
 }
 
 /**
@@ -117,38 +117,38 @@ export async function fetchGyms(params?: Record<string, string>) {
     const supabase = createClient(
       import.meta.env.PUBLIC_SUPABASE_URL,
       import.meta.env.PUBLIC_SUPABASE_ANON_KEY
-    );
+    )
 
     let query = supabase
       .from('gyms')
       .select('*')
-      .eq('status', 'published');
+      .eq('status', 'published')
 
     if (params?.city) {
-      query = query.eq('city', params.city);
+      query = query.eq('city', params.city)
     }
 
     if (params?.region) {
-      query = query.eq('region', params.region);
+      query = query.eq('region', params.region)
     }
 
     if (params?.limit) {
-      const limitNumber = parseInt(params.limit, 10);
+      const limitNumber = parseInt(params.limit, 10)
       if (!Number.isNaN(limitNumber) && limitNumber > 0) {
-        query = query.limit(limitNumber);
+        query = query.limit(limitNumber)
       }
     }
 
-    const { data: gymsData, error } = await query;
+    const { data: gymsData, error } = await query
 
     if (error) {
-      throw error;
+      throw error
     }
 
-    return (gymsData || []).map(transformGym);
+    return (gymsData || []).map(transformGym)
   } catch (error) {
-    console.error('Error fetching gyms:', error);
-    throw error;
+    console.error('Error fetching gyms:', error)
+    throw error
   }
 }
 
@@ -159,17 +159,40 @@ export async function fetchGyms(params?: Record<string, string>) {
  */
 export async function fetchGymBySlug(identifier: string) {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/gyms/${identifier}`);
+    const supabase = createClient(
+      import.meta.env.PUBLIC_SUPABASE_URL,
+      import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+    )
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch gym: ${response.statusText}`);
+    // Try slug first
+    let { data: gym, error } = await supabase
+      .from('gyms')
+      .select('*')
+      .eq('slug', identifier)
+      .eq('status', 'published')
+      .single()
+
+    // If not found by slug, try by ID
+    if ((!gym || error) && error?.code === 'PGRST116') {
+      const result = await supabase
+        .from('gyms')
+        .select('*')
+        .eq('id', identifier)
+        .eq('status', 'published')
+        .single()
+
+      gym = result.data
+      error = result.error
     }
 
-    const data = await response.json();
-    return transformGym(data.gym);
+    if (error || !gym) {
+      throw new Error('Gym not found')
+    }
+
+    return transformGym(gym)
   } catch (error) {
-    console.error('Error fetching gym:', error);
-    throw error;
+    console.error('Error fetching gym:', error)
+    throw error
   }
 }
 
@@ -179,31 +202,31 @@ export async function fetchGymBySlug(identifier: string) {
  * @returns Object with unique cities, states, amenities, and climbing types
  */
 export function extractGymMetadata(gyms: any[]) {
-  const cities = [...new Set(gyms.map(g => g.city))].sort();
-  const states = [...new Set(gyms.map(g => g.region))].sort();
+  const cities = [...new Set(gyms.map(g => g.city))].filter(Boolean).sort()
+  const states = [...new Set(gyms.map(g => g.region))].filter(Boolean).sort()
 
   // Extract all unique amenities
-  const amenitiesSet = new Set<string>();
+  const amenitiesSet = new Set<string>()
   gyms.forEach(g => {
     if (g.amenities) {
-      g.amenities.split('|').forEach((a: string) => amenitiesSet.add(a));
+      g.amenities.split('|').forEach((a: string) => amenitiesSet.add(a.trim()))
     }
-  });
-  const amenities = [...amenitiesSet].sort();
+  })
+  const amenities = [...amenitiesSet].filter(Boolean).sort()
 
   // Extract all unique climbing types
-  const climbingTypesSet = new Set<string>();
+  const climbingTypesSet = new Set<string>()
   gyms.forEach(g => {
     if (g.climbing_types) {
-      g.climbing_types.split('|').forEach((t: string) => climbingTypesSet.add(t));
+      g.climbing_types.split('|').forEach((t: string) => climbingTypesSet.add(t.trim()))
     }
-  });
-  const climbingTypes = [...climbingTypesSet].sort();
+  })
+  const climbingTypes = [...climbingTypesSet].filter(Boolean).sort()
 
   return {
     cities,
     states,
     amenities,
     climbingTypes,
-  };
+  }
 }
