@@ -1,3 +1,5 @@
+import { createClient } from '@supabase/supabase-js';
+
 /**
  * API Configuration and Helper Functions
  * Centralized API calls to Next.js backend
@@ -112,27 +114,38 @@ function transformGym(apiGym: any): any {
  */
 export async function fetchGyms(params?: Record<string, string>) {
   try {
-    const url = new URL(`${API_BASE_URL}/api/gyms`);
+    const supabase = createClient(
+      import.meta.env.PUBLIC_SUPABASE_URL,
+      import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+    );
 
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value) {
-          url.searchParams.append(key, value);
-        }
-      });
+    let query = supabase
+      .from('gyms')
+      .select('*')
+      .eq('status', 'published');
+
+    if (params?.city) {
+      query = query.eq('city', params.city);
     }
 
-    const response = await fetch(url.toString());
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch gyms: ${response.statusText}`);
+    if (params?.region) {
+      query = query.eq('region', params.region);
     }
 
-    const data = await response.json();
-    const gyms = data.gyms || [];
+    if (params?.limit) {
+      const limitNumber = parseInt(params.limit, 10);
+      if (!Number.isNaN(limitNumber) && limitNumber > 0) {
+        query = query.limit(limitNumber);
+      }
+    }
 
-    // Transform each gym to match expected format
-    return gyms.map(transformGym);
+    const { data: gymsData, error } = await query;
+
+    if (error) {
+      throw error;
+    }
+
+    return (gymsData || []).map(transformGym);
   } catch (error) {
     console.error('Error fetching gyms:', error);
     throw error;

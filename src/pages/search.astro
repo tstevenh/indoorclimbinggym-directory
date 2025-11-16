@@ -47,13 +47,19 @@ const activeFilters: Array<{ label: string; param: string; value: string }> = []
 const query = searchParams.get('q');
 if (query && query.trim()) {
   const searchTerm = query.toLowerCase().trim();
-  filteredGyms = filteredGyms.filter(
-    (g) =>
-      g.name.toLowerCase().includes(searchTerm) ||
-      g.city.toLowerCase().includes(searchTerm) ||
-      g.amenities?.toLowerCase().includes(searchTerm) ||
-      g.description_short.toLowerCase().includes(searchTerm)
-  );
+  filteredGyms = filteredGyms.filter((g) => {
+    const name = g.name?.toLowerCase() ?? '';
+    const city = g.city?.toLowerCase() ?? '';
+    const amenities = g.amenities?.toLowerCase() ?? '';
+    const description = g.description_short?.toLowerCase() ?? '';
+
+    return (
+      name.includes(searchTerm) ||
+      city.includes(searchTerm) ||
+      amenities.includes(searchTerm) ||
+      description.includes(searchTerm)
+    );
+  });
   activeFilters.push({ label: `Search: "${query}"`, param: 'q', value: query });
 }
 
@@ -68,9 +74,8 @@ if (stateParam) {
 // City filter
 const cityParam = searchParams.get('city');
 if (cityParam) {
-  filteredGyms = filteredGyms.filter(
-    (g) => g.city.toLowerCase() === cityParam.toLowerCase()
-  );
+  const cityParamLower = cityParam.toLowerCase();
+  filteredGyms = filteredGyms.filter((g) => (g.city?.toLowerCase() ?? '') === cityParamLower);
   // Capitalize city name for display
   const cityDisplay = cityParam.charAt(0).toUpperCase() + cityParam.slice(1).toLowerCase();
   activeFilters.push({ label: `City: ${cityDisplay}`, param: 'city', value: cityParam });
