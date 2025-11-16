@@ -1,9 +1,111 @@
+import { createClient } from '@supabase/supabase-js'
+
 /**
- * Gym Data API - Direct Supabase Queries
- * Fetches gym data directly from Supabase database
+ * API Configuration and Helper Functions
+ * Centralized API calls to Next.js backend
  */
 
-import { createSimpleClient } from '../lib/supabase'
+export const API_BASE_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000'
+
+/**
+ * Transform API gym object to match Astro site's expected format
+ * Maps database schema to legacy JSON format
+ */
+function transformGym(apiGym: any): any {
+  return {
+    // Basic info
+    id: apiGym.id, // UUID (was numeric in JSON)
+    name: apiGym.name,
+    slug: apiGym.slug,
+    verified: apiGym.verified || false,
+    claimed: apiGym.claimed || false,
+    featured: apiGym.featured || false,
+    status: apiGym.status || 'open',
+
+    // Location
+    full_address: apiGym.address || '',
+    postal_code: apiGym.postal_code || '',
+    latitude: apiGym.latitude || 0,
+    longtitude: apiGym.longitude || 0, // Note: keeping misspelling for compatibility
+    city: apiGym.city,
+    region: apiGym.region,
+    country: apiGym.country || 'US',
+    timezone: apiGym.timezone || 'America/Los_Angeles',
+
+    // Contact
+    phone: apiGym.phone || '',
+    email: apiGym.email || '',
+    website: apiGym.website || '',
+    location_link: apiGym.location_link || '',
+    street_view: apiGym.street_view || '',
+
+    // Media
+    photo: apiGym.hero_image || '', // Map hero_image to photo
+    logo: apiGym.logo || '',
+
+    // Features
+    amenities: apiGym.amenities || '',
+    custom_amenities: apiGym.custom_amenities || '',
+    working_hour: apiGym.working_hour || '', // Working hours in pipe-delimited format
+    rating: apiGym.rating || 0,
+    review_count: apiGym.review_count || 0,
+
+    // Descriptions
+    description_short: apiGym.description_short || `Premier climbing gym in ${apiGym.city}`,
+    description_long: apiGym.description_long || '',
+
+    // Climbing info
+    climbing_types: apiGym.climbing_types || '',
+    grade_system: apiGym.difficulty_grades || '', // Map difficulty_grades to grade_system for backwards compatibility
+    route_style: apiGym.climbing_types || '', // Derive from climbing_types
+    route_reset_frequency: apiGym.route_reset_frequency || '',
+    total_problems: apiGym.total_routes || 0, // Map total_routes to total_problems for backwards compatibility
+    total_routes: apiGym.total_routes || 0, // Keep original field name for consistency
+    wall_height_meters: apiGym.wall_height_meters || 0,
+    difficulty_grades: apiGym.difficulty_grades || '',
+
+    // Training
+    crowd_peak_notes: apiGym.crowd_peak_notes || '',
+    training_facilities: apiGym.training_facilities || '',
+    gear_rental: apiGym.rental_equipment || '', // Map rental_equipment to gear_rental
+
+    // Features
+    beginner_friendly: apiGym.beginner_friendly || false,
+    access_notes: apiGym.access_notes || '',
+
+    // Pricing
+    day_pass_price_local: apiGym.day_pass_price_local || 0,
+    student_discount: apiGym.student_discount || false,
+    membership_from_local: apiGym.membership_from_local || 0,
+    currency: apiGym.currency || 'USD',
+    price_type: apiGym.price_type || 'day_pass',
+    label: apiGym.label || 'Day Pass',
+    amount_local: apiGym.day_pass_price_local || 0,
+    conditions: apiGym.conditions || '',
+    group_rates: apiGym.group_rates || false,
+
+    // Additional fields
+    section: apiGym.section || '',
+    discipline: apiGym.discipline || '',
+    grade_range: apiGym.grade_range || '',
+    problems_or_routes: apiGym.total_routes || 0, // Map total_routes to problems_or_routes
+    last_reset_date: apiGym.last_reset_date || '',
+    next_reset_expectation: apiGym.route_reset_frequency || '',
+
+    // Custom Content Fields
+    about: apiGym.about || null,
+    faq: apiGym.faq || null,
+    why_climbers_like_it: apiGym.why_climbers_like_it || null,
+
+    // Detailed Ratings (replaces legacy rating field)
+    rating_overall: apiGym.rating_overall || apiGym.rating || 0,
+    rating_route_quality: apiGym.rating_route_quality || 0,
+    rating_cleanliness: apiGym.rating_cleanliness || 0,
+    rating_staff_friendliness: apiGym.rating_staff_friendliness || 0,
+    rating_facilities: apiGym.rating_facilities || 0,
+    rating_value_for_money: apiGym.rating_value_for_money || 0,
+  }
+}
 
 /**
  * Fetch all gyms with optional filters
@@ -12,88 +114,38 @@ import { createSimpleClient } from '../lib/supabase'
  */
 export async function fetchGyms(params?: Record<string, string>) {
   try {
-    const supabase = createSimpleClient()
+    const supabase = createClient(
+      import.meta.env.PUBLIC_SUPABASE_URL,
+      import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+    )
 
-    // Start building the query
     let query = supabase
       .from('gyms')
       .select('*')
       .eq('status', 'published')
 
-    // Apply filters if provided
-    if (params) {
-      if (params.city) {
-        query = query.eq('city', params.city)
-      }
+    if (params?.city) {
+      query = query.eq('city', params.city)
+    }
 
-      if (params.region) {
-        query = query.eq('region', params.region)
-      }
+    if (params?.region) {
+      query = query.eq('region', params.region)
+    }
 
-      if (params.limit) {
-        const limitNum = parseInt(params.limit, 10)
-        if (!isNaN(limitNum) && limitNum > 0) {
-          query = query.limit(limitNum)
-        }
+    if (params?.limit) {
+      const limitNumber = parseInt(params.limit, 10)
+      if (!Number.isNaN(limitNumber) && limitNumber > 0) {
+        query = query.limit(limitNumber)
       }
     }
 
-    // Execute query
-    const { data: gyms, error } = await query
+    const { data: gymsData, error } = await query
 
     if (error) {
-      console.error('Supabase query error:', error)
-      throw new Error(`Failed to fetch gyms: ${error.message}`)
+      throw error
     }
 
-    // Process gyms: check featured expiration, calculate overall rating, and sort
-    const processedGyms = (gyms || []).map(gym => {
-      // Check if featured subscription has expired
-      const isFeaturedActive = gym.featured &&
-        (!gym.featured_until || new Date(gym.featured_until) > new Date())
-
-      // Calculate rating_overall as average of 5 detailed ratings
-      const detailedRatings = [
-        gym.rating_route_quality,
-        gym.rating_cleanliness,
-        gym.rating_staff_friendliness,
-        gym.rating_facilities,
-        gym.rating_value_for_money
-      ].filter(rating => rating > 0) // Exclude unrated (0.00)
-
-      const calculatedOverall = detailedRatings.length > 0
-        ? Number((detailedRatings.reduce((sum, r) => sum + r, 0) / detailedRatings.length).toFixed(2))
-        : gym.rating || 0.00
-
-      return {
-        ...gym,
-        featured: isFeaturedActive, // Update featured based on expiration
-        rating_overall: gym.rating_overall || calculatedOverall, // Use stored or calculated
-        rating: gym.rating_overall || calculatedOverall, // Legacy field for compatibility
-        photo: gym.hero_image || '', // Map hero_image to photo for backwards compatibility
-        longtitude: gym.longitude || 0, // Map longitude to longtitude (legacy misspelling)
-      }
-    })
-
-    // Sort gyms: featured DESC, rating DESC, name ASC
-    processedGyms.sort((a, b) => {
-      // First sort by featured status
-      if (a.featured !== b.featured) {
-        return b.featured ? 1 : -1
-      }
-
-      // Then by rating (descending)
-      const ratingA = a.rating_overall || a.rating || 0
-      const ratingB = b.rating_overall || b.rating || 0
-      if (ratingA !== ratingB) {
-        return ratingB - ratingA
-      }
-
-      // Finally by name (ascending)
-      return (a.name || '').localeCompare(b.name || '')
-    })
-
-    return processedGyms
+    return (gymsData || []).map(transformGym)
   } catch (error) {
     console.error('Error fetching gyms:', error)
     throw error
@@ -107,9 +159,12 @@ export async function fetchGyms(params?: Record<string, string>) {
  */
 export async function fetchGymBySlug(identifier: string) {
   try {
-    const supabase = createSimpleClient()
+    const supabase = createClient(
+      import.meta.env.PUBLIC_SUPABASE_URL,
+      import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+    )
 
-    // Try to find by slug first
+    // Try slug first
     let { data: gym, error } = await supabase
       .from('gyms')
       .select('*')
@@ -118,7 +173,7 @@ export async function fetchGymBySlug(identifier: string) {
       .single()
 
     // If not found by slug, try by ID
-    if (error && error.code === 'PGRST116') {
+    if ((!gym || error) && error?.code === 'PGRST116') {
       const result = await supabase
         .from('gyms')
         .select('*')
@@ -130,39 +185,11 @@ export async function fetchGymBySlug(identifier: string) {
       error = result.error
     }
 
-    if (error) {
-      console.error('Supabase query error:', error)
-      throw new Error(`Failed to fetch gym: ${error.message}`)
+    if (error || !gym) {
+      throw new Error('Gym not found')
     }
 
-    if (!gym) {
-      throw new Error(`Gym not found: ${identifier}`)
-    }
-
-    // Process single gym (same logic as fetchGyms)
-    const isFeaturedActive = gym.featured &&
-      (!gym.featured_until || new Date(gym.featured_until) > new Date())
-
-    const detailedRatings = [
-      gym.rating_route_quality,
-      gym.rating_cleanliness,
-      gym.rating_staff_friendliness,
-      gym.rating_facilities,
-      gym.rating_value_for_money
-    ].filter(rating => rating > 0)
-
-    const calculatedOverall = detailedRatings.length > 0
-      ? Number((detailedRatings.reduce((sum, r) => sum + r, 0) / detailedRatings.length).toFixed(2))
-      : gym.rating || 0.00
-
-    return {
-      ...gym,
-      featured: isFeaturedActive,
-      rating_overall: gym.rating_overall || calculatedOverall,
-      rating: gym.rating_overall || calculatedOverall,
-      photo: gym.hero_image || '', // Map hero_image to photo for backwards compatibility
-      longtitude: gym.longitude || 0, // Map longitude to longtitude (legacy misspelling)
-    }
+    return transformGym(gym)
   } catch (error) {
     console.error('Error fetching gym:', error)
     throw error
