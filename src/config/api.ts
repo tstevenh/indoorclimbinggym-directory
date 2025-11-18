@@ -3,6 +3,8 @@
  * Centralized API calls to Next.js backend
  */
 
+import { getCachedGyms, setCachedGyms } from '../utils/buildCache';
+
 export const API_BASE_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
 
 /**
@@ -107,10 +109,22 @@ function transformGym(apiGym: any): any {
 
 /**
  * Fetch all gyms with optional filters
+ *
+ * Build-time caching: When called without params, uses in-memory cache
+ * to reduce API calls from ~110 per build to 1 per build (~99% egress reduction)
+ *
  * @param params Optional query parameters (city, region, limit, etc.)
  * @returns Array of gym objects
  */
 export async function fetchGyms(params?: Record<string, string>) {
+  // CHECK CACHE FIRST (only if no params - caching full dataset only)
+  if (!params) {
+    const cached = getCachedGyms();
+    if (cached) {
+      return cached;
+    }
+  }
+
   try {
     const url = new URL(`${API_BASE_URL}/api/gyms`);
 
@@ -122,6 +136,7 @@ export async function fetchGyms(params?: Record<string, string>) {
       });
     }
 
+    console.log(`[API] 🌐 Fetching gyms from ${url.toString()}`);
     const response = await fetch(url.toString());
 
     if (!response.ok) {
@@ -132,7 +147,14 @@ export async function fetchGyms(params?: Record<string, string>) {
     const gyms = data.gyms || [];
 
     // Transform each gym to match expected format
-    return gyms.map(transformGym);
+    const transformedGyms = gyms.map(transformGym);
+
+    // CACHE ONLY IF NO PARAMS (full dataset)
+    if (!params) {
+      setCachedGyms(transformedGyms);
+    }
+
+    return transformedGyms;
   } catch (error) {
     console.error('Error fetching gyms:', error);
     throw error;

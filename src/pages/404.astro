@@ -4,8 +4,9 @@
  * Custom error page with search functionality and helpful navigation
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
-
 import SearchBar from '../components/SearchBar.astro';
+
+export const prerender = true;
 
 const pageTitle = 'Page Not Found | IndoorClimbingGym';
 const pageDescription =

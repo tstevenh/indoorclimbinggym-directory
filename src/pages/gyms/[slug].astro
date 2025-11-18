@@ -9,6 +9,7 @@ import CategoryLinks from '../../components/CategoryLinks.astro';
 import HelpfulGuides from '../../components/HelpfulGuides.astro';
 import OptimizedImage from '../../components/OptimizedImage.astro';
 import GymMap from '../../components/GymMap.astro';
+import SubredditCTA from '../../components/SubredditCTA.astro';
 import { generateGymSchema, generateFAQSchema, serializeSchema } from '../../utils/schema';
 import { generateGymTitle, generateGymDescription, generateGymKeywords } from '../../utils/seo';
 import { IMAGE_SIZES } from '../../utils/imageUtils';
@@ -22,11 +23,14 @@ export async function getStaticPaths() {
 
   return gyms.map(gym => ({
     params: { slug: gym.slug },
-    props: { gym },
+    props: {
+      gym,
+      allGyms: gyms, // Pass full dataset to avoid refetching
+    },
   }));
 }
 
-const { gym } = Astro.props;
+const { gym, allGyms } = Astro.props;
 
 // Parse pipe-delimited fields
 const climbingTypes = gym.climbing_types?.split('|') || [];
@@ -93,8 +97,8 @@ const gymSchema = generateGymSchema(gym, pageUrl);
 const faqSchema = generateFAQSchema(gym.faq && gym.faq.length > 0 ? gym.faq : faqs);
 const combinedSchema = [gymSchema, faqSchema];
 
-// Get related gyms (same city, then same state if needed)
-const allGyms = await fetchGyms();
+// Get related gyms from props (same city, then same state if needed)
+// Note: allGyms is passed via props to avoid refetching (saves API calls)
 let relatedGyms = allGyms.filter(g => g.city === gym.city && g.id !== gym.id);
 if (relatedGyms.length < 3) {
   const stateGyms = allGyms.filter(g => g.region === gym.region && g.id !== gym.id && g.city !== gym.city);
@@ -464,9 +468,34 @@ if (relatedGyms.length < 3) {
             <p class="text-gray-700 mb-2">
               <strong>Total Routes:</strong> {gym.total_routes || 'N/A'} problems/routes
             </p>
-            <p class="text-gray-700">
+            <p class="text-gray-700 mb-4">
               <strong>Route Setting:</strong> Routes reset {gym.route_reset_frequency || 'regularly'}
             </p>
+
+            <!-- Grade Converter Links -->
+            <div class="bg-ivory rounded-lg p-4 border-l-4 border-sage">
+              <p class="text-sm font-semibold text-granite mb-2">Not sure what these grades mean?</p>
+              <div class="flex flex-wrap gap-2">
+                <a
+                  href="/tools/bouldering-grade-conversion"
+                  class="inline-flex items-center gap-1 text-xs bg-sage text-white px-3 py-1.5 rounded-full hover:bg-sage/90 transition-colors"
+                >
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span>Bouldering Converter</span>
+                </a>
+                <a
+                  href="/tools/sport-climbing-grade-conversion"
+                  class="inline-flex items-center gap-1 text-xs bg-sage text-white px-3 py-1.5 rounded-full hover:bg-sage/90 transition-colors"
+                >
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span>Sport Climbing Converter</span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -670,8 +699,14 @@ if (relatedGyms.length < 3) {
       <!-- Category Links -->
       <CategoryLinks gym={gym} />
 
+      <!-- Subreddit Community CTA -->
+      <div class="mb-6">
+        <SubredditCTA variant="gym" />
+      </div>
+
       <!-- Helpful Guides -->
       <HelpfulGuides beginner_friendly={gym.beginner_friendly} />
+
 
       <!-- Related Gyms -->
       {relatedGyms.length > 0 && (

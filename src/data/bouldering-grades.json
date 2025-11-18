@@ -1,0 +1,363 @@
+{
+  "vb": {
+    "system": "v_scale",
+    "display": "VB",
+    "equivalents": {
+      "font": {
+        "value": "3",
+        "confidence": "high",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "-",
+        "confidence": "high",
+        "note": "UK Tech grades start at 4a"
+      }
+    },
+    "skill_level": "Beginner",
+    "gym_outdoor_diff": -2,
+    "description": "Beginner baseline - large holds, simple movements"
+  },
+  "v0": {
+    "system": "v_scale",
+    "display": "V0",
+    "equivalents": {
+      "font": {
+        "value": "4",
+        "confidence": "high",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "4a-4b",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Beginner",
+    "gym_outdoor_diff": -2,
+    "description": "Entry level - good holds, straightforward sequences"
+  },
+  "v1": {
+    "system": "v_scale",
+    "display": "V1",
+    "equivalents": {
+      "font": {
+        "value": "5",
+        "confidence": "high",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "4c-5a",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Beginner",
+    "gym_outdoor_diff": -2,
+    "description": "Basic technique required - small crimps or slopers"
+  },
+  "v2": {
+    "system": "v_scale",
+    "display": "V2",
+    "equivalents": {
+      "font": {
+        "value": "5+",
+        "confidence": "high",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "5a-5b",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Beginner",
+    "gym_outdoor_diff": -2,
+    "description": "Developing technique - core strength and balance needed"
+  },
+  "v3": {
+    "system": "v_scale",
+    "display": "V3",
+    "equivalents": {
+      "font": {
+        "value": "6A",
+        "confidence": "medium",
+        "note": "V-scale is wider than Font at mid-grades"
+      },
+      "uk_tech": {
+        "value": "5c",
+        "confidence": "medium",
+        "note": "UK tech ≈ French sport + 2 grades"
+      }
+    },
+    "skill_level": "Intermediate",
+    "gym_outdoor_diff": -2,
+    "description": "Intermediate - dynamic moves, specific footwork"
+  },
+  "v4": {
+    "system": "v_scale",
+    "display": "V4",
+    "equivalents": {
+      "font": {
+        "value": "6A+",
+        "confidence": "medium",
+        "note": "Font scale more granular at mid-levels"
+      },
+      "uk_tech": {
+        "value": "6a",
+        "confidence": "medium",
+        "note": null
+      }
+    },
+    "skill_level": "Intermediate",
+    "gym_outdoor_diff": -2,
+    "description": "Powerful moves, crimp strength, sustained sequences"
+  },
+  "v5": {
+    "system": "v_scale",
+    "display": "V5",
+    "equivalents": {
+      "font": {
+        "value": "6B",
+        "confidence": "medium",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "6a-6b",
+        "confidence": "medium",
+        "note": null
+      }
+    },
+    "skill_level": "Intermediate",
+    "gym_outdoor_diff": -2,
+    "description": "Advanced technique, specific beta, finger strength"
+  },
+  "v6": {
+    "system": "v_scale",
+    "display": "V6",
+    "equivalents": {
+      "font": {
+        "value": "6C",
+        "confidence": "medium",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "6b",
+        "confidence": "medium",
+        "note": null
+      }
+    },
+    "skill_level": "Intermediate",
+    "gym_outdoor_diff": -2,
+    "description": "Challenging sequences, crimpy or dynamic power"
+  },
+  "v7": {
+    "system": "v_scale",
+    "display": "V7",
+    "equivalents": {
+      "font": {
+        "value": "7A",
+        "confidence": "medium-high",
+        "note": "Font and V-scale align better at higher grades"
+      },
+      "uk_tech": {
+        "value": "6c",
+        "confidence": "medium-high",
+        "note": null
+      }
+    },
+    "skill_level": "Advanced",
+    "gym_outdoor_diff": 0,
+    "description": "Advanced - requires consistent training and technique"
+  },
+  "v8": {
+    "system": "v_scale",
+    "display": "V8",
+    "equivalents": {
+      "font": {
+        "value": "7A+",
+        "confidence": "high",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "6c-7a",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Advanced",
+    "gym_outdoor_diff": 0,
+    "description": "Strong core, finger strength, complex sequences"
+  },
+  "v9": {
+    "system": "v_scale",
+    "display": "V9",
+    "equivalents": {
+      "font": {
+        "value": "7B",
+        "confidence": "high",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "7a",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Advanced",
+    "gym_outdoor_diff": 0,
+    "description": "Elite technique, significant training required"
+  },
+  "v10": {
+    "system": "v_scale",
+    "display": "V10",
+    "equivalents": {
+      "font": {
+        "value": "7B+",
+        "confidence": "high",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "7a-7b",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Advanced",
+    "gym_outdoor_diff": 0,
+    "description": "Exceptional strength and technique, project-level"
+  },
+  "v11": {
+    "system": "v_scale",
+    "display": "V11",
+    "equivalents": {
+      "font": {
+        "value": "7C",
+        "confidence": "medium-low",
+        "note": "Elite grades become more subjective"
+      },
+      "uk_tech": {
+        "value": "7b",
+        "confidence": "medium-low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Elite level - top 1% of climbers"
+  },
+  "v12": {
+    "system": "v_scale",
+    "display": "V12",
+    "equivalents": {
+      "font": {
+        "value": "7C+",
+        "confidence": "medium-low",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "7b-7c",
+        "confidence": "medium-low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Professional level, years of dedicated training"
+  },
+  "v13": {
+    "system": "v_scale",
+    "display": "V13",
+    "equivalents": {
+      "font": {
+        "value": "8A",
+        "confidence": "low",
+        "note": "Route-dependent at elite levels"
+      },
+      "uk_tech": {
+        "value": "7c",
+        "confidence": "low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "World-class climbers, significant outdoor experience"
+  },
+  "v14": {
+    "system": "v_scale",
+    "display": "V14",
+    "equivalents": {
+      "font": {
+        "value": "8A+",
+        "confidence": "low",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "-",
+        "confidence": "low",
+        "note": "UK Tech grades rarely extend this high"
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Cutting-edge difficulty, few ascents worldwide"
+  },
+  "v15": {
+    "system": "v_scale",
+    "display": "V15",
+    "equivalents": {
+      "font": {
+        "value": "8B",
+        "confidence": "low",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "-",
+        "confidence": "low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Established by world's best, extremely rare"
+  },
+  "v16": {
+    "system": "v_scale",
+    "display": "V16",
+    "equivalents": {
+      "font": {
+        "value": "8B+",
+        "confidence": "very-low",
+        "note": "Directly translatable at highest levels"
+      },
+      "uk_tech": {
+        "value": "-",
+        "confidence": "very-low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Top tier difficulty, handful of climbers worldwide"
+  },
+  "v17": {
+    "system": "v_scale",
+    "display": "V17",
+    "equivalents": {
+      "font": {
+        "value": "9A",
+        "confidence": "very-low",
+        "note": null
+      },
+      "uk_tech": {
+        "value": "-",
+        "confidence": "very-low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Current hardest grade, bleeding edge of difficulty"
+  }
+}

@@ -1,0 +1,572 @@
+{
+  "5.4": {
+    "system": "yds",
+    "display": "5.4",
+    "equivalents": {
+      "french": {
+        "value": "3",
+        "confidence": "high",
+        "note": null
+      },
+      "uiaa": {
+        "value": "III",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Beginner",
+    "gym_outdoor_diff": -1,
+    "description": "Beginner level - basic climbing movements, large holds"
+  },
+  "5.5": {
+    "system": "yds",
+    "display": "5.5",
+    "equivalents": {
+      "french": {
+        "value": "4a",
+        "confidence": "high",
+        "note": null
+      },
+      "uiaa": {
+        "value": "IV",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Beginner",
+    "gym_outdoor_diff": -1,
+    "description": "Entry level - good hand and footholds, simple sequences"
+  },
+  "5.6": {
+    "system": "yds",
+    "display": "5.6",
+    "equivalents": {
+      "french": {
+        "value": "4b",
+        "confidence": "high",
+        "note": null
+      },
+      "uiaa": {
+        "value": "IV+",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Beginner",
+    "gym_outdoor_diff": -1,
+    "description": "Basic footwork and balance required"
+  },
+  "5.7": {
+    "system": "yds",
+    "display": "5.7",
+    "equivalents": {
+      "french": {
+        "value": "4c",
+        "confidence": "high",
+        "note": null
+      },
+      "uiaa": {
+        "value": "V-",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Beginner",
+    "gym_outdoor_diff": -1,
+    "description": "Developing technique - more complex sequences"
+  },
+  "5.8": {
+    "system": "yds",
+    "display": "5.8",
+    "equivalents": {
+      "french": {
+        "value": "5a",
+        "confidence": "high",
+        "note": null
+      },
+      "uiaa": {
+        "value": "V",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Beginner",
+    "gym_outdoor_diff": -1,
+    "description": "Intermediate movements, some endurance required"
+  },
+  "5.9": {
+    "system": "yds",
+    "display": "5.9",
+    "equivalents": {
+      "french": {
+        "value": "5b",
+        "confidence": "high",
+        "note": null
+      },
+      "uiaa": {
+        "value": "V+",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Beginner",
+    "gym_outdoor_diff": -1,
+    "description": "Solid technique needed, some finger strength"
+  },
+  "5.10a": {
+    "system": "yds",
+    "display": "5.10a",
+    "equivalents": {
+      "french": {
+        "value": "6a",
+        "confidence": "high",
+        "note": null
+      },
+      "uiaa": {
+        "value": "VI-",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Intermediate",
+    "gym_outdoor_diff": -1,
+    "description": "Intermediate - requires consistent training"
+  },
+  "5.10b": {
+    "system": "yds",
+    "display": "5.10b",
+    "equivalents": {
+      "french": {
+        "value": "6a+",
+        "confidence": "high",
+        "note": null
+      },
+      "uiaa": {
+        "value": "VI",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Intermediate",
+    "gym_outdoor_diff": -1,
+    "description": "Good footwork, endurance, and finger strength"
+  },
+  "5.10c": {
+    "system": "yds",
+    "display": "5.10c",
+    "equivalents": {
+      "french": {
+        "value": "6b",
+        "confidence": "high",
+        "note": null
+      },
+      "uiaa": {
+        "value": "VI+",
+        "confidence": "high",
+        "note": null
+      }
+    },
+    "skill_level": "Intermediate",
+    "gym_outdoor_diff": -1,
+    "description": "Sustained sequences, technical climbing"
+  },
+  "5.10d": {
+    "system": "yds",
+    "display": "5.10d",
+    "equivalents": {
+      "french": {
+        "value": "6b+",
+        "confidence": "high",
+        "note": null
+      },
+      "uiaa": {
+        "value": "VII-",
+        "confidence": "medium-high",
+        "note": null
+      }
+    },
+    "skill_level": "Intermediate",
+    "gym_outdoor_diff": -1,
+    "description": "Advanced intermediate, powerful moves"
+  },
+  "5.11a": {
+    "system": "yds",
+    "display": "5.11a",
+    "equivalents": {
+      "french": {
+        "value": "6c",
+        "confidence": "medium-high",
+        "note": null
+      },
+      "uiaa": {
+        "value": "VII",
+        "confidence": "medium-high",
+        "note": null
+      }
+    },
+    "skill_level": "Intermediate",
+    "gym_outdoor_diff": 0,
+    "description": "Advanced - crimp strength, dynamic movement"
+  },
+  "5.11b": {
+    "system": "yds",
+    "display": "5.11b",
+    "equivalents": {
+      "french": {
+        "value": "6c+",
+        "confidence": "medium-high",
+        "note": null
+      },
+      "uiaa": {
+        "value": "VII+",
+        "confidence": "medium-high",
+        "note": null
+      }
+    },
+    "skill_level": "Intermediate",
+    "gym_outdoor_diff": 0,
+    "description": "Challenging sequences, core strength essential"
+  },
+  "5.11c": {
+    "system": "yds",
+    "display": "5.11c",
+    "equivalents": {
+      "french": {
+        "value": "7a",
+        "confidence": "medium",
+        "note": "Some regional variation at this level"
+      },
+      "uiaa": {
+        "value": "VIII-",
+        "confidence": "medium",
+        "note": null
+      }
+    },
+    "skill_level": "Advanced",
+    "gym_outdoor_diff": 0,
+    "description": "Advanced climbing, requires dedicated training"
+  },
+  "5.11d": {
+    "system": "yds",
+    "display": "5.11d",
+    "equivalents": {
+      "french": {
+        "value": "7a+",
+        "confidence": "medium",
+        "note": null
+      },
+      "uiaa": {
+        "value": "VIII",
+        "confidence": "medium",
+        "note": null
+      }
+    },
+    "skill_level": "Advanced",
+    "gym_outdoor_diff": 0,
+    "description": "Powerful, technical, and sustained climbing"
+  },
+  "5.12a": {
+    "system": "yds",
+    "display": "5.12a",
+    "equivalents": {
+      "french": {
+        "value": "7b",
+        "confidence": "medium",
+        "note": "Regional differences increase at higher grades"
+      },
+      "uiaa": {
+        "value": "VIII+",
+        "confidence": "medium",
+        "note": null
+      }
+    },
+    "skill_level": "Advanced",
+    "gym_outdoor_diff": 0,
+    "description": "Elite intermediate - years of training required"
+  },
+  "5.12b": {
+    "system": "yds",
+    "display": "5.12b",
+    "equivalents": {
+      "french": {
+        "value": "7b+",
+        "confidence": "medium",
+        "note": null
+      },
+      "uiaa": {
+        "value": "IX-",
+        "confidence": "medium",
+        "note": null
+      }
+    },
+    "skill_level": "Advanced",
+    "gym_outdoor_diff": 0,
+    "description": "Exceptional finger strength and technique"
+  },
+  "5.12c": {
+    "system": "yds",
+    "display": "5.12c",
+    "equivalents": {
+      "french": {
+        "value": "7c",
+        "confidence": "medium-low",
+        "note": "Subjective at high levels"
+      },
+      "uiaa": {
+        "value": "IX",
+        "confidence": "medium-low",
+        "note": null
+      }
+    },
+    "skill_level": "Advanced",
+    "gym_outdoor_diff": 0,
+    "description": "Project-grade for most climbers"
+  },
+  "5.12d": {
+    "system": "yds",
+    "display": "5.12d",
+    "equivalents": {
+      "french": {
+        "value": "7c+",
+        "confidence": "medium-low",
+        "note": null
+      },
+      "uiaa": {
+        "value": "IX+",
+        "confidence": "medium-low",
+        "note": null
+      }
+    },
+    "skill_level": "Advanced",
+    "gym_outdoor_diff": 0,
+    "description": "Elite level, top 5% of climbers"
+  },
+  "5.13a": {
+    "system": "yds",
+    "display": "5.13a",
+    "equivalents": {
+      "french": {
+        "value": "8a",
+        "confidence": "low",
+        "note": "Expert grades highly route-dependent"
+      },
+      "uiaa": {
+        "value": "X-",
+        "confidence": "low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Elite - dedicated training, competition level"
+  },
+  "5.13b": {
+    "system": "yds",
+    "display": "5.13b",
+    "equivalents": {
+      "french": {
+        "value": "8a+",
+        "confidence": "low",
+        "note": null
+      },
+      "uiaa": {
+        "value": "X",
+        "confidence": "low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Professional level climbing"
+  },
+  "5.13c": {
+    "system": "yds",
+    "display": "5.13c",
+    "equivalents": {
+      "french": {
+        "value": "8b",
+        "confidence": "low",
+        "note": null
+      },
+      "uiaa": {
+        "value": "X+",
+        "confidence": "low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "World-class climbing, extensive outdoor experience"
+  },
+  "5.13d": {
+    "system": "yds",
+    "display": "5.13d",
+    "equivalents": {
+      "french": {
+        "value": "8b+",
+        "confidence": "low",
+        "note": null
+      },
+      "uiaa": {
+        "value": "XI-",
+        "confidence": "low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Top tier, handful of ascents worldwide"
+  },
+  "5.14a": {
+    "system": "yds",
+    "display": "5.14a",
+    "equivalents": {
+      "french": {
+        "value": "8c",
+        "confidence": "very-low",
+        "note": "Elite grades highly subjective"
+      },
+      "uiaa": {
+        "value": "XI",
+        "confidence": "very-low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Cutting-edge difficulty, world's best climbers"
+  },
+  "5.14b": {
+    "system": "yds",
+    "display": "5.14b",
+    "equivalents": {
+      "french": {
+        "value": "8c+",
+        "confidence": "very-low",
+        "note": null
+      },
+      "uiaa": {
+        "value": "XI+",
+        "confidence": "very-low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Established by top professionals"
+  },
+  "5.14c": {
+    "system": "yds",
+    "display": "5.14c",
+    "equivalents": {
+      "french": {
+        "value": "9a",
+        "confidence": "very-low",
+        "note": null
+      },
+      "uiaa": {
+        "value": "XII-",
+        "confidence": "very-low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Bleeding edge, few ascents globally"
+  },
+  "5.14d": {
+    "system": "yds",
+    "display": "5.14d",
+    "equivalents": {
+      "french": {
+        "value": "9a+",
+        "confidence": "very-low",
+        "note": null
+      },
+      "uiaa": {
+        "value": "XII",
+        "confidence": "very-low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Current peak of sport climbing difficulty"
+  },
+  "5.15a": {
+    "system": "yds",
+    "display": "5.15a",
+    "equivalents": {
+      "french": {
+        "value": "9b",
+        "confidence": "very-low",
+        "note": "Cutting-edge grades, few climbers"
+      },
+      "uiaa": {
+        "value": "XII+",
+        "confidence": "very-low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Extreme difficulty, historic ascents"
+  },
+  "5.15b": {
+    "system": "yds",
+    "display": "5.15b",
+    "equivalents": {
+      "french": {
+        "value": "9b+",
+        "confidence": "very-low",
+        "note": null
+      },
+      "uiaa": {
+        "value": "-",
+        "confidence": "very-low",
+        "note": "UIAA grades rarely extend this high"
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Only a handful of routes at this grade exist"
+  },
+  "5.15c": {
+    "system": "yds",
+    "display": "5.15c",
+    "equivalents": {
+      "french": {
+        "value": "9c",
+        "confidence": "very-low",
+        "note": null
+      },
+      "uiaa": {
+        "value": "-",
+        "confidence": "very-low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Hardest confirmed sport climbs (Adam Ondra, Silence)"
+  },
+  "5.15d": {
+    "system": "yds",
+    "display": "5.15d",
+    "equivalents": {
+      "french": {
+        "value": "9c+",
+        "confidence": "very-low",
+        "note": "Proposed future grade"
+      },
+      "uiaa": {
+        "value": "-",
+        "confidence": "very-low",
+        "note": null
+      }
+    },
+    "skill_level": "Elite",
+    "gym_outdoor_diff": 0,
+    "description": "Theoretical maximum, no confirmed ascents yet"
+  }
+}

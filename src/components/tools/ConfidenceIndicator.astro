@@ -1,0 +1,119 @@
+---
+/**
+ * Confidence Indicator Badge
+ * Visual indicator showing conversion accuracy level
+ * UNIQUE FEATURE - No competitor has this!
+ */
+
+interface Props {
+  level: 'high' | 'medium' | 'medium-high' | 'medium-low' | 'low' | 'very-low';
+  showLabel?: boolean;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const { level, showLabel = true, size = 'md' } = Astro.props;
+
+// Map confidence levels to colors, icons, and descriptions
+const confidenceConfig = {
+  'high': {
+    color: 'bg-green-100 text-green-800 border-green-300',
+    icon: '✓',
+    label: 'High Confidence',
+    description: 'Well-established, standardized conversion'
+  },
+  'medium-high': {
+    color: 'bg-green-100 text-green-700 border-green-300',
+    icon: '✓',
+    label: 'High Confidence',
+    description: 'Widely accepted conversion with strong consensus'
+  },
+  'medium': {
+    color: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+    icon: '≈',
+    label: 'Approximate',
+    description: 'Generally accurate, some regional variation'
+  },
+  'medium-low': {
+    color: 'bg-orange-100 text-orange-800 border-orange-300',
+    icon: '≈',
+    label: 'Approximate',
+    description: 'Conversion varies by region and gym'
+  },
+  'low': {
+    color: 'bg-orange-100 text-orange-900 border-orange-400',
+    icon: '~',
+    label: 'Subjective',
+    description: 'Route-dependent, varies significantly'
+  },
+  'very-low': {
+    color: 'bg-red-100 text-red-900 border-red-400',
+    icon: '~',
+    label: 'Highly Variable',
+    description: 'Elite grades, cutting-edge difficulty'
+  }
+};
+
+const config = confidenceConfig[level];
+
+// Size classes
+const sizeClasses = {
+  'sm': 'text-xs px-2 py-0.5',
+  'md': 'text-sm px-3 py-1',
+  'lg': 'text-base px-4 py-1.5'
+};
+
+const sizeClass = sizeClasses[size];
+---
+
+<div class="confidence-indicator inline-flex items-center gap-2">
+  <span
+    class={`confidence-badge inline-flex items-center gap-1.5 font-medium rounded-full border ${config.color} ${sizeClass}`}
+    title={config.description}
+    role="status"
+    aria-label={`Confidence level: ${config.label}`}
+  >
+    <span class="icon" aria-hidden="true">{config.icon}</span>
+    {showLabel && <span class="label">{config.label}</span>}
+  </span>
+
+  <!-- Tooltip (appears on hover) -->
+  <div class="tooltip-wrapper relative inline-block">
+    <button
+      type="button"
+      class="info-icon w-5 h-5 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors flex items-center justify-center text-xs font-bold"
+      aria-label="More information about confidence level"
+      title={config.description}
+    >
+      i
+    </button>
+
+    <div class="tooltip hidden absolute z-50 w-64 p-3 bg-granite text-white text-sm rounded-lg shadow-xl right-full mr-2 top-1/2 -translate-y-1/2">
+      <p class="font-semibold mb-1">{config.label}</p>
+      <p class="text-gray-200">{config.description}</p>
+      <!-- Arrow pointing right toward icon -->
+      <div class="arrow absolute w-2 h-2 bg-granite transform rotate-45 -right-1 top-1/2 -translate-y-1/2"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .tooltip-wrapper:hover .tooltip {
+    display: block;
+  }
+
+  @media (hover: none) {
+    /* On touch devices, show tooltip on tap */
+    .tooltip-wrapper:active .tooltip {
+      display: block;
+    }
+  }
+
+  .confidence-badge {
+    user-select: none;
+  }
+
+  .info-icon {
+    cursor: help;
+    flex-shrink: 0;
+  }
+</style>

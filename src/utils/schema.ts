@@ -320,6 +320,41 @@ function parseOpeningHours(hoursString: string) {
 }
 
 /**
+ * Generate HowTo schema for step-by-step guides
+ * @param title Title of the how-to guide
+ * @param description Description of what will be accomplished
+ * @param steps Array of step objects with name and text
+ * @param totalTime Optional total time in ISO 8601 duration format (e.g., "PT30M" for 30 minutes)
+ * @returns JSON-LD schema object
+ */
+export function generateHowToSchema(
+  title: string,
+  description: string,
+  steps: Array<{ name: string; text: string; image?: string }>,
+  totalTime?: string
+) {
+  const schema: any = {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: title,
+    description: description,
+    step: steps.map((step, index) => ({
+      '@type': 'HowToStep',
+      position: index + 1,
+      name: step.name,
+      text: step.text,
+      ...(step.image && { image: step.image })
+    }))
+  };
+
+  if (totalTime) {
+    schema.totalTime = totalTime;
+  }
+
+  return schema;
+}
+
+/**
  * Serialize schema to JSON-LD script tag content
  * @param schema Schema object
  * @returns JSON string for script tag

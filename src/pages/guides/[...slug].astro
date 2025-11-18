@@ -11,7 +11,8 @@ import AuthorBio from '../../components/blog/AuthorBio.astro';
 import RelatedPosts from '../../components/blog/RelatedPosts.astro';
 import SocialShare from '../../components/blog/SocialShare.astro';
 import TableOfContents from '../../components/blog/TableOfContents.astro';
-import { generateArticleSchema, generateBreadcrumbSchema } from '../../utils/schema';
+import SubredditCTA from '../../components/SubredditCTA.astro';
+import { generateArticleSchema, generateBreadcrumbSchema, generateFAQSchema, generateHowToSchema } from '../../utils/schema';
 import { generateBlogPostTitle, generateBlogKeywords } from '../../utils/seo';
 
 
@@ -31,6 +32,105 @@ interface Props {
 
 const { entry } = Astro.props;
 const { Content, headings } = await entry.render();
+
+// Extract FAQs from markdown content for FAQ schema
+function extractFAQs(content: string): Array<{ question: string; answer: string }> {
+  const faqs: Array<{ question: string; answer: string }> = [];
+
+  // Find FAQ section (H2 containing "Frequently Asked Questions" or "FAQ")
+  // Match from FAQ heading until next H2 (##) or end of content
+  const faqSectionMatch = content.match(/##\s+.*?(Frequently Asked Questions|FAQ).*?\n([\s\S]+?)(?=\n##\s|$)/i);
+  if (!faqSectionMatch) return faqs;
+
+  const faqSection = faqSectionMatch[2];
+
+  // Extract each FAQ (H3 questions followed by answers until next H3 or end)
+  const faqPattern = /###\s+(.+?)\n+([\s\S]+?)(?=\n###|$)/g;
+  let match;
+
+  while ((match = faqPattern.exec(faqSection)) !== null) {
+    const question = match[1].trim();
+    let answer = match[2]
+      .trim()
+      .replace(/\n\n+/g, ' ') // Replace multiple newlines with space
+      .replace(/\*\*/g, '') // Remove bold markdown
+      .replace(/\*/g, '') // Remove italic markdown
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Remove links, keep text
+      .replace(/\s+/g, ' '); // Normalize whitespace
+
+    // Truncate if too long (Google prefers concise answers)
+    if (answer.length > 500) {
+      answer = answer.substring(0, 497) + '...';
+    }
+
+    faqs.push({ question, answer });
+  }
+
+  return faqs;
+}
+
+// Extract HowTo steps from markdown content for HowTo schema
+function extractHowToSteps(content: string, title: string): { steps: Array<{ name: string; text: string }>; howToTitle: string; description: string } | null {
+  // Look for step-by-step sections with numbered lists or "Step 1:", "Step 2:" patterns
+  const stepPatterns = [
+    // Pattern 1: "## How to..." section with numbered list
+    /##\s+How to[^#]+?\n\n(\d+\.[\s\S]+?)(?=\n##|$)/i,
+    // Pattern 2: "Step-by-Step" section
+    /##\s+Step[- ]by[- ]Step[^#]*?\n\n([\s\S]+?)(?=\n##|$)/i,
+    // Pattern 3: Individual "### Step N:" headings
+    /###\s+Step\s+\d+[:\.]?\s+(.+?)\n\n((?:(?!###).)+)/gs
+  ];
+
+  for (const pattern of stepPatterns) {
+    const match = content.match(pattern);
+    if (match) {
+      const steps: Array<{ name: string; text: string }> = [];
+
+      if (pattern.source.includes('###\\s+Step')) {
+        // Individual step headings (Pattern 3)
+        let stepMatch;
+        const stepPattern = /###\s+Step\s+\d+[:\.]?\s+(.+?)\n\n((?:(?!###).)+)/gs;
+        while ((stepMatch = stepPattern.exec(content)) !== null) {
+          steps.push({
+            name: stepMatch[1].trim(),
+            text: stepMatch[2].trim().replace(/\*\*/g, '').replace(/\*/g, '').replace(/\n\n/g, ' ')
+          });
+        }
+      } else {
+        // Numbered list format (Patterns 1 & 2)
+        const stepSection = match[1];
+        const numberedSteps = stepSection.match(/\d+\.\s+\*\*([^*]+)\*\*[:\s]+([^\n]+(?:\n(?!\d+\.).*)*)/g);
+
+        if (numberedSteps) {
+          numberedSteps.forEach(step => {
+            const stepMatch = step.match(/\d+\.\s+\*\*([^*]+)\*\*[:\s]+(.+)/s);
+            if (stepMatch) {
+              steps.push({
+                name: stepMatch[1].trim(),
+                text: stepMatch[2].trim().replace(/\n/g, ' ')
+              });
+            }
+          });
+        }
+      }
+
+      if (steps.length >= 3) {
+        return {
+          steps,
+          howToTitle: `How to ${title.replace(/^(How to|Complete Guide to|Guide to)\s+/i, '')}`,
+          description: `Step-by-step guide to ${title.toLowerCase()}`
+        };
+      }
+    }
+  }
+
+  return null;
+}
+
+// Get raw markdown content from entry
+const rawContent = entry.body;
+const extractedFAQs = extractFAQs(rawContent);
+const extractedHowTo = extractHowToSteps(rawContent, entry.data.title);
 
 // Get related posts from same category
 const allPosts = await getCollection('blog');
@@ -74,8 +174,21 @@ const breadcrumbs = [
 
 const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbs);
 
+// Generate FAQ schema if FAQs were found
+const faqSchema = extractedFAQs.length > 0 ? generateFAQSchema(extractedFAQs) : null;
+
+// Generate HowTo schema if step-by-step content was found
+const howToSchema = extractedHowTo
+  ? generateHowToSchema(extractedHowTo.howToTitle, extractedHowTo.description, extractedHowTo.steps)
+  : null;
+
 // Combine schemas
-const schemas = [articleSchema, breadcrumbSchema];
+const schemas = [
+  articleSchema,
+  breadcrumbSchema,
+  ...(faqSchema ? [faqSchema] : []),
+  ...(howToSchema ? [howToSchema] : [])
+];
 
 // Format published date
 const formattedDate = entry.data.publishedDate.toLocaleDateString('en-US', {
@@ -192,6 +305,11 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-gray-100 text-g
       avatar={entry.data.authorAvatar}
       bio={entry.data.authorBio}
     />
+
+    <!-- Subreddit CTA -->
+    <div class="my-12">
+      <SubredditCTA variant="blog" />
+    </div>
 
     <!-- Related Posts -->
     <RelatedPosts posts={relatedPosts} currentSlug={entry.slug} />

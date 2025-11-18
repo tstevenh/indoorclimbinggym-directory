@@ -1,0 +1,835 @@
+---
+/**
+ * Sport Climbing Grade Conversion Tool
+ * Interactive converter with YDS, French, and UIAA grades
+ * Unique gym vs outdoor grade adjustment feature
+ */
+
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GradeSearchBar from '../../components/tools/GradeSearchBar.astro';
+import GymOutdoorToggle from '../../components/tools/GymOutdoorToggle.astro';
+import ConversionResults from '../../components/tools/ConversionResults.astro';
+import ConversionTable from '../../components/tools/ConversionTable.astro';
+
+// Import sport climbing grades data
+import sportGrades from '../../data/sport-grades.json';
+
+// SEO
+const title = "Sport Climbing Grade Converter | YDS, French, UIAA - IndoorClimbingGym";
+const description = "Convert sport climbing grades instantly between YDS (5.10a), French (6a+), and UIAA (VI) systems. Unique gym vs outdoor grade adjustments. Free rope climbing grade conversion tool.";
+const canonical = "https://www.indoorclimbinggym.com/tools/sport-climbing-grade-conversion";
+
+// Breadcrumbs
+const breadcrumbs = [
+  { label: 'Home', url: '/' },
+  { label: 'Tools', url: '/tools' },
+  { label: 'Sport Climbing Grade Conversion', url: '/tools/sport-climbing-grade-conversion' },
+];
+
+// Structured data for Tool
+const toolSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Sport Climbing Grade Conversion Tool",
+  "description": "Free tool to convert sport climbing grades between YDS (Yosemite Decimal System), French, and UIAA grading systems with gym vs outdoor adjustments",
+  "url": canonical,
+  "applicationCategory": "UtilityApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "YDS to French conversion",
+    "YDS to UIAA conversion",
+    "Gym vs outdoor grade adjustment",
+    "Confidence indicators for accuracy",
+    "Full reference table (5.4 to 5.15d)"
+  ]
+};
+
+// FAQ Schema
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the YDS grading system?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Yosemite Decimal System (YDS) is the most common sport climbing grading system in North America, ranging from 5.4 (beginner) to 5.15d (world's hardest). It uses numbers with letter grades (a, b, c, d) at 5.10 and above for more granular difficulty ratings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between 5.10a and French 6a?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "5.10a and French 6a are equivalent grades in different systems. 5.10a is the American YDS grade, while 6a is the French sport climbing grade. They represent the same approximate difficulty level - intermediate sport climbing requiring consistent training and good technique."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are gym grades softer than outdoor grades for sport climbing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, indoor gym grades are typically 1 grade softer than outdoor grades at beginner to intermediate levels (5.7-5.11). For example, a gym 5.10a might be closer to outdoor 5.9. Advanced grades (5.12+) tend to be more consistent between gym and outdoor climbing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do YDS letter grades work (a, b, c, d)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Starting at 5.10, the YDS system adds letter grades (a, b, c, d) to create finer distinctions. For example: 5.10a → 5.10b → 5.10c → 5.10d → 5.11a. Each letter represents a meaningful difficulty increase, roughly equivalent to 1-2 V-grades in bouldering or half a French grade."
+      }
+    }
+  ]
+};
+
+const schemas = [toolSchema, faqSchema];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogType="website"
+  keywords={[
+    'sport climbing grades',
+    'yds converter',
+    'french sport grades',
+    'uiaa grades',
+    'climbing grade conversion',
+    '5.10a to french',
+    'rope climbing difficulty',
+    'gym vs outdoor grades'
+  ]}
+  schema={schemas}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Breadcrumb Navigation -->
+  <div class="container mx-auto px-4 max-w-6xl pt-6">
+    <nav class="text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center gap-2 flex-wrap">
+        {breadcrumbs.map((crumb, index) => (
+          <li class="flex items-center gap-2">
+            {index > 0 && <span class="text-gray-400">/</span>}
+            {index === breadcrumbs.length - 1 ? (
+              <span class="text-granite font-medium">{crumb.label}</span>
+            ) : (
+              <a href={crumb.url} class="hover:text-sage">{crumb.label}</a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero bg-gradient-to-br from-sage/20 to-ivory py-12 md:py-16">
+    <div class="container mx-auto px-4 max-w-4xl text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">
+        Sport Climbing Grade Conversion Tool
+      </h1>
+      <p class="text-xl md:text-2xl text-gray-700 mb-6">
+        Convert between YDS, French, and UIAA grades instantly
+      </p>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        Our unique tool accounts for gym vs outdoor grade differences, helping you understand your true sport climbing level across all grading systems.
+      </p>
+    </div>
+  </section>
+
+  <!-- Tool Section (Above the Fold) -->
+  <section class="tool-section py-12">
+    <div class="container mx-auto px-4 max-w-3xl">
+      <div class="bg-white rounded-lg shadow-md p-8">
+        <!-- Search Bar -->
+        <div class="mb-6">
+          <GradeSearchBar
+            gradeData={sportGrades}
+            placeholder="Enter grade (e.g., 5.10a, 6b+, VII)"
+            id="sport-search"
+          />
+        </div>
+
+        <!-- Gym/Outdoor Toggle -->
+        <div class="mb-8">
+          <GymOutdoorToggle id="sport-environment" defaultValue="gym" />
+        </div>
+
+        <!-- Results (initially hidden, shown after grade selection) -->
+        <div id="results-container" class="hidden">
+          <ConversionResults gradeData={null} isGym={true} />
+        </div>
+
+        <!-- CTA after conversion -->
+        <div id="cta-after-conversion" class="hidden mt-8 p-6 bg-sage/5 border-2 border-sage rounded-lg text-center">
+          <p class="text-lg font-semibold text-granite mb-3">
+            Ready to put these grades into practice?
+          </p>
+          <a
+            href="/search"
+            class="inline-block px-6 py-3 bg-sage text-white font-semibold rounded-lg hover:bg-sage/90 transition-colors"
+          >
+            Find Climbing Gyms Near You →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Educational Content -->
+  <section class="content-section py-12 bg-gray-50">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <div class="bg-white rounded-lg shadow-md p-8 md:p-12">
+        <article class="prose prose-lg max-w-none">
+        <!-- How to Use -->
+        <h2 class="text-3xl font-bold text-granite mb-4">How to Use This Converter</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Converting sport climbing grades has never been easier. Simply type any grade into the search bar above - whether it's a YDS grade like "5.10a", a French grade like "6b+", or a UIAA grade like "VII". Our intelligent search will find the grade instantly and show you all equivalent grades across all three major systems.
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          <strong>The Gym vs Outdoor Toggle:</strong> This is where our tool stands out. Indoor climbing gyms typically set grades 1 level softer than outdoor climbing at beginner to intermediate levels (5.7-5.11). Toggle between "Indoor Gym" and "Outdoor" to see adjusted grades. For example, climbing 5.10a at your gym might be closer to outdoor 5.9 - and that's completely normal!
+        </p>
+        <div class="bg-ivory p-6 rounded-lg mb-8">
+          <h3 class="text-xl font-bold text-granite mb-3">Quick Tips:</h3>
+          <ul class="space-y-2 text-gray-700">
+            <li>✓ <strong>Autocomplete suggestions</strong> appear as you type</li>
+            <li>✓ <strong>Keyboard navigation</strong> with arrow keys (↑↓) and Enter</li>
+            <li>✓ <strong>Confidence indicators</strong> show conversion accuracy</li>
+            <li>✓ <strong>Copy button</strong> lets you save conversions for later</li>
+            <li>✓ <strong>Full reference table</strong> at the bottom for quick lookups</li>
+          </ul>
+        </div>
+
+        <!-- Understanding Sport Climbing Grade Systems -->
+        <h2 class="text-3xl font-bold text-granite mb-4 mt-12">Understanding Sport Climbing Grade Systems</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Sport climbing uses three primary grading systems worldwide, each with its own history and regional preferences. Understanding these systems helps you climb confidently anywhere in the world and communicate effectively with other climbers.
+        </p>
+
+        <!-- YDS -->
+        <h3 class="text-2xl font-bold text-granite mb-3">YDS (Yosemite Decimal System)</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          The Yosemite Decimal System is the dominant system in North America and increasingly worldwide. Created in the 1930s and refined in the 1950s at Yosemite National Park, it provides a hierarchical progression: <strong>Class 1</strong> (hiking), <strong>Class 2</strong> (scrambling), <strong>Class 3</strong> (simple climbing), <strong>Class 4</strong> (exposed climbing), and <strong>Class 5</strong> (technical roped climbing).
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          For sport climbing, we focus on Class 5, which ranges from <strong>5.0</strong> (easiest) to <strong>5.15d</strong> (currently the world's hardest). The system uses <strong>letter grades (a, b, c, d)</strong> starting at 5.10 to create finer distinctions: <strong>5.10a → 5.10b → 5.10c → 5.10d → 5.11a</strong>. Before 5.10, grades use whole numbers only (5.4, 5.5, 5.6, etc.).
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          The system is open-ended, meaning new grades (5.16a, etc.) can be added as climbing difficulty progresses. You'll occasionally see <strong>+/- modifiers</strong> (e.g., 5.10a+, 5.11b-) used informally to indicate routes on the border between letter grades, though this isn't part of the official standard.
+        </p>
+        <div class="bg-blue-50 p-5 rounded-lg mb-6">
+          <p class="font-semibold text-granite mb-2">YDS Grade Ranges:</p>
+          <ul class="space-y-1 text-gray-700 text-sm">
+            <li><strong>5.4-5.9:</strong> Beginner (60% of gym climbers)</li>
+            <li><strong>5.10a-5.11d:</strong> Intermediate (30% of gym climbers)</li>
+            <li><strong>5.12a-5.13d:</strong> Advanced (8% of gym climbers)</li>
+            <li><strong>5.14a+:</strong> Elite (2% of gym climbers, professional level)</li>
+          </ul>
+        </div>
+
+        <!-- French System -->
+        <h3 class="text-2xl font-bold text-granite mb-3">French Sport Grades</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          The French system is the international standard for sport climbing, used throughout Europe and increasingly worldwide. It uses a combination of numbers (1-9) and letters (a, b, c) with optional plus signs: <strong>3 → 4 → 4+ → 5a → 5b → 5c → 6a → 6a+ → 6b...</strong> up to <strong>9c</strong> (currently the world's hardest).
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          French grades are the standard in Europe and are increasingly used worldwide alongside the YDS. Many climbers find French grades more granular at mid-levels (the YDS groups 6a, 6a+, and 6b into just 5.10a, 5.10b, and 5.10c). The system provides clearer progression feedback with its consistent use of the plus sign (+) throughout all difficulty levels.
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          <strong>Key difference:</strong> French grades make finer distinctions across all levels. Where the YDS might jump from 5.11b to 5.11c, French breaks this into 6c → 6c+ → 7a, giving climbers more specific feedback on progression and making smaller victories more visible.
+        </p>
+
+        <!-- UIAA Grades -->
+        <h3 class="text-2xl font-bold text-granite mb-3">UIAA Grading System</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          The UIAA (International Climbing and Mountaineering Federation) system uses Roman numerals with +/- modifiers: <strong>III → IV → V → VI → VII...</strong> up to <strong>XII+</strong>. Originally developed in Europe for alpine and traditional climbing, it's still widely used in Germany, Austria, Switzerland, and Eastern Europe.
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          UIAA grades emphasize the <em>technical difficulty of the hardest move</em> rather than overall sustained difficulty. This makes them particularly useful for describing powerful, technical routes with one desperate crux versus sustained endurance climbs. However, UIAA grades are less common for pure sport climbing outside of Central Europe.
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          <strong>Conversion note:</strong> UIAA grades rarely extend beyond XII+ because the system wasn't designed for modern sport climbing's extreme difficulty. Elite routes (5.15a+/9b+) typically don't have UIAA equivalents.
+        </p>
+
+        <!-- British Trad Warning -->
+        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-5 mb-8">
+          <p class="font-semibold text-granite mb-2">Important: British Trad Grades Cannot Convert</p>
+          <p class="text-gray-700 mb-2">
+            British traditional climbing uses a <strong>two-part grading system</strong> (e.g., E3 5c) that combines overall seriousness with technical difficulty. This system <strong>cannot be directly converted</strong> to sport climbing grades because it accounts for factors like:
+          </p>
+          <ul class="list-disc pl-6 text-gray-700 space-y-1">
+            <li>Protection quality (gear placements, runouts)</li>
+            <li>Psychological difficulty (risk of serious injury)</li>
+            <li>Route seriousness (fall consequences, objective hazards)</li>
+          </ul>
+          <p class="text-gray-700 mt-2">
+            A British E5 6b trad route might have the same technical crux as a sport 6b, but the grade also reflects the mental game and danger. Our converter focuses on sport climbing systems only. Always research UK trad routes separately.
+          </p>
+        </div>
+
+        <!-- Why Grades Are Confusing -->
+        <h2 class="text-3xl font-bold text-granite mb-4 mt-12">Why Are Sport Climbing Grades Confusing?</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          If you've ever wondered why the 5.10a at your gym feels easier than outdoor 5.10a, or why different gyms grade routes differently, you're experiencing one of climbing's most frustrating realities: <strong>grades are subjective and inconsistent</strong>.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">1. Three Different Systems</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Unlike many sports with a single universal standard, sport climbing has three competing systems (YDS, French, UIAA), each popular in different regions. Converting between them introduces uncertainty because they don't map perfectly 1:1. Our converter uses consensus conversions based on decades of community agreement, but individual routes may vary.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">2. Letter Grade Complexity in YDS</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          The YDS letter system (a, b, c, d) adds complexity. Is 5.10d closer to 5.11a or 5.10c? Different setters interpret this differently. Some gyms skip letter grades entirely, jumping from 5.10 to 5.11. French grades avoid this issue with their consistent a/b/c/+ system throughout all difficulty levels, making them more intuitive for many climbers.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">3. Endurance vs Power Routes</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Sport climbing grades try to balance <em>technical difficulty</em>, <em>endurance</em>, and <em>power</em> into a single number. A pumpy 5.11a with 40 moves might feel harder than a powerful 5.11c with one desperate crux. Your personal strengths (endurance vs power) determine which feels "accurate" to you personally.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">4. Personal Strengths and Weaknesses</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Your height, reach, flexibility, and training history dramatically affect how hard grades feel <em>to you</em>. A tall climber might find a reachy 5.11a easy while struggling on a crimpy 5.10c. A shorter climber might excel at technical compression routes but fight against dynos. This means grades are always relative to the individual climber.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">5. Grade Inflation Over Time</h3>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          As training methods improve and climbers get stronger, grades shift. A route graded 5.13a in 1990 might be considered 5.12c today because modern climbers are stronger and more technically proficient. Historic outdoor routes are often downgraded as consensus builds around their "true" difficulty.
+        </p>
+
+        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-5 mb-8">
+          <p class="font-semibold text-granite mb-2">The Bottom Line:</p>
+          <p class="text-gray-700">
+            Use grades as a <strong>general guideline</strong>, not an absolute measure. Focus on your own progression, enjoy the climbing, and don't stress too much about whether something "should" feel like 5.11a or 5.11b. The journey matters more than the number.
+          </p>
+        </div>
+
+        <!-- Gym vs Outdoor -->
+        <h2 class="text-3xl font-bold text-granite mb-4 mt-12">Gym vs Outdoor Sport Climbing Grades</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          This is the secret every experienced climber knows: <strong>gym grades are intentionally softer than outdoor grades at beginner to intermediate levels</strong>. This isn't a mistake or inconsistency - it's a deliberate design choice by gym owners and route setters.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">Why Are Gym Grades Softer?</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Commercial gyms want to encourage progression and build confidence. If a climber sends their first 5.10a after a few months, they feel accomplished and motivated to continue. This positive reinforcement keeps people engaged with the sport. Additionally:
+        </p>
+        <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+          <li><strong>Controlled environment:</strong> Gyms have perfect conditions (no rain, consistent friction, clean holds), making routes objectively easier than outdoor equivalents</li>
+          <li><strong>Moldable holds:</strong> Modern plastic holds are designed for optimal grip and comfort, unlike natural rock which can be sharp, polished, or awkward</li>
+          <li><strong>Business incentives:</strong> Gyms need to cater to all skill levels, so they err on the side of more accessible grading</li>
+          <li><strong>No route finding:</strong> Indoor routes have clear tape marking, eliminating the mental challenge of finding beta outdoors</li>
+        </ul>
+
+        <h3 class="text-xl font-bold text-granite mb-3">The Gym-Outdoor Grade Gap</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Based on data from thousands of climbers, here's the typical grade gap:
+        </p>
+        <div class="overflow-x-auto mb-6">
+          <table class="w-full border-2 border-gray-200 text-left">
+            <thead class="bg-sage text-white">
+              <tr>
+                <th class="px-4 py-3 font-semibold">Grade Range</th>
+                <th class="px-4 py-3 font-semibold">Gym Grade</th>
+                <th class="px-4 py-3 font-semibold">Outdoor Equivalent</th>
+                <th class="px-4 py-3 font-semibold">Gap</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr class="bg-white hover:bg-ivory">
+                <td class="px-4 py-3 text-gray-700">Beginner</td>
+                <td class="px-4 py-3 font-semibold">5.7-5.9</td>
+                <td class="px-4 py-3">5.6-5.8</td>
+                <td class="px-4 py-3 text-orange-600">-1 grade</td>
+              </tr>
+              <tr class="bg-gray-50 hover:bg-ivory">
+                <td class="px-4 py-3 text-gray-700">Intermediate</td>
+                <td class="px-4 py-3 font-semibold">5.10a-5.11d</td>
+                <td class="px-4 py-3">5.9-5.11b</td>
+                <td class="px-4 py-3 text-orange-600">-1 grade</td>
+              </tr>
+              <tr class="bg-white hover:bg-ivory">
+                <td class="px-4 py-3 text-gray-700">Advanced</td>
+                <td class="px-4 py-3 font-semibold">5.12a-5.13d</td>
+                <td class="px-4 py-3">5.12a-5.13d</td>
+                <td class="px-4 py-3 text-green-600">Consistent</td>
+              </tr>
+              <tr class="bg-gray-50 hover:bg-ivory">
+                <td class="px-4 py-3 text-gray-700">Elite</td>
+                <td class="px-4 py-3 font-semibold">5.14a+</td>
+                <td class="px-4 py-3">5.14a+</td>
+                <td class="px-4 py-3 text-green-600">Consistent</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Notice how the gap disappears at advanced levels (5.12+). This is because elite climbers train outdoors frequently and demand accurate grading. Additionally, competition-style gym routes at this level are set by professional setters who use international standards.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">Making the Transition to Outdoor Climbing</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          If you're planning your first outdoor sport climbing trip, here's how to set realistic expectations:
+        </p>
+        <ol class="list-decimal pl-6 mb-6 text-gray-700 space-y-3">
+          <li><strong>Drop 1 grade:</strong> If you consistently redpoint 5.10c indoors, start with outdoor 5.10a or 5.9. You'll likely find them challenging enough!</li>
+          <li><strong>Expect different rock texture:</strong> Outdoor rock has different friction (limestone is polished, sandstone is gritty, granite is slick), and holds aren't ergonomic like plastic</li>
+          <li><strong>Learn to clip efficiently:</strong> Indoor routes have pre-placed quickdraws in convenient positions. Outdoors, you clip your own quickdraws while pumped</li>
+          <li><strong>Route finding skills matter:</strong> Indoor routes have obvious tape. Outdoors, you need to read the rock and find the intended line</li>
+          <li><strong>Focus on volume:</strong> Instead of projecting your gym max grade, try to send many easier problems outdoors. Build your outdoor-specific skills before pushing grades</li>
+        </ol>
+
+        <!-- Regional Variations -->
+        <h2 class="text-3xl font-bold text-granite mb-4 mt-12">Regional Grading Variations</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Even within a single grading system, standards vary by region and climbing area. Understanding these quirks helps you set appropriate expectations when traveling.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">United States (YDS)</h3>
+        <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+          <li><strong>Yosemite, California:</strong> Birthplace of the YDS, historically graded very conservatively (harder). Many classic routes from the 1970s-80s have been upgraded over time</li>
+          <li><strong>Red River Gorge, Kentucky:</strong> Known for slightly soft grading, especially at 5.11-5.13. Community consensus suggests subtracting one letter grade</li>
+          <li><strong>Smith Rock, Oregon:</strong> Generally considered accurate to modern YDS standards, with excellent sport climbing</li>
+          <li><strong>Rifle, Colorado:</strong> Elite-level area with accurate grading at 5.12+. Steep, endurance-focused routes that define modern sport climbing standards</li>
+        </ul>
+
+        <h3 class="text-xl font-bold text-granite mb-3">Europe (French Grades)</h3>
+        <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+          <li><strong>Céüse, France:</strong> The gold standard for French grades. Routes here define the system. Often feels harder than equivalent grades elsewhere</li>
+          <li><strong>Spain (Siurana, Margalef, Rodellar):</strong> Generally accurate French grading, with world-class sport climbing</li>
+          <li><strong>Switzerland (Cresciano):</strong> Known for notoriously stiff grading. A 7b here might feel like 7c elsewhere</li>
+          <li><strong>Greece (Kalymnos):</strong> Limestone sport climbing paradise with generally accurate French grades, though some sectors grade soft</li>
+        </ul>
+
+        <h3 class="text-xl font-bold text-granite mb-3">International Standards</h3>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Competition climbing (IFSC World Cups, Olympics) has helped standardize elite-level grading. Professional route setters use international benchmarks, making 5.13+ routes more consistent worldwide than beginner/intermediate grades. If you climb at this level, you'll find gyms that host competitions tend to have more accurate grading.
+        </p>
+
+        <!-- How to Progress -->
+        <h2 class="text-3xl font-bold text-granite mb-4 mt-12">How to Progress Through Sport Climbing Grades</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Understanding grade conversions is useful, but the real question is: <strong>how do you climb harder?</strong> Here's what actually works, based on decades of coaching experience and training science.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">1. Build Endurance First (Beginner: 5.4-5.9)</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          At the beginner stage, your limiting factor isn't power - it's <em>endurance and movement efficiency</em>. Sport climbing requires sustained effort over 20-40 moves, unlike bouldering's short sequences. The climbers who progress fastest focus on volume and learning to rest on the wall.
+        </p>
+        <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+          <li><strong>Aim for:</strong> 8-12 routes per session, mostly within 5.6-5.8</li>
+          <li><strong>Focus on:</strong> Efficient clipping, finding rest positions, pacing yourself, breathing technique</li>
+          <li><strong>Avoid:</strong> Overgripping (death grip), rushing through routes, projecting grades way above your level</li>
+          <li><strong>Key milestone:</strong> When you can flash most 5.9s and climb 5.10a without getting pumped, you're ready for intermediate training</li>
+        </ul>
+
+        <h3 class="text-xl font-bold text-granite mb-3">2. Develop Power Endurance (Intermediate: 5.10a-5.11d)</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          At the intermediate stage, you need <em>power endurance</em> - the ability to sustain hard moves over long sequences. This is where sport climbing diverges from bouldering. You're no longer just learning technique; you're building specific physiological adaptations.
+        </p>
+        <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+          <li><strong>4x4s training:</strong> Climb 4 routes at your onsight grade (e.g., 5.10b) back-to-back with minimal rest. Repeat 4 times. This builds pump resistance</li>
+          <li><strong>Projecting technique:</strong> Spend 70% of time onsighting/flashing, 30% projecting harder routes. Break projects into sections and link them</li>
+          <li><strong>Footwork refinement:</strong> Silent feet drills, precise placements, flagging - technique still trumps power</li>
+          <li><strong>Key milestone:</strong> When you can consistently redpoint 5.11c and flash 5.11a, you're approaching advanced level</li>
+        </ul>
+
+        <h3 class="text-xl font-bold text-granite mb-3">3. Strength and Specificity (Advanced: 5.12a-5.13d)</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Advanced sport climbing requires <em>finger strength</em>, <em>core tension</em>, and <em>route-reading skills</em>. At this level, structured training becomes essential. You're competing with climbers who train 15-20 hours per week.
+        </p>
+        <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+          <li><strong>Periodization:</strong> Cycle through power endurance phases (long pumpy routes), strength phases (hangboarding, limit bouldering), and rest phases</li>
+          <li><strong>Hangboard protocols:</strong> Max hangs for finger strength, repeaters for endurance. Structured programs like "Eva López's method" are proven effective</li>
+          <li><strong>Route reading:</strong> Learn to visualize sequences, identify rest stances, and plan clipping positions before you leave the ground</li>
+          <li><strong>Key milestone:</strong> Breaking into 5.13a typically requires 4-6 years of consistent training for most climbers</li>
+        </ul>
+
+        <h3 class="text-xl font-bold text-granite mb-3">4. Elite Training (5.14a+)</h3>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Elite sport climbing is a full-time pursuit. At this level, you're training 20-25 hours per week, working with coaches, managing nutrition and recovery meticulously, and likely competing internationally or pursuing cutting-edge outdoor projects. Progression is measured in years, not months. This is beyond the scope of most recreational climbers - but if you're here, you probably don't need our advice!
+        </p>
+
+        <div class="bg-sage/10 border-2 border-sage rounded-lg p-6 mb-8">
+          <h3 class="text-xl font-bold text-granite mb-3">Universal Progression Tips:</h3>
+          <ul class="space-y-2 text-gray-700">
+            <li>✓ <strong>Climb 2-3x per week</strong> (sport climbing requires rest for endurance adaptation)</li>
+            <li>✓ <strong>Warm up thoroughly</strong> (15-20 minutes of easy climbing, don't skip this!)</li>
+            <li>✓ <strong>Log your sends</strong> (track onsights, flashes, redpoints - data motivates)</li>
+            <li>✓ <strong>Learn efficient clipping</strong> (practice clipping drills until it's automatic)</li>
+            <li>✓ <strong>Antagonist training</strong> (push-ups, shoulder exercises prevent injuries)</li>
+            <li>✓ <strong>Have fun!</strong> (burnout is real - keep it enjoyable)</li>
+          </ul>
+        </div>
+
+        <!-- FAQ Section -->
+        <h2 class="text-3xl font-bold text-granite mb-6 mt-12">Frequently Asked Questions</h2>
+
+        <div class="space-y-6 mb-8">
+          <!-- FAQ 1 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What is the YDS grading system?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              The Yosemite Decimal System (YDS) is the most common sport climbing grading system in North America, ranging from 5.4 (beginner) to 5.15d (world's hardest). It uses numbers with letter grades (a, b, c, d) at 5.10 and above for more granular difficulty ratings. The system was developed in the 1950s at Yosemite National Park and has become the standard throughout the United States and Canada.
+            </p>
+          </div>
+
+          <!-- FAQ 2 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What is the difference between 5.10a and French 6a?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              5.10a and French 6a are equivalent grades in different systems. 5.10a is the American YDS grade, while 6a is the French sport climbing grade. They represent the same approximate difficulty level - intermediate sport climbing requiring consistent training, good footwork, and developing finger strength. In practical terms, if you can redpoint 5.10a consistently, you should be able to climb French 6a routes.
+            </p>
+          </div>
+
+          <!-- FAQ 3 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">Are gym grades softer than outdoor grades for sport climbing?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Yes, indoor gym grades are typically 1 grade softer than outdoor grades at beginner to intermediate levels (5.7-5.11). For example, a gym 5.10a might be closer to outdoor 5.9. This is intentional to encourage progression and build confidence. Advanced grades (5.12+) tend to be more consistent between gym and outdoor climbing because elite climbers demand accurate grading and professional setters use international standards.
+            </p>
+          </div>
+
+          <!-- FAQ 4 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">How do YDS letter grades work (a, b, c, d)?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Starting at 5.10, the YDS system adds letter grades (a, b, c, d) to create finer distinctions. For example: 5.10a → 5.10b → 5.10c → 5.10d → 5.11a. Each letter represents a meaningful difficulty increase, roughly equivalent to 1-2 V-grades in bouldering or half a French sport grade. Before 5.10 (grades 5.4-5.9), the system uses whole numbers only without letter modifiers.
+            </p>
+          </div>
+
+          <!-- FAQ 5 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What's the difference between YDS and French sport grades?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              YDS uses numbers with letter grades (5.10a, 5.11b) while French uses numbers, letters, and plus signs (6a, 6b+, 7a). French grades are more granular throughout all difficulty levels - YDS only adds letters at 5.10+, while French uses a/b/c from the start. Many climbers find French grades more intuitive and consistent. YDS is standard in North America; French is the international standard everywhere else.
+            </p>
+          </div>
+
+          <!-- FAQ 6 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What does UIAA grade mean in climbing?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              UIAA (International Climbing and Mountaineering Federation) grades use Roman numerals with +/- modifiers (IV, V+, VI-, etc.). The system is primarily used in Central Europe (Germany, Austria, Switzerland) for both sport and traditional climbing. UIAA grades are less common internationally, with most climbers preferring French or YDS systems. The system rarely extends beyond XII+ for modern sport climbing.
+            </p>
+          </div>
+
+          <!-- FAQ 7 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">How long does it take to climb 5.11a?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Most climbers reach 5.11a (gym grades) within 1-2 years of consistent training (2-3 sessions per week). However, this varies dramatically based on starting fitness, body type, training quality, and whether you focus on sport climbing or bouldering. Some athletic beginners reach gym 5.11a in 8-12 months, while others take 3+ years. Outdoor 5.11a typically takes longer - expect to add 6-12 months to your timeline.
+            </p>
+          </div>
+
+          <!-- FAQ 8 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">Why do sport climbing grades feel different at different gyms?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Every gym has different setters with their own interpretation of grades. Factors include: setter experience and training background, gym philosophy (encourage progression vs maintain outdoor standards), route style preferences (endurance vs powerful), and how frequently routes are reset. Additionally, some gyms use YDS, others use French, and some use hybrid systems. The best approach is to learn your gym's specific grading tendencies.
+            </p>
+          </div>
+
+          <!-- FAQ 9 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">Can I trust gym grades for outdoor sport climbing?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Gym grades are a useful starting reference but not directly transferable to outdoor climbing. Drop 1 grade when transitioning outdoors, especially at beginner/intermediate levels (5.7-5.11). If you consistently redpoint gym 5.10c, start with outdoor 5.10a or 5.9. Additionally, outdoor climbing requires route-finding skills, efficient clipping under pressure, dealing with variable rock texture and weather, and different mental game than gym climbing.
+            </p>
+          </div>
+
+          <!-- FAQ 10 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What's a good sport climbing grade for a beginner?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Most true beginners start at 5.4-5.6 (French 3-4b). After 4-8 weeks of consistent climbing (2-3x per week), you should comfortably climb 5.7-5.8. By 3-6 months, many recreational climbers reach 5.9-5.10a. These are gym grades - outdoor grades will be about 1 level harder. Focus on building endurance and learning to rest on the wall rather than pushing max grades early on.
+            </p>
+          </div>
+
+          <!-- FAQ 11 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">Is 5.12a considered elite in sport climbing?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              5.12a is considered advanced, not quite elite. Statistically, around 5-8% of regular gym climbers reach 5.12a, and it typically requires 2-4 years of consistent training. The true elite threshold starts around 5.13a (French 8a), which less than 2-3% of climbers achieve and requires dedicated structured training, outdoor experience, and often coaching. 5.12a is a significant milestone that separates intermediate from advanced climbers.
+            </p>
+          </div>
+
+          <!-- FAQ 12 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What does French 7a convert to in YDS?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              French 7a converts to approximately 5.11c in the YDS system. This is an advanced grade requiring dedicated training, solid finger strength, power endurance, and refined technique. The conversion has moderate confidence because there's some regional variation at this level. Some climbers find French 7a closer to 5.11d, while others feel it's solid 5.11c. Use our converter above to see all equivalent grades and confidence levels.
+            </p>
+          </div>
+
+          <!-- FAQ 13 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">How do I know if I should use gym or outdoor grades?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              If you primarily climb indoors at commercial gyms, use the "Indoor Gym" setting on our toggle. If you climb outdoors regularly or at gyms known for outdoor-accurate grading (competition gyms, climbing co-ops), use the "Outdoor" setting. As a rule of thumb: if routes at your gym feel consistently easier than the grades suggest, it's likely grading soft (gym grades). If you're frequently working hard for the grades, it's closer to outdoor standards.
+            </p>
+          </div>
+
+          <!-- FAQ 14 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What's the hardest sport climbing grade ever climbed?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              As of 2025, the hardest confirmed sport climb is "Silence" at 5.15c (French 9c), established by Adam Ondra in Norway in 2017. This remains the only confirmed 9c in the world. There are several 5.15b (9b+) routes that have been repeated, establishing them as legitimate grades. At this level, grades are highly subjective and depend on individual climber strengths, conditions, and consensus from repeat ascents.
+            </p>
+          </div>
+
+          <!-- FAQ 15 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">Should I focus on endurance or power for sport climbing?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              It depends on your current level. Beginners (5.7-5.9) should focus on endurance - learning to climb efficiently without getting pumped. Intermediate climbers (5.10a-5.11d) need power endurance - sustained hard moves over long sequences. Advanced climbers (5.12+) need both maximum finger strength and power endurance. Use periodized training: build aerobic endurance first, then add power endurance, then layer in maximum strength work.
+            </p>
+          </div>
+        </div>
+
+        <!-- Link to Bouldering Converter -->
+        <div class="bg-sage/10 border-2 border-sage rounded-lg p-6 mb-8 text-center">
+          <h3 class="text-xl font-bold text-granite mb-3">Looking for Bouldering Grades?</h3>
+          <p class="text-gray-700 mb-4">
+            We also have a comprehensive V-Scale to Font conversion tool for bouldering grades.
+          </p>
+          <a
+            href="/tools/bouldering-grade-conversion"
+            class="inline-block px-6 py-3 bg-sage text-white font-semibold rounded-lg hover:bg-sage/90 transition-colors"
+          >
+            Bouldering Grade Converter →
+          </a>
+        </div>
+
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Full Conversion Table -->
+  <section class="table-section py-12 bg-ivory">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <ConversionTable
+        gradeData={sportGrades}
+        title="Complete Sport Climbing Grade Conversion Reference"
+        id="full-sport-table"
+      />
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta py-16 bg-gradient-to-br from-sage to-granite text-white text-center">
+    <div class="container mx-auto px-4 max-w-3xl">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+        Ready to Test Your Grades?
+      </h2>
+      <p class="text-xl text-white/90 mb-8">
+        Find the best sport climbing gyms near you and put your skills to the test on real routes.
+      </p>
+      <a
+        href="/search"
+        class="inline-block px-8 py-4 bg-white text-sage font-bold text-lg rounded-lg hover:bg-white/90 transition-colors shadow-lg"
+      >
+        Find Climbing Gyms Near You
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Client-side interactivity for grade conversion
+  import sportGradesData from '../../data/sport-grades.json';
+
+  // State
+  let selectedGrade: any = null;
+  let isGym = true;
+
+  // DOM elements
+  const searchInput = document.getElementById('sport-search') as HTMLInputElement;
+  const environmentToggle = document.getElementById('sport-environment') as HTMLInputElement;
+  const resultsContainer = document.getElementById('results-container');
+  const ctaAfterConversion = document.getElementById('cta-after-conversion');
+
+  // Listen for grade selection
+  document.addEventListener('gradeSelected', (e: any) => {
+    const gradeKey = e.detail.grade.toLowerCase().replace(/\s+/g, '');
+    selectedGrade = sportGradesData[gradeKey];
+
+    if (selectedGrade) {
+      updateResults();
+    }
+  });
+
+  // Listen for environment change
+  document.addEventListener('environmentChanged', (e: any) => {
+    isGym = e.detail.environment === 'gym';
+
+    if (selectedGrade) {
+      updateResults();
+    }
+  });
+
+  // Update results display
+  function updateResults() {
+    if (!selectedGrade || !resultsContainer) return;
+
+    // Show containers
+    resultsContainer.classList.remove('hidden');
+    ctaAfterConversion?.classList.remove('hidden');
+
+    // Build results HTML
+    const { display, equivalents, skill_level, description, gym_outdoor_diff } = selectedGrade;
+
+    // Calculate adjusted grade for gym vs outdoor
+    let gymNote = '';
+    if (isGym && gym_outdoor_diff !== 0) {
+      const adjustment = Math.abs(gym_outdoor_diff);
+      // For YDS, adjustment is different
+      // Parse the grade to adjust it properly
+      let outdoorGrade = display;
+      if (display.includes('.')) {
+        const parts = display.split('.');
+        const mainGrade = parseInt(parts[0]);
+        const subGrade = parts[1];
+
+        // Adjust based on gym_outdoor_diff (-1 for most beginner/intermediate)
+        if (subGrade.match(/\d+[a-d]/)) {
+          // Has letter grade (5.10a, 5.11b, etc)
+          const numPart = subGrade.match(/\d+/)[0];
+          const letterPart = subGrade.match(/[a-d]/)?.[0] || '';
+
+          // Simple approximation: drop one letter grade
+          const letters = ['a', 'b', 'c', 'd'];
+          const currentLetterIndex = letters.indexOf(letterPart);
+
+          if (currentLetterIndex > 0) {
+            outdoorGrade = `${mainGrade}.${numPart}${letters[currentLetterIndex - 1]}`;
+          } else {
+            // If 'a', go to previous number grade 'd'
+            const prevNum = parseInt(numPart) - 1;
+            outdoorGrade = `${mainGrade}.${prevNum}d`;
+          }
+        } else {
+          // No letter grade (5.4-5.9)
+          const num = parseInt(subGrade);
+          outdoorGrade = `${mainGrade}.${num - adjustment}`;
+        }
+      }
+
+      gymNote = `
+        <div class="gym-note mt-3 p-3 bg-white/10 rounded-md text-sm">
+          <p class="font-medium">🏢 Indoor gym ${display} ≈ Outdoor ${outdoorGrade}</p>
+        </div>
+      `;
+    }
+
+    // Skill level colors
+    const skillLevelColors: Record<string, string> = {
+      'Beginner': 'bg-blue-100 text-blue-800',
+      'Intermediate': 'bg-purple-100 text-purple-800',
+      'Advanced': 'bg-orange-100 text-orange-800',
+      'Elite': 'bg-red-100 text-red-800'
+    };
+    const skillColor = skillLevelColors[skill_level] || 'bg-gray-100 text-gray-800';
+
+    // Build conversion cards
+    let conversionsHTML = '';
+    for (const [system, data] of Object.entries(equivalents) as [string, any][]) {
+      const systemName = system
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
+      // Confidence indicator
+      const confidenceConfig: Record<string, any> = {
+        'high': { color: 'bg-green-100 text-green-800 border-green-300', icon: '✓', label: 'High Confidence' },
+        'medium-high': { color: 'bg-green-100 text-green-700 border-green-300', icon: '✓', label: 'High Confidence' },
+        'medium': { color: 'bg-yellow-100 text-yellow-800 border-yellow-300', icon: '≈', label: 'Approximate' },
+        'medium-low': { color: 'bg-orange-100 text-orange-800 border-orange-300', icon: '≈', label: 'Approximate' },
+        'low': { color: 'bg-orange-100 text-orange-900 border-orange-400', icon: '~', label: 'Subjective' },
+        'very-low': { color: 'bg-red-100 text-red-900 border-red-400', icon: '~', label: 'Highly Variable' }
+      };
+      const confidence = confidenceConfig[data.confidence] || confidenceConfig['medium'];
+
+      const noteHTML = data.note ? `
+        <div class="regional-note p-3 bg-ivory rounded-md mt-3">
+          <p class="text-sm text-gray-700">
+            <span class="font-semibold">Note:</span> ${data.note}
+          </p>
+        </div>
+      ` : '';
+
+      conversionsHTML += `
+        <div class="conversion-card bg-white border-2 border-gray-200 rounded-lg p-5 hover:shadow-lg hover:border-sage transition-all">
+          <div class="system-name text-sm font-semibold text-gray-500 mb-2">
+            ${systemName}
+          </div>
+          <div class="grade-value text-3xl font-bold text-granite mb-3">
+            ${data.value}
+          </div>
+          <div class="mb-3">
+            <span class="inline-flex items-center gap-1.5 font-medium rounded-full border ${confidence.color} text-xs px-2 py-0.5">
+              <span>${confidence.icon}</span>
+              <span>${confidence.label}</span>
+            </span>
+          </div>
+          ${noteHTML}
+        </div>
+      `;
+    }
+
+    resultsContainer.innerHTML = `
+      <div class="conversion-results mt-8 mb-8">
+        <!-- Selected grade header -->
+        <div class="results-header bg-sage text-white rounded-lg p-6 mb-6 text-center">
+          <div class="flex items-center justify-center gap-3 mb-2 flex-wrap">
+            <h3 class="text-4xl md:text-5xl font-bold">${display}</h3>
+            <span class="skill-badge px-3 py-1 rounded-full text-sm font-semibold ${skillColor}">
+              ${skill_level}
+            </span>
+          </div>
+          <p class="text-lg text-white/90">${description}</p>
+          ${gymNote}
+        </div>
+
+        <!-- Conversion cards -->
+        <div class="conversions-grid grid grid-cols-1 md:grid-cols-2 gap-4">
+          ${conversionsHTML}
+        </div>
+      </div>
+    `;
+
+    // Smooth scroll to results
+    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+</script>
+
+<style>
+  .conversion-card {
+    transition: all 200ms ease;
+  }
+
+  .conversion-card:hover {
+    border-color: #98a48b; /* sage */
+    transform: translateY(-2px);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .results-header h3 {
+      font-size: 2.5rem;
+    }
+
+    .conversions-grid {
+      gap: 1rem;
+    }
+  }
+</style>

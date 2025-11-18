@@ -4,11 +4,11 @@
  * Foundation layout for all pages with comprehensive SEO meta tags and schema markup
  */
 import '../styles/global.css';
-import { createClient } from '../lib/supabase';
 import { fetchGyms } from '../config/api';
 import { getStateCode, getStateSlug } from '../utils/states';
 import SpeedInsights from '@vercel/speed-insights/astro';
 import Analytics from '@vercel/analytics/astro';
+import WelcomeModal from '../components/WelcomeModal.astro';
 
 interface Props {
   title: string;
@@ -39,11 +39,6 @@ const {
   prevUrl,
   nextUrl,
 } = Astro.props;
-
-// Check auth state
-// Note: Cross-subdomain authentication works in production (dashboard.* and www.*)
-const supabase = createClient(Astro);
-const { data: { user }, error: authError } = await supabase.auth.getUser();
 
 // Fetch gyms to calculate top 5 states dynamically
 const gymsData = await fetchGyms();
@@ -277,46 +272,11 @@ if (breadcrumbs && breadcrumbs.length > 0) {
             <a href="/guides" class="text-granite hover:text-sage transition-colors">Guides</a>
             <a href="/about" class="text-granite hover:text-sage transition-colors">About</a>
 
-            {user ? (
-              <!-- Logged In: Show Email Dropdown -->
-              <div class="relative group">
-                <button class="flex items-center gap-2 text-granite hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  <span class="max-w-[150px] truncate">{user.email}</span>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                <!-- Dropdown Menu -->
-                <div class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div class="py-2">
-                    <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard`} class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                      Dashboard
-                    </a>
-                    <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard/favorites`} class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                      My Favorites
-                    </a>
-                    <div class="border-t border-gray-200 my-2"></div>
-                    <form method="POST" action={`${import.meta.env.PUBLIC_DASHBOARD_URL}/api/auth/signout`}>
-                      <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
-                        Sign Out
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <!-- Logged Out: Show Login/Sign Up -->
-              <>
-                <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/login`} class="text-granite hover:text-sage transition-colors">Login</a>
-                <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/signup`} class="bg-sage text-white px-6 py-2 rounded hover:bg-sage/90 transition-colors">
-                  Sign Up
-                </a>
-              </>
-            )}
+            <!-- Auth Nav: Populated by client-side script -->
+            <div id="desktop-auth-nav" class="flex items-center gap-4">
+              <!-- Loading placeholder -->
+              <div class="text-gray-400 text-sm">•••</div>
+            </div>
           </div>
 
           <!-- Mobile Hamburger Button -->
@@ -374,6 +334,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
             <h4 class="font-semibold mb-3">Explore</h4>
             <ul class="space-y-2 text-sm">
               <li><a href="/search" class="hover:text-sage">Search Gyms</a></li>
+              <li><a href="/tools" class="hover:text-sage">Grade Converters</a></li>
               <li><a href="/guides" class="hover:text-sage">Guides</a></li>
               <li><a href="/categories/best-bouldering-climbing-gyms/1" class="hover:text-sage">Best Bouldering</a></li>
               <li><a href="/categories" class="hover:text-sage">All Categories</a></li>
@@ -458,135 +419,11 @@ if (breadcrumbs && breadcrumbs.length > 0) {
           </svg>
         </button>
 
-        {user ? (
-          <!-- Logged In User Section -->
-          <>
-            <!-- User Email Display -->
-            <div class="mx-6 mt-6 mb-4 px-6 py-3 bg-sage/10 rounded-lg">
-              <div class="flex items-center gap-2 text-granite">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <span class="text-sm font-medium truncate">{user.email}</span>
-              </div>
-            </div>
-
-            <!-- Divider -->
-            <div class="border-t border-gray-200"></div>
-
-            <!-- Navigation Links -->
-            <nav class="py-2">
-              <a
-                href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard`}
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Dashboard
-              </a>
-              <a
-                href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard/favorites`}
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                My Favorites
-              </a>
-              <a
-                href="/search"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Search
-              </a>
-              <a
-                href="/states"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Browse States
-              </a>
-              <a
-                href="/categories"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Browse Categories
-              </a>
-              <a
-                href="/guides"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Guides
-              </a>
-              <a
-                href="/about"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                About
-              </a>
-            </nav>
-
-            <!-- Divider -->
-            <div class="border-t border-gray-200"></div>
-
-            <!-- Sign Out -->
-            <div class="py-2">
-              <form method="POST" action={`${import.meta.env.PUBLIC_DASHBOARD_URL}/api/auth/signout`}>
-                <button type="submit" class="block w-full text-left px-6 py-4 text-red-600 hover:bg-red-50 transition-colors">
-                  Sign Out
-                </button>
-              </form>
-            </div>
-          </>
-        ) : (
-          <!-- Logged Out Section -->
-          <>
-            <!-- Sign Up Button -->
-            <a
-              href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/signup`}
-              class="block mx-6 mt-6 mb-4 px-6 py-3 bg-sage text-white text-center rounded-lg font-medium hover:bg-sage/90 transition-colors"
-            >
-              Sign Up
-            </a>
-
-            <!-- Divider -->
-            <div class="border-t border-gray-200"></div>
-
-            <!-- Navigation Links -->
-            <nav class="py-2">
-              <a
-                href="/search"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Search
-              </a>
-              <a
-                href="/states"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Browse States
-              </a>
-              <a
-                href="/categories"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Browse Categories
-              </a>
-              <a
-                href="/guides"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Guides
-              </a>
-              <a
-                href="/about"
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                About
-              </a>
-              <a
-                href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/login`}
-                class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-              >
-                Login
-              </a>
-            </nav>
-          </>
-        )}
+        <!-- Mobile Auth Nav: Populated by client-side script -->
+        <div id="mobile-auth-nav">
+          <!-- Loading placeholder -->
+          <div class="mx-6 mt-6 mb-4 text-center text-gray-400 text-sm">Loading...</div>
+        </div>
 
         <!-- Divider -->
         <div class="border-t border-gray-200"></div>
@@ -652,6 +489,144 @@ if (breadcrumbs && breadcrumbs.length > 0) {
         }
       });
     </script>
+
+    <!-- Client-Side Auth Navigation Script -->
+    <script define:vars={{ dashboardUrl: import.meta.env.PUBLIC_DASHBOARD_URL, supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL }}>
+      (function() {
+        const desktopNav = document.getElementById('desktop-auth-nav');
+        const mobileNav = document.getElementById('mobile-auth-nav');
+
+        if (!desktopNav || !mobileNav) return;
+
+        // Helper: Get cookie by name
+        function getCookie(name) {
+          const value = `; ${document.cookie}`;
+          const parts = value.split(`; ${name}=`);
+          if (parts.length === 2) return parts.pop().split(';').shift();
+          return null;
+        }
+
+        // Check for Supabase auth cookie
+        const cookieName = `sb-${supabaseUrl.split('//')[1].split('.')[0]}-auth-token`;
+        const authCookie = getCookie(cookieName);
+
+        if (authCookie) {
+          // User is logged in - show account dropdown (desktop)
+          desktopNav.innerHTML = `
+            <div class="relative group">
+              <button class="flex items-center gap-2 text-granite hover:text-sage transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span>My Account</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div class="py-2">
+                  <a href="${dashboardUrl}/dashboard" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                    Dashboard
+                  </a>
+                  <a href="${dashboardUrl}/dashboard/favorites" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                    My Favorites
+                  </a>
+                  <div class="border-t border-gray-200 my-2"></div>
+                  <form method="POST" action="${dashboardUrl}/api/auth/signout">
+                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                      Sign Out
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          `;
+
+          // User is logged in - show mobile nav
+          mobileNav.innerHTML = `
+            <div class="mx-6 mt-6 mb-4 px-6 py-3 bg-sage/10 rounded-lg">
+              <div class="flex items-center gap-2 text-granite">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="text-sm font-medium">Logged In</span>
+              </div>
+            </div>
+            <div class="border-t border-gray-200"></div>
+            <nav class="py-2">
+              <a href="${dashboardUrl}/dashboard" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                Dashboard
+              </a>
+              <a href="${dashboardUrl}/dashboard/favorites" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                My Favorites
+              </a>
+              <a href="/search" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                Search
+              </a>
+              <a href="/states" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                Browse States
+              </a>
+              <a href="/categories" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                Browse Categories
+              </a>
+              <a href="/guides" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                Guides
+              </a>
+              <a href="/about" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                About
+              </a>
+            </nav>
+            <div class="border-t border-gray-200"></div>
+            <div class="py-2">
+              <form method="POST" action="${dashboardUrl}/api/auth/signout">
+                <button type="submit" class="block w-full text-left px-6 py-4 text-red-600 hover:bg-red-50 transition-colors">
+                  Sign Out
+                </button>
+              </form>
+            </div>
+          `;
+        } else {
+          // User is logged out - show login/signup (desktop)
+          desktopNav.innerHTML = `
+            <a href="${dashboardUrl}/login" class="text-granite hover:text-sage transition-colors">Login</a>
+            <a href="${dashboardUrl}/signup" class="bg-sage text-white px-6 py-2 rounded hover:bg-sage/90 transition-colors">
+              Sign Up
+            </a>
+          `;
+
+          // User is logged out - show mobile nav
+          mobileNav.innerHTML = `
+            <a href="${dashboardUrl}/signup" class="block mx-6 mt-6 mb-4 px-6 py-3 bg-sage text-white text-center rounded-lg font-medium hover:bg-sage/90 transition-colors">
+              Sign Up
+            </a>
+            <div class="border-t border-gray-200"></div>
+            <nav class="py-2">
+              <a href="/search" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                Search
+              </a>
+              <a href="/states" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                Browse States
+              </a>
+              <a href="/categories" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                Browse Categories
+              </a>
+              <a href="/guides" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                Guides
+              </a>
+              <a href="/about" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                About
+              </a>
+              <a href="${dashboardUrl}/login" class="block px-6 py-4 text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                Login
+              </a>
+            </nav>
+          `;
+        }
+      })();
+    </script>
+
+    <!-- One-Time Welcome Modal -->
+    <WelcomeModal />
   </body>
 </html>
 

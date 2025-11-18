@@ -9,7 +9,7 @@ import vercel from '@astrojs/vercel';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://www.indoorclimbinggym.com',
-  output: 'server', // SSR mode with adapter
+  output: 'server', // SSR mode - pages opt-in to static with prerender: true
   adapter: vercel(),
   vite: {
     plugins: [tailwindcss()],

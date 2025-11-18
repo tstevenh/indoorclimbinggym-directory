@@ -1,0 +1,274 @@
+---
+/**
+ * Tools Hub Page
+ * Central directory for all climbing tools
+ */
+
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const pageUrl = 'https://www.indoorclimbinggym.com/tools';
+const title = 'Climbing Tools & Resources - IndoorClimbingGym';
+const description = 'Free climbing tools including grade converters, gym finders, and training resources. Everything you need to improve your climbing.';
+const keywords = [
+  'climbing tools',
+  'grade converter',
+  'climbing calculator',
+  'climbing resources',
+  'bouldering tools',
+  'sport climbing tools'
+];
+
+// CollectionPage schema
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Climbing Tools & Resources',
+  description: 'Free tools and calculators for climbers',
+  url: pageUrl,
+  hasPart: [
+    {
+      '@type': 'WebApplication',
+      name: 'Bouldering Grade Converter',
+      url: 'https://www.indoorclimbinggym.com/tools/bouldering-grade-conversion',
+      applicationCategory: 'UtilitiesApplication',
+      offers: { '@type': 'Offer', price: '0' }
+    },
+    {
+      '@type': 'WebApplication',
+      name: 'Sport Climbing Grade Converter',
+      url: 'https://www.indoorclimbinggym.com/tools/sport-climbing-grade-conversion',
+      applicationCategory: 'UtilitiesApplication',
+      offers: { '@type': 'Offer', price: '0' }
+    }
+  ]
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={pageUrl}
+  keywords={keywords}
+  schema={schema}
+>
+  <!-- Hero Section -->
+  <section class="hero bg-gradient-to-br from-sage to-granite text-white py-16">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">
+        Climbing Tools & Resources
+      </h1>
+      <p class="text-xl md:text-2xl text-white/90">
+        Free tools to help you climb smarter and progress faster
+      </p>
+    </div>
+  </section>
+
+  <!-- Tools Grid -->
+  <section class="tools-section max-w-6xl mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+      <!-- Bouldering Grade Converter -->
+      <a
+        href="/tools/bouldering-grade-conversion"
+        class="tool-card group bg-white border-2 border-gray-200 rounded-lg p-8 hover:border-sage hover:shadow-xl transition-all"
+      >
+        <div class="flex items-start gap-4 mb-4">
+          <div class="icon-wrapper bg-sage/10 p-4 rounded-lg">
+            <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h2 class="text-2xl font-bold text-granite mb-2 group-hover:text-sage transition-colors">
+              Bouldering Grade Converter
+            </h2>
+            <p class="text-gray-600 mb-3">
+              Convert between V-Scale, Fontainebleau, and UK Tech grades instantly
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="badge bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">V-Scale</span>
+              <span class="badge bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">Font</span>
+              <span class="badge bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">UK Tech</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="features space-y-2 mb-4">
+          <div class="flex items-center gap-2 text-sm text-gray-700">
+            <svg class="w-4 h-4 text-sage flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span>Confidence indicators (High/Medium/Low accuracy)</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-gray-700">
+            <svg class="w-4 h-4 text-sage flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span>Gym vs outdoor grade adjustment</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-gray-700">
+            <svg class="w-4 h-4 text-sage flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span>Full reference table (VB to V17)</span>
+          </div>
+        </div>
+
+        <div class="cta-arrow text-sage font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+          <span>Use Converter</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </a>
+
+      <!-- Sport Climbing Grade Converter -->
+      <a
+        href="/tools/sport-climbing-grade-conversion"
+        class="tool-card group bg-white border-2 border-gray-200 rounded-lg p-8 hover:border-sage hover:shadow-xl transition-all"
+      >
+        <div class="flex items-start gap-4 mb-4">
+          <div class="icon-wrapper bg-sage/10 p-4 rounded-lg">
+            <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h2 class="text-2xl font-bold text-granite mb-2 group-hover:text-sage transition-colors">
+              Sport Climbing Grade Converter
+            </h2>
+            <p class="text-gray-600 mb-3">
+              Convert between YDS, French, and UIAA grading systems
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="badge bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">YDS</span>
+              <span class="badge bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">French</span>
+              <span class="badge bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded">UIAA</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="features space-y-2 mb-4">
+          <div class="flex items-center gap-2 text-sm text-gray-700">
+            <svg class="w-4 h-4 text-sage flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span>Accuracy ratings for each conversion</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-gray-700">
+            <svg class="w-4 h-4 text-sage flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span>Indoor gym vs outdoor adjustments</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-gray-700">
+            <svg class="w-4 h-4 text-sage flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span>Complete chart (5.4 to 5.15d)</span>
+          </div>
+        </div>
+
+        <div class="cta-arrow text-sage font-semibold flex items-center gap-2 group-hover:gap-3 transition-all">
+          <span>Use Converter</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- Coming Soon Section -->
+  <section class="coming-soon max-w-6xl mx-auto px-4 py-12">
+    <h2 class="text-3xl font-bold text-granite mb-8 text-center">Coming Soon</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Cost Per Climb Calculator -->
+      <div class="tool-preview bg-gray-50 border-2 border-gray-200 rounded-lg p-6 opacity-60">
+        <div class="icon-wrapper bg-gray-200 p-3 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-gray-700 mb-2">Cost Per Climb Calculator</h3>
+        <p class="text-sm text-gray-600">
+          Compare day pass vs membership costs based on your climbing frequency
+        </p>
+      </div>
+
+      <!-- Route Difficulty Finder -->
+      <div class="tool-preview bg-gray-50 border-2 border-gray-200 rounded-lg p-6 opacity-60">
+        <div class="icon-wrapper bg-gray-200 p-3 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-gray-700 mb-2">Route Finder by Grade</h3>
+        <p class="text-sm text-gray-600">
+          Find gyms near you with routes at your specific climbing level
+        </p>
+      </div>
+
+      <!-- Training Plan Generator -->
+      <div class="tool-preview bg-gray-50 border-2 border-gray-200 rounded-lg p-6 opacity-60">
+        <div class="icon-wrapper bg-gray-200 p-3 rounded-lg w-12 h-12 flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <h3 class="text-lg font-bold text-gray-700 mb-2">Training Plan Generator</h3>
+        <p class="text-sm text-gray-600">
+          Get personalized training plans based on your goals and current level
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section max-w-4xl mx-auto px-4 py-12">
+    <div class="bg-sage rounded-lg p-8 text-white text-center">
+      <h2 class="text-3xl font-bold mb-4">Find Your Perfect Climbing Gym</h2>
+      <p class="text-lg mb-6 text-white/90">
+        Use our tools to understand your climbing level, then find gyms that match
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="/search"
+          class="px-8 py-3 bg-white text-sage font-semibold rounded-lg hover:bg-ivory transition-colors"
+        >
+          Search All Gyms →
+        </a>
+        <a
+          href="/guides"
+          class="px-8 py-3 bg-white/10 text-white border-2 border-white font-semibold rounded-lg hover:bg-white/20 transition-colors"
+        >
+          Read Climbing Guides →
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .tool-card {
+    cursor: pointer;
+  }
+
+  .tool-card:hover .icon-wrapper {
+    background-color: rgba(152, 164, 139, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .tools-section .grid {
+      gap: 1.5rem;
+    }
+
+    .tool-card {
+      padding: 1.5rem;
+    }
+  }
+</style>

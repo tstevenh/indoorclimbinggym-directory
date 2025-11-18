@@ -1,0 +1,789 @@
+---
+/**
+ * Bouldering Grade Conversion Tool
+ * Interactive converter with V-Scale, Font, and UK Tech grades
+ * Unique gym vs outdoor grade adjustment feature
+ */
+
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GradeSearchBar from '../../components/tools/GradeSearchBar.astro';
+import GymOutdoorToggle from '../../components/tools/GymOutdoorToggle.astro';
+import ConversionResults from '../../components/tools/ConversionResults.astro';
+import ConversionTable from '../../components/tools/ConversionTable.astro';
+
+// Import bouldering grades data
+import boulderingGrades from '../../data/bouldering-grades.json';
+
+// SEO
+const title = "Bouldering Grade Converter | V-Scale, Font, UK Tech - IndoorClimbingGym";
+const description = "Convert bouldering grades instantly between V-Scale, Fontainebleau, and UK Tech systems. Unique gym vs outdoor grade adjustments. Free climbing grade conversion tool.";
+const canonical = "https://www.indoorclimbinggym.com/tools/bouldering-grade-conversion";
+
+// Breadcrumbs
+const breadcrumbs = [
+  { label: 'Home', url: '/' },
+  { label: 'Tools', url: '/tools' },
+  { label: 'Bouldering Grade Conversion', url: '/tools/bouldering-grade-conversion' },
+];
+
+// Structured data for Tool
+const toolSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Bouldering Grade Conversion Tool",
+  "description": "Free tool to convert bouldering climbing grades between V-Scale, Fontainebleau, and UK Technical grading systems with gym vs outdoor adjustments",
+  "url": canonical,
+  "applicationCategory": "UtilityApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "V-Scale to Fontainebleau conversion",
+    "V-Scale to UK Tech conversion",
+    "Gym vs outdoor grade adjustment",
+    "Confidence indicators for accuracy",
+    "Full reference table (VB to V17)"
+  ]
+};
+
+// FAQ Schema
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the V-Scale in bouldering?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The V-Scale (Hueco Scale) is the most common bouldering grading system in the United States, ranging from VB (beginner) to V17 (world's hardest). It was developed by John 'Verm' Sherman at Hueco Tanks, Texas in the 1990s."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between V5 and Font 6B?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "V5 and Font 6B are equivalent grades in different systems. V5 is the American V-Scale grade, while Font 6B is the French Fontainebleau grade. They represent the same approximate difficulty level - intermediate bouldering requiring advanced technique and finger strength."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are gym grades softer than outdoor grades?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, indoor gym grades are typically 1-2 grades softer than outdoor grades at beginner to intermediate levels (VB-V6). This is intentional to encourage progression and build confidence. Advanced grades (V7+) tend to be more consistent between gym and outdoor climbing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How accurate are bouldering grade conversions?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Accuracy varies by grade level. Beginner grades (V0-V3) have high confidence conversions that are well-established. Intermediate grades (V4-V6) have moderate accuracy with some regional variation. Elite grades (V11+) are more subjective and route-dependent, with lower confidence in conversions."
+      }
+    }
+  ]
+};
+
+const schemas = [toolSchema, faqSchema];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  ogType="website"
+  keywords={[
+    'bouldering grades',
+    'v scale converter',
+    'fontainebleau grades',
+    'uk tech grades',
+    'climbing grade conversion',
+    'v5 to font',
+    'bouldering difficulty',
+    'gym vs outdoor grades'
+  ]}
+  schema={schemas}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Breadcrumb Navigation -->
+  <div class="container mx-auto px-4 max-w-6xl pt-6">
+    <nav class="text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center gap-2 flex-wrap">
+        {breadcrumbs.map((crumb, index) => (
+          <li class="flex items-center gap-2">
+            {index > 0 && <span class="text-gray-400">/</span>}
+            {index === breadcrumbs.length - 1 ? (
+              <span class="text-granite font-medium">{crumb.label}</span>
+            ) : (
+              <a href={crumb.url} class="hover:text-sage">{crumb.label}</a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero bg-gradient-to-br from-sage/20 to-ivory py-12 md:py-16">
+    <div class="container mx-auto px-4 max-w-4xl text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">
+        Bouldering Grade Conversion Tool
+      </h1>
+      <p class="text-xl md:text-2xl text-gray-700 mb-6">
+        Convert between V-Scale, Fontainebleau, and UK Tech grades instantly
+      </p>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        Our unique tool accounts for gym vs outdoor grade differences, helping you understand your true climbing level across all grading systems.
+      </p>
+    </div>
+  </section>
+
+  <!-- Tool Section (Above the Fold) -->
+  <section class="tool-section py-12">
+    <div class="container mx-auto px-4 max-w-3xl">
+      <div class="bg-white rounded-lg shadow-md p-8">
+        <!-- Search Bar -->
+        <div class="mb-6">
+          <GradeSearchBar
+            gradeData={boulderingGrades}
+            placeholder="Enter grade (e.g., V5, 6B, 6a)"
+            id="bouldering-search"
+          />
+        </div>
+
+        <!-- Gym/Outdoor Toggle -->
+        <div class="mb-8">
+          <GymOutdoorToggle id="bouldering-environment" defaultValue="gym" />
+        </div>
+
+        <!-- Results (initially hidden, shown after grade selection) -->
+        <div id="results-container" class="hidden">
+          <ConversionResults gradeData={null} isGym={true} />
+        </div>
+
+        <!-- CTA after conversion -->
+        <div id="cta-after-conversion" class="hidden mt-8 p-6 bg-sage/5 border-2 border-sage rounded-lg text-center">
+          <p class="text-lg font-semibold text-granite mb-3">
+            Ready to put these grades into practice?
+          </p>
+          <a
+            href="/search"
+            class="inline-block px-6 py-3 bg-sage text-white font-semibold rounded-lg hover:bg-sage/90 transition-colors"
+          >
+            Find Bouldering Gyms Near You →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Educational Content -->
+  <section class="content-section py-12 bg-gray-50">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <div class="bg-white rounded-lg shadow-md p-8 md:p-12">
+        <article class="prose prose-lg max-w-none">
+        <!-- How to Use -->
+        <h2 class="text-3xl font-bold text-granite mb-4">How to Use This Converter</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Converting bouldering grades has never been easier. Simply type any grade into the search bar above - whether it's a V-Scale grade like "V5", a Fontainebleau grade like "6B", or a UK Tech grade like "6a". Our intelligent search will find the grade instantly and show you all equivalent grades across all three major systems.
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          <strong>The Gym vs Outdoor Toggle:</strong> This is where our tool stands out. Indoor climbing gyms typically set grades 1-2 levels softer than outdoor climbing at beginner to intermediate levels. Toggle between "Indoor Gym" and "Outdoor" to see adjusted grades. For example, climbing V4 at your gym might be closer to outdoor V2 or V3 - and that's completely normal!
+        </p>
+        <div class="bg-ivory p-6 rounded-lg mb-8">
+          <h3 class="text-xl font-bold text-granite mb-3">Quick Tips:</h3>
+          <ul class="space-y-2 text-gray-700">
+            <li>✓ <strong>Autocomplete suggestions</strong> appear as you type</li>
+            <li>✓ <strong>Keyboard navigation</strong> with arrow keys (↑↓) and Enter</li>
+            <li>✓ <strong>Confidence indicators</strong> show conversion accuracy</li>
+            <li>✓ <strong>Copy button</strong> lets you save conversions for later</li>
+            <li>✓ <strong>Full reference table</strong> at the bottom for quick lookups</li>
+          </ul>
+        </div>
+
+        <!-- Understanding Bouldering Grade Systems -->
+        <h2 class="text-3xl font-bold text-granite mb-4 mt-12">Understanding Bouldering Grade Systems</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Bouldering uses three primary grading systems worldwide, each with its own history and regional preferences. Understanding these systems helps you climb confidently anywhere in the world.
+        </p>
+
+        <!-- V-Scale -->
+        <h3 class="text-2xl font-bold text-granite mb-3">V-Scale (Hueco Scale)</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          The V-Scale is the dominant system in the United States and increasingly worldwide. Created by John "Verm" Sherman at Hueco Tanks, Texas in the late 1990s, it provides a simple numerical progression: <strong>VB (beginner) → V0 → V1 → V2...</strong> up to <strong>V17</strong> (currently the world's hardest established grade).
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          The system is open-ended, meaning new grades (V18, V19, etc.) can be added as climbing difficulty progresses. Unlike sport climbing's YDS system, the V-Scale doesn't use letter modifiers - just clean numbers. However, you'll occasionally see "V0-" or "V0+" to indicate problems on the border between grades.
+        </p>
+        <div class="bg-blue-50 p-5 rounded-lg mb-6">
+          <p class="font-semibold text-granite mb-2">V-Scale Grade Ranges:</p>
+          <ul class="space-y-1 text-gray-700 text-sm">
+            <li><strong>VB-V3:</strong> Beginner (60% of gym climbers)</li>
+            <li><strong>V4-V6:</strong> Intermediate (30% of gym climbers)</li>
+            <li><strong>V7-V10:</strong> Advanced (8% of gym climbers)</li>
+            <li><strong>V11+:</strong> Elite (2% of gym climbers, professional level)</li>
+          </ul>
+        </div>
+
+        <!-- Fontainebleau -->
+        <h3 class="text-2xl font-bold text-granite mb-3">Fontainebleau System (Font Grades)</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          The Fontainebleau system originated at the famous bouldering area near Paris, France. It uses a combination of numbers (1-9) and letters (a, b, c) with optional plus signs: <strong>3 → 4 → 5 → 5+ → 6A → 6A+ → 6B...</strong> up to <strong>9A</strong>.
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Font grades are the standard in Europe and are increasingly used worldwide alongside the V-Scale. Many climbers find Font grades more granular at mid-levels (the V-Scale groups 6A, 6A+, and 6B into just V3 and V4). The system also has a separate technical grade component (lowercase letters: 4a, 5a, 6a) which describes the technical difficulty, though this is less commonly used in modern bouldering.
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          <strong>Key difference:</strong> Font grades make finer distinctions at intermediate levels. Where the V-Scale might jump from V5 to V6, Font breaks this into 6B → 6B+ → 6C, giving climbers more specific feedback on progression.
+        </p>
+
+        <!-- UK Tech Grades -->
+        <h3 class="text-2xl font-bold text-granite mb-3">UK Technical Grades</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          The UK uses a unique technical grading system that focuses on the hardest individual move or sequence: <strong>4a → 4b → 4c → 5a → 5b...</strong> up to <strong>7b-7c</strong> for the hardest boulder problems. This system is similar to French sport climbing grades but typically runs about two letter grades harder (UK 6a ≈ French sport 6c).
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          UK Tech grades emphasize the <em>technical crux</em> - the single hardest move - rather than overall difficulty. This makes them particularly useful for describing powerful, crunchy problems with one desperate move versus sustained endurance problems. However, UK Tech grades are rarely used outside the UK, and many modern UK climbers also use V-Scale or Font grades.
+        </p>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          <strong>Conversion note:</strong> UK Tech grades don't extend as high as V-Scale or Font. Elite problems (V14+) typically aren't given UK Tech grades because the system wasn't designed for that level of difficulty.
+        </p>
+
+        <!-- Why Grades Are Confusing -->
+        <h2 class="text-3xl font-bold text-granite mb-4 mt-12">Why Are Bouldering Grades Confusing?</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          If you've ever wondered why the V4 at your gym feels easier than outdoor V4, or why different gyms grade problems differently, you're experiencing one of climbing's most frustrating realities: <strong>grades are subjective and inconsistent</strong>.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">1. Three Different Systems</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Unlike many sports with a single universal standard, bouldering has three competing systems (V-Scale, Font, UK Tech), each popular in different regions. Converting between them introduces uncertainty because they don't map perfectly 1:1. Our converter uses consensus conversions based on decades of community agreement, but individual routes may vary.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">2. Subjectivity in Route Setting</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Every route setter has their own interpretation of what "V5" means. Some gyms grade conservatively (harder), others liberally (easier). Factors like hold style, wall angle, movement style, and setter experience all influence grades. What one gym calls V4 might be V3 or V5 at another gym.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">3. Personal Strengths and Weaknesses</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Your body type, height, flexibility, and training history dramatically affect how hard grades feel <em>to you</em>. A 6'2" climber might find a reachy V5 easy while struggling on a crimpy V3. A shorter climber might excel at technical compression problems but fight against dynos. This means grades are always relative to the individual climber.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">4. Grade Inflation Over Time</h3>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          As climbing equipment, training methods, and community standards evolve, grades shift. A problem graded V8 in 1995 might be considered V6 today because climbers are stronger and more technically proficient. Historic outdoor problems are often downgraded as consensus builds around their "true" difficulty.
+        </p>
+
+        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-5 mb-8">
+          <p class="font-semibold text-granite mb-2">The Bottom Line:</p>
+          <p class="text-gray-700">
+            Use grades as a <strong>general guideline</strong>, not an absolute measure. Focus on your own progression, enjoy the climbing, and don't stress too much about whether something "should" feel like a V5 or V6. The journey matters more than the number.
+          </p>
+        </div>
+
+        <!-- Gym vs Outdoor -->
+        <h2 class="text-3xl font-bold text-granite mb-4 mt-12">Gym vs Outdoor Bouldering Grades</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          This is the secret every experienced climber knows: <strong>gym grades are intentionally softer than outdoor grades at beginner to intermediate levels</strong>. This isn't a mistake or inconsistency - it's a deliberate design choice by gym owners and route setters.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">Why Are Gym Grades Softer?</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Commercial gyms want to encourage progression and build confidence. If a new climber sends their first V2 after a few weeks, they feel accomplished and motivated to continue. This positive reinforcement keeps people engaged with the sport. Additionally:
+        </p>
+        <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+          <li><strong>Controlled environment:</strong> Gyms have perfect conditions (no rain, consistent friction, clean holds), making problems objectively easier than outdoor equivalents</li>
+          <li><strong>Moldable holds:</strong> Modern plastic holds are designed for optimal grip, unlike natural rock which can be polished, sharp, or awkward</li>
+          <li><strong>Business incentives:</strong> Gyms need to cater to all skill levels, so they err on the side of more accessible grading</li>
+          <li><strong>Volume setting:</strong> Gyms set hundreds of problems. It's impossible to grade every single one with outdoor-level precision</li>
+        </ul>
+
+        <h3 class="text-xl font-bold text-granite mb-3">The Gym-Outdoor Grade Gap</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Based on data from thousands of climbers, here's the typical grade gap:
+        </p>
+        <div class="overflow-x-auto mb-6">
+          <table class="w-full border-2 border-gray-200 text-left">
+            <thead class="bg-sage text-white">
+              <tr>
+                <th class="px-4 py-3 font-semibold">Grade Range</th>
+                <th class="px-4 py-3 font-semibold">Gym Grade</th>
+                <th class="px-4 py-3 font-semibold">Outdoor Equivalent</th>
+                <th class="px-4 py-3 font-semibold">Gap</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr class="bg-white hover:bg-ivory">
+                <td class="px-4 py-3 text-gray-700">Beginner</td>
+                <td class="px-4 py-3 font-semibold">V0-V2</td>
+                <td class="px-4 py-3">VB-V0</td>
+                <td class="px-4 py-3 text-orange-600">-2 grades</td>
+              </tr>
+              <tr class="bg-gray-50 hover:bg-ivory">
+                <td class="px-4 py-3 text-gray-700">Early Intermediate</td>
+                <td class="px-4 py-3 font-semibold">V3-V4</td>
+                <td class="px-4 py-3">V1-V2</td>
+                <td class="px-4 py-3 text-orange-600">-2 grades</td>
+              </tr>
+              <tr class="bg-white hover:bg-ivory">
+                <td class="px-4 py-3 text-gray-700">Intermediate</td>
+                <td class="px-4 py-3 font-semibold">V5-V6</td>
+                <td class="px-4 py-3">V3-V5</td>
+                <td class="px-4 py-3 text-yellow-600">-1 to -2 grades</td>
+              </tr>
+              <tr class="bg-gray-50 hover:bg-ivory">
+                <td class="px-4 py-3 text-gray-700">Advanced</td>
+                <td class="px-4 py-3 font-semibold">V7-V10</td>
+                <td class="px-4 py-3">V7-V10</td>
+                <td class="px-4 py-3 text-green-600">Consistent</td>
+              </tr>
+              <tr class="bg-white hover:bg-ivory">
+                <td class="px-4 py-3 text-gray-700">Elite</td>
+                <td class="px-4 py-3 font-semibold">V11+</td>
+                <td class="px-4 py-3">V11+</td>
+                <td class="px-4 py-3 text-green-600">Consistent</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Notice how the gap disappears at advanced levels (V7+). This is because elite climbers train outdoors frequently and demand accurate grading. Additionally, competition-style gym problems at this level are set by professional setters who use international standards.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">Making the Transition to Outdoor Climbing</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          If you're planning your first outdoor bouldering trip, here's how to set realistic expectations:
+        </p>
+        <ol class="list-decimal pl-6 mb-6 text-gray-700 space-y-3">
+          <li><strong>Drop 1-2 grades:</strong> If you consistently send V4 indoors, start with outdoor V2-V3 problems. You'll likely find them challenging enough!</li>
+          <li><strong>Expect different conditions:</strong> Outdoor rock is textured differently (sharp crystals vs smooth plastic), weather affects friction, and you'll deal with dirt, chalk residue, and polished holds</li>
+          <li><strong>Beta is harder to read:</strong> Indoor problems have color-coded holds and obvious sequences. Outdoor problems require route-finding skills and creativity</li>
+          <li><strong>Focus on volume:</strong> Instead of projecting your gym max grade, try to send many easier problems outdoors. Build your outdoor-specific skills before pushing grades</li>
+          <li><strong>Bring experienced friends:</strong> Outdoor climbing has a learning curve beyond just difficulty - spotting, crash pad placement, descent routes, and environmental awareness all matter</li>
+        </ol>
+
+        <!-- Regional Variations -->
+        <h2 class="text-3xl font-bold text-granite mb-4 mt-12">Regional Grading Variations</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Even within a single grading system, standards vary by region and climbing area. Understanding these quirks helps you set appropriate expectations when traveling.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">United States (V-Scale)</h3>
+        <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+          <li><strong>Hueco Tanks, Texas:</strong> Birthplace of the V-Scale, historically graded very hard. Many classic problems have been downgraded over time (e.g., "The Mandala" went from V12 to V10)</li>
+          <li><strong>Bishop, California:</strong> Known for powerful, compressed granite problems. Generally considered accurate to modern V-Scale standards</li>
+          <li><strong>Font-ish areas (New River Gorge, Red River Gorge):</strong> Some regions use Font-style grading even in the US, creating conversion confusion</li>
+          <li><strong>Gym chains:</strong> Planet Granite gyms are known for slightly stiffer grading than average. Brooklyn Boulders tends toward softer grades</li>
+        </ul>
+
+        <h3 class="text-xl font-bold text-granite mb-3">Europe (Fontainebleau)</h3>
+        <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+          <li><strong>Fontainebleau, France:</strong> The gold standard for Font grades. Classic problems here define the system. Often feels harder than equivalent V-Scale grades</li>
+          <li><strong>Switzerland (Magic Wood, Cresciano):</strong> Known for notoriously stiff grading. A 7B here might feel like 7C elsewhere</li>
+          <li><strong>Spain (Albarracin, Margalef):</strong> Generally considered accurate to Font standards, with excellent quality rock</li>
+          <li><strong>UK (Peak District, Lake District):</strong> Uses UK Tech grades locally, but many problems also have V-Scale/Font equivalents. Sandstone areas (southern UK) grade softer than gritstone (northern UK)</li>
+        </ul>
+
+        <h3 class="text-xl font-bold text-granite mb-3">International Standards</h3>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Competition climbing (IFSC World Cups, Olympics) has helped standardize elite-level grading. Professional route setters use international benchmarks, making V10+ problems more consistent worldwide than beginner/intermediate grades. If you climb at this level, you'll find gyms that host competitions tend to have more accurate grading.
+        </p>
+
+        <!-- How to Progress -->
+        <h2 class="text-3xl font-bold text-granite mb-4 mt-12">How to Progress Through the Grades</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Understanding grade conversions is useful, but the real question is: <strong>how do you climb harder?</strong> Here's what actually works, based on decades of coaching experience and training science.
+        </p>
+
+        <h3 class="text-xl font-bold text-granite mb-3">1. Volume Before Intensity (Beginner: VB-V3)</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          At the beginner stage, your limiting factor isn't strength - it's <em>technique and movement efficiency</em>. The climbers who progress fastest aren't the ones grinding on projects; they're the ones who climb lots of problems at their comfortable level.
+        </p>
+        <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+          <li><strong>Aim for:</strong> 15-30 problems per session, mostly within V0-V2</li>
+          <li><strong>Focus on:</strong> Footwork, body positioning, straight arms, efficient movement</li>
+          <li><strong>Avoid:</strong> Overprojecting problems way above your level (injuries + minimal learning)</li>
+          <li><strong>Key milestone:</strong> When V2 problems feel easy and you can flash most V3s, you're ready for intermediate training</li>
+        </ul>
+
+        <h3 class="text-xl font-bold text-granite mb-3">2. Develop Weaknesses (Intermediate: V4-V6)</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          At the intermediate stage, you'll develop <em>style preferences</em> - movements you're naturally good at (e.g., dynamic jumping) and styles you avoid (e.g., crimpy vertical walls). This is where you need to actively train your weaknesses.
+        </p>
+        <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+          <li><strong>Climb everything:</strong> Slab, overhanging, vertical, crimps, slopers, pinches - don't specialize yet</li>
+          <li><strong>Project strategically:</strong> Spend 70% of time on V3-V5 flash attempts, 30% on V6-V7 projects</li>
+          <li><strong>Structured training helps:</strong> Hangboarding, campus board, core work - but technique still matters more than strength</li>
+          <li><strong>Key milestone:</strong> When you can consistently flash V5 and occasionally send V7, you're approaching advanced level</li>
+        </ul>
+
+        <h3 class="text-xl font-bold text-granite mb-3">3. Strength and Specificity (Advanced: V7-V10)</h3>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Advanced climbing requires both <em>strength</em> and <em>power</em>. You need finger strength for small holds, core tension for steep terrain, and shoulder stability for dynamic moves. At this level, structured training becomes essential.
+        </p>
+        <ul class="list-disc pl-6 mb-6 text-gray-700 space-y-2">
+          <li><strong>Periodization:</strong> Cycle through power phases (campus, limit bouldering), strength phases (hangboard, weighted pulls), and endurance phases (long problems, 4x4s)</li>
+          <li><strong>Rest matters:</strong> Take 2-3 full rest days per week. Overtraining is the #1 killer of V7+ progression</li>
+          <li><strong>Outdoor focus:</strong> If you want to progress at this level, you need outdoor climbing experience. Gym-only climbers plateau around V7-V8</li>
+          <li><strong>Key milestone:</strong> Breaking into V10 typically requires 3-5 years of consistent training for most climbers</li>
+        </ul>
+
+        <h3 class="text-xl font-bold text-granite mb-3">4. Elite Training (V11+)</h3>
+        <p class="text-gray-700 leading-relaxed mb-6">
+          Elite bouldering is a full-time pursuit for most. At this level, you're training 15-20 hours per week, working with coaches, managing nutrition, and likely competing or pursuing outdoor first ascents. Progression is measured in years, not months. This is beyond the scope of most recreational climbers - but if you're here, you probably don't need our advice!
+        </p>
+
+        <div class="bg-sage/10 border-2 border-sage rounded-lg p-6 mb-8">
+          <h3 class="text-xl font-bold text-granite mb-3">Universal Progression Tips:</h3>
+          <ul class="space-y-2 text-gray-700">
+            <li>✓ <strong>Climb 2-4x per week</strong> (more isn't always better)</li>
+            <li>✓ <strong>Warm up properly</strong> (15-20 minutes of easy climbing)</li>
+            <li>✓ <strong>Log your sends</strong> (tracking progress keeps you motivated)</li>
+            <li>✓ <strong>Watch better climbers</strong> (steal beta and learn technique)</li>
+            <li>✓ <strong>Prioritize injury prevention</strong> (antagonist training, stretching, rest)</li>
+            <li>✓ <strong>Have fun!</strong> (burnout is real - keep it enjoyable)</li>
+          </ul>
+        </div>
+
+        <!-- FAQ Section -->
+        <h2 class="text-3xl font-bold text-granite mb-6 mt-12">Frequently Asked Questions</h2>
+
+        <div class="space-y-6 mb-8">
+          <!-- FAQ 1 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What is the V-Scale in bouldering?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              The V-Scale (Hueco Scale) is the most common bouldering grading system in the United States, ranging from VB (beginner) to V17 (world's hardest). It was developed by John "Verm" Sherman at Hueco Tanks, Texas in the 1990s. The system uses simple numerical progression (V0, V1, V2...) without letter modifiers, making it easy to understand. It's open-ended, allowing new grades to be added as climbing difficulty advances.
+            </p>
+          </div>
+
+          <!-- FAQ 2 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What is the difference between V5 and Font 6B?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              V5 and Font 6B are equivalent grades in different systems. V5 is the American V-Scale grade, while Font 6B is the French Fontainebleau grade. They represent the same approximate difficulty level - intermediate bouldering requiring advanced technique, finger strength, and specific beta. In practical terms, if you can climb V5 consistently, you should be able to climb Font 6B problems (though individual route styles may feel easier or harder depending on your strengths).
+            </p>
+          </div>
+
+          <!-- FAQ 3 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">Are gym grades softer than outdoor grades?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Yes, indoor gym grades are typically 1-2 grades softer than outdoor grades at beginner to intermediate levels (VB-V6). This is intentional to encourage progression and build confidence. For example, a gym V4 might be closer to outdoor V2 or V3. Advanced grades (V7+) tend to be more consistent between gym and outdoor climbing because elite climbers demand accurate grading and professional setters use international standards.
+            </p>
+          </div>
+
+          <!-- FAQ 4 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">How accurate are bouldering grade conversions?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Accuracy varies by grade level. Beginner grades (V0-V3) have high confidence conversions that are well-established through decades of community consensus. Intermediate grades (V4-V6) have moderate accuracy with some regional variation. Elite grades (V11+) are more subjective and route-dependent, with lower confidence in conversions. Our tool shows confidence indicators for each conversion so you know how reliable the equivalence is.
+            </p>
+          </div>
+
+          <!-- FAQ 5 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What's the difference between V-Scale and Fontainebleau grades?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              The V-Scale uses simple numbers (V0-V17), while Fontainebleau uses a combination of numbers and letters (4, 5, 5+, 6A, 6A+, 6B, etc.). Font grades are more granular at intermediate levels - where the V-Scale jumps from V5 to V6, Font breaks this into 6B, 6B+, and 6C. This gives climbers more specific feedback on progression. Font is the standard in Europe, while V-Scale dominates in the US, but both systems are increasingly used worldwide.
+            </p>
+          </div>
+
+          <!-- FAQ 6 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What does UK Tech grade mean in bouldering?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              UK Technical grades (4a, 4b, 4c, 5a, 5b...) focus on the hardest individual move or sequence rather than overall difficulty. The system is similar to French sport climbing grades but typically runs about two letter grades harder. UK Tech grades are primarily used in the United Kingdom and aren't commonly applied to elite boulder problems (V14+) because the system wasn't designed for that difficulty level.
+            </p>
+          </div>
+
+          <!-- FAQ 7 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">How long does it take to climb V5?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Most climbers reach V5 (gym grades) within 1-2 years of consistent training (2-3 sessions per week). However, this varies dramatically based on starting fitness, body type, training quality, and whether you're working with coaches. Some athletic beginners reach gym V5 in 6-9 months, while others take 3+ years. Outdoor V5 typically takes longer - expect to add 6-12 months to your timeline. Remember: progression isn't linear, and climbing is about the journey, not racing to a number.
+            </p>
+          </div>
+
+          <!-- FAQ 8 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">Why do grades feel different at different gyms?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Every gym has different setters with their own interpretation of grades. Factors include: setter experience and training background, gym philosophy (encourage progression vs maintain outdoor standards), hold selection and wall angle, target demographic (families vs competition climbers), and how frequently routes are reset. This is why a V4 at one gym might feel like V3 or V5 at another. The best approach is to learn your gym's specific grading tendencies and not stress about the numbers too much.
+            </p>
+          </div>
+
+          <!-- FAQ 9 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">Can I trust gym grades for outdoor climbing?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Gym grades are a useful starting reference but not directly transferable to outdoor climbing. Drop 1-2 grades when transitioning outdoors, especially at beginner/intermediate levels (VB-V6). If you consistently send gym V4, start with outdoor V2-V3. Additionally, outdoor climbing requires route-finding skills, dealing with variable rock texture, weather conditions, and different movement styles than gym climbing. The skills transfer, but the grades don't convert 1:1 until advanced levels (V7+).
+            </p>
+          </div>
+
+          <!-- FAQ 10 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What's a good bouldering grade for a beginner?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Most true beginners start at VB-V0 (Fontainebleau 3-4). After 4-8 weeks of consistent climbing (2-3x per week), you should be able to climb V1-V2 comfortably. By 3-6 months, many recreational climbers reach V3. These are gym grades - outdoor grades will be 1-2 levels harder. Focus on volume (climbing lots of problems) rather than pushing max grades early on. Building solid technique at easier grades sets you up for faster long-term progression.
+            </p>
+          </div>
+
+          <!-- FAQ 11 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">Is V10 considered elite in bouldering?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Yes, V10 (Font 7B+) is considered the entry point to advanced/elite climbing. Statistically, less than 2-3% of regular gym climbers ever reach V10, and it typically requires 3-5+ years of consistent, structured training. At this level, climbers usually train 12-20 hours per week, incorporate periodized strength training, and spend significant time climbing outdoors. Breaking through V10 is a major milestone that separates recreational from serious/semi-professional climbers.
+            </p>
+          </div>
+
+          <!-- FAQ 12 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What does Font 6A+ convert to in V-Scale?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Font 6A+ converts to approximately V4 in the V-Scale. This is an intermediate grade requiring power, crimp strength, and sustained sequences. The conversion has moderate confidence because Font grades are more granular at this level (6A, 6A+, 6B all fall within the V3-V4 range). Regional variation means some climbers find Font 6A+ closer to V3, while others feel it's solid V4. Use our converter above to see all equivalent grades and confidence levels.
+            </p>
+          </div>
+
+          <!-- FAQ 13 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">How do I know if I should climb gym or outdoor grades?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              If you primarily climb indoors at commercial gyms, use the "Indoor Gym" setting on our toggle. If you climb outdoors regularly or at gyms known for outdoor-accurate grading (competition gyms, climber-owned co-ops), use the "Outdoor" setting. As a rule of thumb: if the gym feels easy and you rarely get challenged, it's likely grading soft (gym grades). If you're frequently projecting and grades feel stiff, it's closer to outdoor standards.
+            </p>
+          </div>
+
+          <!-- FAQ 14 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">What's the hardest bouldering grade ever climbed?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              As of 2025, the hardest confirmed boulder problems are graded V17 (Font 9A). Notable ascents include "Burden of Dreams" (Finland), "Return of the Sleepwalker" (Red Rocks), and "Hypnotized Minds" (Sweden). There's ongoing debate about potential V18 problems, but the climbing community hasn't reached consensus yet. At this level, grades are highly subjective and depend on the climber's specific strengths, style, and conditions. Only a handful of climbers worldwide have climbed V17.
+            </p>
+          </div>
+
+          <!-- FAQ 15 -->
+          <div class="faq-item bg-white border-2 border-gray-200 rounded-lg p-6 hover:border-sage transition-colors">
+            <h3 class="text-xl font-bold text-granite mb-3">Should I focus on grades or technique as a beginner?</h3>
+            <p class="text-gray-700 leading-relaxed">
+              Focus on technique, not grades. The climbers who progress fastest at the beginner stage are those who climb lots of volume at comfortable grades (V0-V2), focusing on footwork, body positioning, and efficient movement. Chasing grades early leads to injuries, poor technique habits, and burnout. Aim to flash (climb on your first try) most problems at your level before attempting higher grades. When V3 feels easy, you'll naturally progress to V4 - you won't need to force it by projecting.
+            </p>
+          </div>
+        </div>
+
+        <!-- Link to Sport Climbing Converter -->
+        <div class="bg-sage/10 border-2 border-sage rounded-lg p-6 mb-8 text-center">
+          <h3 class="text-xl font-bold text-granite mb-3">Looking for Sport Climbing Grades?</h3>
+          <p class="text-gray-700 mb-4">
+            We also have a comprehensive YDS to French conversion tool for rope climbing grades.
+          </p>
+          <a
+            href="/tools/sport-climbing-grade-conversion"
+            class="inline-block px-6 py-3 bg-sage text-white font-semibold rounded-lg hover:bg-sage/90 transition-colors"
+          >
+            Sport Climbing Grade Converter →
+          </a>
+        </div>
+
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Full Conversion Table -->
+  <section class="table-section py-12 bg-ivory">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <ConversionTable
+        gradeData={boulderingGrades}
+        title="Complete Bouldering Grade Conversion Reference"
+        id="full-bouldering-table"
+      />
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta py-16 bg-gradient-to-br from-sage to-granite text-white text-center">
+    <div class="container mx-auto px-4 max-w-3xl">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+        Ready to Test Your Grades?
+      </h2>
+      <p class="text-xl text-white/90 mb-8">
+        Find the best bouldering gyms near you and put your skills to the test on real problems.
+      </p>
+      <a
+        href="/search"
+        class="inline-block px-8 py-4 bg-white text-sage font-bold text-lg rounded-lg hover:bg-white/90 transition-colors shadow-lg"
+      >
+        Find Bouldering Gyms Near You
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Client-side interactivity for grade conversion
+  import boulderingGradesData from '../../data/bouldering-grades.json';
+
+  // State
+  let selectedGrade: any = null;
+  let isGym = true;
+
+  // DOM elements
+  const searchInput = document.getElementById('bouldering-search') as HTMLInputElement;
+  const environmentToggle = document.getElementById('bouldering-environment') as HTMLInputElement;
+  const resultsContainer = document.getElementById('results-container');
+  const ctaAfterConversion = document.getElementById('cta-after-conversion');
+
+  // Listen for grade selection
+  document.addEventListener('gradeSelected', (e: any) => {
+    const gradeKey = e.detail.grade.toLowerCase().replace(/[^a-z0-9]/g, '');
+    selectedGrade = boulderingGradesData[gradeKey];
+
+    if (selectedGrade) {
+      updateResults();
+    }
+  });
+
+  // Listen for environment change
+  document.addEventListener('environmentChanged', (e: any) => {
+    isGym = e.detail.environment === 'gym';
+
+    if (selectedGrade) {
+      updateResults();
+    }
+  });
+
+  // Update results display
+  function updateResults() {
+    if (!selectedGrade || !resultsContainer) return;
+
+    // Show containers
+    resultsContainer.classList.remove('hidden');
+    ctaAfterConversion?.classList.remove('hidden');
+
+    // Build results HTML
+    const { display, equivalents, skill_level, description, gym_outdoor_diff } = selectedGrade;
+
+    // Calculate adjusted grade for gym vs outdoor
+    let gymNote = '';
+    if (isGym && gym_outdoor_diff !== 0) {
+      const adjustment = Math.abs(gym_outdoor_diff);
+      const outdoorGrade = display.replace(/\d+/, (match: string) => {
+        const num = parseInt(match) - adjustment;
+        return num >= 0 ? num.toString() : 'B';
+      });
+      gymNote = `
+        <div class="gym-note mt-3 p-3 bg-white/10 rounded-md text-sm">
+          <p class="font-medium">🏢 Indoor gym ${display} ≈ Outdoor ${outdoorGrade}</p>
+        </div>
+      `;
+    }
+
+    // Skill level colors
+    const skillLevelColors: Record<string, string> = {
+      'Beginner': 'bg-blue-100 text-blue-800',
+      'Intermediate': 'bg-purple-100 text-purple-800',
+      'Advanced': 'bg-orange-100 text-orange-800',
+      'Elite': 'bg-red-100 text-red-800'
+    };
+    const skillColor = skillLevelColors[skill_level] || 'bg-gray-100 text-gray-800';
+
+    // Build conversion cards
+    let conversionsHTML = '';
+    for (const [system, data] of Object.entries(equivalents) as [string, any][]) {
+      const systemName = system
+        .split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
+      // Confidence indicator
+      const confidenceConfig: Record<string, any> = {
+        'high': { color: 'bg-green-100 text-green-800 border-green-300', icon: '✓', label: 'High Confidence' },
+        'medium-high': { color: 'bg-green-100 text-green-700 border-green-300', icon: '✓', label: 'High Confidence' },
+        'medium': { color: 'bg-yellow-100 text-yellow-800 border-yellow-300', icon: '≈', label: 'Approximate' },
+        'medium-low': { color: 'bg-orange-100 text-orange-800 border-orange-300', icon: '≈', label: 'Approximate' },
+        'low': { color: 'bg-orange-100 text-orange-900 border-orange-400', icon: '~', label: 'Subjective' },
+        'very-low': { color: 'bg-red-100 text-red-900 border-red-400', icon: '~', label: 'Highly Variable' }
+      };
+      const confidence = confidenceConfig[data.confidence] || confidenceConfig['medium'];
+
+      const noteHTML = data.note ? `
+        <div class="regional-note p-3 bg-ivory rounded-md mt-3">
+          <p class="text-sm text-gray-700">
+            <span class="font-semibold">Note:</span> ${data.note}
+          </p>
+        </div>
+      ` : '';
+
+      conversionsHTML += `
+        <div class="conversion-card bg-white border-2 border-gray-200 rounded-lg p-5 hover:shadow-lg hover:border-sage transition-all">
+          <div class="system-name text-sm font-semibold text-gray-500 mb-2">
+            ${systemName}
+          </div>
+          <div class="grade-value text-3xl font-bold text-granite mb-3">
+            ${data.value}
+          </div>
+          <div class="mb-3">
+            <span class="inline-flex items-center gap-1.5 font-medium rounded-full border ${confidence.color} text-xs px-2 py-0.5">
+              <span>${confidence.icon}</span>
+              <span>${confidence.label}</span>
+            </span>
+          </div>
+          ${noteHTML}
+        </div>
+      `;
+    }
+
+    resultsContainer.innerHTML = `
+      <div class="conversion-results mt-8 mb-8">
+        <!-- Selected grade header -->
+        <div class="results-header bg-sage text-white rounded-lg p-6 mb-6 text-center">
+          <div class="flex items-center justify-center gap-3 mb-2 flex-wrap">
+            <h3 class="text-4xl md:text-5xl font-bold">${display}</h3>
+            <span class="skill-badge px-3 py-1 rounded-full text-sm font-semibold ${skillColor}">
+              ${skill_level}
+            </span>
+          </div>
+          <p class="text-lg text-white/90">${description}</p>
+          ${gymNote}
+        </div>
+
+        <!-- Conversion cards -->
+        <div class="conversions-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          ${conversionsHTML}
+        </div>
+      </div>
+    `;
+
+    // Smooth scroll to results
+    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+</script>
+
+<style>
+  .conversion-card {
+    transition: all 200ms ease;
+  }
+
+  .conversion-card:hover {
+    border-color: #98a48b; /* sage */
+    transform: translateY(-2px);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .results-header h3 {
+      font-size: 2.5rem;
+    }
+
+    .conversions-grid {
+      gap: 1rem;
+    }
+  }
+</style>

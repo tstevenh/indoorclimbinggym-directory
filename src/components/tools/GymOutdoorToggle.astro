@@ -1,0 +1,177 @@
+---
+/**
+ * Gym vs Outdoor Toggle
+ * Adjusts grade conversions based on climbing environment
+ * UNIQUE FEATURE - Accounts for gym grade softness
+ */
+
+interface Props {
+  id?: string;
+  defaultValue?: 'gym' | 'outdoor';
+}
+
+const { id = 'gym-outdoor-toggle', defaultValue = 'gym' } = Astro.props;
+---
+
+<div class="gym-outdoor-toggle-container">
+  <div class="flex items-center justify-between mb-3">
+    <label for={id} class="text-sm font-semibold text-granite flex items-center gap-2">
+      Climbing Environment:
+
+      <!-- Info tooltip -->
+      <div class="tooltip-wrapper relative inline-block">
+        <button
+          type="button"
+          class="info-icon w-5 h-5 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors flex items-center justify-center text-xs font-bold"
+          aria-label="Why does this matter?"
+          tabindex="0"
+        >
+          ?
+        </button>
+
+        <div class="tooltip hidden absolute z-10 w-72 p-4 bg-granite text-white text-sm rounded-lg shadow-xl -top-2 left-8">
+          <p class="font-semibold mb-2">Why Gym vs Outdoor?</p>
+          <p class="text-gray-200 mb-2">
+            <strong>Indoor gyms</strong> (Beginner-Intermediate): Grades are typically <strong>1-2 grades softer</strong> to encourage progression.
+          </p>
+          <p class="text-gray-200">
+            <strong>Outdoor</strong>: Traditional grading, often feels harder. Advanced grades (V7+/5.12+) are more consistent.
+          </p>
+          <!-- Arrow -->
+          <div class="arrow absolute w-2 h-2 bg-granite transform rotate-45 -left-1 top-4"></div>
+        </div>
+      </div>
+    </label>
+  </div>
+
+  <!-- Toggle switch -->
+  <div class="toggle-switch-wrapper">
+    <input
+      type="checkbox"
+      id={id}
+      class="toggle-checkbox sr-only"
+      role="switch"
+      aria-checked={defaultValue === 'outdoor'}
+      aria-label="Toggle between indoor gym and outdoor climbing grades"
+    />
+
+    <label for={id} class="toggle-label flex items-center gap-4 cursor-pointer select-none">
+      <!-- Gym option -->
+      <span class="option-text gym-text font-medium text-granite transition-colors">
+        🏢 Indoor Gym
+      </span>
+
+      <!-- Switch visual -->
+      <div class="toggle-track relative w-14 h-7 bg-gray-300 rounded-full transition-colors">
+        <div class="toggle-thumb absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow-md transform transition-transform"></div>
+      </div>
+
+      <!-- Outdoor option -->
+      <span class="option-text outdoor-text font-medium text-gray-400 transition-colors">
+        ⛰️ Outdoor
+      </span>
+    </label>
+  </div>
+
+  <!-- Help text -->
+  <p class="help-text mt-2 text-xs text-gray-600" aria-live="polite">
+    <span class="gym-help">Showing indoor gym grades (typically softer for beginners)</span>
+    <span class="outdoor-help hidden">Showing outdoor grades (traditional grading)</span>
+  </p>
+</div>
+
+<style>
+  /* Tooltip hover behavior */
+  .tooltip-wrapper:hover .tooltip,
+  .tooltip-wrapper:focus-within .tooltip {
+    display: block;
+  }
+
+  @media (hover: none) {
+    .tooltip-wrapper:active .tooltip {
+      display: block;
+    }
+  }
+
+  /* Screen reader only class */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Toggle switch checked state */
+  .toggle-checkbox:checked ~ .toggle-label .toggle-track {
+    background-color: #98a48b; /* sage */
+  }
+
+  .toggle-checkbox:checked ~ .toggle-label .toggle-thumb {
+    transform: translateX(1.75rem); /* 28px */
+  }
+
+  .toggle-checkbox:checked ~ .toggle-label .gym-text {
+    color: #9ca3af; /* gray-400 */
+  }
+
+  .toggle-checkbox:checked ~ .toggle-label .outdoor-text {
+    color: #555; /* granite */
+    font-weight: 600;
+  }
+
+  /* Focus states for accessibility */
+  .toggle-checkbox:focus-visible ~ .toggle-label .toggle-track {
+    outline: 2px solid #98a48b;
+    outline-offset: 2px;
+  }
+
+  .info-icon {
+    cursor: help;
+  }
+
+  .info-icon:focus {
+    outline: 2px solid #98a48b;
+    outline-offset: 1px;
+  }
+</style>
+
+<script define:vars={{ id }}>
+  (function() {
+    const checkbox = document.getElementById(id);
+    const gymHelp = document.querySelector('.gym-help');
+    const outdoorHelp = document.querySelector('.outdoor-help');
+
+    function updateEnvironment() {
+      const isOutdoor = checkbox.checked;
+
+      // Update aria-checked
+      checkbox.setAttribute('aria-checked', isOutdoor.toString());
+
+      // Update help text
+      if (isOutdoor) {
+        gymHelp.classList.add('hidden');
+        outdoorHelp.classList.remove('hidden');
+      } else {
+        gymHelp.classList.remove('hidden');
+        outdoorHelp.classList.add('hidden');
+      }
+
+      // Dispatch custom event
+      const event = new CustomEvent('environmentChanged', {
+        detail: { environment: isOutdoor ? 'outdoor' : 'gym' },
+        bubbles: true
+      });
+      checkbox.dispatchEvent(event);
+    }
+
+    checkbox.addEventListener('change', updateEnvironment);
+
+    // Initialize
+    updateEnvironment();
+  })();
+</script>
