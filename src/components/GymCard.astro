@@ -36,7 +36,9 @@ const climbingTypesDisplay = climbingTypes
   .join(', ');
 
 // Parse amenities (show first 3)
-const amenitiesList = gym.amenities?.split('|').slice(0, 3) || [];
+const allAmenities = gym.amenities?.split('|') || [];
+const amenitiesList = allAmenities.slice(0, 3);
+const remainingCount = allAmenities.length - 3;
 
 // Format price
 const priceDisplay = gym.day_pass_price_local
@@ -114,10 +116,15 @@ const priceDisplay = gym.day_pass_price_local
     {amenitiesList.length > 0 && (
       <div class="flex flex-wrap gap-2 mb-4">
         {amenitiesList.map(amenity => (
-          <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+          <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded capitalize">
             {amenity.replace(/_/g, ' ')}
           </span>
         ))}
+        {remainingCount > 0 && (
+          <span class="text-xs bg-sage/10 text-sage px-2 py-1 rounded font-medium">
+            +{remainingCount} more
+          </span>
+        )}
       </div>
     )}
 
