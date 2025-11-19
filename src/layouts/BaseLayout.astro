@@ -8,7 +8,6 @@ import { fetchGyms } from '../config/api';
 import { getStateCode, getStateSlug } from '../utils/states';
 import SpeedInsights from '@vercel/speed-insights/astro';
 import Analytics from '@vercel/analytics/astro';
-import WelcomeModal from '../components/WelcomeModal.astro';
 
 interface Props {
   title: string;
@@ -624,9 +623,6 @@ if (breadcrumbs && breadcrumbs.length > 0) {
         }
       })();
     </script>
-
-    <!-- One-Time Welcome Modal -->
-    <WelcomeModal />
   </body>
 </html>
 

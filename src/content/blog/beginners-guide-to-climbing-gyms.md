@@ -1,8 +1,8 @@
 ---
 title: "Complete Beginner's Guide to Climbing Gyms in 2025"
 description: "Complete beginner's guide to climbing gyms: what to expect, gym etiquette, safety basics, costs, and choosing the right gym for your first experience."
-publishedDate: 2025-11-17
-updatedDate: 2025-11-17
+publishedDate: 2025-11-13
+updatedDate: 2025-11-13
 author: "Indoor Climbing Gym Team"
 category: "guides"
 tags: ["beginners", "climbing gym", "getting started", "etiquette", "safety"]
