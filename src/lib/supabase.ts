@@ -1,5 +1,21 @@
 import { createServerClient } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
+/**
+ * Simple Supabase client for build-time queries (getStaticPaths)
+ * Use this when you don't have Astro context (during build)
+ */
+export function createSimpleClient() {
+  return createSupabaseClient(
+    import.meta.env.PUBLIC_SUPABASE_URL,
+    import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+  )
+}
+
+/**
+ * Server-side Supabase client with cookie support
+ * Use this when you have Astro context (during SSR)
+ */
 export function createClient(Astro: any) {
   // Extract root domain for cookie sharing across subdomains
   // Production: .indoorclimbinggym.com (shares between dashboard.* and www.*)
