@@ -49,10 +49,10 @@ if (query && query.trim()) {
   const searchTerm = query.toLowerCase().trim();
   filteredGyms = filteredGyms.filter(
     (g) =>
-      g.name.toLowerCase().includes(searchTerm) ||
-      g.city.toLowerCase().includes(searchTerm) ||
+      g.name?.toLowerCase().includes(searchTerm) ||
+      g.city?.toLowerCase().includes(searchTerm) ||
       g.amenities?.toLowerCase().includes(searchTerm) ||
-      g.description_short.toLowerCase().includes(searchTerm)
+      g.description_short?.toLowerCase().includes(searchTerm)
   );
   activeFilters.push({ label: `Search: "${query}"`, param: 'q', value: query });
 }
