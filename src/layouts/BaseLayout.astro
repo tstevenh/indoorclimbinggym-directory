@@ -163,6 +163,8 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="dns-prefetch" href="https://www.google-analytics.com" />
 
     <!-- JSON-LD Structured Data -->
     {Array.isArray(schema)
@@ -184,6 +186,15 @@ if (breadcrumbs && breadcrumbs.length > 0) {
 
     <!-- Vercel Web Analytics -->
     <Analytics />
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KQJE0F08ER"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KQJE0F08ER');
+    </script>
   </head>
   <body class="min-h-screen bg-ivory text-granite antialiased">
     <!-- Skip to main content link for accessibility -->
