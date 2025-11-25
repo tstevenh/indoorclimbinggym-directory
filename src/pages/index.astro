@@ -50,8 +50,15 @@ const topStates = Object.entries(stateCounts)
   .slice(0, 9)
   .map(([state, count]) => ({ state, count }));
 
-// Get unique cities
-const cities = [...new Set(gyms.map(g => ({ city: g.city, region: g.region, slug: g.slug })))];
+// Get unique cities (deduplicate by city+region combination)
+const uniqueCities = new Map();
+gyms.forEach(gym => {
+  const key = `${gym.city}-${gym.region}`;
+  if (!uniqueCities.has(key)) {
+    uniqueCities.set(key, { city: gym.city, region: gym.region, slug: gym.slug });
+  }
+});
+const cities = Array.from(uniqueCities.values());
 const popularCities = cities.slice(0, 6);
 
 // Define top 8 curated categories with gym counts

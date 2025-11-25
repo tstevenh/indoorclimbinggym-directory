@@ -1,0 +1,41 @@
+Gym Name,State,Region,Gym Type,Boulder Grade Range,Rope Grade Range,Wall Style,Soft/Medium/Hard,One-Sentence Explanation
+Sender One (SNA),CA,West,Mixed,V0–V12+,5.6–5.14,Tall & Aesthetic,Soft,"Known for gymnastic, 'comp-style' setting and very tall, impressive walls that can feel generous in grading."
+Mesa Rim (Mission Valley),CA,West,Mixed,V0–V12,5.5–5.14,Huge Overhangs,Medium,"Generally fair grading with massive, endurance-heavy lead walls that mimic outdoor pump."
+Touchstone (Dogpatch),CA,West,Bouldering,V0–V12,—,Open & Flowy,Soft,"Famous for 'vacation grades' that prioritize fun, flowy movement over raw difficulty."
+The Front (Salt Lake),UT,West,Mixed,V0–V13,5.6–5.14,Steep & Powerful,Hard,"Notorious for sandbagged, strength-dependent boulder problems and steep competition walls."
+Movement (Baker/RiNo),CO,West,Mixed,V0–V13,5.6–5.14,Commercial Mix,Medium,"The standard for modern commercial grading; consistent, approachable, but rarely stiff."
+Seattle Bouldering Project,WA,West,Bouldering,Circuits (Yellow–Black),—,Geometric/Volumes,Soft,"Circuit grading system tends to encompass wide ranges, often leaning soft to remain accessible."
+Vertical World (Seattle),WA,West,Mixed,V0–V11,5.6–5.13+,Old School/Textured,Hard,"First gym in America; retains an 'old school' grit with stiff, technical, and often crimpy setting."
+The Circuit (Tigard/NE),OR,West,Bouldering,V0–V11,—,Slab & Vert,Very Soft,Widely considered one of the softest gyms in the West; beginner-friendly but grade-inflated.
+Momentum (Millcreek),UT,West,Mixed,V0–V13,5.5–5.13+,Archways & Cracks,Medium,Creative setting with specific crack features; grading is generally fair but can feel soft on big holds.
+The Spot (Boulder),CO,West,Bouldering,Spot Scale (1–5+),—,Natural Features,Likely Medium,Uses unique 'Spot Scale' (1–5 spots); famous for top-outs and natural-feeling features that blur indoor/outdoor styles.
+Austin Bouldering Project,TX,South,Bouldering,Circuits (Yellow–Black),—,Comp/Volumes,Soft,Focuses on broad accessibility with circuit grades that often feel easier than outdoor equivalents.
+Crux Climbing Center,TX,South,Mixed,V-Ranges (V0–V12),5.6–5.13,Transformer Wall,Medium,"Uses grade ranges (e.g., V3–V5) which keeps things honest, though 'comp style' setting dominates."
+Stone Summit (Atlanta),GA,South,Mixed,V0–V11,5.6–5.14,Massive Vert/Steep,Hard,Tall 60ft walls require serious endurance; older sets can feel particularly sandbagged and reachy.
+Vertical Ventures (St. Pete),FL,South,Mixed,V0–V11,5.5–5.13,Features & Aretes,Medium,Good mix of styles; grades are generally consistent for the region but softer than the Northeast.
+Project Rock,FL,South,Mixed,V0–V10,5.6–5.13,Commercial/Themed,Soft,Very commercialized atmosphere often results in 'feel good' grading for newer climbers.
+Inner Peaks (South End),NC,South,Mixed,V0–V12,5.6–5.13+,Triangular/Geometric,Medium,Consistent 'triangular' distribution of grades; known for the 'Bike Rack' slab and fair ratings.
+Triangle Rock Club,NC,South,Mixed,V0–V11,5.5–5.13,Commercial Mix,Soft,Uses a sometimes confusing 'ranged' tag system; generally considers member satisfaction over stiff grades.
+High Point (Chattanooga),TN,South,Mixed,V0–V11,5.5–5.13+,Downtown/Display,Soft,Tourist-heavy location leads to approachable grading; a gym V6 might feel like an outdoor V3.
+Climb Nashville,TN,South,Mixed,V0–V10,5.6–5.13,Steep Overhangs,Medium,"A strong local community keeps grading grounded, though still softer than the nearby steep outdoor crags."
+Summit Gyms (Grapevine),TX,South,Mixed,V0–V12,5.6–5.13,Classic Gym Style,Medium,Recently acquired by Movement; historically 'old school soft' but shifting toward standardized commercial grading.
+First Ascent (Avondale),IL,Midwest,Mixed,V0–V12,5.6–5.13+,Steep & Techy,Hard,"Avondale is the 'climber's gym' of the chain, known for stiffer grades than its Uptown sibling."
+Vertical Endeavors (St. Paul),MN,Midwest,Mixed,V0–V12,5.5–5.13,Vert/Slab Heavy,Medium,"Mixed bag; rope grades can be soft, but bouldering often feels stiff and technical/crimpy."
+Planet Rock (Ann Arbor),MI,Midwest,Mixed,V0–V11,5.5–5.13+,Community/Old School,Medium,Community-driven vibe with grades that are fair but not discouraging; huge lead arches.
+Mosaic Climbing,OH,Midwest,Mixed,Color Coded (V0–V11),5.5–5.13+,Sterile/Comp Style,Medium,"Modern, clean aesthetic with 'sterile' Walltopia walls; grading is color-coded and generally consistent."
+Climb Time (Blue Ash),OH,Midwest,Bouldering,Tape (Solid/Stripe/Dot),—,Grunge/Plywood,Hard,"Old school 'dungeon' vibe with tape grading; focused on raw power, crimps, and realistic difficulty."
+Boulders (Downtown),WI,Midwest,Bouldering,Circuits (Pink–Black),—,Geometric/Angles,Medium,"Madison’s bouldering hub; circuits are broad, but the 'Black' circuit offers legitimate difficulty."
+Adventure Rock,WI,Midwest,Mixed,V0–V11,5.5–5.13,Varied Angles,Medium,"Well-rounded facility; grades are standard for the Midwest—approachable low end, stiff high end."
+Climb So iLL (St. Louis),MO,Midwest,Mixed,Circuits/V-Scale,5.6–5.13,Aesthetic/Industrial,Soft,"Heavily stylized 'boutique' gym; prioritizes aesthetics and accessibility, often resulting in softer grades."
+Upper Limits (Maryland Hts),MO,Midwest,Mixed,V0–V11,5.5–5.13+,Tall/Massive Arch,Hard,"The 'serious' gym of the area with tall, pumping lead walls that demand real endurance."
+Chicago Bouldering Project,IL,Midwest,Bouldering,Circuits (Yellow–Black),—,Open Concept,Soft,"Like its sister gyms (SBP/ABP), the focus is on fun and flow, leading to accessible, softer grades."
+The Cliffs (LIC),NY,Northeast,Mixed,V0–V12,5.6–5.13+,Commercial/Production,Medium,High production value sets; grades can be inconsistent but generally hover around 'commercial medium'.
+Central Rock Gym (Cambridge),MA,Northeast,Bouldering,V0–V11,—,Steep & Powerful,Hard,Cambridge location is known for being significantly stiffer and more power-focused than other CRG locations.
+The Gravity Vault (Hoboken),NJ,Northeast,Mixed,V0–V11,5.5–5.13,Textured/Features,Soft,Widely cited as very soft; often criticized for 'low-balling' grades to encourage rapid progression.
+MetroRock (Everett),MA,Northeast,Mixed,V0–V12,5.6–5.13+,Old School/Strange,Hard,"Older walls with quirky, sometimes awkward setting that feels stiff and technical compared to modern gyms."
+Brooklyn Boulders (Gowanus),NY,Northeast,Mixed,V0–V11,5.6–5.13,Gritty/Community,Soft,Original hipster gym vibe; historically soft grading to accommodate a high volume of casual climbers.
+GP81,NY,Northeast,Bouldering,V0–V12+,—,Training/System,Very Hard,Built by climbers for climbers; no-frills training facility with arguably the stiffest grades in NYC.
+Reach Climbing,PA,Northeast,Mixed,V0–V12,5.5–5.13+,Comp Style,Medium,Host to Nationals; setting leans heavily toward competition style (coordination/dynos) rather than outdoor simulation.
+Movement (Timonium),MD,Northeast,Mixed,V0–V12,5.6–5.13,Big Box Commercial,Soft,formerly Earth Treks; huge facility with 'feel good' grading designed to keep members happy.
+Iron City Boulders,PA,Northeast,Bouldering,V0–V11,—,Performance/Clean,Medium,Performance-focused setting that encourages progression; fair grades that aren't gift-wrapped.
+Salt Pump,ME,Northeast,Mixed,Red-Point/No-Grade,5.6–5.13,Clean/Modern,Medium,Often hides grades on the back of tags to encourage trying routes; promotes experience over grade chasing.

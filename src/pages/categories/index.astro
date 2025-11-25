@@ -26,18 +26,18 @@ try {
  */
 function getIconForAmenity(amenity: string): string {
   const iconMap: Record<string, string> = {
-    'cafe': '☕',
-    'wifi': '📶',
-    'showers': '🚿',
-    'parking': '🅿️',
-    'pro_shop': '🏪',
-    'sauna': '🧖',
-    'kids_zone': '👨‍👩‍👧‍👦',
-    'yoga': '🧘',
-    'lockers': '🔒',
-    'weights': '🏋️',
+    'cafe': '',
+    'wifi': '',
+    'showers': '',
+    'parking': '',
+    'pro_shop': '',
+    'sauna': '',
+    'kids_zone': '',
+    'yoga': '',
+    'lockers': '',
+    'weights': '',
   };
-  return iconMap[amenity] || '✨';
+  return iconMap[amenity] || '';
 }
 
 /**
@@ -45,13 +45,13 @@ function getIconForAmenity(amenity: string): string {
  */
 function getIconForClimbingType(type: string): string {
   const iconMap: Record<string, string> = {
-    'bouldering': '🧗',
-    'top_rope': '🪢',
-    'lead': '⛓️',
-    'speed': '⚡',
-    'auto_belay': '🔄',
+    'bouldering': '',
+    'top_rope': '',
+    'lead': '',
+    'speed': '',
+    'auto_belay': '',
   };
-  return iconMap[type] || '🧗';
+  return iconMap[type] || '';
 }
 
 /**
@@ -72,7 +72,7 @@ const staticCategories = [
     name: 'Best for Beginners',
     slug: 'best-climbing-gyms-for-beginners',
     description: 'Welcoming gyms perfect for first-time climbers with intro classes',
-    icon: '🎯',
+    icon: '',
     count: gymsData.filter(g => g.beginner_friendly === true).length,
     category: 'experience',
   },
@@ -80,7 +80,7 @@ const staticCategories = [
     name: 'Best Bouldering Gyms',
     slug: 'best-bouldering-climbing-gyms',
     description: 'Top-rated facilities focused on bouldering excellence',
-    icon: '🧗',
+    icon: '',
     count: gymsData.filter(g => g.climbing_types?.includes('bouldering')).length,
     category: 'specialty',
   },
@@ -88,7 +88,7 @@ const staticCategories = [
     name: 'Gyms with Sauna',
     slug: 'climbing-gyms-with-sauna',
     description: 'Recovery-focused gyms with sauna amenities',
-    icon: '🧖',
+    icon: '',
     count: gymsData.filter(g => g.amenities?.includes('sauna')).length,
     category: 'amenity',
   },
@@ -96,7 +96,7 @@ const staticCategories = [
     name: 'Gyms with Kids Zone',
     slug: 'climbing-gyms-with-kids-zone',
     description: 'Family-friendly gyms with dedicated kids areas',
-    icon: '👨‍👩‍👧‍👦',
+    icon: '',
     count: gymsData.filter(g => g.amenities?.includes('kids_zone')).length,
     category: 'amenity',
   },
@@ -104,7 +104,7 @@ const staticCategories = [
     name: 'Affordable Gyms',
     slug: 'affordable-climbing-gyms',
     description: 'Budget-friendly climbing gyms with great value',
-    icon: '💰',
+    icon: '',
     count: gymsData.filter(g => g.day_pass_price_local <= 20).length,
     category: 'value',
   },
@@ -278,19 +278,16 @@ const schema = {
           href={`/categories/${category.slug}/1`}
           class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-sage group"
         >
-          <div class="flex items-start gap-4">
-            <div class="text-4xl flex-shrink-0">{category.icon}</div>
-            <div class="flex-1">
-              <h3 class="text-xl font-bold text-granite group-hover:text-sage mb-2 transition-colors">
-                {category.name}
-              </h3>
-              <p class="text-sm text-gray-600 mb-3">{category.description}</p>
-              <div class="flex items-center justify-between">
-                <span class="text-sage font-bold text-lg">{category.count} gyms</span>
-                <span class="text-sage text-sm group-hover:translate-x-1 transition-transform inline-block">
-                  View →
-                </span>
-              </div>
+          <div>
+            <h3 class="text-xl font-bold text-granite group-hover:text-sage mb-2 transition-colors">
+              {category.name}
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">{category.description}</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sage font-bold text-lg">{category.count} gyms</span>
+              <span class="text-sage text-sm group-hover:translate-x-1 transition-transform inline-block">
+                View →
+              </span>
             </div>
           </div>
         </a>
@@ -310,19 +307,16 @@ const schema = {
           href={`/categories/${category.slug}/1`}
           class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-sage group"
         >
-          <div class="flex items-start gap-4">
-            <div class="text-4xl flex-shrink-0">{category.icon}</div>
-            <div class="flex-1">
-              <h3 class="text-xl font-bold text-granite group-hover:text-sage mb-2 transition-colors">
-                {category.name}
-              </h3>
-              <p class="text-sm text-gray-600 mb-3">{category.description}</p>
-              <div class="flex items-center justify-between">
-                <span class="text-sage font-bold text-lg">{category.count} gyms</span>
-                <span class="text-sage text-sm group-hover:translate-x-1 transition-transform inline-block">
-                  View →
-                </span>
-              </div>
+          <div>
+            <h3 class="text-xl font-bold text-granite group-hover:text-sage mb-2 transition-colors">
+              {category.name}
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">{category.description}</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sage font-bold text-lg">{category.count} gyms</span>
+              <span class="text-sage text-sm group-hover:translate-x-1 transition-transform inline-block">
+                View →
+              </span>
             </div>
           </div>
         </a>
@@ -342,19 +336,16 @@ const schema = {
           href={`/categories/${category.slug}/1`}
           class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-sage group"
         >
-          <div class="flex items-start gap-4">
-            <div class="text-4xl flex-shrink-0">{category.icon}</div>
-            <div class="flex-1">
-              <h3 class="text-xl font-bold text-granite group-hover:text-sage mb-2 transition-colors">
-                {category.name}
-              </h3>
-              <p class="text-sm text-gray-600 mb-3">{category.description}</p>
-              <div class="flex items-center justify-between">
-                <span class="text-sage font-bold text-lg">{category.count} gyms</span>
-                <span class="text-sage text-sm group-hover:translate-x-1 transition-transform inline-block">
-                  View →
-                </span>
-              </div>
+          <div>
+            <h3 class="text-xl font-bold text-granite group-hover:text-sage mb-2 transition-colors">
+              {category.name}
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">{category.description}</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sage font-bold text-lg">{category.count} gyms</span>
+              <span class="text-sage text-sm group-hover:translate-x-1 transition-transform inline-block">
+                View →
+              </span>
             </div>
           </div>
         </a>

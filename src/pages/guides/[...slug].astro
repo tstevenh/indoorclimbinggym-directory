@@ -156,6 +156,8 @@ const articleSchema = generateArticleSchema(
     publishedDate,
     updatedDate,
     heroImage: entry.data.heroImage,
+    heroImageAlt: entry.data.heroImageAlt,
+    category: entry.data.category,
     wordCount: entry.data.wordCount,
     tags: entry.data.tags,
   },
@@ -217,6 +219,11 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-gray-100 text-g
   keywords={keywords}
   schema={schemas}
   breadcrumbs={breadcrumbs}
+  articlePublishedTime={publishedDate}
+  articleModifiedTime={updatedDate}
+  articleAuthor={entry.data.author}
+  articleSection={entry.data.category}
+  articleTags={entry.data.tags}
 >
   <!-- Article Header -->
   <article class="max-w-4xl mx-auto">

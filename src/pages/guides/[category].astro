@@ -1,0 +1,142 @@
+---
+/**
+ * Dynamic Category Page (/guides/[category]/)
+ * Auto-generates pages for all blog categories
+ */
+
+export const prerender = true;
+
+import { getCollection } from 'astro:content';
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogCard from '../../components/blog/BlogCard.astro';
+import BlogCategories from '../../components/blog/BlogCategories.astro';
+import { generateItemListSchema } from '../../utils/schema';
+
+// Generate static paths for all unique categories
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog');
+  const uniqueCategories = [...new Set(allPosts.map(post => post.data.category))];
+
+  return uniqueCategories.map(category => ({
+    params: { category },
+  }));
+}
+
+const { category } = Astro.params;
+
+// Get all blog posts in this category
+const allPosts = await getCollection('blog', ({ data }) => data.category === category);
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime()
+);
+
+// Helper function to capitalize and format category name
+const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+const categoryLabel = capitalize(category!);
+
+// SEO metadata
+const title = `${categoryLabel} | Indoor Climbing Guides`;
+const description = `Browse all ${categoryLabel.toLowerCase()} articles about indoor climbing. Expert advice, tips, and resources for climbers.`;
+const pageUrl = `https://www.indoorclimbinggym.com/guides/${category}`;
+
+// Generate schema
+const itemListSchema = generateItemListSchema(
+  sortedPosts.map((post, index) => ({
+    id: index,
+    name: post.data.title,
+    slug: post.slug,
+    full_address: '',
+    city: '',
+    region: '',
+    postal_code: '',
+    country: '',
+    latitude: 0,
+    longtitude: 0,
+    phone: '',
+    website: `https://www.indoorclimbinggym.com/guides/${post.slug}`,
+    photo: post.data.heroImage,
+    rating: 0,
+    day_pass_price_local: 0,
+    working_hour: '',
+    amenities: '',
+    climbing_types: '',
+    description_short: post.data.description,
+  })),
+  `Climbing ${categoryLabel}`,
+  pageUrl
+);
+
+const breadcrumbs = [
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com' },
+  { label: 'Guides', url: 'https://www.indoorclimbinggym.com/guides' },
+  { label: categoryLabel, url: pageUrl },
+];
+
+const keywords = [
+  `climbing ${category}`,
+  `indoor climbing ${category}`,
+  `climbing gym ${category}`,
+  'climbing advice',
+  'climbing resources'
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={pageUrl}
+  keywords={keywords}
+  schema={itemListSchema}
+  breadcrumbs={breadcrumbs}
+>
+  <section class="mb-12">
+    <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">
+      {categoryLabel}
+    </h1>
+    <p class="text-xl text-gray-600 max-w-3xl">
+      Explore our collection of {categoryLabel.toLowerCase()} articles for indoor climbing enthusiasts.
+    </p>
+  </section>
+
+  <BlogCategories currentCategory={category} />
+
+  {sortedPosts.length > 0 ? (
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+      {sortedPosts.map((post) => (
+        <BlogCard
+          slug={post.slug}
+          title={post.data.title}
+          description={post.data.description}
+          publishedDate={post.data.publishedDate}
+          author={post.data.author}
+          category={post.data.category}
+          heroImage={post.data.heroImage}
+          heroImageAlt={post.data.heroImageAlt}
+          readingTime={post.data.readingTime}
+        />
+      ))}
+    </div>
+  ) : (
+    <div class="text-center py-16">
+      <p class="text-xl text-gray-600">No {categoryLabel.toLowerCase()} articles yet. Check back soon!</p>
+    </div>
+  )}
+
+  <!-- SEO-rich content section -->
+  <section class="mt-16 bg-white rounded-lg shadow-md p-8">
+    <h2 class="text-2xl font-bold text-granite mb-4">About {categoryLabel} Content</h2>
+    <div class="prose max-w-none text-gray-600">
+      <p class="mb-4">
+        Our {categoryLabel.toLowerCase()} collection features expert-written articles about indoor climbing.
+        Whether you're a beginner looking to get started or an experienced climber seeking to improve your skills,
+        our comprehensive guides provide valuable insights and practical advice.
+      </p>
+      <p>
+        All articles are written by experienced climbers and regularly updated to reflect the latest techniques,
+        equipment, and industry trends. Browse through our {sortedPosts.length} article{sortedPosts.length !== 1 ? 's' : ''} in this category
+        or explore other topics to expand your climbing knowledge.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

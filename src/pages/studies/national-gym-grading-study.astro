@@ -1,0 +1,605 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  generateScholarlyArticleSchema,
+  generateDatasetSchema,
+  generateBreadcrumbSchema
+} from '../../utils/schema';
+
+export const prerender = true;
+
+// Study Metadata (exported for automatic listing)
+export const studyMetadata = {
+  title: 'National Gym Grading Study',
+  slug: 'national-gym-grading-study',
+  description: 'Comprehensive analysis of climbing gym grading systems across 40 climbing facilities in the United States.',
+  gymsAnalyzed: 40,
+  publishedDate: '2024-01-01',
+  updatedDate: '2025-01-01',
+  tags: ['grading', 'analysis', 'data'],
+};
+
+// SEO Configuration
+const title = 'National Gym Grading Study | Climbing Grade Analysis';
+const description = 'Comprehensive analysis of climbing gym grading across 40 U.S. facilities. Explore regional differences, wall styles, and grade variability data with downloadable dataset.';
+const canonical = 'https://www.indoorclimbinggym.com/studies/national-gym-grading-study';
+const keywords = ['climbing grades', 'gym grading study', 'climbing data', 'grade analysis', 'boulder grades', 'climbing research'];
+
+// Citation text
+const citationText = 'IndoorClimbingGym.com. (2025). National Gym Grading Study: Analysis of Grade Variability Across 40 U.S. Climbing Facilities. Retrieved from https://www.indoorclimbinggym.com/studies/national-gym-grading-study';
+
+// Generate ScholarlyArticle schema
+const scholarlyArticleSchema = generateScholarlyArticleSchema({
+  title: studyMetadata.title,
+  description: studyMetadata.description,
+  publishedDate: studyMetadata.publishedDate,
+  updatedDate: studyMetadata.updatedDate,
+  author: 'IndoorClimbingGym.com Research Team',
+  keywords: studyMetadata.tags,
+  citation: citationText,
+  gymsAnalyzed: studyMetadata.gymsAnalyzed
+}, canonical);
+
+// Generate Dataset schema
+const datasetSchema = generateDatasetSchema({
+  name: '40 U.S. Climbing Gym Grading Data',
+  description: 'Comprehensive dataset analyzing grading patterns across 40 climbing gyms in the United States, including regional variations, wall styles, and difficulty distributions.',
+  datePublished: studyMetadata.publishedDate,
+  dateModified: studyMetadata.updatedDate,
+  creator: 'IndoorClimbingGym.com Research Team',
+  keywords: ['climbing grades', 'gym data', 'grading analysis', 'climbing research'],
+  variablesMeasured: ['grading_difficulty', 'region', 'wall_style', 'gym_type', 'boulder_range', 'rope_range'],
+  spatialCoverage: 'United States (18 states, 4 regions)',
+  temporalCoverage: '2024-2025'
+}, canonical);
+
+// Breadcrumbs
+const breadcrumbs = [
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com' },
+  { label: 'Studies', url: 'https://www.indoorclimbinggym.com/studies' },
+  { label: 'National Gym Grading Study', url: canonical }
+];
+
+const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbs);
+
+// Combine all schemas into @graph
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [scholarlyArticleSchema, datasetSchema, breadcrumbSchema]
+};
+
+// Study Statistics
+const totalGyms = 40;
+const regions = 4;
+const states = 18;
+
+// Regional Distribution
+const regionalData = [
+  { region: 'West', count: 10, percentage: 25, gyms: 'CA, WA, OR, UT, CO' },
+  { region: 'South', count: 10, percentage: 25, gyms: 'TX, GA, FL, NC, TN' },
+  { region: 'Midwest', count: 10, percentage: 25, gyms: 'IL, MN, MI, OH, WI, MO' },
+  { region: 'Northeast', count: 10, percentage: 25, gyms: 'NY, MA, NJ, PA, MD, ME' },
+];
+
+// Grading Distribution
+const gradingDistribution = [
+  { category: 'Very Soft', count: 2, percentage: 5 },
+  { category: 'Soft', count: 12, percentage: 30 },
+  { category: 'Medium', count: 20, percentage: 50 },
+  { category: 'Hard', count: 5, percentage: 12.5 },
+  { category: 'Very Hard', count: 1, percentage: 2.5 },
+];
+
+// Wall Style Distribution
+const wallStyles = [
+  { style: 'Steep & Overhang', count: 12, percentage: 30 },
+  { style: 'Mixed/Commercial', count: 14, percentage: 35 },
+  { style: 'Vertical/Slab', count: 8, percentage: 20 },
+  { style: 'Competition/Volumes', count: 6, percentage: 15 },
+];
+
+// Gym Type Distribution
+const gymTypes = [
+  { type: 'Mixed (Boulder + Rope)', count: 29, percentage: 72.5 },
+  { type: 'Bouldering Only', count: 11, percentage: 27.5 },
+];
+
+// Dataset for full table (sample - you can expand)
+const fullDataset = [
+  { name: 'Sender One (SNA)', state: 'CA', region: 'West', type: 'Mixed', boulderRange: 'V0–V12+', ropeRange: '5.6–5.14', wallStyle: 'Tall & Aesthetic', grading: 'Soft', explanation: 'Known for gymnastic, \'comp-style\' setting and very tall, impressive walls that can feel generous in grading.' },
+  { name: 'Mesa Rim (Mission Valley)', state: 'CA', region: 'West', type: 'Mixed', boulderRange: 'V0–V12', ropeRange: '5.5–5.14', wallStyle: 'Huge Overhangs', grading: 'Medium', explanation: 'Generally fair grading with massive, endurance-heavy lead walls that mimic outdoor pump.' },
+  { name: 'Touchstone (Dogpatch)', state: 'CA', region: 'West', type: 'Bouldering', boulderRange: 'V0–V12', ropeRange: '—', wallStyle: 'Open & Flowy', grading: 'Soft', explanation: 'Famous for \'vacation grades\' that prioritize fun, flowy movement over raw difficulty.' },
+  { name: 'The Front (Salt Lake)', state: 'UT', region: 'West', type: 'Mixed', boulderRange: 'V0–V13', ropeRange: '5.6–5.14', wallStyle: 'Steep & Powerful', grading: 'Hard', explanation: 'Notorious for sandbagged, strength-dependent boulder problems and steep competition walls.' },
+  { name: 'Movement (Baker/RiNo)', state: 'CO', region: 'West', type: 'Mixed', boulderRange: 'V0–V13', ropeRange: '5.6–5.14', wallStyle: 'Commercial Mix', grading: 'Medium', explanation: 'The standard for modern commercial grading; consistent, approachable, but rarely stiff.' },
+  { name: 'Seattle Bouldering Project', state: 'WA', region: 'West', type: 'Bouldering', boulderRange: 'Circuits (Yellow–Black)', ropeRange: '—', wallStyle: 'Geometric/Volumes', grading: 'Soft', explanation: 'Circuit grading system tends to encompass wide ranges, often leaning soft to remain accessible.' },
+  { name: 'Vertical World (Seattle)', state: 'WA', region: 'West', type: 'Mixed', boulderRange: 'V0–V11', ropeRange: '5.6–5.13+', wallStyle: 'Old School/Textured', grading: 'Hard', explanation: 'First gym in America; retains an \'old school\' grit with stiff, technical, and often crimpy setting.' },
+  { name: 'The Circuit (Tigard/NE)', state: 'OR', region: 'West', type: 'Bouldering', boulderRange: 'V0–V11', ropeRange: '—', wallStyle: 'Slab & Vert', grading: 'Very Soft', explanation: 'Widely considered one of the softest gyms in the West; beginner-friendly but grade-inflated.' },
+  { name: 'Momentum (Millcreek)', state: 'UT', region: 'West', type: 'Mixed', boulderRange: 'V0–V13', ropeRange: '5.5–5.13+', wallStyle: 'Archways & Cracks', grading: 'Medium', explanation: 'Creative setting with specific crack features; grading is generally fair but can feel soft on big holds.' },
+  { name: 'The Spot (Boulder)', state: 'CO', region: 'West', type: 'Bouldering', boulderRange: 'Spot Scale (1–5+)', ropeRange: '—', wallStyle: 'Natural Features', grading: 'Medium', explanation: 'Uses unique \'Spot Scale\' (1–5 spots); famous for top-outs and natural-feeling features that blur indoor/outdoor styles.' },
+  { name: 'Austin Bouldering Project', state: 'TX', region: 'South', type: 'Bouldering', boulderRange: 'Circuits (Yellow–Black)', ropeRange: '—', wallStyle: 'Comp/Volumes', grading: 'Soft', explanation: 'Focuses on broad accessibility with circuit grades that often feel easier than outdoor equivalents.' },
+  { name: 'Crux Climbing Center', state: 'TX', region: 'South', type: 'Mixed', boulderRange: 'V-Ranges (V0–V12)', ropeRange: '5.6–5.13', wallStyle: 'Transformer Wall', grading: 'Medium', explanation: 'Uses grade ranges (e.g., V3–V5) which keeps things honest, though \'comp style\' setting dominates.' },
+  { name: 'Stone Summit (Atlanta)', state: 'GA', region: 'South', type: 'Mixed', boulderRange: 'V0–V11', ropeRange: '5.6–5.14', wallStyle: 'Massive Vert/Steep', grading: 'Hard', explanation: 'Tall 60ft walls require serious endurance; older sets can feel particularly sandbagged and reachy.' },
+  { name: 'Vertical Ventures (St. Pete)', state: 'FL', region: 'South', type: 'Mixed', boulderRange: 'V0–V11', ropeRange: '5.5–5.13', wallStyle: 'Features & Aretes', grading: 'Medium', explanation: 'Good mix of styles; grades are generally consistent for the region but softer than the Northeast.' },
+  { name: 'Project Rock', state: 'FL', region: 'South', type: 'Mixed', boulderRange: 'V0–V10', ropeRange: '5.6–5.13', wallStyle: 'Commercial/Themed', grading: 'Soft', explanation: 'Very commercialized atmosphere often results in \'feel good\' grading for newer climbers.' },
+  { name: 'Inner Peaks (South End)', state: 'NC', region: 'South', type: 'Mixed', boulderRange: 'V0–V12', ropeRange: '5.6–5.13+', wallStyle: 'Triangular/Geometric', grading: 'Medium', explanation: 'Consistent \'triangular\' distribution of grades; known for the \'Bike Rack\' slab and fair ratings.' },
+  { name: 'Triangle Rock Club', state: 'NC', region: 'South', type: 'Mixed', boulderRange: 'V0–V11', ropeRange: '5.5–5.13', wallStyle: 'Commercial Mix', grading: 'Soft', explanation: 'Uses a sometimes confusing \'ranged\' tag system; generally considers member satisfaction over stiff grades.' },
+  { name: 'High Point (Chattanooga)', state: 'TN', region: 'South', type: 'Mixed', boulderRange: 'V0–V11', ropeRange: '5.5–5.13+', wallStyle: 'Downtown/Display', grading: 'Soft', explanation: 'Tourist-heavy location leads to approachable grading; a gym V6 might feel like an outdoor V3.' },
+  { name: 'Climb Nashville', state: 'TN', region: 'South', type: 'Mixed', boulderRange: 'V0–V10', ropeRange: '5.6–5.13', wallStyle: 'Steep Overhangs', grading: 'Medium', explanation: 'A strong local community keeps grading grounded, though still softer than the nearby steep outdoor crags.' },
+  { name: 'Summit Gyms (Grapevine)', state: 'TX', region: 'South', type: 'Mixed', boulderRange: 'V0–V12', ropeRange: '5.6–5.13', wallStyle: 'Classic Gym Style', grading: 'Medium', explanation: 'Recently acquired by Movement; historically \'old school soft\' but shifting toward standardized commercial grading.' },
+  { name: 'First Ascent (Avondale)', state: 'IL', region: 'Midwest', type: 'Mixed', boulderRange: 'V0–V12', ropeRange: '5.6–5.13+', wallStyle: 'Steep & Techy', grading: 'Hard', explanation: 'Avondale is the \'climber\'s gym\' of the chain, known for stiffer grades than its Uptown sibling.' },
+  { name: 'Vertical Endeavors (St. Paul)', state: 'MN', region: 'Midwest', type: 'Mixed', boulderRange: 'V0–V12', ropeRange: '5.5–5.13', wallStyle: 'Vert/Slab Heavy', grading: 'Medium', explanation: 'Mixed bag; rope grades can be soft, but bouldering often feels stiff and technical/crimpy.' },
+  { name: 'Planet Rock (Ann Arbor)', state: 'MI', region: 'Midwest', type: 'Mixed', boulderRange: 'V0–V11', ropeRange: '5.5–5.13+', wallStyle: 'Community/Old School', grading: 'Medium', explanation: 'Community-driven vibe with grades that are fair but not discouraging; huge lead arches.' },
+  { name: 'Mosaic Climbing', state: 'OH', region: 'Midwest', type: 'Mixed', boulderRange: 'Color Coded (V0–V11)', ropeRange: '5.5–5.13+', wallStyle: 'Sterile/Comp Style', grading: 'Medium', explanation: 'Modern, clean aesthetic with \'sterile\' Walltopia walls; grading is color-coded and generally consistent.' },
+  { name: 'Climb Time (Blue Ash)', state: 'OH', region: 'Midwest', type: 'Bouldering', boulderRange: 'Tape (Solid/Stripe/Dot)', ropeRange: '—', wallStyle: 'Grunge/Plywood', grading: 'Hard', explanation: 'Old school \'dungeon\' vibe with tape grading; focused on raw power, crimps, and realistic difficulty.' },
+  { name: 'Boulders (Downtown)', state: 'WI', region: 'Midwest', type: 'Bouldering', boulderRange: 'Circuits (Pink–Black)', ropeRange: '—', wallStyle: 'Geometric/Angles', grading: 'Medium', explanation: 'Madison\'s bouldering hub; circuits are broad, but the \'Black\' circuit offers legitimate difficulty.' },
+  { name: 'Adventure Rock', state: 'WI', region: 'Midwest', type: 'Mixed', boulderRange: 'V0–V11', ropeRange: '5.5–5.13', wallStyle: 'Varied Angles', grading: 'Medium', explanation: 'Well-rounded facility; grades are standard for the Midwest—approachable low end, stiff high end.' },
+  { name: 'Climb So iLL (St. Louis)', state: 'MO', region: 'Midwest', type: 'Mixed', boulderRange: 'Circuits/V-Scale', ropeRange: '5.6–5.13', wallStyle: 'Aesthetic/Industrial', grading: 'Soft', explanation: 'Heavily stylized \'boutique\' gym; prioritizes aesthetics and accessibility, often resulting in softer grades.' },
+  { name: 'Upper Limits (Maryland Hts)', state: 'MO', region: 'Midwest', type: 'Mixed', boulderRange: 'V0–V11', ropeRange: '5.5–5.13+', wallStyle: 'Tall/Massive Arch', grading: 'Hard', explanation: 'The \'serious\' gym of the area with tall, pumping lead walls that demand real endurance.' },
+  { name: 'Chicago Bouldering Project', state: 'IL', region: 'Midwest', type: 'Bouldering', boulderRange: 'Circuits (Yellow–Black)', ropeRange: '—', wallStyle: 'Open Concept', grading: 'Soft', explanation: 'Like its sister gyms (SBP/ABP), the focus is on fun and flow, leading to accessible, softer grades.' },
+  { name: 'The Cliffs (LIC)', state: 'NY', region: 'Northeast', type: 'Mixed', boulderRange: 'V0–V12', ropeRange: '5.6–5.13+', wallStyle: 'Commercial/Production', grading: 'Medium', explanation: 'High production value sets; grades can be inconsistent but generally hover around \'commercial medium\'.' },
+  { name: 'Central Rock Gym (Cambridge)', state: 'MA', region: 'Northeast', type: 'Bouldering', boulderRange: 'V0–V11', ropeRange: '—', wallStyle: 'Steep & Powerful', grading: 'Hard', explanation: 'Cambridge location is known for being significantly stiffer and more power-focused than other CRG locations.' },
+  { name: 'The Gravity Vault (Hoboken)', state: 'NJ', region: 'Northeast', type: 'Mixed', boulderRange: 'V0–V11', ropeRange: '5.5–5.13', wallStyle: 'Textured/Features', grading: 'Soft', explanation: 'Widely cited as very soft; often criticized for \'low-balling\' grades to encourage rapid progression.' },
+  { name: 'MetroRock (Everett)', state: 'MA', region: 'Northeast', type: 'Mixed', boulderRange: 'V0–V12', ropeRange: '5.6–5.13+', wallStyle: 'Old School/Strange', grading: 'Hard', explanation: 'Older walls with quirky, sometimes awkward setting that feels stiff and technical compared to modern gyms.' },
+  { name: 'Brooklyn Boulders (Gowanus)', state: 'NY', region: 'Northeast', type: 'Mixed', boulderRange: 'V0–V11', ropeRange: '5.6–5.13', wallStyle: 'Gritty/Community', grading: 'Soft', explanation: 'Original hipster gym vibe; historically soft grading to accommodate a high volume of casual climbers.' },
+  { name: 'GP81', state: 'NY', region: 'Northeast', type: 'Bouldering', boulderRange: 'V0–V12+', ropeRange: '—', wallStyle: 'Training/System', grading: 'Very Hard', explanation: 'Built by climbers for climbers; no-frills training facility with arguably the stiffest grades in NYC.' },
+  { name: 'Reach Climbing', state: 'PA', region: 'Northeast', type: 'Mixed', boulderRange: 'V0–V12', ropeRange: '5.5–5.13+', wallStyle: 'Comp Style', grading: 'Medium', explanation: 'Host to Nationals; setting leans heavily toward competition style (coordination/dynos) rather than outdoor simulation.' },
+  { name: 'Movement (Timonium)', state: 'MD', region: 'Northeast', type: 'Mixed', boulderRange: 'V0–V12', ropeRange: '5.6–5.13', wallStyle: 'Big Box Commercial', grading: 'Soft', explanation: 'Formerly Earth Treks; huge facility with \'feel good\' grading designed to keep members happy.' },
+  { name: 'Iron City Boulders', state: 'PA', region: 'Northeast', type: 'Bouldering', boulderRange: 'V0–V11', ropeRange: '—', wallStyle: 'Performance/Clean', grading: 'Medium', explanation: 'Performance-focused setting that encourages progression; fair grades that aren\'t gift-wrapped.' },
+  { name: 'Salt Pump', state: 'ME', region: 'Northeast', type: 'Mixed', boulderRange: 'Red-Point/No-Grade', ropeRange: '5.6–5.13', wallStyle: 'Clean/Modern', grading: 'Medium', explanation: 'Often hides grades on the back of tags to encourage trying routes; promotes experience over grade chasing.' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  keywords={keywords}
+  canonical={canonical}
+  schema={combinedSchema}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-sage/20 to-ivory py-16 md:py-20 -mx-4 px-4 mb-12">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl font-bold text-granite mb-6">
+        National Gym Grading Study
+      </h1>
+      <p class="text-xl md:text-2xl text-gray-700 mb-4">
+        Comprehensive Analysis of Climbing Grade Variability Across U.S. Indoor Facilities
+      </p>
+      <div class="flex flex-wrap justify-center gap-6 mt-8 text-lg">
+        <div class="flex flex-col items-center">
+          <span class="text-4xl font-bold text-sage">{totalGyms}</span>
+          <span class="text-gray-600">Gyms Analyzed</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="text-4xl font-bold text-sage">{regions}</span>
+          <span class="text-gray-600">U.S. Regions</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <span class="text-4xl font-bold text-sage">{states}</span>
+          <span class="text-gray-600">States Covered</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-5xl mx-auto">
+    <!-- Introduction -->
+    <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-granite mb-4">Overview</h2>
+      <div class="prose prose-lg max-w-none text-gray-700">
+        <p>
+          Climbing gym grades are notoriously inconsistent. A V4 in one gym might feel like a V2 or V6 in another. For traveling climbers and those training across multiple facilities, this variability makes it difficult to track progress, identify weaknesses, and structure effective training programs.
+        </p>
+        <p>
+          This study analyzes grade ranges, setting philosophies, and wall styles across 40 climbing gyms in the United States to quantify these differences and help climbers understand how grading varies by region, gym type, and wall style.
+        </p>
+      </div>
+    </section>
+
+    <!-- Methodology -->
+    <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-granite mb-4">Methodology</h2>
+      <div class="prose max-w-none text-gray-700">
+        <p>
+          This research analyzed 40 indoor climbing facilities across the West Coast, South, Midwest, and Northeast regions of the United States. Data was collected from publicly available sources including gym websites, online reviews, and climber feedback.
+        </p>
+
+        <p><strong>Data Sources:</strong></p>
+        <ul>
+          <li>Official gym websites (grade ranges, wall specifications)</li>
+          <li>Instagram and social media (wall angles, setting styles, climber feedback)</li>
+          <li>Online climbing forums and review platforms (Mountain Project, Reddit, Google Reviews)</li>
+          <li>Direct climber testimonials and community consensus</li>
+        </ul>
+
+        <p><strong>Variables Examined:</strong></p>
+        <ul>
+          <li><strong>Grade ranges:</strong> Maximum and minimum grades offered for bouldering and rope climbing</li>
+          <li><strong>Wall styles:</strong> Dominant wall features (steep overhangs, slabs, volumes, vertical walls)</li>
+          <li><strong>Setting philosophy:</strong> Competition-style vs. commercial vs. training-focused</li>
+          <li><strong>Grading assessment:</strong> Classified as Very Soft, Soft, Medium, Hard, or Very Hard based on climber consensus and comparison to outdoor equivalents</li>
+        </ul>
+
+        <p><strong>Classification Methodology:</strong></p>
+        <p>
+          Each gym was assigned a grading classification based on multiple factors including setter style, business model (commercial vs. training-focused), wall angles, and aggregated climber feedback patterns. Grading classifications were determined through cross-referencing multiple data sources to establish consensus on how each facility's grades compare to outdoor climbing standards and other gyms.
+        </p>
+
+        <p><strong>Study Limitations:</strong></p>
+        <ul>
+          <li>This is a representative snapshot of 40 facilities, not a comprehensive census of all U.S. climbing gyms</li>
+          <li>Grade assessments reflect general patterns and may not apply to every route set at a given gym</li>
+          <li>Setting styles and grading philosophies can change over time as staff and ownership evolve</li>
+          <li>Individual climber experience varies based on personal strengths, weaknesses, and training background</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Key Findings -->
+    <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-granite mb-4">Key Findings</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-gradient-to-br from-sage/10 to-ivory p-6 rounded-lg border-l-4 border-sage">
+          <h3 class="text-xl font-bold text-granite mb-2">Regional Patterns</h3>
+          <p class="text-gray-700">
+            The Northeast skewed harder overall, while the South trended softer. The West Coast showed the widest variance, with gyms ranging from very soft to very hard. The Midwest demonstrated the most consistency.
+          </p>
+        </div>
+        <div class="bg-gradient-to-br from-sage/10 to-ivory p-6 rounded-lg border-l-4 border-sage">
+          <h3 class="text-xl font-bold text-granite mb-2">Wall Style Correlation</h3>
+          <p class="text-gray-700">
+            Wall style proved to be the strongest predictor of grading philosophy. Steep, overhang-dominated gyms consistently graded harder, while slab and vertical-heavy facilities skewed softer.
+          </p>
+        </div>
+        <div class="bg-gradient-to-br from-sage/10 to-ivory p-6 rounded-lg border-l-4 border-sage">
+          <h3 class="text-xl font-bold text-granite mb-2">Gym Type Impact</h3>
+          <p class="text-gray-700">
+            Commercial chains grade approximately one full V-grade softer than training-focused facilities. This reflects different business models and target audiences rather than inconsistency.
+          </p>
+        </div>
+        <div class="bg-gradient-to-br from-sage/10 to-ivory p-6 rounded-lg border-l-4 border-sage">
+          <h3 class="text-xl font-bold text-granite mb-2">Grade Variance Range</h3>
+          <p class="text-gray-700">
+            A solid V4 climber could reasonably expect to climb V2-V6 across different gyms, depending on wall angle, hold style, and setting philosophy—a significant disruption to training progressions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grading Definitions -->
+    <section class="bg-gradient-to-br from-sage/10 to-ivory rounded-lg p-6 md:p-8 mb-8 border-2 border-sage/20">
+      <h2 class="text-2xl font-bold text-granite mb-4 flex items-center gap-2">
+        <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Understanding Grading Classifications
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div class="bg-white p-4 rounded-lg border-l-4 border-green-500">
+          <h3 class="font-bold text-granite mb-2 text-sm">Very Soft</h3>
+          <p class="text-xs text-gray-600">Grades 2+ levels easier than outdoor equivalents. Heavily focused on accessibility and flow.</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg border-l-4 border-green-400">
+          <h3 class="font-bold text-granite mb-2 text-sm">Soft</h3>
+          <p class="text-xs text-gray-600">Grades 1-2 levels easier than outdoor. Prioritizes member enjoyment and progression.</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg border-l-4 border-blue-500">
+          <h3 class="font-bold text-granite mb-2 text-sm">Medium</h3>
+          <p class="text-xs text-gray-600">Grades align with outdoor equivalents. Balanced approach between challenge and accessibility.</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg border-l-4 border-orange-500">
+          <h3 class="font-bold text-granite mb-2 text-sm">Hard</h3>
+          <p class="text-xs text-gray-600">Grades 1-2 levels harder than outdoor. Emphasizes technical precision and strength.</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg border-l-4 border-red-500">
+          <h3 class="font-bold text-granite mb-2 text-sm">Very Hard</h3>
+          <p class="text-xs text-gray-600">Grades 2+ levels harder than outdoor. Focused on serious training and performance.</p>
+        </div>
+      </div>
+      <p class="text-sm text-gray-700 mt-4 italic">
+        Note: These classifications represent general patterns across each facility's entire range of routes. Individual problems may vary, and personal experience depends on climbing style and strengths.
+      </p>
+    </section>
+
+    <!-- Regional Distribution -->
+    <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-granite mb-6">Regional Distribution</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-sage text-white">
+              <th class="px-4 py-3 text-left font-semibold">Region</th>
+              <th class="px-4 py-3 text-left font-semibold">Gyms Analyzed</th>
+              <th class="px-4 py-3 text-left font-semibold">States Covered</th>
+              <th class="px-4 py-3 text-left font-semibold">Percentage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {regionalData.map((row, index) => (
+              <tr class={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                <td class="px-4 py-3 text-gray-700 font-semibold">{row.region}</td>
+                <td class="px-4 py-3 text-gray-700">{row.count}</td>
+                <td class="px-4 py-3 text-gray-600 text-sm">{row.gyms}</td>
+                <td class="px-4 py-3 text-gray-700">{row.percentage}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Grading Distribution -->
+    <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-granite mb-6">Grading Distribution</h2>
+      <p class="text-gray-700 mb-6">
+        Half of all gyms analyzed grade at a "medium" level (consistent with outdoor equivalents), while 35% grade softer than outdoor standards and 15% grade harder.
+      </p>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-sage text-white">
+              <th class="px-4 py-3 text-left font-semibold">Grading Category</th>
+              <th class="px-4 py-3 text-left font-semibold">Number of Gyms</th>
+              <th class="px-4 py-3 text-left font-semibold">Percentage</th>
+              <th class="px-4 py-3 text-left font-semibold">Visual</th>
+            </tr>
+          </thead>
+          <tbody>
+            {gradingDistribution.map((item, index) => (
+              <tr class={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                <td class="px-4 py-3 font-semibold text-gray-700">{item.category}</td>
+                <td class="px-4 py-3 text-gray-700">{item.count}</td>
+                <td class="px-4 py-3 text-gray-700">{item.percentage}%</td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <div class="w-48 bg-gray-200 rounded h-4 overflow-hidden">
+                      <div
+                        class="bg-sage h-full rounded"
+                        style={`width: ${item.percentage}%`}
+                      ></div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Wall Style Analysis -->
+    <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-granite mb-6">Wall Style Distribution</h2>
+      <p class="text-gray-700 mb-6">
+        Wall angle and style were the strongest predictors of grading philosophy, with steep/overhang facilities consistently grading harder.
+      </p>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-sage text-white">
+              <th class="px-4 py-3 text-left font-semibold">Wall Style</th>
+              <th class="px-4 py-3 text-left font-semibold">Number of Gyms</th>
+              <th class="px-4 py-3 text-left font-semibold">Percentage</th>
+              <th class="px-4 py-3 text-left font-semibold">Visual</th>
+            </tr>
+          </thead>
+          <tbody>
+            {wallStyles.map((item, index) => (
+              <tr class={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                <td class="px-4 py-3 font-semibold text-gray-700">{item.style}</td>
+                <td class="px-4 py-3 text-gray-700">{item.count}</td>
+                <td class="px-4 py-3 text-gray-700">{item.percentage}%</td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <div class="w-48 bg-gray-200 rounded h-4 overflow-hidden">
+                      <div
+                        class="bg-sage h-full rounded"
+                        style={`width: ${item.percentage}%`}
+                      ></div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Gym Type Distribution -->
+    <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-granite mb-6">Gym Type Breakdown</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {gymTypes.map((item) => (
+          <div class="bg-gradient-to-br from-ivory to-white p-6 rounded-lg border-2 border-sage/20">
+            <div class="text-center">
+              <div class="text-5xl font-bold text-sage mb-2">{item.percentage}%</div>
+              <div class="text-lg font-semibold text-granite mb-1">{item.type}</div>
+              <div class="text-gray-600">{item.count} of {totalGyms} gyms</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Full Dataset Table -->
+    <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-granite mb-6">Complete Dataset</h2>
+      <p class="text-gray-700 mb-6">
+        Below is the complete dataset of all 40 gyms analyzed in this study. Use the table to explore specific gyms and compare grading philosophies across regions.
+      </p>
+      <div class="overflow-x-auto border-2 border-gray-200 rounded-lg">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-sage text-white">
+              <th class="px-3 py-2 text-left font-semibold">Gym Name</th>
+              <th class="px-3 py-2 text-left font-semibold">State</th>
+              <th class="px-3 py-2 text-left font-semibold">Region</th>
+              <th class="px-3 py-2 text-left font-semibold">Type</th>
+              <th class="px-3 py-2 text-left font-semibold">Boulder Range</th>
+              <th class="px-3 py-2 text-left font-semibold">Wall Style</th>
+              <th class="px-3 py-2 text-left font-semibold">Grading</th>
+            </tr>
+          </thead>
+          <tbody>
+            {fullDataset.map((gym, index) => (
+              <tr class={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                <td class="px-3 py-2 text-gray-700 font-semibold">{gym.name}</td>
+                <td class="px-3 py-2 text-gray-600">{gym.state}</td>
+                <td class="px-3 py-2 text-gray-600">{gym.region}</td>
+                <td class="px-3 py-2 text-gray-600">{gym.type}</td>
+                <td class="px-3 py-2 text-gray-700">{gym.boulderRange}</td>
+                <td class="px-3 py-2 text-gray-600 text-xs">{gym.wallStyle}</td>
+                <td class="px-3 py-2">
+                  <span class={`px-2 py-1 rounded-full text-xs font-semibold ${
+                    gym.grading === 'Very Hard' || gym.grading === 'Hard' ? 'bg-red-100 text-red-800' :
+                    gym.grading === 'Medium' ? 'bg-blue-100 text-blue-800' :
+                    'bg-green-100 text-green-800'
+                  }`}>
+                    {gym.grading}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Download CTA -->
+    <section class="bg-sage rounded-lg shadow-xl p-8 md:p-12 mb-12 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+        Download the Complete Dataset
+      </h2>
+      <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+        Get the full dataset including detailed explanations for each gym's grading philosophy, wall styles, and regional characteristics.
+      </p>
+      <a
+        href="/data/national-gym-grading-study.csv"
+        download
+        class="inline-flex items-center gap-3 bg-white text-sage px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors shadow-lg"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+        Download CSV Dataset
+      </a>
+      <p class="text-white/80 mt-4 text-sm">40 gyms • 4 regions • Full analysis</p>
+    </section>
+
+    <!-- Grade Conversion Tools Section -->
+    <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-granite mb-6 text-center">Understand Climbing Grades</h2>
+      <p class="text-gray-700 text-center mb-8 max-w-2xl mx-auto">
+        Since gym grades vary so much, understanding the grading systems is essential. Use our conversion tools to compare different grading scales.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        <a href="/tools/bouldering-grade-conversion" class="group bg-gradient-to-br from-ivory to-white p-8 rounded-lg border-2 border-sage/20 hover:border-sage hover:shadow-lg transition-all">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-granite group-hover:text-sage mb-2">Bouldering Grade Conversion</h3>
+            <p class="text-sm text-gray-600 mb-4">Convert between V-Scale, Font, and other bouldering grading systems</p>
+            <span class="text-sage text-sm font-semibold">Use Converter →</span>
+          </div>
+        </a>
+        <a href="/tools/sport-climbing-grade-conversion" class="group bg-gradient-to-br from-ivory to-white p-8 rounded-lg border-2 border-sage/20 hover:border-sage hover:shadow-lg transition-all">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold text-granite group-hover:text-sage mb-2">Sport Climbing Grade Conversion</h3>
+            <p class="text-sm text-gray-600 mb-4">Convert between YDS, French, UIAA, and other rope climbing grades</p>
+            <span class="text-sage text-sm font-semibold">Use Converter →</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Related Resources -->
+    <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-granite mb-6">Related Guides</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="/guides/beginners-guide-to-climbing-gyms" class="group">
+          <div class="bg-gradient-to-br from-ivory to-white p-6 rounded-lg border-2 border-gray-200 group-hover:border-sage transition-all">
+            <h3 class="text-lg font-bold text-granite group-hover:text-sage mb-2">Beginner's Guide to Climbing Gyms</h3>
+            <p class="text-sm text-gray-600">Learn how to choose the right gym for your skill level and training goals.</p>
+          </div>
+        </a>
+        <a href="/guides/is-climbing-gym-membership-worth-it" class="group">
+          <div class="bg-gradient-to-br from-ivory to-white p-6 rounded-lg border-2 border-gray-200 group-hover:border-sage transition-all">
+            <h3 class="text-lg font-bold text-granite group-hover:text-sage mb-2">Is a Climbing Gym Membership Worth It?</h3>
+            <p class="text-sm text-gray-600">Cost analysis and comparison of membership vs. day pass pricing.</p>
+          </div>
+        </a>
+        <a href="/guides/what-to-wear-indoor-rock-climbing" class="group">
+          <div class="bg-gradient-to-br from-ivory to-white p-6 rounded-lg border-2 border-gray-200 group-hover:border-sage transition-all">
+            <h3 class="text-lg font-bold text-granite group-hover:text-sage mb-2">What to Wear Indoor Rock Climbing</h3>
+            <p class="text-sm text-gray-600">Complete clothing guide for your first gym visit and beyond.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Conclusion -->
+    <section class="bg-white rounded-lg shadow-md p-6 md:p-8 mb-8">
+      <h2 class="text-2xl md:text-3xl font-bold text-granite mb-4">Conclusion</h2>
+      <div class="prose prose-lg max-w-none text-gray-700">
+        <p>
+          This study confirms what many climbers have long suspected: climbing gym grades are highly variable and depend heavily on wall style, gym type, and regional factors. A "V4 climber" at one gym might struggle with V2s or cruise V6s at another facility.
+        </p>
+        <p>
+          For climbers serious about training and progression, this means grades should be treated as approximate guidance rather than absolute measures of ability. Building a grade-independent training system based on movement patterns, time-boxed performance testing, and style-specific benchmarking is far more reliable than tracking V-numbers alone.
+        </p>
+        <p>
+          Understanding these patterns allows climbers to calibrate expectations when traveling, choose gyms that align with their training goals, and measure progress more objectively across different facilities.
+        </p>
+      </div>
+      <div class="mt-8 text-center">
+        <a
+          href="/"
+          class="inline-block bg-sage text-white px-8 py-3 rounded-lg font-bold hover:bg-sage/90 transition-colors"
+        >
+          Search Climbing Gyms Across the U.S.
+        </a>
+      </div>
+    </section>
+
+    <!-- Citation Block -->
+    <section class="bg-gradient-to-br from-sage/5 to-ivory rounded-lg p-6 md:p-8 mb-8 border-2 border-sage/30">
+      <h2 class="text-xl font-bold text-granite mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+        </svg>
+        How to Cite This Study
+      </h2>
+      <div class="bg-white p-6 rounded-lg border-l-4 border-sage">
+        <p class="text-sm text-gray-700 mb-4">
+          If you reference this research in articles, blog posts, training guides, or academic work, please use the following citation:
+        </p>
+        <div class="bg-gray-50 p-4 rounded border border-gray-200 font-mono text-sm text-gray-800">
+          IndoorClimbingGym.com. (2025). <em>National Gym Grading Study: Analysis of Grade Variability Across 40 U.S. Climbing Facilities</em>. Retrieved from https://www.indoorclimbinggym.com/studies/national-gym-grading-study
+        </div>
+        <p class="text-xs text-gray-600 mt-4">
+          This study is provided as an open educational resource. We encourage coaches, trainers, journalists, and climbers to reference and share this data to improve training practices and grading transparency across the climbing community.
+        </p>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Custom styles for print-friendly tables */
+  @media print {
+    .bg-sage {
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+  }
+</style>

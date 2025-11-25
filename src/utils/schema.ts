@@ -200,6 +200,7 @@ export function generateFAQSchema(faqs: Array<{ question: string; answer: string
 
 /**
  * Generate Article schema for blog posts
+ * Enhanced for AI citation and search engine optimization
  * @param post Blog post object with all necessary fields
  * @param pageUrl Full URL of the article page
  * @returns JSON-LD schema object
@@ -207,17 +208,24 @@ export function generateFAQSchema(faqs: Array<{ question: string; answer: string
 export function generateArticleSchema(post: any, pageUrl: string) {
   const schema: any = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': ['Article', 'BlogPosting'],
+    '@id': pageUrl,
     headline: post.title,
     description: post.description,
-    image: post.heroImage,
+    image: {
+      '@type': 'ImageObject',
+      url: post.heroImage,
+      ...(post.heroImageAlt && { caption: post.heroImageAlt })
+    },
     author: {
       '@type': 'Person',
       name: post.author,
+      url: 'https://www.indoorclimbinggym.com'
     },
     publisher: {
       '@type': 'Organization',
       name: 'IndoorClimbingGym.com',
+      url: 'https://www.indoorclimbinggym.com',
       logo: {
         '@type': 'ImageObject',
         url: 'https://www.indoorclimbinggym.com/logo.png',
@@ -229,6 +237,9 @@ export function generateArticleSchema(post: any, pageUrl: string) {
       '@type': 'WebPage',
       '@id': pageUrl,
     },
+    inLanguage: 'en-US',
+    isAccessibleForFree: true,
+    ...(post.category && { articleSection: post.category }),
   };
 
   // Add optional fields if available
@@ -352,6 +363,139 @@ export function generateHowToSchema(
   }
 
   return schema;
+}
+
+/**
+ * Generate ScholarlyArticle schema for research studies
+ * @param study Study metadata object
+ * @param pageUrl Full URL of the study page
+ * @returns JSON-LD schema object
+ */
+export function generateScholarlyArticleSchema(study: {
+  title: string;
+  description: string;
+  publishedDate: string;
+  updatedDate: string;
+  author?: string;
+  keywords?: string[];
+  citation?: string;
+  gymsAnalyzed?: number;
+}, pageUrl: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ScholarlyArticle',
+    '@id': pageUrl,
+    headline: study.title,
+    abstract: study.description,
+    author: {
+      '@type': 'Organization',
+      name: study.author || 'IndoorClimbingGym.com Research Team',
+      url: 'https://www.indoorclimbinggym.com'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'IndoorClimbingGym.com',
+      url: 'https://www.indoorclimbinggym.com',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.indoorclimbinggym.com/logo.png'
+      }
+    },
+    datePublished: study.publishedDate,
+    dateModified: study.updatedDate,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': pageUrl
+    },
+    ...(study.keywords && { keywords: study.keywords.join(', ') }),
+    ...(study.citation && { citation: study.citation }),
+    inLanguage: 'en-US',
+    isAccessibleForFree: true,
+    ...(study.gymsAnalyzed && {
+      about: {
+        '@type': 'Thing',
+        name: `Climbing Gym Grading Analysis of ${study.gymsAnalyzed} facilities`
+      }
+    })
+  };
+}
+
+/**
+ * Generate Dataset schema for downloadable research data
+ * @param dataset Dataset metadata
+ * @param pageUrl Full URL of the dataset/study page
+ * @returns JSON-LD schema object
+ */
+export function generateDatasetSchema(dataset: {
+  name: string;
+  description: string;
+  datePublished: string;
+  dateModified: string;
+  creator?: string;
+  keywords?: string[];
+  variablesMeasured?: string[];
+  spatialCoverage?: string;
+  temporalCoverage?: string;
+}, pageUrl: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    '@id': `${pageUrl}#dataset`,
+    name: dataset.name,
+    description: dataset.description,
+    creator: {
+      '@type': 'Organization',
+      name: dataset.creator || 'IndoorClimbingGym.com',
+      url: 'https://www.indoorclimbinggym.com'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'IndoorClimbingGym.com',
+      url: 'https://www.indoorclimbinggym.com'
+    },
+    datePublished: dataset.datePublished,
+    dateModified: dataset.dateModified,
+    license: 'https://creativecommons.org/licenses/by/4.0/',
+    isAccessibleForFree: true,
+    inLanguage: 'en-US',
+    ...(dataset.keywords && { keywords: dataset.keywords }),
+    ...(dataset.variablesMeasured && { variablesMeasured: dataset.variablesMeasured }),
+    ...(dataset.spatialCoverage && { spatialCoverage: dataset.spatialCoverage }),
+    ...(dataset.temporalCoverage && { temporalCoverage: dataset.temporalCoverage })
+  };
+}
+
+/**
+ * Generate ItemList schema for study index pages
+ * @param studies Array of study objects
+ * @param pageTitle Title of the collection
+ * @param pageUrl Full URL of the index page
+ * @returns JSON-LD schema object
+ */
+export function generateStudyListSchema(studies: Array<{
+  title: string;
+  slug: string;
+  description: string;
+}>, pageTitle: string, pageUrl: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: pageTitle,
+    description: 'Research studies and data analysis about climbing gyms',
+    url: pageUrl,
+    numberOfItems: studies.length,
+    itemListElement: studies.map((study, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'ScholarlyArticle',
+        '@id': `${pageUrl}/${study.slug}`,
+        name: study.title,
+        description: study.description,
+        url: `${pageUrl}/${study.slug}`
+      }
+    }))
+  };
 }
 
 /**
