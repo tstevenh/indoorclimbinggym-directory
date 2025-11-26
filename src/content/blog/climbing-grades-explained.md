@@ -1,8 +1,8 @@
 ---
 title: "Climbing Grade Conversion Guide (V-Scale, YDS, Font)"
 description: "Complete guide to climbing grades with conversion charts. Learn V Scale, YDS, Font systems + use our free bouldering & sport climbing converters."
-publishedDate: 2025-11-18
-updatedDate: 2025-11-18
+publishedDate: 2025-11-21
+updatedDate: 2025-11-21
 author: "Indoor Climbing Gym Team"
 category: "guides"
 tags: ["climbing grades", "v scale", "yds", "font", "bouldering grades", "grade conversion", "climbing rating system"]

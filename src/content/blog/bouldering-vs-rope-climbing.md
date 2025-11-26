@@ -1,8 +1,8 @@
 ---
 title: "Bouldering vs Rope Climbing: Which Is Right for You?"
 description: "Bouldering vs rope climbing: Compare costs, difficulty, equipment, and safety. Discover which climbing style suits beginners best. Start climbing today!"
-publishedDate: 2025-11-15T00:00:00.000Z
-updatedDate: 2025-11-15T00:00:00.000Z
+publishedDate: 2025-11-12T00:00:00.000Z
+updatedDate: 2025-11-12T00:00:00.000Z
 author: "Indoor Climbing Gym Team"
 category: "guides"
 tags: ["bouldering", "rope climbing", "beginners", "climbing types", "comparison", "top rope"]

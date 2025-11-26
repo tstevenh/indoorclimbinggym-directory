@@ -1,7 +1,7 @@
 ---
 title: "Aloha Rock Gym: Maui's First Indoor Climbing Gym Opens"
 description: "Maui's first indoor climbing gym opens after 10+ years. Features 40-foot walls, training gear, and community programs for fire-affected families."
-publishedDate: 2025-11-25
+publishedDate: 2025-11-24
 author: "Indoor Climbing Gym Team"
 category: "news"
 tags:

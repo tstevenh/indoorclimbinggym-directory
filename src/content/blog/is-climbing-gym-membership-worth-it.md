@@ -1,8 +1,8 @@
 ---
 title: "Is a Climbing Gym Membership Worth It? Cost Analysis"
 description: "Is a climbing gym membership worth it? Compare day passes vs memberships, calculate break-even points, and discover when memberships save you money."
-publishedDate: 2025-11-17
-updatedDate: 2025-11-17
+publishedDate: 2025-11-19
+updatedDate: 2025-11-19
 author: "Indoor Climbing Gym Team"
 category: "guides"
 tags: ["membership", "pricing", "budget", "cost analysis", "value"]

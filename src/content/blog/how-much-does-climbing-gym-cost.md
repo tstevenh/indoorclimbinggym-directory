@@ -1,8 +1,8 @@
 ---
 title: "How Much Does It Cost to Climb at a Gym? (2025 Prices)"
 description: "Climbing gym costs $15-$32 per visit. Complete guide to day pass prices, equipment rentals, memberships, and hidden expenses. Budget wisely!"
-publishedDate: 2025-11-16T00:00:00.000Z
-updatedDate: 2025-11-16T00:00:00.000Z
+publishedDate: 2025-11-17T00:00:00.000Z
+updatedDate: 2025-11-17T00:00:00.000Z
 author: "Indoor Climbing Gym Team"
 category: "guides"
 tags: ["pricing", "beginners", "cost guide", "day pass", "membership", "budget"]
