@@ -8,6 +8,7 @@ import { fetchGyms } from '../config/api';
 import { getStateCode, getStateSlug } from '../utils/states';
 import SpeedInsights from '@vercel/speed-insights/astro';
 import Analytics from '@vercel/analytics/astro';
+import CookieConsent from '../components/CookieConsent.astro';
 
 interface Props {
   title: string;
@@ -205,12 +206,23 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     <!-- Vercel Web Analytics -->
     <Analytics />
 
-    <!-- Google Analytics -->
+    <!-- Google Analytics (Consent-controlled) -->
+    <!-- Script loaded conditionally by CookieConsent component after user consent -->
+    <script is:inline>
+      // Initialize dataLayer for consent management
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function() { dataLayer.push(arguments); };
+
+      // Default to no consent until user accepts
+      gtag('consent', 'default', {
+        'analytics_storage': 'denied',
+        'ad_storage': 'denied'
+      });
+    </script>
+
+    <!-- GA script tag (will be enabled if analytics consent is given) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KQJE0F08ER"></script>
     <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
       gtag('config', 'G-KQJE0F08ER');
     </script>
   </head>
@@ -725,6 +737,9 @@ if (breadcrumbs && breadcrumbs.length > 0) {
         }
       })();
     </script>
+
+    <!-- Cookie Consent Banner -->
+    <CookieConsent />
   </body>
 </html>
 

@@ -194,17 +194,16 @@ export function slugify(text: string): string {
 /**
  * Generate SEO-optimized title for blog posts
  * @param postTitle Title of the blog post
- * @returns Optimized title with brand
+ * @returns Optimized title without brand suffix
  */
 export function generateBlogPostTitle(postTitle: string): string {
-  const brandSuffix = ' | IndoorClimbingGym';
-  const maxLength = 60 - brandSuffix.length;
+  const maxLength = 60;
 
   if (postTitle.length > maxLength) {
-    return postTitle.substring(0, maxLength - 3) + '...' + brandSuffix;
+    return postTitle.substring(0, maxLength - 3) + '...';
   }
 
-  return `${postTitle}${brandSuffix}`;
+  return postTitle;
 }
 
 /**
