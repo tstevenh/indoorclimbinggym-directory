@@ -38,7 +38,7 @@ Bouldering is a form of rock climbing performed on short walls or "boulders" wit
 - **Social Aspect**: Ground-level community atmosphere
 - **Partner Requirement**: None—climb solo or with casual friends
 
-Bouldering problems are graded using the [V-scale](/tools/bouldering-grade-conversion) in North America (V0 being easiest, with elite climbers working on V15-V17) or Font scale in Europe. Each problem typically takes 4-8 moves to complete, requiring maximum strength, precise technique, and creative problem-solving. Learn more about [understanding climbing grades](/guides/climbing-grades-explained) to track your progression effectively.
+Bouldering problems are graded using the [V-scale](/tools/bouldering-grade-conversion) in North America (V0 being easiest, with elite climbers working on V15-V17) or Font scale in Europe. Each problem typically takes 4-8 moves to complete, requiring maximum strength, precise technique, and creative problem-solving. Learn more about [understanding climbing grades](/blog/climbing-grades-explained) to track your progression effectively.
 
 Looking for facilities near you? Browse [best bouldering gyms](/categories/best-bouldering-climbing-gyms/) to find dedicated bouldering centers with extensive problem variety and strong communities.
 
@@ -71,7 +71,7 @@ Lead climbing involves clipping the rope into quickdraws as you ascend. This adv
 
 ### Rope Climbing Grading Systems
 
-Rope climbing uses the [Yosemite Decimal System](/tools/sport-climbing-grade-conversion) (YDS) in North America, ranging from 5.0 (beginner-friendly) to 5.15d (world-class difficulty). Most gym climbers progress through 5.6-5.12 grades. Routes are typically 30-60 feet tall and can take 3-10 minutes to complete, depending on [difficulty and your climbing speed](/guides/climbing-grades-explained).
+Rope climbing uses the [Yosemite Decimal System](/tools/sport-climbing-grade-conversion) (YDS) in North America, ranging from 5.0 (beginner-friendly) to 5.15d (world-class difficulty). Most gym climbers progress through 5.6-5.12 grades. Routes are typically 30-60 feet tall and can take 3-10 minutes to complete, depending on [difficulty and your climbing speed](/blog/climbing-grades-explained).
 
 Find facilities offering rope climbing by browsing [top rope climbing gyms](/categories/best-top-rope-climbing-gyms/) in your area.
 
@@ -119,7 +119,7 @@ Bouldering requires minimal equipment, making it the most accessible option for 
 
 Rope climbing requires more equipment knowledge and higher upfront costs, but gyms typically offer affordable rental packages. Most climbers start by renting for the first 2-3 months before investing in personal gear.
 
-For detailed cost breakdowns and membership comparisons, check our comprehensive [climbing gym pricing guide](/guides/how-much-does-climbing-gym-cost/). Also review [what to wear for indoor rock climbing](/guides/what-to-wear-indoor-rock-climbing) to complete your gear setup.
+For detailed cost breakdowns and membership comparisons, check our comprehensive [climbing gym pricing guide](/blog/how-much-does-climbing-gym-cost/). Also review [what to wear for indoor rock climbing](/blog/what-to-wear-indoor-rock-climbing) to complete your gear setup.
 
 ### Equipment Cost Comparison Table
 
@@ -137,7 +137,7 @@ For detailed cost breakdowns and membership comparisons, check our comprehensive
 
 ## Is Bouldering Harder Than Rope Climbing?
 
-The "bouldering vs rope climbing difficulty" debate depends entirely on what type of fitness and challenge you're measuring. Neither is objectively harder—they test different physical and mental attributes. Understanding [climbing grade systems](/guides/climbing-grades-explained) helps you compare difficulty across both disciplines objectively.
+The "bouldering vs rope climbing difficulty" debate depends entirely on what type of fitness and challenge you're measuring. Neither is objectively harder—they test different physical and mental attributes. Understanding [climbing grade systems](/blog/climbing-grades-explained) helps you compare difficulty across both disciplines objectively.
 
 ### Physical Demands of Bouldering
 
@@ -275,7 +275,7 @@ Searching for the right starting point? Browse [climbing gyms for beginners](/ca
 - **Rope Climbing**: Progress from [5.6 to 5.8-5.9](/tools/sport-climbing-grade-conversion) routes, master belay systems
 
 **Months 3-6: Development Phase**
-- **Bouldering**: Tackle [V3-V5 problems](/guides/climbing-grades-explained), refine dynamic movement and body tension
+- **Bouldering**: Tackle [V3-V5 problems](/blog/climbing-grades-explained), refine dynamic movement and body tension
 - **Rope Climbing**: Climb 5.9-5.10c routes, build endurance for multiple laps
 
 **Months 6-12: Intermediate Phase**
@@ -317,7 +317,7 @@ Beyond equipment costs, there are several financial considerations when choosing
 - Miscellaneous: $50 (tape, extra chalk)
 - **Total**: $1,290
 
-**Verdict**: Bouldering is approximately 15% more affordable in the first year due to lower equipment costs and no certification requirements. However, the difference becomes minimal in subsequent years. For more detailed pricing analysis, read our guide on [climbing gym membership costs](/guides/how-much-does-climbing-gym-cost/).
+**Verdict**: Bouldering is approximately 15% more affordable in the first year due to lower equipment costs and no certification requirements. However, the difference becomes minimal in subsequent years. For more detailed pricing analysis, read our guide on [climbing gym membership costs](/blog/how-much-does-climbing-gym-cost/).
 
 ## Safety Comparison: Is Bouldering More Dangerous?
 
@@ -506,7 +506,7 @@ Many gyms offer both bouldering and rope climbing:
 
 Use our [complete climbing gym directory](/search) to compare facilities in your area, filtering by bouldering, rope climbing, or combined offerings. Read reviews from local climbers and compare pricing, amenities, and class offerings. You can also [browse gyms by state](/states) to find options near you.
 
-For more guidance on choosing the right facility, read our [complete beginner's guide to climbing gyms](/guides/beginners-guide-to-climbing-gyms/) covering everything from first visit etiquette to long-term progression.
+For more guidance on choosing the right facility, read our [complete beginner's guide to climbing gyms](/blog/beginners-guide-to-climbing-gyms/) covering everything from first visit etiquette to long-term progression.
 
 ### Your First 30 Days Action Plan
 
@@ -549,7 +549,7 @@ Follow this 5-step roadmap to launch your climbing journey with confidence:
 
 ### What is the difference between bouldering and rope climbing?
 
-Bouldering is performed on short walls (12-20 feet) without ropes, using crash pads for protection. Rope climbing involves taller walls (30-60+ feet) with rope safety systems. Bouldering requires minimal equipment and no partner, while rope climbing needs harnesses, ropes, and a belayer. Bouldering focuses on powerful, short problems (4-8 moves), whereas rope climbing emphasizes sustained endurance over longer routes (30-60 feet). Learn more about [climbing grade systems](/guides/climbing-grades-explained) to understand difficulty progression.
+Bouldering is performed on short walls (12-20 feet) without ropes, using crash pads for protection. Rope climbing involves taller walls (30-60+ feet) with rope safety systems. Bouldering requires minimal equipment and no partner, while rope climbing needs harnesses, ropes, and a belayer. Bouldering focuses on powerful, short problems (4-8 moves), whereas rope climbing emphasizes sustained endurance over longer routes (30-60 feet). Learn more about [climbing grade systems](/blog/climbing-grades-explained) to understand difficulty progression.
 
 ### Is bouldering harder than rope climbing?
 

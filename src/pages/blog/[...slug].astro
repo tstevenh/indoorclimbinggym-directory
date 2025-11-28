@@ -139,7 +139,7 @@ const relatedPosts = allPosts.filter(
 );
 
 // SEO setup
-const pageUrl = `https://www.indoorclimbinggym.com/guides/${entry.slug}`;
+const pageUrl = `https://www.indoorclimbinggym.com/blog/${entry.slug}`;
 const title = generateBlogPostTitle(entry.data.title);
 const keywords = generateBlogKeywords(entry.data.tags, entry.data.category);
 
@@ -166,10 +166,10 @@ const articleSchema = generateArticleSchema(
 
 const breadcrumbs = [
   { label: 'Home', url: 'https://www.indoorclimbinggym.com' },
-  { label: 'Guides', url: 'https://www.indoorclimbinggym.com/guides' },
+  { label: 'Guides', url: 'https://www.indoorclimbinggym.com/blog' },
   {
     label: entry.data.category.charAt(0).toUpperCase() + entry.data.category.slice(1),
-    url: `https://www.indoorclimbinggym.com/guides/${entry.data.category}`,
+    url: `https://www.indoorclimbinggym.com/blog/${entry.data.category}`,
   },
   { label: entry.data.title, url: pageUrl },
 ];
@@ -232,10 +232,10 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-gray-100 text-g
       <ol class="flex flex-wrap items-center gap-2">
         <li><a href="/" class="hover:text-sage">Home</a></li>
         <li>/</li>
-        <li><a href="/guides" class="hover:text-sage">Guides</a></li>
+        <li><a href="/blog" class="hover:text-sage">Guides</a></li>
         <li>/</li>
         <li>
-          <a href={`/guides/${entry.data.category}`} class="hover:text-sage">
+          <a href={`/blog/${entry.data.category}`} class="hover:text-sage">
             {entry.data.category.charAt(0).toUpperCase() + entry.data.category.slice(1)}
           </a>
         </li>

@@ -39,7 +39,7 @@ Most beginners start with either bouldering or top rope climbing before progress
 
 ### What to Wear to a Climbing Gym
 
-Forget specialized athletic wear for your first visit. Here's what works perfectly (for a detailed breakdown, see our comprehensive guide on [what to wear indoor rock climbing](/guides/what-to-wear-indoor-rock-climbing)):
+Forget specialized athletic wear for your first visit. Here's what works perfectly (for a detailed breakdown, see our comprehensive guide on [what to wear indoor rock climbing](/blog/what-to-wear-indoor-rock-climbing)):
 
 **Clothing:**
 - Comfortable athletic shorts or pants
@@ -78,7 +78,7 @@ Forget specialized athletic wear for your first visit. Here's what works perfect
 
 ### Cost for Your First Visit
 
-Budget for these typical expenses (learn more about [climbing gym costs in detail](/guides/how-much-does-climbing-gym-cost)):
+Budget for these typical expenses (learn more about [climbing gym costs in detail](/blog/how-much-does-climbing-gym-cost)):
 
 - **Day pass**: $18-$30 (varies by city and gym)
 - **Shoe rental**: $5-$7
@@ -88,7 +88,7 @@ Budget for these typical expenses (learn more about [climbing gym costs in detai
 
 **Total First Visit**: $26-$48 without a class, $51-$88 with an intro class
 
-Many gyms offer first-timer specials or package deals that include the day pass, equipment rental, and a beginner lesson at a discount. If you're considering long-term climbing, our guide on [whether gym memberships are worth it](/guides/is-climbing-gym-membership-worth-it) can help you make an informed decision.
+Many gyms offer first-timer specials or package deals that include the day pass, equipment rental, and a beginner lesson at a discount. If you're considering long-term climbing, our guide on [whether gym memberships are worth it](/blog/is-climbing-gym-membership-worth-it) can help you make an informed decision.
 
 ## Your First Experience: Step by Step
 
@@ -288,7 +288,7 @@ Cards at the bottom of routes show difficulty grade and route name
 
 ### Grading Systems
 
-Understanding [climbing grades](/guides/climbing-grades-explained) is essential for choosing appropriate routes and tracking your progress.
+Understanding [climbing grades](/blog/climbing-grades-explained) is essential for choosing appropriate routes and tracking your progress.
 
 **Bouldering: V-Scale**
 - V0-V1: Absolute beginner
@@ -428,7 +428,7 @@ Your hands will adapt:
 
 **Goals:**
 - Consistent 2-3x weekly visits
-- Progress to next grade level (understanding [how grades work](/guides/climbing-grades-explained) helps set realistic goals)
+- Progress to next grade level (understanding [how grades work](/blog/climbing-grades-explained) helps set realistic goals)
 - Develop climbing partnerships
 - Learn route-reading skills
 - Consider buying your own shoes
@@ -522,7 +522,7 @@ You're ready to progress beyond beginner status when you can:
 1. Consistently complete [V2 boulders](/tools/bouldering-grade-conversion) or [5.8 routes](/tools/sport-climbing-grade-conversion)
 2. Demonstrate proper falling technique
 3. Successfully belay another climber (if rope climbing)
-4. Understand [route grades](/guides/climbing-grades-explained) and gym marking systems
+4. Understand [route grades](/blog/climbing-grades-explained) and gym marking systems
 5. Warm up independently with good technique
 6. Recognize efficient movement patterns
 7. Feel confident navigating the gym solo
@@ -555,7 +555,7 @@ Most climbers reach this point after 2-4 months of consistent (2-3x weekly) clim
 
 ### Step 4: Evaluate and Decide (End of Month One)
 - Decide if climbing fits your lifestyle
-- Consider purchasing a membership if you're hooked (read our analysis on [whether memberships are worth it](/guides/is-climbing-gym-membership-worth-it))
+- Consider purchasing a membership if you're hooked (read our analysis on [whether memberships are worth it](/blog/is-climbing-gym-membership-worth-it))
 - Buy your own climbing shoes if committed
 - Set goals for month two
 
@@ -572,8 +572,8 @@ Yes, you can. And we can't wait to see you at the gym.
 **Featured Resources for Beginners:**
 - [Search climbing gyms in your area](/search) - Find beginner-friendly facilities
 - [Beginner-friendly gyms directory](/categories/best-climbing-gyms-for-beginners) - Curated list of welcoming facilities
-- [What to wear indoor rock climbing](/guides/what-to-wear-indoor-rock-climbing) - Complete clothing guide
-- [Climbing gym cost breakdown](/guides/how-much-does-climbing-gym-cost) - Budget planning
+- [What to wear indoor rock climbing](/blog/what-to-wear-indoor-rock-climbing) - Complete clothing guide
+- [Climbing gym cost breakdown](/blog/how-much-does-climbing-gym-cost) - Budget planning
 - [Bouldering grade conversion tool](/tools/bouldering-grade-conversion) - Understand difficulty levels
 - [Browse gyms by state](/states) - Explore options nationwide
 

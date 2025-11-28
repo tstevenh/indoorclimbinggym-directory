@@ -356,4 +356,4 @@ Whether you're planning your first climbing gym or managing an established facil
 
 Ready to find a gym that prioritizes safety? [Search our directory of climbing gyms](/search) to discover facilities that meet the highest safety standards, or explore [climbing gyms designed for beginners](/categories/best-climbing-gyms-for-beginners) that emphasize comprehensive instruction and supervision.
 
-For more insights on climbing gym operations and the climbing experience, check out our comprehensive [beginner's guide to climbing gyms](/guides/beginners-guide-to-climbing-gyms) or explore whether [climbing gym memberships are worth the investment](/guides/is-climbing-gym-membership-worth-it).
+For more insights on climbing gym operations and the climbing experience, check out our comprehensive [beginner's guide to climbing gyms](/blog/beginners-guide-to-climbing-gyms) or explore whether [climbing gym memberships are worth the investment](/blog/is-climbing-gym-membership-worth-it).

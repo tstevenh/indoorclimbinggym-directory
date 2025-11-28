@@ -26,7 +26,7 @@ Aloha Rock Gym is set to become Maui's first indoor climbing gym after more than
 
 Some stories build slowly. Others break open all at once. Aloha Rock Gym somehow does both.
 
-For years, Maui climbers trained wherever they could: garage walls with worn foot chips, beach boulders weathered by salt and wind, pull-up bars welded into backyards. Anything to stay sharp. And the dream of a real [indoor climbing gym](/guides/beginners-guide-to-climbing-gyms)? It hung in the air like a high crux move you know your body can do, but the timing never lines up… until suddenly it does.
+For years, Maui climbers trained wherever they could: garage walls with worn foot chips, beach boulders weathered by salt and wind, pull-up bars welded into backyards. Anything to stay sharp. And the dream of a real [indoor climbing gym](/blog/beginners-guide-to-climbing-gyms)? It hung in the air like a high crux move you know your body can do, but the timing never lines up… until suddenly it does.
 
 Aloha Rock Gym is now right on the edge of opening. Not someday. Not "when things calm down." Now. Almost.
 
@@ -60,7 +60,7 @@ Step into the 10,000 square-foot [Kahului](https://en.wikipedia.org/wiki/Kahului
 
 ### The Walls
 
-- **Roped climbing up to 40 feet**: [top rope, lead, and auto belay](/guides/bouldering-vs-rope-climbing)
+- **Roped climbing up to 40 feet**: [top rope, lead, and auto belay](/blog/bouldering-vs-rope-climbing)
 - **Bouldering areas for all levels**: friendly slabs for beginners and steep, powerful terrain for seasoned climbers
 
 Routes will get updated regularly. New problems, new challenges, new reasons to come back.
@@ -82,7 +82,7 @@ You can train power, control, tension, finger strength—everything that makes a
 - Rental shoes, harnesses, chalk
 - A clean lounge where you can rest, reset, and watch climbers work through problems
 
-No clutter. No wasted space. Just a gym that understands [what climbers actually need](/guides/beginners-guide-to-climbing-gyms).
+No clutter. No wasted space. Just a gym that understands [what climbers actually need](/blog/beginners-guide-to-climbing-gyms).
 
 ## Climbing With Purpose: The Kōkua Program
 
@@ -114,7 +114,7 @@ Kids' pricing stays simple and family-friendly:
 - **Ages 12–17**: $25/week
 - **Ages 11 and under**: $15/week
 
-Day passes after opening should land around $20–$25. Wondering if a membership is right for you? Read our analysis on [whether climbing gym memberships are worth it](/guides/is-climbing-gym-membership-worth-it).
+Day passes after opening should land around $20–$25. Wondering if a membership is right for you? Read our analysis on [whether climbing gym memberships are worth it](/blog/is-climbing-gym-membership-worth-it).
 
 ## The Community Energy
 

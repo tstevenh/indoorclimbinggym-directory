@@ -271,7 +271,7 @@ Most gyms offer package pricing that bundles equipment:
 
 ## Climbing Gym Membership Costs (And When They're Worth It)
 
-Memberships make sense once you're climbing regularly. Here's how to evaluate whether you're ready. For a deeper analysis, check out our guide on [whether climbing gym memberships are worth it](/guides/is-climbing-gym-membership-worth-it).
+Memberships make sense once you're climbing regularly. Here's how to evaluate whether you're ready. For a deeper analysis, check out our guide on [whether climbing gym memberships are worth it](/blog/is-climbing-gym-membership-worth-it).
 
 ### Student Memberships
 
@@ -308,7 +308,7 @@ This is the most popular membership tier and best value for working professional
 **Break-even calculation:**
 At $22 per day pass and $95 membership, you break even at **5 visits monthly**. If you climb twice weekly, you're saving significant money.
 
-**Best for:** Anyone climbing 2+ times weekly who wants consistency and community connection. Learn more about [maximizing membership value](/guides/is-climbing-gym-membership-worth-it).
+**Best for:** Anyone climbing 2+ times weekly who wants consistency and community connection. Learn more about [maximizing membership value](/blog/is-climbing-gym-membership-worth-it).
 
 ### Premium Memberships
 
@@ -444,7 +444,7 @@ Let's put climbing costs in perspective by comparing to other fitness activities
 - Classes: Often included in membership
 - Annual cost: $900-$1,440
 
-**Verdict:** Climbing is more expensive than traditional gyms, but offers a full-body workout, social community, and adventure sport skill development. Most climbers find the premium worth it. See our analysis of [membership value](/guides/is-climbing-gym-membership-worth-it) for more details.
+**Verdict:** Climbing is more expensive than traditional gyms, but offers a full-body workout, social community, and adventure sport skill development. Most climbers find the premium worth it. See our analysis of [membership value](/blog/is-climbing-gym-membership-worth-it) for more details.
 
 ### Climbing vs. Other Adventure Sports
 
@@ -572,7 +572,7 @@ Let's look at three detailed scenarios showing what climbing actually costs at d
 
 **Sarah - First-Time Climber (Seattle, WA)**
 
-Sarah heard about climbing from a friend and wants to try it once before committing to anything. She read our [beginner's guide](/guides/beginners-guide-to-climbing-gyms) to prepare.
+Sarah heard about climbing from a friend and wants to try it once before committing to anything. She read our [beginner's guide](/blog/beginners-guide-to-climbing-gyms) to prepare.
 
 **Costs:**
 - Day pass: $26
@@ -596,7 +596,7 @@ Sarah loved climbing but realized the belay class and parking inflated costs. On
 
 **Marcus - Recreational Climber (Austin, TX)**
 
-Marcus has been climbing for 3 months and goes twice weekly. He finally bought his own shoes and chalk bag. He learned about [climbing grades](/guides/climbing-grades-explained) to track his progression.
+Marcus has been climbing for 3 months and goes twice weekly. He finally bought his own shoes and chalk bag. He learned about [climbing grades](/blog/climbing-grades-explained) to track his progression.
 
 **Initial gear investment:**
 - Climbing shoes: $95
@@ -620,13 +620,13 @@ Marcus has been climbing for 3 months and goes twice weekly. He finally bought h
 **Marcus's cost per session:**
 $1,385 ÷ 96 sessions = **$14.40 per climbing session**
 
-This is cheaper than day passes ($22) and includes unlimited climbing time. Read more about [membership value calculations](/guides/is-climbing-gym-membership-worth-it).
+This is cheaper than day passes ($22) and includes unlimited climbing time. Read more about [membership value calculations](/blog/is-climbing-gym-membership-worth-it).
 
 ### Scenario 3: Dedicated Climber's Annual Costs
 
 **Jessica - Serious Climber (Denver, CO)**
 
-Jessica climbs 4 times per week and is training for outdoor sport climbing trips. She's been climbing for 2 years and regularly practices different [climbing grades](/guides/climbing-grades-explained) to improve.
+Jessica climbs 4 times per week and is training for outdoor sport climbing trips. She's been climbing for 2 years and regularly practices different [climbing grades](/blog/climbing-grades-explained) to improve.
 
 **Gear owned (accumulated over 2 years):**
 - Two pairs climbing shoes (approach + performance): $240
@@ -657,7 +657,7 @@ Your first climbing gym visit typically costs $25-$45 total. This includes a day
 
 ### Is climbing gym expensive compared to regular gyms?
 
-Yes, climbing gyms are more expensive than traditional fitness gyms. Standard climbing memberships cost $75-$120 monthly compared to $30-$70 for traditional gyms. However, climbing provides a full-body workout, teaches a valuable outdoor skill, and offers strong social community aspects. Most climbers find the premium worthwhile for the unique experience and mental challenge that treadmills and weight machines can't replicate. Read our detailed analysis about [whether memberships are worth the cost](/guides/is-climbing-gym-membership-worth-it).
+Yes, climbing gyms are more expensive than traditional fitness gyms. Standard climbing memberships cost $75-$120 monthly compared to $30-$70 for traditional gyms. However, climbing provides a full-body workout, teaches a valuable outdoor skill, and offers strong social community aspects. Most climbers find the premium worthwhile for the unique experience and mental challenge that treadmills and weight machines can't replicate. Read our detailed analysis about [whether memberships are worth the cost](/blog/is-climbing-gym-membership-worth-it).
 
 ### Do you need a membership to climb at a gym?
 
@@ -669,7 +669,7 @@ Climbing shoe rentals cost $5-$7 per visit. Beginner climbing shoes to purchase 
 
 ### What are the hidden costs of climbing?
 
-Beyond day passes and memberships, expect these additional costs: belay certification classes ($30-$60), equipment rental if you don't own gear ($8-$12 per visit), parking at urban gyms ($5-$15), personal gear purchases after the rental phase ($150-$300 for beginner setup), and optional extras like coaching or yoga classes ($15-$50 each). Budget 20-30% more than membership costs alone to account for these expenses. Our [beginner's guide](/guides/beginners-guide-to-climbing-gyms) covers all the costs you should anticipate.
+Beyond day passes and memberships, expect these additional costs: belay certification classes ($30-$60), equipment rental if you don't own gear ($8-$12 per visit), parking at urban gyms ($5-$15), personal gear purchases after the rental phase ($150-$300 for beginner setup), and optional extras like coaching or yoga classes ($15-$50 each). Budget 20-30% more than membership costs alone to account for these expenses. Our [beginner's guide](/blog/beginners-guide-to-climbing-gyms) covers all the costs you should anticipate.
 
 ### Can you save money climbing at a gym?
 
@@ -713,7 +713,7 @@ Most climbers find that the cost is justified by the unique combination of physi
 
 Ready to start your climbing journey? [Explore local climbing gyms](/search) in your area, compare pricing and membership options, and read reviews from other climbers. Many gyms offer free trial days or first-time visitor packages—the perfect low-risk way to discover whether climbing is worth the investment for you.
 
-For more information, check out our [complete beginner's guide](/guides/beginners-guide-to-climbing-gyms) and learn about [climbing grades explained](/guides/climbing-grades-explained) to understand how difficulty levels work.
+For more information, check out our [complete beginner's guide](/blog/beginners-guide-to-climbing-gyms) and learn about [climbing grades explained](/blog/climbing-grades-explained) to understand how difficulty levels work.
 
 ---
 

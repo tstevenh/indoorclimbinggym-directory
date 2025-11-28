@@ -1,6 +1,6 @@
 ---
 /**
- * Blog Index Page (/guides/)
+ * Blog Index Page (/blog/)
  * Lists all blog posts with filtering and pagination
  */
 
@@ -31,7 +31,7 @@ const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
 const title = 'Indoor Climbing Guides, Tips & Resources';
 const description =
   'Expert guides, tips, and resources for indoor climbing. Learn about climbing techniques, gym memberships, gear reviews, and more from experienced climbers.';
-const pageUrl = 'https://www.indoorclimbinggym.com/guides';
+const pageUrl = 'https://www.indoorclimbinggym.com/blog';
 
 // Generate ItemList schema for blog posts
 const itemListSchema = generateItemListSchema(
@@ -128,7 +128,7 @@ const keywords = [
     <nav class="flex justify-center items-center gap-2 mt-12" aria-label="Pagination">
       {currentPage > 1 && (
         <a
-          href={currentPage === 2 ? '/guides' : `/guides/page/${currentPage - 1}`}
+          href={currentPage === 2 ? '/blog' : `/blog/page/${currentPage - 1}`}
           class="px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50"
         >
           Previous
@@ -137,7 +137,7 @@ const keywords = [
 
       {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
         <a
-          href={page === 1 ? '/guides' : `/guides/page/${page}`}
+          href={page === 1 ? '/blog' : `/blog/page/${page}`}
           class={`px-4 py-2 rounded ${
             page === currentPage
               ? 'bg-sage text-white'
@@ -150,7 +150,7 @@ const keywords = [
 
       {currentPage < totalPages && (
         <a
-          href={`/guides/page/${currentPage + 1}`}
+          href={`/blog/page/${currentPage + 1}`}
           class="px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50"
         >
           Next

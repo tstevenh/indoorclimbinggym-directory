@@ -19,11 +19,11 @@ You've tried climbing a few times, you're hooked, and now you're staring at memb
 
 This is one of the most common questions new climbers face. The answer depends on how often you plan to climb, what type of membership you choose, and the specific pricing at your local gym. The good news? The math is straightforward, and we'll walk you through exactly when a membership makes financial sense.
 
-In this comprehensive cost analysis, we'll compare day passes versus memberships, break down different membership types, calculate break-even points, and help you make the smartest decision for your budget and climbing goals. If you're just getting started, check out our [beginner's guide to climbing gyms](/guides/beginners-guide-to-climbing-gyms) for foundational information.
+In this comprehensive cost analysis, we'll compare day passes versus memberships, break down different membership types, calculate break-even points, and help you make the smartest decision for your budget and climbing goals. If you're just getting started, check out our [beginner's guide to climbing gyms](/blog/beginners-guide-to-climbing-gyms) for foundational information.
 
 ## Understanding Climbing Gym Pricing Models
 
-Before diving into whether a membership is worth it, let's understand how climbing gyms structure their pricing. For a deeper dive into pricing structures, read our complete guide on [how much it costs to climb at a gym](/guides/how-much-does-climbing-gym-cost).
+Before diving into whether a membership is worth it, let's understand how climbing gyms structure their pricing. For a deeper dive into pricing structures, read our complete guide on [how much it costs to climb at a gym](/blog/how-much-does-climbing-gym-cost).
 
 ### Day Pass Pricing
 
@@ -189,7 +189,7 @@ Read the fine print. Some gyms charge if you cancel before a minimum term (often
 
 ## Membership Type Decision Guide
 
-Not all memberships are created equal. Here's how to choose the right tier for your climbing goals and budget. For more insights on cost considerations, check our detailed guide on [climbing gym costs](/guides/how-much-does-climbing-gym-cost).
+Not all memberships are created equal. Here's how to choose the right tier for your climbing goals and budget. For more insights on cost considerations, check our detailed guide on [climbing gym costs](/blog/how-much-does-climbing-gym-cost).
 
 ### When to Choose Student Membership
 
@@ -303,7 +303,7 @@ Despite the math favoring memberships for regular climbers, day passes are the s
 
 ### 1. You're Still Exploring
 
-**If you've climbed fewer than 10 times**, stick with day passes. You're still discovering whether climbing fits your lifestyle. Our [beginner's guide](/guides/beginners-guide-to-climbing-gyms) can help you evaluate if climbing is right for you.
+**If you've climbed fewer than 10 times**, stick with day passes. You're still discovering whether climbing fits your lifestyle. Our [beginner's guide](/blog/beginners-guide-to-climbing-gyms) can help you evaluate if climbing is right for you.
 
 **Action plan:** After 10 visits, evaluate your commitment level.
 
@@ -354,7 +354,7 @@ The break-even analysis tells part of the story, but memberships offer intangibl
 - Removes decision fatigue (no need to pay each visit)
 - Sunk cost encourages regular attendance
 
-**Result:** Many climbers find they climb MORE with memberships, improving faster and getting better value. As you progress through [different climbing grades](/guides/climbing-grades-explained), consistent practice becomes crucial for skill development.
+**Result:** Many climbers find they climb MORE with memberships, improving faster and getting better value. As you progress through [different climbing grades](/blog/climbing-grades-explained), consistent practice becomes crucial for skill development.
 
 ### Convenience and Speed
 
@@ -502,7 +502,7 @@ Let's look at three real-world scenarios to illustrate when a climbing gym membe
 **Decision:** Standard membership is worth it
 **Annual savings:** $2,916
 
-**Jessica's getting incredible value** and progressing rapidly with consistent practice. She uses resources like our [climbing grades guide](/guides/climbing-grades-explained) to understand her progression path.
+**Jessica's getting incredible value** and progressing rapidly with consistent practice. She uses resources like our [climbing grades guide](/blog/climbing-grades-explained) to understand her progression path.
 
 ## Finding the Best Membership Deals
 
@@ -532,11 +532,11 @@ Use our [search tool](/search) to compare membership pricing across multiple gym
 
 **Is a climbing gym membership worth it?** The answer is yes – but only if you climb regularly.
 
-**The simple rule:** If you visit 4-5+ times per month (approximately once per week), a membership saves you money and offers additional value through community, perks, and convenience. This frequency also allows you to progress through [climbing grades](/guides/climbing-grades-explained) more effectively.
+**The simple rule:** If you visit 4-5+ times per month (approximately once per week), a membership saves you money and offers additional value through community, perks, and convenience. This frequency also allows you to progress through [climbing grades](/blog/climbing-grades-explained) more effectively.
 
 **For everyone else**, day passes provide flexibility without financial commitment while you're still building your climbing habit. If you're just starting out, check out [climbing gyms for beginners](/categories/best-climbing-gyms-for-beginners) to find welcoming facilities.
 
-The smartest approach? Start with day passes, track your actual climbing frequency over 2-3 months, then make an informed decision based on your real behavior, not your aspirational goals. For detailed cost breakdowns, see our comprehensive guide on [how much climbing gyms cost](/guides/how-much-does-climbing-gym-cost).
+The smartest approach? Start with day passes, track your actual climbing frequency over 2-3 months, then make an informed decision based on your real behavior, not your aspirational goals. For detailed cost breakdowns, see our comprehensive guide on [how much climbing gyms cost](/blog/how-much-does-climbing-gym-cost).
 
 Ready to compare climbing gym memberships in your area? Use our comprehensive directory to find gyms, compare pricing, read reviews, and discover the best value for your climbing goals.
 

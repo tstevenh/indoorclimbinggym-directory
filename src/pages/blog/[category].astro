@@ -1,6 +1,6 @@
 ---
 /**
- * Dynamic Category Page (/guides/[category]/)
+ * Dynamic Category Page (/blog/[category]/)
  * Auto-generates pages for all blog categories
  */
 
@@ -38,7 +38,7 @@ const categoryLabel = capitalize(category!);
 // SEO metadata
 const title = `${categoryLabel} | Indoor Climbing Guides`;
 const description = `Browse all ${categoryLabel.toLowerCase()} articles about indoor climbing. Expert advice, tips, and resources for climbers.`;
-const pageUrl = `https://www.indoorclimbinggym.com/guides/${category}`;
+const pageUrl = `https://www.indoorclimbinggym.com/blog/${category}`;
 
 // Generate schema
 const itemListSchema = generateItemListSchema(
@@ -54,7 +54,7 @@ const itemListSchema = generateItemListSchema(
     latitude: 0,
     longtitude: 0,
     phone: '',
-    website: `https://www.indoorclimbinggym.com/guides/${post.slug}`,
+    website: `https://www.indoorclimbinggym.com/blog/${post.slug}`,
     photo: post.data.heroImage,
     rating: 0,
     day_pass_price_local: 0,
@@ -69,7 +69,7 @@ const itemListSchema = generateItemListSchema(
 
 const breadcrumbs = [
   { label: 'Home', url: 'https://www.indoorclimbinggym.com' },
-  { label: 'Guides', url: 'https://www.indoorclimbinggym.com/guides' },
+  { label: 'Guides', url: 'https://www.indoorclimbinggym.com/blog' },
   { label: categoryLabel, url: pageUrl },
 ];
 

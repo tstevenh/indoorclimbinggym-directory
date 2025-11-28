@@ -630,7 +630,7 @@ Climbing grades are imperfect, subjective, and sometimes frustrating—but they'
 
 1. **Convert your grades:** Try our [Bouldering Converter](/tools/bouldering-grade-conversion) or [Sport Climbing Converter](/tools/sport-climbing-grade-conversion)
 2. **Find appropriate gyms:** Browse our [climbing gym directory](/search) to find facilities matching your level
-3. **Learn more:** Read our [Beginner's Guide to Climbing Gyms](/guides/beginners-guide-to-climbing-gyms) for additional tips
+3. **Learn more:** Read our [Beginner's Guide to Climbing Gyms](/blog/beginners-guide-to-climbing-gyms) for additional tips
 
 Whether you're a first-time climber decoding VB vs V0, or an intermediate climber planning a trip to Font and wondering how your V5s translate, understanding climbing grades opens up a world of possibilities.
 
@@ -641,9 +641,9 @@ Whether you're a first-time climber decoding VB vs V0, or an intermediate climbe
 ## Additional Resources
 
 **Related Articles:**
-- [Bouldering vs Rope Climbing: Which Is Right for You?](/guides/bouldering-vs-rope-climbing)
-- [Beginner's Guide to Climbing Gyms](/guides/beginners-guide-to-climbing-gyms)
-- [How Much Does a Climbing Gym Membership Cost?](/guides/how-much-does-climbing-gym-cost)
+- [Bouldering vs Rope Climbing: Which Is Right for You?](/blog/bouldering-vs-rope-climbing)
+- [Beginner's Guide to Climbing Gyms](/blog/beginners-guide-to-climbing-gyms)
+- [How Much Does a Climbing Gym Membership Cost?](/blog/how-much-does-climbing-gym-cost)
 
 **External Resources:**
 - [Wikipedia: Grade (climbing)](https://en.wikipedia.org/wiki/Grade_(climbing)) - Comprehensive grading system overview

@@ -13,7 +13,7 @@ Use kebab-case for file names:
 - `best-climbing-shoes-for-beginners.md`
 - `indoor-climbing-tips.md`
 
-The filename becomes the URL slug: `/guides/filename`
+The filename becomes the URL slug: `/blog/filename`
 
 ## Required Frontmatter
 
@@ -87,7 +87,7 @@ Link to relevant pages within the content:
 - Gym detail pages: `/gyms/gym-slug`
 - City pages: `/wa/seattle`
 - Category pages: `/categories/best-bouldering-gyms`
-- Other blog posts: `/guides/post-slug`
+- Other blog posts: `/blog/post-slug`
 
 ## Markdown Features
 
@@ -109,7 +109,7 @@ Link to relevant pages within the content:
 
 ### Links
 ```markdown
-[Link text](/guides/another-post)
+[Link text](/blog/another-post)
 [External link](https://example.com)
 ```
 
@@ -144,9 +144,9 @@ const example = true;
 
 ## URLs Generated
 
-- Blog index: `/guides/`
-- Category pages: `/guides/{category}/`
-- Individual posts: `/guides/{filename}/`
+- Blog index: `/blog/`
+- Category pages: `/blog/{category}/`
+- Individual posts: `/blog/{filename}/`
 - RSS feed: `/rss.xml`
 
 ## Example Post Structure
@@ -196,7 +196,7 @@ Wrap up and call-to-action...
 If you have questions about the blog system, check:
 - Content collection config: `/src/content/config.ts`
 - Blog components: `/src/components/blog/`
-- Page templates: `/src/pages/guides/`
+- Page templates: `/src/pages/blog/`
 
 
   Method 1: Using Public Folder (Recommended for Blog)

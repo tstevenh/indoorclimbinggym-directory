@@ -22,5 +22,10 @@ export default defineConfig({
   integrations: [react(), sitemap()],
   build: {
     inlineStylesheets: 'auto', // Inline small CSS for better performance
+  },
+  // 301 Redirects for /guides → /blog migration (2025-11-28)
+  redirects: {
+    '/guides': '/blog',
+    '/guides/[...slug]': '/blog/[...slug]',
   }
 });

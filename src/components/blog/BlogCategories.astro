@@ -22,11 +22,11 @@ const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
 // Build categories array with "All Articles" first
 const categories = [
-  { slug: 'all', label: 'All Articles', href: '/guides' },
+  { slug: 'all', label: 'All Articles', href: '/blog' },
   ...uniqueCategories.map(cat => ({
     slug: cat,
     label: capitalize(cat),
-    href: `/guides/${cat}`
+    href: `/blog/${cat}`
   }))
 ];
 ---

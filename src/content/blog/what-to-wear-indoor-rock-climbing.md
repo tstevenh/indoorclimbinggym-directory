@@ -27,7 +27,7 @@ Indoor rock climbing doesn't require specialized clothing on day one. Unlike ski
 
 Everything else—chalk, harnesses, accessories—comes later. Let's break down each category so you climb comfortably and confidently.
 
-If you're new to climbing, check out our [complete beginner's guide to climbing gyms](/guides/beginners-guide-to-climbing-gyms) for step-by-step instructions on getting started.
+If you're new to climbing, check out our [complete beginner's guide to climbing gyms](/blog/beginners-guide-to-climbing-gyms) for step-by-step instructions on getting started.
 
 ---
 
@@ -159,7 +159,7 @@ Athletic leggings dominate climbing gyms because they simply work better than an
 
 **Performance Note:** You can perform a high step at hip-height in leggings. In jeans, your maximum step height drops to mid-thigh level—severely limiting route options.
 
-To understand how clothing affects your climbing ability across different difficulty levels, read our guide on [climbing grades explained](/guides/climbing-grades-explained).
+To understand how clothing affects your climbing ability across different difficulty levels, read our guide on [climbing grades explained](/blog/climbing-grades-explained).
 
 ### Climbing-Specific Pants
 
@@ -259,7 +259,7 @@ This decision depends on your climbing frequency and commitment level.
 
 **Rental Math:** At $6 per visit, you'll spend $60 after 10 sessions and $120 after 20 sessions. This helps calculate your break-even point for purchasing.
 
-For a detailed breakdown of climbing gym costs including equipment rentals, check out our guide on [how much it costs to climb at a gym](/guides/how-much-does-climbing-gym-cost).
+For a detailed breakdown of climbing gym costs including equipment rentals, check out our guide on [how much it costs to climb at a gym](/blog/how-much-does-climbing-gym-cost).
 
 #### When to BUY Climbing Shoes
 
@@ -449,7 +449,7 @@ Lead climbing demands explosive moves and creates more wear on clothing.
 
 **Why:** Lead climbing requires reaching high clips in awkward positions. Maximum mobility is critical. Reinforced pants protect against repeated wall abrasion.
 
-For more insights on different climbing styles and their requirements, read our comparison guide: [Bouldering vs Rope Climbing](/guides/bouldering-vs-rope-climbing).
+For more insights on different climbing styles and their requirements, read our comparison guide: [Bouldering vs Rope Climbing](/blog/bouldering-vs-rope-climbing).
 
 ---
 
@@ -457,7 +457,7 @@ For more insights on different climbing styles and their requirements, read our 
 
 You don't need expensive gear to start climbing. Here's how to outfit yourself at three budget levels.
 
-For a complete breakdown of all climbing costs beyond clothing, see our detailed guide on [how much climbing gym membership costs](/guides/how-much-does-climbing-gym-cost).
+For a complete breakdown of all climbing costs beyond clothing, see our detailed guide on [how much climbing gym membership costs](/blog/how-much-does-climbing-gym-cost).
 
 ### Under $30: Use What You Have
 
@@ -665,7 +665,7 @@ Wear whatever makes you comfortable. Climbing culture is generally accepting and
 
 **Total First Visit Cost:** $10-$18 in rentals (plus gym day pass $15-$25)
 
-New to climbing? Our [beginner's guide to climbing gyms](/guides/beginners-guide-to-climbing-gyms) walks you through everything you need to know for your first visit.
+New to climbing? Our [beginner's guide to climbing gyms](/blog/beginners-guide-to-climbing-gyms) walks you through everything you need to know for your first visit.
 
 ### After 5-10 Sessions: Consider First Purchase
 
@@ -724,8 +724,8 @@ The best climbing outfit is whatever gets you to the gym and allows you to move 
 **Ready to put your climbing outfit to the test?** [Find climbing gyms near you](/search) with our comprehensive directory. Filter by equipment rentals, pro shops, and beginner programs. Compare facilities and start your climbing journey today.
 
 For more resources to help you get started:
-- [Complete beginner's guide to climbing gyms](/guides/beginners-guide-to-climbing-gyms)
-- [Understanding climbing grades](/guides/climbing-grades-explained)
+- [Complete beginner's guide to climbing gyms](/blog/beginners-guide-to-climbing-gyms)
+- [Understanding climbing grades](/blog/climbing-grades-explained)
 - [Bouldering grade conversion tool](/tools/bouldering-grade-conversion)
 - [Sport climbing grade conversion tool](/tools/sport-climbing-grade-conversion)
 - [Best climbing gyms for beginners](/categories/best-climbing-gyms-for-beginners)
