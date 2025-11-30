@@ -499,6 +499,31 @@ export function generateStudyListSchema(studies: Array<{
 }
 
 /**
+ * Generate VideoObject schema for embedded YouTube videos
+ * @param videoId YouTube video ID
+ * @param title Video title (optional, defaults to generic)
+ * @param description Video description (optional)
+ * @returns JSON-LD schema object
+ */
+export function generateVideoSchema(
+  videoId: string,
+  title?: string,
+  description?: string
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    '@id': `https://www.youtube.com/watch?v=${videoId}`,
+    name: title || 'Climbing Guide Video',
+    description: description || 'Educational video about indoor climbing',
+    thumbnailUrl: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+    embedUrl: `https://www.youtube.com/embed/${videoId}`,
+    uploadDate: new Date().toISOString(),
+    contentUrl: `https://www.youtube.com/watch?v=${videoId}`,
+  };
+}
+
+/**
  * Serialize schema to JSON-LD script tag content
  * @param schema Schema object
  * @returns JSON string for script tag

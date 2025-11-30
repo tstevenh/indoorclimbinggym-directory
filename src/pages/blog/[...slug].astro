@@ -12,7 +12,7 @@ import RelatedPosts from '../../components/blog/RelatedPosts.astro';
 import SocialShare from '../../components/blog/SocialShare.astro';
 import TableOfContents from '../../components/blog/TableOfContents.astro';
 import SubredditCTA from '../../components/SubredditCTA.astro';
-import { generateArticleSchema, generateBreadcrumbSchema, generateFAQSchema, generateHowToSchema } from '../../utils/schema';
+import { generateArticleSchema, generateBreadcrumbSchema, generateFAQSchema, generateHowToSchema, generateVideoSchema } from '../../utils/schema';
 import { generateBlogPostTitle, generateBlogKeywords } from '../../utils/seo';
 
 
@@ -37,9 +37,10 @@ const { Content, headings } = await entry.render();
 function extractFAQs(content: string): Array<{ question: string; answer: string }> {
   const faqs: Array<{ question: string; answer: string }> = [];
 
-  // Find FAQ section (H2 containing "Frequently Asked Questions" or "FAQ")
-  // Match from FAQ heading until next H2 (##) or end of content
-  const faqSectionMatch = content.match(/##\s+.*?(Frequently Asked Questions|FAQ).*?\n([\s\S]+?)(?=\n##\s|$)/i);
+  // IMPROVED: Accept more heading variations for FAQ sections
+  // Matches: FAQ, FAQs, Frequently Asked Questions, Common Questions, Q&A
+  // [^\n]* ensures the keyword is on the actual H2 heading line, not in content after it
+  const faqSectionMatch = content.match(/##\s+[^\n]*(FAQs?|Frequently Asked Questions?|Common Questions?|Q&?A)\b[^\n]*\n([\s\S]+?)(?=\n##\s|$)/i);
   if (!faqSectionMatch) return faqs;
 
   const faqSection = faqSectionMatch[2];
@@ -58,9 +59,20 @@ function extractFAQs(content: string): Array<{ question: string; answer: string 
       .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Remove links, keep text
       .replace(/\s+/g, ' '); // Normalize whitespace
 
-    // Truncate if too long (Google prefers concise answers)
+    // IMPROVED: Smart truncation - end at sentence boundaries
     if (answer.length > 500) {
-      answer = answer.substring(0, 497) + '...';
+      const truncated = answer.substring(0, 500);
+      const lastPeriod = truncated.lastIndexOf('.');
+      const lastQuestion = truncated.lastIndexOf('?');
+      const lastExclamation = truncated.lastIndexOf('!');
+      const cutPoint = Math.max(lastPeriod, lastQuestion, lastExclamation);
+
+      // Only cut at sentence if we found one after 300 chars (keep reasonable length)
+      if (cutPoint > 300) {
+        answer = answer.substring(0, cutPoint + 1);
+      } else {
+        answer = truncated + '...';
+      }
     }
 
     faqs.push({ question, answer });
@@ -69,68 +81,106 @@ function extractFAQs(content: string): Array<{ question: string; answer: string 
   return faqs;
 }
 
-// Extract HowTo steps from markdown content for HowTo schema
+// IMPROVED: Extract HowTo steps with more flexible patterns
 function extractHowToSteps(content: string, title: string): { steps: Array<{ name: string; text: string }>; howToTitle: string; description: string } | null {
-  // Look for step-by-step sections with numbered lists or "Step 1:", "Step 2:" patterns
-  const stepPatterns = [
-    // Pattern 1: "## How to..." section with numbered list
-    /##\s+How to[^#]+?\n\n(\d+\.[\s\S]+?)(?=\n##|$)/i,
-    // Pattern 2: "Step-by-Step" section
-    /##\s+Step[- ]by[- ]Step[^#]*?\n\n([\s\S]+?)(?=\n##|$)/i,
-    // Pattern 3: Individual "### Step N:" headings
-    /###\s+Step\s+\d+[:\.]?\s+(.+?)\n\n((?:(?!###).)+)/gs
-  ];
+  const steps: Array<{ name: string; text: string }> = [];
 
-  for (const pattern of stepPatterns) {
-    const match = content.match(pattern);
-    if (match) {
-      const steps: Array<{ name: string; text: string }> = [];
+  // Pattern 1: Individual "### Step N:" headings
+  const stepHeadingPattern = /###\s+Step\s+\d+[:\.]?\s+(.+?)\n+([\s\S]+?)(?=\n###|$)/g;
+  let match;
+  while ((match = stepHeadingPattern.exec(content)) !== null) {
+    steps.push({
+      name: match[1].trim(),
+      text: match[2].trim().replace(/\*\*/g, '').replace(/\*/g, '').replace(/\n\n/g, ' ')
+    });
+  }
 
-      if (pattern.source.includes('###\\s+Step')) {
-        // Individual step headings (Pattern 3)
-        let stepMatch;
-        const stepPattern = /###\s+Step\s+\d+[:\.]?\s+(.+?)\n\n((?:(?!###).)+)/gs;
-        while ((stepMatch = stepPattern.exec(content)) !== null) {
-          steps.push({
-            name: stepMatch[1].trim(),
-            text: stepMatch[2].trim().replace(/\*\*/g, '').replace(/\*/g, '').replace(/\n\n/g, ' ')
-          });
-        }
-      } else {
-        // Numbered list format (Patterns 1 & 2)
-        const stepSection = match[1];
-        const numberedSteps = stepSection.match(/\d+\.\s+\*\*([^*]+)\*\*[:\s]+([^\n]+(?:\n(?!\d+\.).*)*)/g);
+  // Pattern 2: Numbered lists ONLY in "how to" posts or sections with step headings
+  if (steps.length === 0) {
+    // Only look for numbered lists if title indicates "how to" content
+    const isHowToPost = /how to|guide to|complete guide|getting started|step-by-step/i.test(title);
 
-        if (numberedSteps) {
-          numberedSteps.forEach(step => {
-            const stepMatch = step.match(/\d+\.\s+\*\*([^*]+)\*\*[:\s]+(.+)/s);
-            if (stepMatch) {
+    if (isHowToPost) {
+      // Look for numbered lists within sections that have "how to" or "steps" in the heading
+      const howToSectionPattern = /##[^\n]*(how to|steps|getting started|process)[^\n]*\n([\s\S]+?)(?=\n##\s|$)/gi;
+      let sectionMatch;
+
+      while ((sectionMatch = howToSectionPattern.exec(content)) !== null) {
+        const sectionContent = sectionMatch[2];
+        const numberedListPattern = /\d+\.\s+(.+?)(?:\n|$)/g;
+        const matches = sectionContent.match(numberedListPattern);
+
+        if (matches && matches.length >= 3) {
+          matches.slice(0, 10).forEach((line, idx) => {
+            const text = line.replace(/^\d+\.\s+/, '').replace(/\*\*/g, '').trim();
+            if (text.length > 10) {
               steps.push({
-                name: stepMatch[1].trim(),
-                text: stepMatch[2].trim().replace(/\n/g, ' ')
+                name: `Step ${idx + 1}`,
+                text: text
               });
             }
           });
+          break; // Only use first matching section
         }
       }
-
-      if (steps.length >= 3) {
-        return {
-          steps,
-          howToTitle: `How to ${title.replace(/^(How to|Complete Guide to|Guide to)\s+/i, '')}`,
-          description: `Step-by-step guide to ${title.toLowerCase()}`
-        };
-      }
     }
+  }
+
+  if (steps.length >= 3) {
+    return {
+      steps: steps.slice(0, 10),
+      howToTitle: title.replace(/^(How to|Complete Guide to|Guide to)\s+/i, ''),
+      description: `Step-by-step guide to ${title.toLowerCase()}`
+    };
   }
 
   return null;
 }
 
+// NEW: Detect markdown tables for Table schema
+function detectTables(content: string): boolean {
+  // Markdown tables have format:
+  // | Header 1 | Header 2 |
+  // |----------|----------|
+  // | Data 1   | Data 2   |
+  const tablePattern = /\|.+\|[\r\n]+\|[-:\s|]+\|[\r\n]+(\|.+\|[\r\n]+)+/g;
+  return tablePattern.test(content);
+}
+
+// NEW: Extract YouTube videos for VideoObject schema
+function extractVideos(content: string): Array<{ videoId: string; url: string }> {
+  const videos: Array<{ videoId: string; url: string }> = [];
+
+  // Match YouTube URLs (watch?v= and youtu.be formats)
+  const youtubePattern = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/g;
+  let match;
+
+  while ((match = youtubePattern.exec(content)) !== null) {
+    const videoId = match[1];
+    videos.push({
+      videoId,
+      url: `https://www.youtube.com/watch?v=${videoId}`
+    });
+  }
+
+  return videos;
+}
+
 // Get raw markdown content from entry
 const rawContent = entry.body;
+
+// Extract schemas with debug logging
 const extractedFAQs = extractFAQs(rawContent);
 const extractedHowTo = extractHowToSteps(rawContent, entry.data.title);
+const hasTables = detectTables(rawContent);
+const extractedVideos = extractVideos(rawContent);
+
+// Debug logging (visible during build)
+console.log(`[SCHEMA] ${entry.slug}:`);
+console.log(`  - FAQs: ${extractedFAQs.length} found`);
+console.log(`  - HowTo steps: ${extractedHowTo ? extractedHowTo.steps.length : 0} found`);
+console.log(`  - Tables: ${hasTables ? 'YES' : 'NO'}`);
+console.log(`  - Videos: ${extractedVideos.length} found`);
 
 // Get related posts from same category
 const allPosts = await getCollection('blog');
@@ -184,12 +234,19 @@ const howToSchema = extractedHowTo
   ? generateHowToSchema(extractedHowTo.howToTitle, extractedHowTo.description, extractedHowTo.steps)
   : null;
 
-// Combine schemas
+// Generate Video schemas if YouTube videos were found
+const videoSchemas = extractedVideos.map(video =>
+  generateVideoSchema(video.videoId, entry.data.title, entry.data.description)
+);
+
+// CONDITIONAL SCHEMA COMBINING - Only include schemas for content that exists!
 const schemas = [
   articleSchema,
   breadcrumbSchema,
   ...(faqSchema ? [faqSchema] : []),
-  ...(howToSchema ? [howToSchema] : [])
+  ...(howToSchema ? [howToSchema] : []),
+  ...videoSchemas  // Only included if videos detected
+  // NOTE: Table schema intentionally NOT included - handled by browser rendering
 ];
 
 // Format published date
@@ -423,4 +480,94 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-gray-100 text-g
     background-color: #f8f8f5;
     font-weight: bold;
   }
+
+  /* Mobile responsive table wrapper */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    margin: 2rem 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  /* Remove margin from table when wrapped */
+  .table-wrapper table {
+    margin: 0;
+  }
+
+  /* Scrollbar styling for better UX */
+  .table-wrapper::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  .table-wrapper::-webkit-scrollbar-thumb {
+    background: #98a48b;
+    border-radius: 4px;
+  }
+
+  .table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #7a8670;
+  }
+
+  /* Visual indicator for scrollable content */
+  @media (max-width: 768px) {
+    .table-wrapper::after {
+      content: '→ Scroll';
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(152, 164, 139, 0.9);
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      pointer-events: none;
+      opacity: 0;
+      animation: fadeInOut 3s ease-in-out;
+    }
+
+    @keyframes fadeInOut {
+      0%, 100% { opacity: 0; }
+      10%, 90% { opacity: 1; }
+    }
+
+    /* Smaller text and padding on mobile for better fit */
+    .prose table {
+      font-size: 0.875rem;
+    }
+
+    .prose th,
+    .prose td {
+      padding: 0.5rem;
+    }
+  }
 </style>
+
+<script>
+  // Wrap all tables in a scrollable container for mobile responsiveness
+  document.addEventListener('DOMContentLoaded', () => {
+    const tables = document.querySelectorAll('.prose table');
+
+    tables.forEach((table) => {
+      // Skip if already wrapped
+      if (table.parentElement?.classList.contains('table-wrapper')) {
+        return;
+      }
+
+      // Create wrapper
+      const wrapper = document.createElement('div');
+      wrapper.className = 'table-wrapper';
+
+      // Wrap the table
+      table.parentNode?.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    });
+  });
+</script>

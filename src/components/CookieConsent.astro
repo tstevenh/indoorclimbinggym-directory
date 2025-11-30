@@ -204,14 +204,12 @@
     const consent = getConsent();
     if (!consent?.analytics) return;
 
-    // GA script is already in the page but disabled, just enable tracking
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      dataLayer.push(arguments);
+    // Use the global gtag function to update consent
+    if (typeof window.gtag === 'function') {
+      window.gtag('consent', 'update', {
+        'analytics_storage': 'granted'
+      });
     }
-    gtag('consent', 'update', {
-      'analytics_storage': 'granted'
-    });
   }
 
   // Show banner if no consent yet

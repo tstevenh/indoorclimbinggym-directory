@@ -638,6 +638,34 @@ Whether you're a first-time climber decoding VB vs V0, or an intermediate climbe
 
 ---
 
+## Frequently Asked Questions
+
+### What's the difference between V-scale and YDS grades?
+
+V-scale (Hueco scale) rates bouldering problems from V0 (easiest) to V17 (hardest). YDS (Yosemite Decimal System) rates rope climbing from 5.0 to 5.15d. Bouldering uses V-scale, rope climbing uses YDS. They measure different things – bouldering emphasizes short, powerful moves while rope climbing includes endurance over longer routes.
+
+### How do I know what grade to climb as a beginner?
+
+Most beginners start at V0-V1 for bouldering or 5.6-5.8 for rope climbing. Your gym staff can recommend appropriate starting grades during your intro session. Focus on technique over grade-chasing for your first 3-6 months. Climbing below your limit builds fundamentals faster than struggling on hard routes.
+
+### Do climbing grades vary between different gyms?
+
+Yes, significantly! Grades are subjective interpretations, not standardized measurements. A V3 at one gym might feel like V2 or V4 at another. Some gyms grade soft (easier than standard), others grade stiff (harder than standard). This is normal – focus on personal progress rather than comparing grades across gyms.
+
+### Why are bouldering grades different from rope climbing grades?
+
+Bouldering and rope climbing are fundamentally different disciplines. Bouldering involves short (4-7 moves), intense problems focusing on power and technique. Rope climbing features longer routes (30-100+ feet) requiring endurance and mental stamina. Each sport needs its own grading system to accurately reflect difficulty.
+
+### How long does it take to improve one grade level?
+
+Timeline varies by starting level and frequency. Absolute beginners progress quickly (V0 to V2 in 2-3 months). Intermediate climbers (V4-V6) might spend 6-12 months per grade. Advanced climbers (V8+) can spend years on single grade improvements. Climbing 2-3 times weekly accelerates progress more than occasional sessions.
+
+### What does the letter rating mean in YDS (5.10a, 5.10b)?
+
+Letters (a, b, c, d) subdivide grades from 5.10 onward into four difficulty levels. Within 5.10, routes progress: 5.10a (easiest) → 5.10b → 5.10c → 5.10d (hardest). This granularity helps climbers find appropriate challenges as difficulty differences become more subtle at higher grades.
+
+---
+
 ## Additional Resources
 
 **Related Articles:**

@@ -528,6 +528,32 @@ Use our [search tool](/search) to compare membership pricing across multiple gym
 6. "Are there peak vs. off-peak membership options?"
 7. "What's included in the membership?" (classes, guest passes, etc.)
 
+## FAQ
+
+### How many times per week makes a membership worth it?
+
+A climbing gym membership becomes cost-effective when you visit 5+ times per month, which equals roughly once per week or more. At this frequency, you'll spend $15-25 per visit with a membership versus $20-35 with day passes. The break-even point is typically 4-5 visits monthly.
+
+### Can I freeze my membership when traveling or injured?
+
+Most climbing gyms allow membership freezes for 1-3 months per year, though policies vary by facility. Some charge a small freeze fee ($5-15/month) to maintain your rate. Always ask about freeze policies before signing up, especially if you travel frequently for work or have seasonal schedules.
+
+### Are there family or student discounts available?
+
+Yes! Most gyms offer 10-25% student discounts with valid ID. Family memberships (2+ people) typically save 15-30% compared to individual memberships. Some gyms also offer senior, military, or first responder discounts. Always inquire about all available discounts.
+
+### What happens if I sign up and don't go enough?
+
+You're locked into the membership term (month-to-month or annual contract). Most gyms don't prorate or refund unused time. This is why starting with day passes for 2-3 months helps establish your actual climbing frequency before committing financially.
+
+### Do memberships include classes and equipment rental?
+
+Membership typically includes unlimited climbing access but NOT equipment rental or classes. Shoes and harness rental usually costs $5-12 extra per visit. Technique classes, yoga, and fitness classes often require additional fees ($15-50 each) even for members. Always clarify what's included.
+
+### Should I get a month-to-month or annual membership?
+
+Choose month-to-month for flexibility if you're new to climbing or unsure about long-term commitment. Annual memberships save 10-20% but require 12-month commitment. Only lock in annual rates after climbing consistently for 3+ months and confirming you love the sport and specific gym.
+
 ## Conclusion: The Verdict on Membership Value
 
 **Is a climbing gym membership worth it?** The answer is yes – but only if you climb regularly.

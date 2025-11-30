@@ -559,6 +559,32 @@ Most climbers reach this point after 2-4 months of consistent (2-3x weekly) clim
 - Buy your own climbing shoes if committed
 - Set goals for month two
 
+## Frequently Asked Questions
+
+### Do I need to be fit to start climbing?
+
+No! Climbing gyms welcome people of all fitness levels. You'll build strength and endurance as you climb – that's the beauty of the sport. Beginners start on easier routes and naturally progress. Many climbers find that climbing IS their fitness journey, not something requiring pre-existing fitness.
+
+### What should I bring to my first climbing session?
+
+Just bring comfortable athletic clothing, a water bottle, and an open mind. The gym provides rental shoes and all safety equipment. Avoid loose jewelry, and wear form-fitting clothes so you can see your footwork. If you have long hair, bring a hair tie.
+
+### How long does it take to learn climbing basics?
+
+Most people feel comfortable with basic climbing movement within 2-3 sessions. You'll learn belay certification (for rope climbing) in 1-2 hours of instruction. However, climbing is a lifelong learning sport – even experts continue developing new skills.
+
+### Can I climb alone or do I need a partner?
+
+It depends on your gym and chosen style. Bouldering (climbing shorter walls without ropes) is always solo-friendly. For rope climbing, some gyms offer auto-belays (mechanical devices) that allow solo climbing. Traditional rope climbing requires a belay partner, but many gyms help match solo climbers.
+
+### Are climbing gyms safe for complete beginners?
+
+Yes, extremely safe when you follow gym rules and staff instructions. Modern climbing gyms use certified equipment, padded floors, trained staff, and strict safety protocols. The injury rate for indoor climbing is actually lower than many team sports.
+
+### How much does it cost to start climbing?
+
+Your first session costs $25-45 including day pass and rental gear. If you continue, monthly memberships run $75-120. You can climb for months on rental equipment before buying your own. Budget $20-40 per session initially, dropping to $15-25 once you have a membership.
+
 ## Conclusion: Your Climbing Journey Starts Here
 
 Walking into a climbing gym for the first time takes courage, but it opens the door to an incredible sport and community. [Beginner-friendly climbing gyms](/categories/best-climbing-gyms-for-beginners) are specifically designed to welcome newcomers – the staff wants you to succeed, other climbers remember being new, and the environment is supportive.
