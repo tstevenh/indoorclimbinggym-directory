@@ -199,21 +199,17 @@
     localStorage.setItem(COOKIE_CONSENT_KEY + '_expiry', expiryDate.toISOString());
   }
 
-  // Load Google Analytics if analytics consent is given
-  function loadGoogleAnalytics(): void {
+  // Apply stored consent settings (overrides default)
+  function applyStoredConsent(): void {
     const consent = getConsent();
-    if (!consent?.analytics) return;
+    if (!consent) return; // No stored preference? Keep default (Granted)
 
-    // Use the global gtag function to update consent
     if (typeof window.gtag === 'function') {
       window.gtag('consent', 'update', {
-        'analytics_storage': 'granted'
-      });
-
-      // Send a page_view event now that consent is granted
-      window.gtag('event', 'page_view', {
-        page_location: window.location.href,
-        page_title: document.title
+        'analytics_storage': consent.analytics ? 'granted' : 'denied',
+        'ad_storage': consent.analytics ? 'granted' : 'denied',
+        'ad_user_data': consent.analytics ? 'granted' : 'denied',
+        'ad_personalization': consent.analytics ? 'granted' : 'denied'
       });
     }
   }
@@ -227,7 +223,7 @@
         banner.classList.remove('hidden');
       }
     } else {
-      loadGoogleAnalytics();
+      applyStoredConsent();
     }
   }
 
@@ -240,7 +236,7 @@
     };
     saveConsent(consent);
     closeBanner();
-    loadGoogleAnalytics();
+    applyStoredConsent();
   });
 
   // Handle Manage Preferences
@@ -263,6 +259,7 @@
     saveConsent(consent);
     closeModal();
     closeBanner();
+    applyStoredConsent(); // Applies 'denied' update
   });
 
   // Handle Modal Save Preferences
@@ -279,7 +276,7 @@
     saveConsent(consent);
     closeModal();
     closeBanner();
-    loadGoogleAnalytics();
+    applyStoredConsent();
   });
 
   // Handle Modal Backdrop Close

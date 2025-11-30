@@ -213,10 +213,13 @@ if (breadcrumbs && breadcrumbs.length > 0) {
       window.dataLayer = window.dataLayer || [];
       window.gtag = function() { dataLayer.push(arguments); };
 
-      // Default to no consent until user accepts
+      // Default to 'granted' (Soft Opt-in) so data is collected immediately
+      // Users can still opt-out via the banner
       gtag('consent', 'default', {
-        'analytics_storage': 'denied',
-        'ad_storage': 'denied'
+        'analytics_storage': 'granted',
+        'ad_storage': 'granted',
+        'ad_user_data': 'granted',
+        'ad_personalization': 'granted'
       });
     </script>
 
