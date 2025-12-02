@@ -207,25 +207,23 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     <Analytics />
 
     <!-- Google Analytics (Consent-controlled) -->
-    <!-- Script loaded conditionally by CookieConsent component after user consent -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KQJE0F08ER"></script>
     <script is:inline>
-      // Initialize dataLayer for consent management
       window.dataLayer = window.dataLayer || [];
-      window.gtag = function() { dataLayer.push(arguments); };
-
-      // Default to 'granted' (Soft Opt-in) so data is collected immediately
-      // Users can still opt-out via the banner
+      function gtag(){dataLayer.push(arguments);}
+      
+      // 1. Set Consent Defaults (Must be first)
       gtag('consent', 'default', {
         'analytics_storage': 'granted',
         'ad_storage': 'granted',
         'ad_user_data': 'granted',
         'ad_personalization': 'granted'
       });
-    </script>
 
-    <!-- GA script tag (will be enabled if analytics consent is given) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KQJE0F08ER"></script>
-    <script is:inline>
+      // 2. Initialize Timestamp (Critical for data collection)
+      gtag('js', new Date());
+
+      // 3. Configure the Property
       gtag('config', 'G-KQJE0F08ER');
     </script>
   </head>
