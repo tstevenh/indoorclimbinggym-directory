@@ -13,6 +13,7 @@ import GymCard from '../components/GymCard.astro';
 import FilterSidebar from '../components/FilterSidebar.astro';
 import Pagination from '../components/Pagination.astro';
 import { fetchGyms } from '../config/api';
+import { getStateName } from '../utils/states';
 
 // Fetch gyms from API
 let gyms: any[] = [];
@@ -27,15 +28,6 @@ try {
 
 // Get URL search parameters
 const searchParams = Astro.url.searchParams;
-
-// State code to full name mapping
-const stateMap: Record<string, string> = {
-  wa: 'Washington',
-  tx: 'Texas',
-  co: 'Colorado',
-  ny: 'New York',
-  ca: 'California',
-};
 
 // Start with all gyms
 let filteredGyms = [...gyms];
@@ -60,7 +52,7 @@ if (query && query.trim()) {
 // State filter
 const stateParam = searchParams.get('state');
 if (stateParam) {
-  const stateFullName = stateMap[stateParam.toLowerCase()] || stateParam;
+  const stateFullName = getStateName(stateParam);
   filteredGyms = filteredGyms.filter((g) => g.region === stateFullName);
   activeFilters.push({ label: `State: ${stateFullName}`, param: 'state', value: stateParam });
 }

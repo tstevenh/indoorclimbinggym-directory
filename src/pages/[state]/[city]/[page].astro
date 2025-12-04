@@ -11,6 +11,7 @@ import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema
 import { generateCityTitle, generateCityDescription } from '../../../utils/seo';
 import { fetchGyms } from '../../../config/api';
 import { getStateSlug } from '../../../utils/states';
+import AffiliateBlock from '../../../components/AffiliateBlock.astro';
 
 
 export const prerender = true;
@@ -426,6 +427,16 @@ const breadcrumbs = [
       View all guides →
     </a>
   </section>
+
+  <!-- Affiliate Block -->
+  <div class="max-w-7xl mx-auto mb-16">
+    <AffiliateBlock 
+      title={`Top Gear for ${city} Climbers`} 
+      subtitle="Recommended by locals."
+      category="gear"
+      count={5}
+    />
+  </div>
 
   <!-- CTA -->
   <section class="text-center bg-sage rounded-lg p-12 text-white">

@@ -12,6 +12,7 @@ import GradeSearchBar from '../../components/tools/GradeSearchBar.astro';
 import GymOutdoorToggle from '../../components/tools/GymOutdoorToggle.astro';
 import ConversionResults from '../../components/tools/ConversionResults.astro';
 import ConversionTable from '../../components/tools/ConversionTable.astro';
+import AffiliateBlock from '../../components/AffiliateBlock.astro';
 
 // Import sport climbing grades data
 import sportGrades from '../../data/sport-grades.json';
@@ -206,6 +207,13 @@ const schemas = [toolSchema, faqSchema];
             <li>✓ <strong>Full reference table</strong> at the bottom for quick lookups</li>
           </ul>
         </div>
+
+        <AffiliateBlock 
+          title="Essential Sport Climbing Gear" 
+          subtitle="Get ready for the crag with our top picks."
+          category="gear"
+          count={3}
+        />
 
         <!-- Understanding Sport Climbing Grade Systems -->
         <h2 class="text-3xl font-bold text-granite mb-4 mt-12">Understanding Sport Climbing Grade Systems</h2>

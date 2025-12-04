@@ -20,33 +20,46 @@ const {
   showRatingFilter = true,
 } = Astro.props;
 
-// Import API helper
-import { fetchGyms, extractGymMetadata } from '../config/api';
+// Import API helper and utils
+import { fetchGyms } from '../config/api';
+import { getStateCode } from '../utils/states';
 
-// Fetch gyms and extract metadata for filters
+// Fetch gyms and build filter data
 let cities: string[] = [];
 let states: string[] = [];
+const stateCitiesMap: Record<string, string[]> = {};
 
 try {
   const gyms = await fetchGyms();
-  const metadata = extractGymMetadata(gyms);
-  cities = metadata.cities;
-  states = metadata.states;
+  
+  // build state -> cities map
+  gyms.forEach(gym => {
+    if (gym.region && gym.city) {
+      const stateCode = getStateCode(gym.region).toLowerCase();
+      
+      if (!stateCitiesMap[stateCode]) {
+        stateCitiesMap[stateCode] = [];
+      }
+      // Add city if not already present
+      if (!stateCitiesMap[stateCode].includes(gym.city)) {
+        stateCitiesMap[stateCode].push(gym.city);
+      }
+    }
+  });
+
+  // Sort cities within each state
+  Object.values(stateCitiesMap).forEach(cityList => cityList.sort());
+
+  // Get all unique states and cities for initial render
+  states = [...new Set(gyms.map(g => g.region).filter(Boolean))].sort();
+  cities = [...new Set(gyms.map(g => g.city).filter(Boolean))].sort();
+
 } catch (error) {
-  console.error('Failed to fetch gym metadata:', error);
-  // Fallback to hardcoded values if API fails
+  console.error('Failed to fetch gym data for filters:', error);
+  // Fallback
   cities = ['Austin', 'Denver', 'Los Angeles', 'New York', 'Seattle'];
   states = ['California', 'Colorado', 'New York', 'Texas', 'Washington'];
 }
-
-// State to code mapping
-const stateToCode: Record<string, string> = {
-  'Washington': 'wa',
-  'Texas': 'tx',
-  'Colorado': 'co',
-  'New York': 'ny',
-  'California': 'ca',
-};
 
 // Get current URL params to pre-populate form
 const currentParams = Astro.url.searchParams;
@@ -75,7 +88,14 @@ const amenities = [
 <aside class="bg-white rounded-lg shadow-md p-6 sticky top-4">
   <h2 class="text-xl font-bold text-granite mb-6">Filter Gyms</h2>
 
-  <form id="filter-form" method="get" action="/search" class="space-y-6">
+  <!-- Pass the map to client-side JS via data attribute on the form -->
+  <form 
+    id="filter-form" 
+    method="get" 
+    action="/search" 
+    class="space-y-6"
+    data-state-cities={JSON.stringify(stateCitiesMap)}
+  >
     <!-- Location Filter -->
     {showLocationFilter && (
       <div class="filter-section">
@@ -92,7 +112,7 @@ const amenities = [
           >
             <option value="">All States</option>
             {states.map(state => {
-              const stateCode = stateToCode[state];
+              const stateCode = getStateCode(state).toLowerCase();
               const isSelected = currentParams.get('state')?.toLowerCase() === stateCode;
               return (
                 <option value={stateCode} selected={isSelected}>{state}</option>
@@ -296,11 +316,76 @@ const amenities = [
 </aside>
 
 <script>
-  // Handle form submission to properly format checkbox arrays
+  // Handle form submission and city filtering
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('filter-form') as HTMLFormElement;
+    const stateSelect = document.getElementById('state-select') as HTMLSelectElement;
+    const citySelect = document.getElementById('city-select') as HTMLSelectElement;
 
-    if (form) {
+    if (form && stateSelect && citySelect) {
+      // Get state-cities map from data attribute
+      const stateCitiesMap = JSON.parse(form.dataset.stateCities || '{}');
+      
+      // Store initial city selection (from server render)
+      const initialCity = citySelect.value;
+
+      // Function to update city options
+      const updateCityOptions = () => {
+        const selectedState = stateSelect.value;
+        const currentCity = citySelect.value;
+        
+        // Clear current options
+        citySelect.innerHTML = '<option value="">All Cities</option>';
+        
+        let citiesToShow = [];
+        
+        if (selectedState && stateCitiesMap[selectedState]) {
+          // Show only cities for selected state
+          citiesToShow = stateCitiesMap[selectedState];
+        } else {
+          // Show all cities (merge all arrays)
+          const allCitiesSet = new Set();
+          Object.values(stateCitiesMap).forEach((cities: any) => {
+            cities.forEach((city: string) => allCitiesSet.add(city));
+          });
+          citiesToShow = Array.from(allCitiesSet).sort();
+        }
+        
+        // Add options
+        citiesToShow.forEach((city: any) => {
+          const option = document.createElement('option');
+          option.value = city.toLowerCase();
+          option.textContent = city;
+          
+          // Preserve selection if it's valid for the new list
+          // Check against lowercase value for comparison
+          if (city.toLowerCase() === currentCity) {
+            option.selected = true;
+          }
+          
+          citySelect.appendChild(option);
+        });
+      };
+
+      // Listen for state changes
+      stateSelect.addEventListener('change', updateCityOptions);
+      
+      // Also run on load if there's a state selected but we need to ensure consistency
+      // (Server rendering handles the initial "selected" attribute correctly, but this ensures subsequent interactions work)
+      // Actually, server side renders filtered lists only if logic was there. 
+      // Since we simplified server render to show "All Cities" initially unless filtered,
+      // let's run this on load ONLY if a state is selected to filter the initial list if it wasn't filtered by server.
+      // The server code above renders ALL cities initially. So we should run this to filter them if a state is pre-selected.
+      if (stateSelect.value) {
+        // Save current city value before update wipes it (captured in initialCity)
+        // We need to manually re-select it after update
+        updateCityOptions();
+        if (initialCity) {
+           citySelect.value = initialCity;
+        }
+      }
+
+      // Handle Form Submit
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         const formData = new FormData(form);

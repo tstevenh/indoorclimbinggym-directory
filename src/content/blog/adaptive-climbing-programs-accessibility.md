@@ -6,7 +6,7 @@ author: "Indoor Climbing Gym Team"
 category: "guides"
 tags: ["accessibility", "inclusion", "community", "adaptive-climbing", "best-practices"]
 featured: true
-heroImage: "https://images.unsplash.com/photo-1516391319253-8c94c1638d0f?w=1200&h=600&fit=crop"
+heroImage: "/images/blog/adaptive-climbing-programs-accessibility.webp"
 heroImageAlt: "Adaptive climber with prosthetic climbing with support in inclusive gym"
 wordCount: 3200
 readingTime: 13

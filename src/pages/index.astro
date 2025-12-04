@@ -6,6 +6,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GymCard from '../components/GymCard.astro';
 import SearchBar from '../components/SearchBar.astro';
+import AsSeenOn from '../components/AsSeenOn.astro';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../utils/schema';
 import { fetchGyms } from '../config/api';
 import { getStateCode, getStateSlug, getStateName } from '../utils/states';
@@ -123,7 +124,7 @@ const description = 'Discover indoor climbing gyms near you. Search by location,
   schema={combinedSchema}
 >
   <!-- Hero Section -->
-  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 min-h-[600px] bg-gradient-to-br from-sage/30 via-ivory to-sage/10 py-16 md:py-24 mb-12">
+  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 min-h-[600px] bg-gradient-to-br from-sage/30 via-ivory to-sage/10 py-16 md:py-24">
     <div class="container mx-auto px-4">
       <div class="max-w-4xl mx-auto text-center">
         <h1 class="text-4xl md:text-6xl font-bold text-granite mb-6">
@@ -158,6 +159,8 @@ const description = 'Discover indoor climbing gyms near you. Search by location,
       </div>
     </div>
   </section>
+
+  <AsSeenOn />
 
   <!-- Featured Gyms Section -->
   <section class="mb-16">

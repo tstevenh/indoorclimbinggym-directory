@@ -12,6 +12,7 @@ import RelatedPosts from '../../components/blog/RelatedPosts.astro';
 import SocialShare from '../../components/blog/SocialShare.astro';
 import TableOfContents from '../../components/blog/TableOfContents.astro';
 import SubredditCTA from '../../components/SubredditCTA.astro';
+import AffiliateBlock from '../../components/AffiliateBlock.astro';
 import { generateArticleSchema, generateBreadcrumbSchema, generateFAQSchema, generateHowToSchema, generateVideoSchema } from '../../utils/schema';
 import { generateBlogPostTitle, generateBlogKeywords } from '../../utils/seo';
 
@@ -350,6 +351,13 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-gray-100 text-g
     <div class="prose prose-lg max-w-none mb-8">
       <Content />
     </div>
+
+    <!-- Affiliate Block -->
+    <AffiliateBlock 
+      title="Recommended Gear" 
+      subtitle="Our top picks for climbers."
+      count={3}
+    />
 
     <!-- Tags -->
     {entry.data.tags.length > 0 && (

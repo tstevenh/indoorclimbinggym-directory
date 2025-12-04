@@ -60,13 +60,16 @@ export function generateGymSchema(gym: Gym, pageUrl: string) {
     url: gym.website,
     priceRange: `$${gym.day_pass_price_local}`,
     openingHoursSpecification: openingHours,
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: gym.rating_overall || gym.rating,
-      reviewCount: gym.review_count || 0,
-      bestRating: 5,
-      worstRating: 1,
-    },
+    // Only include aggregateRating if we have reviews (Google requires reviewCount > 0)
+    ...(gym.review_count && gym.review_count > 0 && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: gym.rating_overall || gym.rating,
+        reviewCount: gym.review_count,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    }),
     // Add detailed rating breakdown as additional properties
     ...(gym.rating_route_quality > 0 && {
       additionalProperty: [
@@ -169,10 +172,16 @@ export function generateItemListSchema(
           addressLocality: gym.city,
           addressRegion: gym.region,
         },
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: gym.rating,
-        },
+        // Only include aggregateRating if we have reviews (Google requires reviewCount > 0)
+        ...(gym.review_count && gym.review_count > 0 && {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: gym.rating_overall || gym.rating,
+            reviewCount: gym.review_count,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }),
       },
     })),
   };

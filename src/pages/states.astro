@@ -9,6 +9,7 @@ import { generateSEO } from '../utils/seo';
 import { generateItemListSchema } from '../utils/schema';
 import { fetchGyms } from '../config/api';
 import { getStateCode, getStateSlug, getStateName } from '../utils/states';
+import AffiliateBlock from '../components/AffiliateBlock.astro';
 
 export const prerender = true;
 
@@ -126,19 +127,44 @@ const breadcrumbs = [
 
   <!-- States Grid Section -->
   <section class="mb-12">
-    <h2 class="text-3xl font-bold text-granite mb-6">
-      Browse by State
-    </h2>
-    <p class="text-gray-700 mb-8">
-      Select a state below to explore all climbing gyms, compare prices and amenities,
-      and find the perfect facility for your climbing needs.
-    </p>
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+      <div>
+        <h2 class="text-3xl font-bold text-granite mb-2">
+          Browse by State
+        </h2>
+        <p class="text-gray-700 max-w-2xl">
+          Select a state below to explore all climbing gyms, compare prices and amenities,
+          and find the perfect facility for your climbing needs.
+        </p>
+      </div>
+      
+      <!-- Sort Control -->
+      <div class="w-full md:w-auto">
+        <label for="sort-states" class="sr-only">Sort by</label>
+        <div class="relative">
+          <select 
+            id="sort-states" 
+            class="appearance-none bg-white border border-gray-300 text-granite py-2 pl-4 pr-10 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent cursor-pointer w-full md:w-48"
+          >
+            <option value="count">Most Gyms</option>
+            <option value="alpha">Alphabetical (A-Z)</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div id="states-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {statesArray.map(state => (
         <a
           href={`/${state.slug}/`}
           class="block p-6 bg-white border border-gray-200 rounded-lg hover:border-sage hover:shadow-lg transition-all duration-300 group"
+          data-name={state.name}
+          data-count={state.count}
         >
           <div class="flex items-center justify-between mb-2">
             <h2 class="text-xl font-bold text-granite group-hover:text-sage transition-colors">
@@ -155,6 +181,42 @@ const breadcrumbs = [
       ))}
     </div>
   </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sortSelect = document.getElementById('sort-states');
+      const grid = document.getElementById('states-grid');
+      
+      if (!sortSelect || !grid) return;
+
+      const sortItems = (criteria) => {
+        const items = Array.from(grid.children);
+        
+        const sorted = items.sort((a, b) => {
+          if (criteria === 'count') {
+            // Sort by count (Descending)
+            const countA = parseInt(a.getAttribute('data-count') || '0');
+            const countB = parseInt(b.getAttribute('data-count') || '0');
+            return countB - countA;
+          } else {
+            // Sort by name (Ascending)
+            const nameA = a.getAttribute('data-name') || '';
+            const nameB = b.getAttribute('data-name') || '';
+            return nameA.localeCompare(nameB);
+          }
+        });
+        
+        // Clear and re-append
+        grid.innerHTML = '';
+        sorted.forEach(item => grid.appendChild(item));
+      };
+
+      sortSelect.addEventListener('change', (e) => {
+        // @ts-ignore
+        sortItems(e.target.value);
+      });
+    });
+  </script>
 
   <!-- Why Climb Indoor Section -->
   <section class="mb-12 bg-white rounded-lg shadow-md p-8">
@@ -314,6 +376,16 @@ const breadcrumbs = [
       </a>
     </div>
   </section>
+
+  <!-- Affiliate Block -->
+  <div class="max-w-7xl mx-auto mb-16">
+    <AffiliateBlock 
+      title="Travel Gear for Climbers" 
+      subtitle="Essential gear for your next climbing trip."
+      category="gear"
+      count={5}
+    />
+  </div>
 
   <!-- CTA Section -->
   <section class="text-center bg-gradient-to-r from-sage to-sage/80 rounded-lg p-12 text-white">

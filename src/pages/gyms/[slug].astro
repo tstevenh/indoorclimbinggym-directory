@@ -10,6 +10,7 @@ import HelpfulGuides from '../../components/HelpfulGuides.astro';
 import OptimizedImage from '../../components/OptimizedImage.astro';
 import GymMap from '../../components/GymMap.astro';
 import SubredditCTA from '../../components/SubredditCTA.astro';
+import AffiliateBlock from '../../components/AffiliateBlock.astro';
 import { generateGymSchema, generateFAQSchema, serializeSchema } from '../../utils/schema';
 import { generateGymTitle, generateGymDescription, generateGymKeywords } from '../../utils/seo';
 import { IMAGE_SIZES } from '../../utils/imageUtils';
@@ -652,6 +653,12 @@ if (relatedGyms.length < 3) {
         )}
       </section>
 
+      {/* Affiliate Gear Block - Monetization */}
+      <AffiliateBlock 
+        title="Recommended Climbing Gear"
+        subtitle="Don't want to rent? Here is the gear we recommend for gym climbing."
+      />
+
       <!-- Pricing - Only show if pricing data exists -->
       {(gym.day_pass_price_local || gym.membership_from_local) && (
         <section class="bg-white rounded-lg shadow-md p-6">
@@ -776,7 +783,7 @@ if (relatedGyms.length < 3) {
   {/* Claim Listing Modal */}
   {!gym.claimed && gym.status === 'published' && (
     <div id="claim-modal" class="hidden fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-lg max-w-md w-full p-6 relative">
+      <div class="bg-white rounded-lg max-w-md w-full p-6 relative border-t-4 border-sage shadow-2xl">
         {/* Close Button */}
         <button id="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -960,17 +967,87 @@ if (relatedGyms.length < 3) {
       });
     })();
   </script>
+
+  {/* Report Info Modal */}
+  <div id="report-modal" class="hidden fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg max-w-md w-full p-6 relative border-t-4 border-sage shadow-2xl">
+      {/* Close Button */}
+      <button id="close-report-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      {/* Modal Content */}
+      <h2 class="text-2xl font-bold text-granite mb-4">Report Incorrect Info</h2>
+      <div class="space-y-4 mb-6">
+        <p class="text-gray-700">
+          To ensure data quality, we require users to login or register to report incorrect information.
+        </p>
+        <p class="text-gray-700">
+           You will be redirected to our dashboard to submit your correction.
+        </p>
+      </div>
+
+      {/* CTA Button */}
+      <div class="flex gap-3">
+        <button id="report-maybe-later" class="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+          Maybe Later
+        </button>
+        <a
+          href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/corrections/submit?gym_id=${gym.id}&gym_name=${encodeURIComponent(gym.name)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex-1 px-4 py-3 bg-sage text-white text-center rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+        >
+          Login to Report
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {/* Report Modal Script */}
+  <script>
+    const reportBtn = document.getElementById('report-info-btn');
+    const reportModal = document.getElementById('report-modal');
+    const closeReportBtn = document.getElementById('close-report-modal');
+    const reportMaybeLaterBtn = document.getElementById('report-maybe-later');
+
+    reportBtn?.addEventListener('click', () => {
+      reportModal?.classList.remove('hidden');
+    });
+
+    closeReportBtn?.addEventListener('click', () => {
+      reportModal?.classList.add('hidden');
+    });
+
+    reportMaybeLaterBtn?.addEventListener('click', () => {
+      reportModal?.classList.add('hidden');
+    });
+
+    // Close on outside click
+    reportModal?.addEventListener('click', (e) => {
+      if (e.target === reportModal) {
+        reportModal.classList.add('hidden');
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !reportModal?.classList.contains('hidden')) {
+        reportModal.classList.add('hidden');
+      }
+    });
+  </script>
   </div>
 
   <!-- Floating Report Incorrect Info Button -->
-  <a
-    href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/corrections/submit?gym_id=${gym.id}&gym_name=${encodeURIComponent(gym.name)}`}
-    target="_blank"
-    rel="noopener noreferrer"
-    class="fixed bottom-6 right-6 bg-white border-2 border-sage text-sage px-4 py-3 rounded-full font-medium shadow-lg hover:bg-sage hover:!text-white transition-all duration-200 flex items-center gap-2 z-50"
+  <button
+    id="report-info-btn"
+    class="fixed bottom-6 right-6 bg-white border-2 border-sage text-sage px-4 py-3 rounded-full font-medium shadow-xl hover:shadow-2xl hover:bg-sage hover:!text-white transition-all duration-200 flex items-center gap-2 z-50"
     aria-label="Report incorrect gym information"
   >
     <span class="hidden sm:inline">Report Incorrect Info</span>
     <span class="sm:hidden">Report Error</span>
-  </a>
+  </button>
 </BaseLayout>

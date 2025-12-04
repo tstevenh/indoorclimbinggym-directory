@@ -12,6 +12,7 @@ import GradeSearchBar from '../../components/tools/GradeSearchBar.astro';
 import GymOutdoorToggle from '../../components/tools/GymOutdoorToggle.astro';
 import ConversionResults from '../../components/tools/ConversionResults.astro';
 import ConversionTable from '../../components/tools/ConversionTable.astro';
+import AffiliateBlock from '../../components/AffiliateBlock.astro';
 
 // Import bouldering grades data
 import boulderingGrades from '../../data/bouldering-grades.json';
@@ -206,6 +207,13 @@ const schemas = [toolSchema, faqSchema];
             <li>✓ <strong>Full reference table</strong> at the bottom for quick lookups</li>
           </ul>
         </div>
+
+        <AffiliateBlock 
+          title="Gear to Get You There" 
+          subtitle="Essential tools for bouldering progression."
+          category="training"
+          count={3}
+        />
 
         <!-- Understanding Bouldering Grade Systems -->
         <h2 class="text-3xl font-bold text-granite mb-4 mt-12">Understanding Bouldering Grade Systems</h2>
