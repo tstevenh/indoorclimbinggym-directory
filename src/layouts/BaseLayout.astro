@@ -208,10 +208,10 @@ if (breadcrumbs && breadcrumbs.length > 0) {
 
     <!-- Google Analytics (Consent-controlled) -->
     <script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=G-KQJE0F08ER"></script>
-    <script is:inline>
+    <script type="text/partytown">
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      
+
       // 1. Set Consent Defaults (Must be first)
       gtag('consent', 'default', {
         'analytics_storage': 'granted',
