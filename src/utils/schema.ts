@@ -164,7 +164,7 @@ export function generateItemListSchema(
       '@type': 'ListItem',
       position: index + 1,
       item: {
-        '@type': 'Place',
+        '@type': 'LocalBusiness',
         name: gym.name,
         url: `https://www.indoorclimbinggym.com/gyms/${gym.slug}`,
         address: {
