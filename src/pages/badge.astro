@@ -10,209 +10,188 @@ export const prerender = true;
 const title = "Get Your FREE Verified Gym Badge | IndoorClimbingGym.com";
 const description = "Display our verified badge on your website and get 6 weeks of FREE featured placement, listing upgrade, and priority in search results. No credit card required.";
 const keywords = ["climbing gym badge", "verified gym badge", "gym partnership", "climbing gym marketing"];
+
+const breadcrumbs = [
+  { label: 'Home', url: '/' },
+  { label: 'Get Verified', url: '/badge' },
+];
 ---
 
-<BaseLayout title={title} description={description} keywords={keywords}>
-  <!-- Hero Section -->
-  <section class="text-center mb-16">
-    <h1 class="text-5xl md:text-6xl font-bold text-granite mb-6">Get Your FREE Verified Gym Badge</h1>
-    <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-      Display our badge on your website and get <strong class="text-sage">6 weeks of featured placement</strong>, listing upgrade, and priority search results
-    </p>
-    <a href="#badges" class="inline-block bg-sage text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-sage/90 transition-colors">
-      Get Your Badge Now →
-    </a>
+<BaseLayout title={title} description={description} keywords={keywords} breadcrumbs={breadcrumbs}>
+  <!-- Full-Width Hero Section -->
+  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 bg-gradient-to-br from-sage/20 via-ivory to-sage/5 py-20 md:py-32 overflow-hidden">
+    <!-- Decorative background elements -->
+    <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#98a48b_1px,transparent_1px)] [background-size:20px_20px]"></div>
+    
+    <div class="container mx-auto px-4 relative z-10 text-center">
+      <span class="inline-block py-1 px-3 rounded-full bg-sage/10 text-sage font-bold text-sm tracking-wide uppercase mb-6">
+        For Gym Owners
+      </span>
+      <h1 class="text-5xl md:text-6xl font-bold text-granite mb-6 leading-tight">
+        Get Verified & <br/>
+        <span class="text-sage relative inline-block">
+          Get Featured
+          <svg class="absolute w-full h-3 -bottom-1 left-0 text-sage/30" viewBox="0 0 100 10" preserveAspectRatio="none">
+            <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="8" fill="none" />
+          </svg>
+        </span>
+      </h1>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-10">
+        Add our badge to your site and unlock <strong class="text-sage">6 weeks of FREE featured placement</strong>. Stand out to local climbers instantly.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a 
+          href="#badges" 
+          class="px-8 py-4 bg-sage text-white font-bold rounded-xl hover:bg-sage/90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
+        >
+          Get Your Badge
+        </a>
+        <a 
+          href="#how-it-works" 
+          class="px-8 py-4 bg-white text-sage font-bold rounded-xl border border-sage/20 hover:bg-sage/5 transition-all"
+        >
+          How It Works
+        </a>
+      </div>
+    </div>
   </section>
 
-  <!-- Value Proposition -->
-  <section class="bg-sage/10 rounded-lg p-8 mb-16 border-l-4 border-sage">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-3xl md:text-4xl font-bold text-granite mb-6 text-center">Here's What You Get (100% FREE)</h2>
-
-      <!-- Benefit 1: Featured Placement -->
-      <div class="bg-white rounded-lg p-6 mb-6 shadow-md">
-        <div class="flex items-start gap-4">
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-sage rounded-full flex items-center justify-center text-white text-xl font-bold">1</div>
+  <!-- Value Proposition (Overlapping Card) -->
+  <section class="container mx-auto px-4 -mt-20 relative z-20 mb-24">
+    <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-12">
+      <h2 class="text-3xl font-bold text-granite mb-12 text-center">Unlock Premium Benefits (100% Free)</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Benefit 1 -->
+        <div class="text-center p-6 rounded-2xl hover:bg-gray-50 transition-colors group">
+          <div class="w-16 h-16 bg-sage/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-sage transition-colors duration-300 shadow-sm">
+            <svg class="w-8 h-8 text-sage group-hover:!text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
           </div>
-          <div>
-            <h3 class="text-2xl font-bold text-granite mb-3">6 Weeks of Featured Placement</h3>
-            <p class="text-gray-700 mb-4">For the next 6 weeks, your gym will:</p>
-            <ul class="space-y-2 mb-4">
-              <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span><strong>Appear at the top</strong> of all city pages</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Display a prominent <strong>"Featured" badge</strong></span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Get <strong>3-5x more clicks</strong> than regular listings</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Stand out from competitors in your city</span>
-              </li>
-            </ul>
-            <p class="text-sm text-gray-600 italic">
-              <strong>Why it matters:</strong> Climbers click what stands out. Being "Featured" gives you more visibility without paying for ads or boosting posts.
-            </p>
-          </div>
+          <h3 class="text-xl font-bold text-granite mb-3">#1 Search Ranking</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Your gym will stick to the top of search results in your city for 6 full weeks. Get seen first by local climbers.
+          </p>
         </div>
-      </div>
 
-      <!-- Benefit 2: Free Listing Upgrade -->
-      <div class="bg-white rounded-lg p-6 mb-6 shadow-md">
-        <div class="flex items-start gap-4">
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-sage rounded-full flex items-center justify-center text-white text-xl font-bold">2</div>
+        <!-- Benefit 2 -->
+        <div class="text-center p-6 rounded-2xl hover:bg-gray-50 transition-colors group">
+          <div class="w-16 h-16 bg-sage/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-sage transition-colors duration-300 shadow-sm">
+            <svg class="w-8 h-8 text-sage group-hover:!text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
-          <div>
-            <h3 class="text-2xl font-bold text-granite mb-3">Free Listing Upgrade</h3>
-            <p class="text-gray-700 mb-4">We personally optimize your listing to look professional:</p>
-            <ul class="space-y-2 mb-4">
-              <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Add your <strong>logo</strong> (if available)</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Upload <strong>high-quality photos</strong> of your facility</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Fix all info (address, hours, pricing, description)</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Make it <strong>match your brand</strong> and look trustworthy</span>
-              </li>
-            </ul>
-            <p class="text-sm text-gray-600 italic">
-              <strong>Why it matters:</strong> Most gyms don't have time for this. We give you free professional polish that makes your business look better to climbers searching online.
-            </p>
-          </div>
+          <h3 class="text-xl font-bold text-granite mb-3">Official Verification</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Gain instant trust with the "Verified" checkmark on your profile. Show climbers your info is accurate and managed.
+          </p>
         </div>
-      </div>
 
-      <!-- Benefit 3: Priority in City Search -->
-      <div class="bg-white rounded-lg p-6 shadow-md">
-        <div class="flex items-start gap-4">
-          <div class="flex-shrink-0">
-            <div class="w-12 h-12 bg-sage rounded-full flex items-center justify-center text-white text-xl font-bold">3</div>
+        <!-- Benefit 3 -->
+        <div class="text-center p-6 rounded-2xl hover:bg-gray-50 transition-colors group">
+          <div class="w-16 h-16 bg-sage/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-sage transition-colors duration-300 shadow-sm">
+            <svg class="w-8 h-8 text-sage group-hover:!text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
           </div>
-          <div>
-            <h3 class="text-2xl font-bold text-granite mb-3">Priority in City Search Results</h3>
-            <p class="text-gray-700 mb-4">When climbers search for gyms in your city (e.g., "Climbing gyms in Austin"), your gym will:</p>
-            <ul class="space-y-2 mb-4">
-              <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span><strong>Rank at the top</strong> of local results</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Appear before competitors</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Get more clicks and visibility</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <svg class="w-5 h-5 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Look more authoritative to climbers</span>
-              </li>
-            </ul>
-            <p class="text-sm text-gray-600 italic">
-              <strong>Why it matters:</strong> This gives you a competitive edge — other local gyms won't get this visibility. It's like a temporary "SEO boost" inside our directory.
-            </p>
-          </div>
+          <h3 class="text-xl font-bold text-granite mb-3">Listing Makeover</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            We'll personally optimize your page with your logo, best photos, and updated hours to make your brand shine.
+          </p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- How It Works -->
-  <section class="mb-16">
-    <h2 class="text-3xl md:text-4xl font-bold text-granite text-center mb-12">How It Works (3 Simple Steps)</h2>
+  <section id="how-it-works" class="container mx-auto px-4 mb-24">
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-granite mb-4">How It Works</h2>
+      <p class="text-gray-600">Three simple steps to boost your visibility.</p>
+    </div>
+
     <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-      <!-- Step 1 -->
-      <div class="text-center">
-        <div class="w-16 h-16 bg-sage rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">1</div>
-        <h3 class="text-xl font-bold text-granite mb-3">Get Your Badge Code</h3>
-        <p class="text-gray-600">Copy the embed code below — it takes 30 seconds</p>
+      <div class="relative">
+        <div class="bg-gray-50 rounded-2xl p-8 h-full border border-gray-100 relative z-10">
+          <span class="absolute -top-4 -left-4 w-10 h-10 bg-sage text-white rounded-xl flex items-center justify-center font-bold shadow-lg">1</span>
+          <h3 class="text-xl font-bold text-granite mb-4 mt-2">Copy the Code</h3>
+          <p class="text-gray-600 text-sm">Choose the badge style that fits your website (Dark or Light) and copy the short HTML snippet.</p>
+        </div>
+        <!-- Connector line for desktop -->
+        <div class="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gray-200 z-0"></div>
       </div>
-      <!-- Step 2 -->
-      <div class="text-center">
-        <div class="w-16 h-16 bg-sage rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">2</div>
-        <h3 class="text-xl font-bold text-granite mb-3">Add to Your Website</h3>
-        <p class="text-gray-600">Paste the code in your footer (or contact your webmaster)</p>
+
+      <div class="relative">
+        <div class="bg-gray-50 rounded-2xl p-8 h-full border border-gray-100 relative z-10">
+          <span class="absolute -top-4 -left-4 w-10 h-10 bg-sage text-white rounded-xl flex items-center justify-center font-bold shadow-lg">2</span>
+          <h3 class="text-xl font-bold text-granite mb-4 mt-2">Add to Footer</h3>
+          <p class="text-gray-600 text-sm">Paste the code into your website's footer or partner page. It works on WordPress, Squarespace, Wix, and more.</p>
+        </div>
+        <div class="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gray-200 z-0"></div>
       </div>
-      <!-- Step 3 -->
-      <div class="text-center">
-        <div class="w-16 h-16 bg-sage rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">3</div>
-        <h3 class="text-xl font-bold text-granite mb-3">Get Featured!</h3>
-        <p class="text-gray-600">We verify the badge and activate your 6-week featured placement</p>
+
+      <div class="relative">
+        <div class="bg-gray-50 rounded-2xl p-8 h-full border border-gray-100 relative z-10">
+          <span class="absolute -top-4 -left-4 w-10 h-10 bg-sage text-white rounded-xl flex items-center justify-center font-bold shadow-lg">3</span>
+          <h3 class="text-xl font-bold text-granite mb-4 mt-2">Get Featured</h3>
+          <p class="text-gray-600 text-sm">Email us when it's live. We'll verify it and instantly activate your 6-week featured status!</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Badge Preview -->
-  <section id="badges" class="mb-16">
-    <h2 class="text-3xl md:text-4xl font-bold text-granite text-center mb-8">Choose Your Badge Style</h2>
-    <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-      <!-- Dark Badge -->
-      <div class="bg-white rounded-lg shadow-lg p-8 text-center">
-        <h3 class="text-xl font-bold text-granite mb-4">Dark Badge</h3>
-        <p class="text-sm text-gray-600 mb-6">For light backgrounds</p>
-        <div class="bg-gray-50 p-8 rounded-lg mb-6">
-          <img src="/badges/verified.png" alt="Verified Gym Badge - Dark" class="w-48 h-auto mx-auto" />
-        </div>
-        <button
-          onclick="copyCode('dark')"
-          class="bg-sage text-white px-6 py-3 rounded-lg font-medium hover:bg-sage/90 transition-colors w-full"
-        >
-          Copy Code
-        </button>
+  <!-- Badge Preview & Code -->
+  <section id="badges" class="bg-sage/5 py-24 mb-24">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-granite mb-4">Choose Your Badge</h2>
+        <p class="text-gray-600">Select the version that looks best on your website.</p>
       </div>
-      <!-- Light Badge -->
-      <div class="bg-gray-800 rounded-lg shadow-lg p-8 text-center">
-        <h3 class="text-xl font-bold text-white mb-4">Light Badge</h3>
-        <p class="text-sm text-gray-300 mb-6">For dark backgrounds</p>
-        <div class="bg-gray-700 p-8 rounded-lg mb-6">
-          <img src="/badges/verified-light.png" alt="Verified Gym Badge - Light" class="w-48 h-auto mx-auto" />
+
+      <div class="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+        
+        <!-- Dark Badge Option -->
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col">
+          <div class="bg-gray-50 p-12 flex items-center justify-center border-b border-gray-100">
+            <img src="/badges/verified.png" alt="Verified Gym Badge - Dark" class="w-48 h-auto drop-shadow-sm hover:scale-105 transition-transform duration-300" />
+          </div>
+          <div class="p-8 text-center flex-grow flex flex-col justify-between">
+            <div>
+              <h3 class="text-2xl font-bold text-granite mb-2">Dark Badge</h3>
+              <p class="text-gray-500 mb-8 text-sm">Best for light-colored backgrounds (white, gray).</p>
+            </div>
+            <button
+              onclick="copyCode('dark')"
+              class="w-full py-4 rounded-xl bg-granite text-white font-bold hover:bg-gray-800 transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+              Copy Embed Code
+            </button>
+          </div>
         </div>
-        <button
-          onclick="copyCode('light')"
-          class="bg-sage text-white px-6 py-3 rounded-lg font-medium hover:bg-sage/90 transition-colors w-full"
-        >
-          Copy Code
-        </button>
+
+        <!-- Light Badge Option -->
+        <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col">
+          <div class="bg-gray-900 p-12 flex items-center justify-center border-b border-gray-100 relative">
+            <div class="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
+            <img src="/badges/verified-light.png" alt="Verified Gym Badge - Light" class="w-48 h-auto drop-shadow-lg hover:scale-105 transition-transform duration-300 relative z-10" />
+          </div>
+          <div class="p-8 text-center flex-grow flex flex-col justify-between">
+            <div>
+              <h3 class="text-2xl font-bold text-granite mb-2">Light Badge</h3>
+              <p class="text-gray-500 mb-8 text-sm">Best for dark-colored footers or backgrounds.</p>
+            </div>
+            <button
+              onclick="copyCode('light')"
+              class="w-full py-4 rounded-xl bg-sage text-white font-bold hover:bg-sage/90 transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+              Copy Embed Code
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -237,124 +216,101 @@ const keywords = ["climbing gym badge", "verified gym badge", "gym partnership",
     </textarea>
   </div>
 
-  <!-- Installation Guide -->
-  <section class="mb-16 bg-sage/10 rounded-lg p-8 border-l-4 border-sage">
-    <h2 class="text-3xl md:text-4xl font-bold text-granite text-center mb-8">Installation Guide</h2>
-    <div class="max-w-3xl mx-auto">
-      <div class="space-y-6">
-        <!-- WordPress -->
-        <div class="bg-white rounded-lg p-6 shadow-md border-l-4 border-sage">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-sage rounded flex items-center justify-center text-white font-bold text-lg">W</div>
-            <h3 class="text-xl font-bold text-granite">WordPress</h3>
+  <!-- Installation Guide (Accordion Style) -->
+  <section class="container mx-auto px-4 mb-24">
+    <div class="max-w-3xl mx-auto bg-gray-50 rounded-3xl p-8 md:p-12 border border-gray-100">
+      <h2 class="text-3xl font-bold text-granite mb-8 text-center">Installation Guide</h2>
+      <div class="space-y-4">
+        
+        <details class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <summary class="flex items-center justify-between p-6 cursor-pointer list-none font-bold text-granite hover:bg-gray-50 transition-colors">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center font-bold text-sm">W</span>
+              WordPress
+            </div>
+            <svg class="w-5 h-5 text-gray-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </summary>
+          <div class="px-6 pb-6 text-gray-600 text-sm border-t border-gray-50">
+            <ol class="list-decimal list-inside space-y-2 mt-4">
+              <li>Go to <strong>Appearance → Widgets</strong></li>
+              <li>Add a <strong>Custom HTML</strong> widget to your footer</li>
+              <li>Paste the badge code</li>
+              <li>Click <strong>Save</strong></li>
+            </ol>
           </div>
-          <ol class="list-decimal list-inside space-y-2 text-gray-700">
-            <li>Go to <strong>Appearance → Widgets</strong></li>
-            <li>Add a <strong>Custom HTML</strong> widget to your footer</li>
-            <li>Paste the badge code</li>
-            <li>Click <strong>Save</strong></li>
-          </ol>
-        </div>
-        <!-- Wix -->
-        <div class="bg-white rounded-lg p-6 shadow-md border-l-4 border-sage">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-sage rounded flex items-center justify-center text-white font-bold text-lg">WX</div>
-            <h3 class="text-xl font-bold text-granite">Wix</h3>
+        </details>
+
+        <details class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <summary class="flex items-center justify-between p-6 cursor-pointer list-none font-bold text-granite hover:bg-gray-50 transition-colors">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center font-bold text-sm">Sq</span>
+              Squarespace
+            </div>
+            <svg class="w-5 h-5 text-gray-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </summary>
+          <div class="px-6 pb-6 text-gray-600 text-sm border-t border-gray-50">
+            <ol class="list-decimal list-inside space-y-2 mt-4">
+              <li>Edit your footer section</li>
+              <li>Add a <strong>Code Block</strong></li>
+              <li>Paste the badge code</li>
+              <li>Click <strong>Apply</strong> and save</li>
+            </ol>
           </div>
-          <ol class="list-decimal list-inside space-y-2 text-gray-700">
-            <li>Click the <strong>+ (Add)</strong> button on the left</li>
-            <li>Select <strong>Embed → Custom Element</strong></li>
-            <li>Click <strong>Add Custom Code</strong></li>
-            <li>Paste the badge code and position in footer</li>
-          </ol>
-        </div>
-        <!-- Squarespace -->
-        <div class="bg-white rounded-lg p-6 shadow-md border-l-4 border-sage">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-sage rounded flex items-center justify-center text-white font-bold text-lg">S</div>
-            <h3 class="text-xl font-bold text-granite">Squarespace</h3>
+        </details>
+
+        <details class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <summary class="flex items-center justify-between p-6 cursor-pointer list-none font-bold text-granite hover:bg-gray-50 transition-colors">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center font-bold text-sm">Wx</span>
+              Wix
+            </div>
+            <svg class="w-5 h-5 text-gray-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </summary>
+          <div class="px-6 pb-6 text-gray-600 text-sm border-t border-gray-50">
+            <ol class="list-decimal list-inside space-y-2 mt-4">
+              <li>Click the <strong>+ (Add)</strong> button on the left</li>
+              <li>Select <strong>Embed → Custom Element</strong></li>
+              <li>Click <strong>Add Custom Code</strong></li>
+              <li>Paste the badge code and position in footer</li>
+            </ol>
           </div>
-          <ol class="list-decimal list-inside space-y-2 text-gray-700">
-            <li>Edit your footer section</li>
-            <li>Add a <strong>Code Block</strong></li>
-            <li>Paste the badge code</li>
-            <li>Click <strong>Apply</strong> and save</li>
-          </ol>
-        </div>
-        <!-- Custom HTML -->
-        <div class="bg-white rounded-lg p-6 shadow-md border-l-4 border-sage">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 bg-sage rounded flex items-center justify-center text-white font-bold text-lg">&lt;/&gt;</div>
-            <h3 class="text-xl font-bold text-granite">Custom HTML Site</h3>
+        </details>
+
+        <details class="group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <summary class="flex items-center justify-between p-6 cursor-pointer list-none font-bold text-granite hover:bg-gray-50 transition-colors">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 bg-gray-100 text-gray-600 rounded-lg flex items-center justify-center font-bold text-sm">&lt;/&gt;</span>
+              Custom HTML
+            </div>
+            <svg class="w-5 h-5 text-gray-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          </summary>
+          <div class="px-6 pb-6 text-gray-600 text-sm border-t border-gray-50">
+            <ol class="list-decimal list-inside space-y-2 mt-4">
+              <li>Open your footer HTML file (usually <code>footer.html</code>)</li>
+              <li>Find the footer section (<code>&lt;footer&gt;</code>)</li>
+              <li>Paste the badge code before the closing tag</li>
+              <li>Save and upload</li>
+            </ol>
           </div>
-          <ol class="list-decimal list-inside space-y-2 text-gray-700">
-            <li>Open your footer HTML file (usually <code>footer.html</code> or <code>index.html</code>)</li>
-            <li>Find the footer section (<code>&lt;footer&gt;</code>)</li>
-            <li>Paste the badge code before <code>&lt;/footer&gt;</code></li>
-            <li>Save and upload to your server</li>
-          </ol>
-        </div>
+        </details>
+
       </div>
       <div class="mt-8 text-center">
-        <p class="text-gray-600 mb-4">Need help installing? We're here for you!</p>
-        <a href="/contact" class="text-sage font-semibold hover:underline">Contact us for installation help →</a>
+        <a href="/contact" class="text-sage font-semibold hover:underline">Need help installing? Contact support →</a>
       </div>
     </div>
   </section>
 
-  <!-- FAQ -->
-  <section class="mb-16">
-    <h2 class="text-3xl md:text-4xl font-bold text-granite text-center mb-12">Frequently Asked Questions</h2>
-    <div class="max-w-3xl mx-auto space-y-6">
-      <!-- FAQ 1 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-xl font-bold text-granite mb-3">Is this really free?</h3>
-        <p class="text-gray-700">Yes! 100% free. No credit card required, no hidden fees. We're building a network of trusted gyms and want you to be part of it.</p>
-      </div>
-      <!-- FAQ 2 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-xl font-bold text-granite mb-3">How long do I get featured placement?</h3>
-        <p class="text-gray-700">You get 6 full weeks of featured placement starting the day we verify the badge is live on your site. After 6 weeks, you can extend by keeping the badge displayed.</p>
-      </div>
-      <!-- FAQ 3 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-xl font-bold text-granite mb-3">Can I remove the badge anytime?</h3>
-        <p class="text-gray-700">Yes, you can remove it whenever you want. However, featured placement will end if the badge is removed before the 6-week period.</p>
-      </div>
-      <!-- FAQ 4 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-xl font-bold text-granite mb-3">Will this slow down my website?</h3>
-        <p class="text-gray-700">No. The badge is a simple image that loads quickly (under 50KB). It won't affect your site speed or performance.</p>
-      </div>
-      <!-- FAQ 5 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-xl font-bold text-granite mb-3">What if I need help installing?</h3>
-        <p class="text-gray-700">We're happy to help! Contact us and we'll guide you through the installation or even do it for you if you provide access.</p>
-      </div>
-      <!-- FAQ 6 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-xl font-bold text-granite mb-3">How do you verify the badge is installed?</h3>
-        <p class="text-gray-700">After you install the badge, email us your website URL. We'll verify it's live and activate your featured placement within 24 hours.</p>
-      </div>
-      <!-- FAQ 7 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="text-xl font-bold text-granite mb-3">What happens after 6 weeks?</h3>
-        <p class="text-gray-700">After 6 weeks, your listing returns to standard placement. You can contact us to discuss extended featured placement options or paid upgrades.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section id="apply" class="bg-gradient-to-r from-sage to-sage/80 rounded-lg p-12 text-white text-center mb-16">
-    <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to Get Featured?</h2>
-    <p class="text-xl mb-8 max-w-2xl mx-auto">
-      Copy the badge code above, add it to your website, and email us to activate your <strong>6 weeks of FREE featured placement</strong> 
-    </p>
-    <div class="space-y-4">
-      <a href="/contact" class="inline-block bg-white text-sage px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
-        Contact Us to Get Started
+  <!-- Final CTA -->
+  <section class="bg-sage py-24 mb-0 text-center text-white">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Get Featured?</h2>
+      <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+        Install the badge today and email us at <a href="mailto:tim@indoorclimbinggym.com" class="text-white underline hover:text-white/80 transition-colors">tim@indoorclimbinggym.com</a> to activate your benefits.
+      </p>
+      <a href="#badges" class="inline-block bg-white text-sage px-10 py-5 rounded-xl font-bold text-lg hover:bg-ivory hover:text-sage transition-all shadow-xl">
+        Get Your Badge Code
       </a>
-      <p class="text-sm text-white/80">Or email us at: <a href="mailto:tim@indoorclimbinggym.com" class="underline font-semibold">tim@indoorclimbinggym.com</a></p>
     </div>
   </section>
 
@@ -370,14 +326,17 @@ const keywords = ["climbing gym badge", "verified gym badge", "gym partnership",
       document.execCommand('copy');
 
       // Show feedback
-      const button = event.target;
-      const originalText = button.innerHTML;
-      button.innerHTML = 'Copied!';
-      button.style.backgroundColor = '#4ade80';
+      const button = event.target.closest('button'); // Use closest in case icon is clicked
+      const originalHTML = button.innerHTML;
+      
+      button.innerHTML = '<span class="flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Copied!</span>';
+      button.style.backgroundColor = '#10b981'; // green-500
+      button.style.color = 'white';
 
       setTimeout(() => {
-        button.innerHTML = originalText;
+        button.innerHTML = originalHTML;
         button.style.backgroundColor = '';
+        button.style.color = '';
       }, 2000);
     }
   </script>

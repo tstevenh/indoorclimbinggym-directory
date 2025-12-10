@@ -43,6 +43,8 @@ if (query && query.trim()) {
     (g) =>
       g.name?.toLowerCase().includes(searchTerm) ||
       g.city?.toLowerCase().includes(searchTerm) ||
+      g.address?.toLowerCase().includes(searchTerm) ||
+      g.postal_code?.toLowerCase().includes(searchTerm) ||
       g.amenities?.toLowerCase().includes(searchTerm) ||
       g.description_short?.toLowerCase().includes(searchTerm)
   );

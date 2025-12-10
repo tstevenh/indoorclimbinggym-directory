@@ -1,4 +1,4 @@
----
+--- 
 /**
  * Contact Us Page
  * Get in touch with IndoorClimbingGym team
@@ -13,6 +13,11 @@ const title = 'Contact Us - IndoorClimbingGym';
 const description = 'Get in touch with IndoorClimbingGym. Whether you\'re a climber, gym owner, or business partner, we\'re here to help.';
 const keywords = ['contact', 'support', 'gym owners', 'business inquiries', 'climbing gym directory', 'submit gym', 'claim listing'];
 const canonical = 'https://www.indoorclimbinggym.com/contact';
+
+const breadcrumbs = [
+  { label: 'Home', url: '/' },
+  { label: 'Contact', url: '/contact' },
+];
 ---
 
 <BaseLayout
@@ -20,85 +25,96 @@ const canonical = 'https://www.indoorclimbinggym.com/contact';
   description={description}
   keywords={keywords}
   canonical={canonical}
+  breadcrumbs={breadcrumbs}
 >
-  <!-- Hero Section -->
-  <section class="bg-gradient-to-br from-sage/20 to-ivory py-16 md:py-20 -mx-4 px-4 mb-12">
-    <div class="max-w-4xl mx-auto text-center">
-      <h1 class="text-4xl md:text-5xl font-bold text-granite mb-6">
-        Contact Us
+  <!-- Full-Width Hero Section -->
+  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 bg-gradient-to-br from-sage/20 via-ivory to-sage/5 py-20 md:py-32 overflow-hidden">
+    <!-- Decorative background elements -->
+    <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#98a48b_1px,transparent_1px)] [background-size:20px_20px]"></div>
+    
+    <div class="container mx-auto px-4 relative z-10 text-center">
+      <span class="inline-block py-1 px-3 rounded-full bg-sage/10 text-sage font-bold text-sm tracking-wide uppercase mb-6">
+        Get In Touch
+      </span>
+      <h1 class="text-5xl md:text-6xl font-bold text-granite mb-6 leading-tight">
+        We'd Love to Hear <br/>
+        <span class="text-sage relative inline-block">
+          From You
+          <svg class="absolute w-full h-3 -bottom-1 left-0 text-sage/30" viewBox="0 0 100 10" preserveAspectRatio="none">
+            <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="8" fill="none" />
+          </svg>
+        </span>
       </h1>
-      <p class="text-xl md:text-2xl text-gray-700">
-        We'd love to hear from you. Get in touch with our team.
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        Whether you have a question about a gym, want to partner with us, or just want to say hi, our team is ready to answer all your questions.
       </p>
     </div>
   </section>
 
-  <!-- Contact Information Cards -->
-  <section class="max-w-6xl mx-auto mb-16">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Email Support Card -->
-      <div class="bg-white rounded-lg shadow-md p-8 text-center hover:shadow-lg transition-shadow">
-        <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+  <!-- Contact Cards (Overlapping) -->
+  <section class="container mx-auto px-4 -mt-20 relative z-20 mb-24">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      
+      <!-- Support Card -->
+      <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center hover:-translate-y-1 transition-transform duration-300 group">
+        <div class="w-16 h-16 bg-sage/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-sage transition-colors duration-300">
+          <svg class="w-8 h-8 text-sage group-hover:!text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
         </div>
-        <h3 class="font-bold text-granite text-xl mb-3">Email Support</h3>
-        <a href="mailto:support@indoorclimbinggym.com" class="text-sage hover:text-sage/80 font-medium text-lg block mb-2">
+        <h3 class="text-2xl font-bold text-granite mb-2">Climber Support</h3>
+        <p class="text-gray-500 mb-6 text-sm">Need help finding a gym or reporting an issue?</p>
+        <a href="mailto:support@indoorclimbinggym.com" class="text-sage font-bold hover:text-sage/80 transition-colors">
           support@indoorclimbinggym.com
         </a>
-        <p class="text-gray-600 text-sm">
-          We typically respond within 24 hours
-        </p>
       </div>
 
-      <!-- Business Inquiries Card -->
-      <div class="bg-white rounded-lg shadow-md p-8 text-center hover:shadow-lg transition-shadow">
-        <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Business Card -->
+      <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center hover:-translate-y-1 transition-transform duration-300 group">
+        <div class="w-16 h-16 bg-sage/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-sage transition-colors duration-300">
+          <svg class="w-8 h-8 text-sage group-hover:!text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-granite mb-2">Partnerships</h3>
+        <p class="text-gray-500 mb-6 text-sm">Interested in advertising or working together?</p>
+        <a href="mailto:business@indoorclimbinggym.com" class="text-sage font-bold hover:text-sage/80 transition-colors">
+          business@indoorclimbinggym.com
+        </a>
+      </div>
+
+      <!-- Gym Owner Card -->
+      <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 text-center hover:-translate-y-1 transition-transform duration-300 group">
+        <div class="w-16 h-16 bg-sage/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-sage transition-colors duration-300">
+          <svg class="w-8 h-8 text-sage group-hover:!text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
           </svg>
         </div>
-        <h3 class="font-bold text-granite text-xl mb-3">Business Inquiries</h3>
-        <a href="mailto:business@indoorclimbinggym.com" class="text-sage hover:text-sage/80 font-medium text-lg block mb-2">
-          business@indoorclimbinggym.com
-        </a>
-        <p class="text-gray-600 text-sm">
-          For partnerships and advertising
-        </p>
-      </div>
-
-      <!-- Gym Owners Card -->
-      <div class="bg-white rounded-lg shadow-md p-8 text-center hover:shadow-lg transition-shadow">
-        <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        </div>
-        <h3 class="font-bold text-granite text-xl mb-3">Gym Owners</h3>
-        <p class="text-gray-700 font-medium mb-4">
-          Submit or claim your gym
-        </p>
+        <h3 class="text-2xl font-bold text-granite mb-2">Gym Owners</h3>
+        <p class="text-gray-500 mb-6 text-sm">Claim your listing or update your gym\'s details.</p>
         <a
           href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard`}
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-block bg-sage text-white px-6 py-2 rounded-lg font-medium hover:bg-sage/90 transition-colors"
+          class="inline-block bg-sage text-white px-6 py-2 rounded-lg font-bold hover:bg-sage/90 transition-all shadow-md hover:shadow-lg"
         >
-          Gym Owner Portal
+          Go to Dashboard →
         </a>
       </div>
+
     </div>
   </section>
 
   <!-- Contact Form Section -->
-  <section class="bg-gray-50 py-16 -mx-4 px-4 mb-16">
-    <div class="max-w-2xl mx-auto">
-      <h2 class="text-3xl font-bold text-granite mb-8 text-center">Send Us a Message</h2>
+  <section class="container mx-auto px-4 mb-24">
+    <div class="max-w-3xl mx-auto bg-gray-50 rounded-3xl p-8 md:p-12 border border-gray-100">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-granite mb-4">Send us a Message</h2>
+        <p class="text-gray-600">Fill out the form below and we\'ll get back to you as soon as possible.</p>
+      </div>
 
       <!-- Tally Contact Form Embed -->
-      <div class="bg-white rounded-lg shadow-md p-8">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <iframe
           data-tally-src="https://tally.so/embed/lbDllX?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
           loading="lazy"
@@ -108,7 +124,6 @@ const canonical = 'https://www.indoorclimbinggym.com/contact';
           marginheight="0"
           marginwidth="0"
           title="Contact Form"
-          class="rounded-lg"
         ></iframe>
       </div>
 
@@ -120,80 +135,44 @@ const canonical = 'https://www.indoorclimbinggym.com/contact';
   </section>
 
   <!-- FAQ Section -->
-  <section class="max-w-4xl mx-auto mb-16">
-    <h2 class="text-3xl font-bold text-granite mb-8 text-center">Frequently Asked Questions</h2>
-    <div class="space-y-6">
-      <!-- FAQ 1 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="font-bold text-granite text-lg mb-3">How do I submit a gym to your directory?</h3>
-        <p class="text-gray-700">
-          Gym owners can submit their facility through our <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard`} class="text-sage hover:underline" target="_blank" rel="noopener noreferrer">Gym Owner Portal</a>.
-          Simply create an account, fill out your gym's information (including address, hours, pricing, amenities, and photos),
-          and submit for review. Our team will verify the information and publish your listing within 2-3 business days.
-          Listing your gym is completely free!
-        </p>
-      </div>
+  <section class="container mx-auto px-4 mb-20">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-granite mb-12 text-center">Frequently Asked Questions</h2>
+      
+      <div class="space-y-6">
+        <!-- FAQ 1 -->
+        <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <h3 class="text-xl font-bold text-granite mb-3 flex items-center gap-3">
+            <span class="w-8 h-8 bg-sage/10 rounded-full flex items-center justify-center text-sage text-sm font-bold">1</span>
+            How do I submit a gym?
+          </h3>
+          <p class="text-gray-600 leading-relaxed pl-11">
+            Gym owners can submit their facility through our <a href="${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard" class="text-sage font-medium hover:underline" target="_blank" rel="noopener noreferrer">Gym Owner Portal</a>. It's free, fast, and gives you control over your listing.
+          </p>
+        </div>
 
-      <!-- FAQ 2 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="font-bold text-granite text-lg mb-3">How do I claim my gym listing?</h3>
-        <p class="text-gray-700">
-          If your gym is already listed on our site, you can claim it by visiting the <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard`} class="text-sage hover:underline" target="_blank" rel="noopener noreferrer">Gym Owner Portal</a>
-          and searching for your gym. Click "Claim This Gym" and provide verification that you're the owner or authorized representative
-          (business email, phone number, or documentation). Once verified, you'll have full control to update your gym's information,
-          add photos, respond to reviews, and access analytics about your listing's performance.
-        </p>
-      </div>
+        <!-- FAQ 2 -->
+        <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <h3 class="text-xl font-bold text-granite mb-3 flex items-center gap-3">
+            <span class="w-8 h-8 bg-sage/10 rounded-full flex items-center justify-center text-sage text-sm font-bold">2</span>
+            Is listing my gym free?
+          </h3>
+          <p class="text-gray-600 leading-relaxed pl-11">
+            Yes! Basic listings are always free. We believe in open access to climbing information. We do offer premium features for enhanced visibility, but you never have to pay to be listed.
+          </p>
+        </div>
 
-      <!-- FAQ 3 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="font-bold text-granite text-lg mb-3">Is there a cost to list my gym?</h3>
-        <p class="text-gray-700">
-          No, basic listings are completely free! We believe in supporting the climbing community by making gym information
-          accessible to all climbers. We do offer premium features for gym owners who want enhanced visibility, such as featured
-          placement in search results, priority listing in city pages, custom branding options, and detailed analytics.
-          Contact us at <a href="mailto:business@indoorclimbinggym.com" class="text-sage hover:underline">business@indoorclimbinggym.com</a>
-          to learn more about premium options.
-        </p>
-      </div>
-
-      <!-- FAQ 4 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="font-bold text-granite text-lg mb-3">How do I report incorrect information?</h3>
-        <p class="text-gray-700">
-          We strive for accuracy, but sometimes information changes or errors occur. If you notice incorrect details about a gym
-          (wrong hours, outdated pricing, closed facility, etc.), please email us at
-          <a href="mailto:support@indoorclimbinggym.com" class="text-sage hover:underline">support@indoorclimbinggym.com</a>
-          with the gym name, the incorrect information, and the correct details. Include any supporting documentation if available.
-          We'll update the listing within 24-48 hours. You can also report issues directly on the gym's page if you're logged in.
-        </p>
-      </div>
-
-      <!-- FAQ 5 -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h3 class="font-bold text-granite text-lg mb-3">How can I advertise on your site?</h3>
-        <p class="text-gray-700">
-          We offer various advertising opportunities for climbing-related businesses, including banner ads, sponsored listings,
-          newsletter sponsorships, and content partnerships. Our audience consists of active climbers actively searching for gyms,
-          gear, and climbing-related services. For advertising inquiries, rates, and available placements, please contact our business team at
-          <a href="mailto:business@indoorclimbinggym.com" class="text-sage hover:underline">business@indoorclimbinggym.com</a>.
-          We'll be happy to discuss custom packages tailored to your marketing goals.
-        </p>
+        <!-- FAQ 3 -->
+        <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <h3 class="text-xl font-bold text-granite mb-3 flex items-center gap-3">
+            <span class="w-8 h-8 bg-sage/10 rounded-full flex items-center justify-center text-sage text-sm font-bold">3</span>
+            How do I report incorrect info?
+          </h3>
+          <p class="text-gray-600 leading-relaxed pl-11">
+            If you see something wrong, please <a href="mailto:support@indoorclimbinggym.com" class="text-sage font-medium hover:underline">email us</a> with the gym name and the correct details. We verify and update listings within 48 hours.
+          </p>
+        </div>
       </div>
     </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="text-center bg-sage rounded-lg p-12 text-white">
-    <h2 class="text-3xl font-bold mb-4">Ready to explore climbing gyms?</h2>
-    <p class="text-lg mb-8 text-white/90">
-      Search our directory of climbing gyms across the United States
-    </p>
-    <a
-      href="/search"
-      class="inline-block bg-white text-sage px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
-    >
-      Browse Gyms
-    </a>
   </section>
 </BaseLayout>

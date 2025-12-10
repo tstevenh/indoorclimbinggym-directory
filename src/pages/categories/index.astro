@@ -8,18 +8,16 @@
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { fetchGyms } from '../../config/api';
-import gymsJsonData from '../../data/gyms.json';
 import AffiliateBlock from '../../components/AffiliateBlock.astro';
 
 export const prerender = true;
 
-// Fetch gyms from API (with JSON fallback)
-let gymsData;
+// Fetch gyms from API
+let gymsData = [];
 try {
   gymsData = await fetchGyms();
 } catch (error) {
-  console.log('API unavailable, using local JSON data');
-  gymsData = gymsJsonData;
+  console.error('Failed to fetch gyms:', error);
 }
 
 /**

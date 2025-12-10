@@ -1,41 +1,44 @@
 ---
 /**
- * Blog Index Page (/blog/)
+ * Blog Index Page (/blog/ and /blog/[page])
  * Lists all blog posts with filtering and pagination
  */
 
 export const prerender = true;
 
 import { getCollection } from 'astro:content';
+import type { Page } from 'astro';
+import type { CollectionEntry } from 'astro:content';
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogCard from '../../components/blog/BlogCard.astro';
 import BlogCategories from '../../components/blog/BlogCategories.astro';
 import { generateItemListSchema } from '../../utils/schema';
 
-// Get all blog posts and sort by date (most recent first)
-const allPosts = await getCollection('blog');
-const sortedPosts = allPosts.sort(
-  (a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime()
-);
+export async function getStaticPaths({ paginate }: { paginate: any }) {
+  const allPosts = await getCollection('blog');
+  const sortedPosts = allPosts.sort(
+    (a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime()
+  );
 
-// Pagination setup
-const postsPerPage = 12;
-const currentPage = 1;
-const startIndex = (currentPage - 1) * postsPerPage;
-const endIndex = startIndex + postsPerPage;
-const paginatedPosts = sortedPosts.slice(startIndex, endIndex);
-const totalPages = Math.ceil(sortedPosts.length / postsPerPage);
+  return paginate(sortedPosts, { pageSize: 12 });
+}
+
+interface Props {
+  page: Page<CollectionEntry<'blog'>>;
+}
+
+const { page } = Astro.props;
 
 // SEO metadata
-const title = 'Indoor Climbing Guides, Tips & Resources';
+const title = page.currentPage === 1 ? 'Indoor Climbing Guides, Tips & Resources' : `Indoor Climbing Guides - Page ${page.currentPage}`;
 const description =
   'Expert guides, tips, and resources for indoor climbing. Learn about climbing techniques, gym memberships, gear reviews, and more from experienced climbers.';
-const pageUrl = 'https://www.indoorclimbinggym.com/blog';
+const pageUrl = `https://www.indoorclimbinggym.com/blog${page.currentPage > 1 ? `/${page.currentPage}` : ''}`;
 
 // Generate ItemList schema for blog posts
 const itemListSchema = generateItemListSchema(
-  paginatedPosts.map((post, index) => ({
+  page.data.map((post, index) => ({
     id: index,
     name: post.data.title,
     slug: post.slug,
@@ -47,7 +50,7 @@ const itemListSchema = generateItemListSchema(
     latitude: 0,
     longtitude: 0,
     phone: '',
-    website: `${pageUrl}/${post.slug}`,
+    website: `https://www.indoorclimbinggym.com/blog/${post.slug}`,
     photo: post.data.heroImage,
     rating: 0,
     day_pass_price_local: 0,
@@ -63,8 +66,12 @@ const itemListSchema = generateItemListSchema(
 // Breadcrumbs
 const breadcrumbs = [
   { label: 'Home', url: 'https://www.indoorclimbinggym.com' },
-  { label: 'Guides', url: pageUrl },
+  { label: 'Guides', url: 'https://www.indoorclimbinggym.com/blog' },
 ];
+
+if (page.currentPage > 1) {
+    breadcrumbs.push({ label: `Page ${page.currentPage}`, url: pageUrl });
+}
 
 const keywords = [
   'climbing guides',
@@ -99,9 +106,9 @@ const keywords = [
   <BlogCategories currentCategory="all" />
 
   <!-- Blog Posts Grid -->
-  {paginatedPosts.length > 0 ? (
+  {page.data.length > 0 ? (
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-      {paginatedPosts.map((post) => (
+      {page.data.map((post) => (
         <BlogCard
           slug={post.slug}
           title={post.data.title}
@@ -124,33 +131,33 @@ const keywords = [
   )}
 
   <!-- Pagination -->
-  {totalPages > 1 && (
+  {page.lastPage > 1 && (
     <nav class="flex justify-center items-center gap-2 mt-12" aria-label="Pagination">
-      {currentPage > 1 && (
+      {page.url.prev && (
         <a
-          href={currentPage === 2 ? '/blog' : `/blog/page/${currentPage - 1}`}
+          href={page.url.prev}
           class="px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50"
         >
           Previous
         </a>
       )}
 
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+      {Array.from({ length: page.lastPage }, (_, i) => i + 1).map((pageNum) => (
         <a
-          href={page === 1 ? '/blog' : `/blog/page/${page}`}
+          href={pageNum === 1 ? '/blog' : `/blog/${pageNum}`}
           class={`px-4 py-2 rounded ${
-            page === currentPage
+            pageNum === page.currentPage
               ? 'bg-sage text-white'
               : 'bg-white border border-gray-300 hover:bg-gray-50'
           }`}
         >
-          {page}
+          {pageNum}
         </a>
       ))}
 
-      {currentPage < totalPages && (
+      {page.url.next && (
         <a
-          href={`/blog/page/${currentPage + 1}`}
+          href={page.url.next}
           class="px-4 py-2 bg-white border border-gray-300 rounded hover:bg-gray-50"
         >
           Next
