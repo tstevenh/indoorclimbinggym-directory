@@ -14,6 +14,20 @@ export interface SEOProps {
   nofollow?: boolean;
 }
 
+// State abbreviation helper for shorter titles
+function getStateAbbreviation(state: string): string | null {
+  const stateMap: Record<string, string> = {
+    'washington': 'WA', 'california': 'CA', 'texas': 'TX',
+    'colorado': 'CO', 'new york': 'NY', 'florida': 'FL',
+    'oregon': 'OR', 'arizona': 'AZ', 'utah': 'UT', 'nevada': 'NV',
+    'georgia': 'GA', 'north carolina': 'NC', 'virginia': 'VA',
+    'massachusetts': 'MA', 'pennsylvania': 'PA', 'ohio': 'OH',
+    'illinois': 'IL', 'michigan': 'MI', 'minnesota': 'MN',
+    'wisconsin': 'WI', 'tennessee': 'TN', 'missouri': 'MO',
+  };
+  return stateMap[state.toLowerCase()] || null;
+}
+
 /**
  * Generate complete SEO meta tags for a page
  * @param props SEO properties
@@ -70,10 +84,24 @@ export function generateSEO(props: SEOProps) {
  * @param gymName Name of the gym
  * @param city City name
  * @param region State/region
+ * @param rating Optional rating for CTR boost
  * @returns Optimized title
  */
-export function generateGymTitle(gymName: string, city: string, region: string): string {
-  return `${gymName} - Climbing Gym in ${city}, ${region}`;
+export function generateGymTitle(
+  gymName: string,
+  city: string,
+  region: string,
+  rating?: number
+): string {
+  // Rating-forward formula for higher CTR
+  if (rating && rating > 0) {
+    const ratingStr = rating.toFixed(1);
+    const title = `${ratingStr}★ ${gymName} | ${city} Climbing Gym`;
+    if (title.length <= 60) return title;
+  }
+  // Fallback: shorter format
+  const fallback = `${gymName} | ${city} Climbing Gym`;
+  return fallback.length > 60 ? fallback.substring(0, 57) + '...' : fallback;
 }
 
 /**
@@ -82,26 +110,41 @@ export function generateGymTitle(gymName: string, city: string, region: string):
  * @param city City name
  * @param climbingTypes Types of climbing offered
  * @param rating Rating out of 5
+ * @param dayPassPrice Optional day pass price
+ * @param topAmenity Optional top amenity to highlight
  * @returns Optimized description
  */
 export function generateGymDescription(
   gymName: string,
   city: string,
   climbingTypes: string[],
-  rating: number
+  rating: number,
+  dayPassPrice?: number,
+  topAmenity?: string
 ): string {
-  const types = climbingTypes.slice(0, 3).map(t => t.replace(/_/g, ' ')).join(', ');
-  return `${gymName} in ${city} offers ${types}. Rated ${rating}★. View hours, prices, amenities, and directions. Find your next climb.`;
+  const ratingStr = rating.toFixed(1);
+  const types = climbingTypes.slice(0, 2).map(t => t.replace(/_/g, ' ')).join(' & ');
+  let desc = `Rated ${ratingStr}★ by climbers. ${gymName} offers ${types}`;
+  if (topAmenity) desc += ` + ${topAmenity}`;
+  if (dayPassPrice && dayPassPrice > 0) desc += `. Day pass from $${dayPassPrice}`;
+  desc += `. Hours, directions & photos inside.`;
+  return desc.length > 160 ? desc.substring(0, 157) + '...' : desc;
 }
 
 /**
  * Generate SEO-optimized title for city pages
  * @param city City name
  * @param state State name
+ * @param count Optional gym count for CTR boost
  * @returns Optimized title
  */
-export function generateCityTitle(city: string, state: string): string {
-  return `Best Climbing Gyms in ${city}, ${state} | Indoor Climbing`;
+export function generateCityTitle(city: string, state: string, count?: number): string {
+  if (count && count > 0) {
+    const stateAbbr = getStateAbbreviation(state) || state;
+    const title = `${count} Best Climbing Gyms in ${city}, ${stateAbbr}`;
+    if (title.length <= 60) return title;
+  }
+  return `Best Climbing Gyms in ${city}, ${state}`;
 }
 
 /**
@@ -110,24 +153,39 @@ export function generateCityTitle(city: string, state: string): string {
  * @param state State name
  * @param count Number of gyms
  * @param avgRating Average rating
+ * @param priceMin Optional minimum price
+ * @param priceMax Optional maximum price
  * @returns Optimized description
  */
 export function generateCityDescription(
   city: string,
   state: string,
   count: number,
-  avgRating: number
+  avgRating: number,
+  priceMin?: number,
+  priceMax?: number
 ): string {
-  return `Discover ${count} climbing gyms in ${city}, ${state}. Compare prices, hours, amenities, and ratings (avg ${avgRating}★). Find bouldering and rope climbing near you.`;
+  let desc = `Compare ${count} climbing gyms in ${city}. Avg rating ${avgRating.toFixed(1)}★`;
+  if (priceMin && priceMax && priceMin > 0) {
+    desc += `. Day passes $${priceMin}-$${priceMax}`;
+  }
+  desc += `. Bouldering, lead & top rope. Find your perfect gym today.`;
+  return desc.length > 160 ? desc.substring(0, 157) + '...' : desc;
 }
 
 /**
  * Generate SEO-optimized title for state pages
  * @param state State name
+ * @param gymCount Optional gym count
+ * @param cityCount Optional city count
  * @returns Optimized title
  */
-export function generateStateTitle(state: string): string {
-  return `Indoor Climbing Gyms in ${state} | Complete Directory`;
+export function generateStateTitle(state: string, gymCount?: number, cityCount?: number): string {
+  if (gymCount && cityCount && gymCount > 0) {
+    const title = `${gymCount} Climbing Gyms in ${state} | ${cityCount} Cities`;
+    if (title.length <= 60) return title;
+  }
+  return `Climbing Gyms in ${state} | Complete Directory`;
 }
 
 /**
@@ -135,14 +193,23 @@ export function generateStateTitle(state: string): string {
  * @param state State name
  * @param cityCount Number of cities with gyms
  * @param gymCount Total gym count
+ * @param topGymName Optional top gym name
+ * @param topGymRating Optional top gym rating
  * @returns Optimized description
  */
 export function generateStateDescription(
   state: string,
   cityCount: number,
-  gymCount: number
+  gymCount: number,
+  topGymName?: string,
+  topGymRating?: number
 ): string {
-  return `Find climbing gyms across ${cityCount} cities in ${state}. Browse ${gymCount} gyms with reviews, prices, and directions. Your complete guide to indoor climbing in ${state}.`;
+  let desc = `Find ${gymCount} climbing gyms across ${cityCount} cities in ${state}`;
+  if (topGymName && topGymRating) {
+    desc += `. Top-rated: ${topGymName} (${topGymRating.toFixed(1)}★)`;
+  }
+  desc += `. Compare prices, amenities & locations.`;
+  return desc.length > 160 ? desc.substring(0, 157) + '...' : desc;
 }
 
 /**

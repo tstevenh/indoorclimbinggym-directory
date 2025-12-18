@@ -52,9 +52,18 @@ const featuredGyms = stateGyms
     return a.name.localeCompare(b.name);
   });
 
-// Generate SEO data
-const title = generateStateTitle(region);
-const description = generateStateDescription(region, cities.length, stateGyms.length);
+// Find top-rated gym for SEO description
+const topGym = [...stateGyms].sort((a, b) => (b.rating || 0) - (a.rating || 0))[0];
+
+// Generate SEO data with CTR-optimized parameters
+const title = generateStateTitle(region, stateGyms.length, cities.length);
+const description = generateStateDescription(
+  region,
+  cities.length,
+  stateGyms.length,
+  topGym?.name,
+  topGym?.rating
+);
 const pageUrl = `https://www.indoorclimbinggym.com/${stateSlug}`;
 
 // Generate schemas

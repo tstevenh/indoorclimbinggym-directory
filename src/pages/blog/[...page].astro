@@ -30,11 +30,30 @@ interface Props {
 
 const { page } = Astro.props;
 
+// Get post count from collection
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime()
+);
+const postCount = sortedPosts.length;
+
 // SEO metadata
-const title = page.currentPage === 1 ? 'Indoor Climbing Guides, Tips & Resources' : `Indoor Climbing Guides - Page ${page.currentPage}`;
-const description =
-  'Expert guides, tips, and resources for indoor climbing. Learn about climbing techniques, gym memberships, gear reviews, and more from experienced climbers.';
+const title = page.currentPage === 1
+  ? 'Climbing Guides & Tips | Expert Advice for Climbers'
+  : `Climbing Guides & Tips - Page ${page.currentPage}`;
+const description = `${postCount} expert guides on indoor climbing. Techniques, gear reviews, gym costs & more. Written by climbers for beginners & pros.`;
 const pageUrl = `https://www.indoorclimbinggym.com/blog${page.currentPage > 1 ? `/${page.currentPage}` : ''}`;
+
+// Calculate pagination URLs for rel=prev/next
+const prevUrl = page.currentPage > 1
+  ? (page.currentPage === 2
+      ? 'https://www.indoorclimbinggym.com/blog'
+      : `https://www.indoorclimbinggym.com/blog/${page.currentPage - 1}`)
+  : undefined;
+
+const nextUrl = page.currentPage < page.lastPage
+  ? `https://www.indoorclimbinggym.com/blog/${page.currentPage + 1}`
+  : undefined;
 
 // Generate ItemList schema for blog posts
 const itemListSchema = generateItemListSchema(
@@ -90,6 +109,8 @@ const keywords = [
   keywords={keywords}
   schema={itemListSchema}
   breadcrumbs={breadcrumbs}
+  prevUrl={prevUrl}
+  nextUrl={nextUrl}
 >
   <!-- Hero Section -->
   <section class="mb-12">

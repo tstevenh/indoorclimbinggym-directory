@@ -243,6 +243,17 @@ const pageUrl = currentPage === 1
   ? `https://www.indoorclimbinggym.com/categories/${categorySlug}`
   : `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage}`;
 
+// Calculate pagination URLs for rel=prev/next
+const prevUrl = currentPage > 1
+  ? (currentPage === 2
+      ? `https://www.indoorclimbinggym.com/categories/${categorySlug}`
+      : `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage - 1}`)
+  : undefined;
+
+const nextUrl = currentPage < totalPages
+  ? `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage + 1}`
+  : undefined;
+
 const seoData = generateSEO({
   title: currentPage > 1 ? `${pageTitle} - Page ${currentPage}` : pageTitle,
   description: pageDescription,
@@ -355,6 +366,8 @@ Beyond physical infrastructure, the best ${formattedValue.toLowerCase()} climbin
   keywords={seoData.keywords.split(', ')}
   schema={combinedSchema}
   breadcrumbs={breadcrumbs}
+  prevUrl={prevUrl}
+  nextUrl={nextUrl}
 >
   <!-- Breadcrumb Navigation -->
   <nav class="text-sm mb-6" aria-label="Breadcrumb">

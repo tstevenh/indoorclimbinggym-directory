@@ -42,8 +42,8 @@ const totalGyms = gymsData.length;
 const totalStates = statesArray.length;
 
 // Generate SEO
-const title = 'Climbing Gyms by State | Indoor Climbing Directory';
-const description = 'Browse climbing gyms and bouldering facilities across all US states. Find the perfect indoor climbing gym near you.';
+const title = `Climbing Gyms by State | ${totalGyms} Gyms in ${totalStates} States`;
+const description = `Browse ${totalGyms} climbing gyms across ${totalStates} US states. Filter by state to find gyms near you. Complete directory with ratings & prices.`;
 const pageUrl = 'https://www.indoorclimbinggym.com/states';
 
 const seo = generateSEO({

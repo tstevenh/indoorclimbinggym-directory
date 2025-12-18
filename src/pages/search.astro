@@ -149,13 +149,14 @@ const hasFilters = activeFilters.length > 0;
 const resultsCount = filteredGyms.length;
 const totalCount = gyms.length;
 
+const totalGyms = gyms.length;
 const title = hasFilters
   ? `${resultsCount} Climbing Gyms Found | Indoor Climbing Gym`
   : 'Search Climbing Gyms | Filter by Location & Amenities';
 
 const description = hasFilters
   ? `Browse ${resultsCount} indoor climbing gyms matching your criteria. Find the perfect climbing gym with our advanced search and filtering tools.`
-  : 'Search and filter climbing gyms by location, amenities, climbing type, and price. Find the perfect gym for your needs.';
+  : `Search ${totalGyms}+ climbing gyms. Filter by state, city, climbing type, amenities & price. Compare ratings & find your perfect gym.`;
 
 // Only index the base search page (no parameters)
 const noindex = hasFilters;

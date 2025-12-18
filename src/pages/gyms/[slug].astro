@@ -75,9 +75,28 @@ const breadcrumbs = [
   { label: gym.name, url: `https://www.indoorclimbinggym.com/gyms/${gym.slug}` },
 ];
 
-// Generate SEO data
-const title = generateGymTitle(gym.name, gym.city, gym.region);
-const description = generateGymDescription(gym.name, gym.city, climbingTypes, gym.rating);
+// Helper to get the most interesting amenity for SEO
+function getTopAmenity(amenities: string): string | undefined {
+  const amenityList = amenities?.split('|') || [];
+  const priorityAmenities = ['sauna', 'cafe', 'yoga', 'fitness', 'kids_zone'];
+  for (const priority of priorityAmenities) {
+    if (amenityList.includes(priority)) {
+      return priority.replace(/_/g, ' ');
+    }
+  }
+  return undefined;
+}
+
+// Generate SEO data with CTR-optimized parameters
+const title = generateGymTitle(gym.name, gym.city, gym.region, gym.rating);
+const description = generateGymDescription(
+  gym.name,
+  gym.city,
+  climbingTypes,
+  gym.rating,
+  gym.day_pass_price_local,
+  getTopAmenity(gym.amenities)
+);
 const keywords = generateGymKeywords(gym.name, gym.city, climbingTypes);
 const pageUrl = `https://www.indoorclimbinggym.com/gyms/${gym.slug}`;
 

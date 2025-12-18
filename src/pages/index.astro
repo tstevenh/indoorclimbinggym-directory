@@ -113,9 +113,12 @@ const orgSchema = generateOrganizationSchema();
 const websiteSchema = generateWebSiteSchema();
 const combinedSchema = [orgSchema, websiteSchema];
 
-// SEO data
-const title = 'Find Best Climbing Gyms Near You | IndoorClimbingGym';
-const description = 'Discover indoor climbing gyms near you. Search by location, amenities, and type. Browse 15+ gyms across 5 cities with reviews, prices, and directions.';
+// Dynamic SEO with counts
+const totalGyms = gyms.length;
+const uniqueStates = [...new Set(gyms.map(g => g.region))].length;
+
+const title = `Find Climbing Gyms Near You | ${totalGyms}+ Gyms`;
+const description = `Search ${totalGyms}+ climbing gyms in ${uniqueStates} states. Compare ratings, prices & amenities. Bouldering, lead & top rope. Free gym finder with reviews.`;
 ---
 
 <BaseLayout

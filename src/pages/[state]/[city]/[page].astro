@@ -88,14 +88,39 @@ const featuredGyms = cityGyms
   });
 
 
-// Generate SEO data
+// Calculate valid price range for SEO (filter out zeros/nulls)
+const validPrices = cityGyms
+  .map(g => g.day_pass_price_local)
+  .filter(p => p && p > 0);
+const seoPriceMin = validPrices.length > 0 ? Math.min(...validPrices) : undefined;
+const seoPriceMax = validPrices.length > 0 ? Math.max(...validPrices) : undefined;
+
+// Generate SEO data with CTR-optimized parameters
 const title = currentPage > 1
-  ? `${generateCityTitle(city, region)} - Page ${currentPage}`
-  : generateCityTitle(city, region);
-const description = generateCityDescription(city, region, cityGyms.length, parseFloat(avgRating));
+  ? `${generateCityTitle(city, region, cityGyms.length)} - Page ${currentPage}`
+  : generateCityTitle(city, region, cityGyms.length);
+const description = generateCityDescription(
+  city,
+  region,
+  cityGyms.length,
+  parseFloat(avgRating),
+  seoPriceMin,
+  seoPriceMax
+);
 const pageUrl = currentPage === 1
   ? `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}`
   : `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/${currentPage}`;
+
+// Calculate pagination URLs for rel=prev/next
+const prevUrl = currentPage > 1
+  ? (currentPage === 2
+      ? `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}`
+      : `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/${currentPage - 1}`)
+  : undefined;
+
+const nextUrl = currentPage < totalPages
+  ? `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/${currentPage + 1}`
+  : undefined;
 
 // Generate schemas
 const itemListSchema = generateItemListSchema(
@@ -174,8 +199,11 @@ const breadcrumbs = [
 <BaseLayout
   title={title}
   description={description}
+  canonical={pageUrl}
   schema={combinedSchema}
   breadcrumbs={breadcrumbs}
+  prevUrl={prevUrl}
+  nextUrl={nextUrl}
 >
   <!-- Breadcrumb Navigation -->
   <nav class="text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
