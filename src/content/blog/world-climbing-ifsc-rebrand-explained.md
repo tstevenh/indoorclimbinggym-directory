@@ -24,18 +24,6 @@ The IFSC officially rebranded to World Climbing on December 10, 2025. This rebra
 - Stronger global identity helps local climbing gyms and communities grow
 - Find your entry point at [indoor climbing gyms near you](/search)
 
-## Table of Contents
-
-1. [Why This Rebrand Matters](#why-this-rebrand-matters)
-2. [From IFSC to World Climbing](#from-ifsc-to-world-climbing)
-3. [The New Logo Design](#the-new-logo-design)
-4. [Leadership's Vision](#leaderships-vision)
-5. [What Changes in 2026](#what-changes-in-2026)
-6. [Why This Matters Beyond Elite Competitions](#why-this-matters-beyond-elite-competitions)
-7. [What This Means for You](#what-this-means-for-you)
-8. [Find Your Place in World Climbing](#find-your-place-in-world-climbing)
-9. [FAQ](#faq)
-
 ## Why This Rebrand Matters
 
 Rebrands in sports signal identity shifts. They tell you who's invited. Who the sport serves. Where it's going next.

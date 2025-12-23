@@ -31,25 +31,6 @@ Unlike rope climbing, you don't need a partner. You don't need expensive gear. J
 - V-scale and Font scale are the main grading systems
 - You can start at any fitness level; technique matters more than strength
 
-## Table of Contents
-
-1. What Is Bouldering in Simple Terms?
-2. How Is Bouldering Different From Other Types of Rock Climbing?
-3. A Brief History of Bouldering
-4. Where Do People Go Bouldering?
-5. What Equipment Do You Need for Bouldering?
-6. What Does a Bouldering Problem Look Like?
-7. How Hard Is Bouldering? (Grading Systems Explained)
-8. What Skills Does Bouldering Build?
-9. Is Bouldering Safe for Beginners?
-10. Who Is Bouldering For?
-11. Famous Bouldering Climbers You Might Have Heard Of
-12. Indoor vs Outdoor Bouldering: Which Should You Try First?
-13. Is Bouldering the Same as Artificial Climbing?
-14. Common Beginner Questions About Bouldering (FAQ)
-15. How to Get Started With Bouldering Near You
-16. Final Thoughts
-
 ## Quick Answer Box
 
 **What is bouldering?** Bouldering is a form of climbing where you climb short walls or rocks (typically under 20 feet) without ropes. You use crash pads for protection and focus on solving short, powerful climbing sequences called boulder problems. It emphasizes technique, finger strength, and problem solving over endurance.

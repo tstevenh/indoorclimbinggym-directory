@@ -41,6 +41,13 @@ const schema = {
       url: 'https://www.indoorclimbinggym.com/tools/sport-climbing-grade-conversion',
       applicationCategory: 'UtilitiesApplication',
       offers: { '@type': 'Offer', price: '0' }
+    },
+    {
+      '@type': 'WebApplication',
+      name: 'Cost Per Climb Calculator',
+      url: 'https://www.indoorclimbinggym.com/tools/cost-per-climb-calculator',
+      applicationCategory: 'UtilitiesApplication',
+      offers: { '@type': 'Offer', price: '0' }
     }
   ]
 };
@@ -162,6 +169,44 @@ const breadcrumbs = [
         </div>
       </a>
 
+      <!-- Cost Per Climb Calculator -->
+      <a
+        href="/tools/cost-per-climb-calculator"
+        class="group bg-white rounded-2xl shadow-xl border border-gray-100 p-8 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col relative overflow-hidden"
+      >
+        <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+           <svg class="w-32 h-32 text-sage" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/></svg>
+        </div>
+
+        <div class="flex items-start gap-6 mb-6 relative z-10">
+          <div class="w-16 h-16 bg-sage/10 rounded-2xl flex items-center justify-center text-sage group-hover:bg-sage transition-colors duration-300 flex-shrink-0 shadow-sm">
+            <svg class="w-8 h-8 text-sage group-hover:!text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-granite mb-2 group-hover:text-sage transition-colors">
+              Cost Per Climb Calculator
+            </h2>
+            <p class="text-gray-600 mb-4 leading-relaxed">
+              Compare day pass vs membership costs. Find the break-even point and calculate annual savings based on your climbing frequency.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="bg-gray-50 text-gray-600 text-xs font-bold px-3 py-1 rounded-full border border-gray-100">Day Pass</span>
+              <span class="bg-gray-50 text-gray-600 text-xs font-bold px-3 py-1 rounded-full border border-gray-100">Membership</span>
+              <span class="bg-gray-50 text-gray-600 text-xs font-bold px-3 py-1 rounded-full border border-gray-100">Savings</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between text-sage font-bold group-hover:gap-4 transition-all relative z-10">
+          <span>Use Calculator</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </div>
+      </a>
+
     </div>
   </section>
 
@@ -173,20 +218,7 @@ const breadcrumbs = [
          <h2 class="text-3xl font-bold text-granite">Coming Soon</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Cost Per Climb Calculator -->
-        <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm opacity-70 hover:opacity-100 transition-opacity">
-          <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 mb-6">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0-2.08.402-2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h3 class="text-lg font-bold text-gray-800 mb-2">Cost Per Climb Calculator</h3>
-          <p class="text-sm text-gray-500 leading-relaxed">
-            Compare day pass vs membership costs based on your climbing frequency.
-          </p>
-        </div>
-
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Route Difficulty Finder -->
         <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm opacity-70 hover:opacity-100 transition-opacity">
           <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400 mb-6">

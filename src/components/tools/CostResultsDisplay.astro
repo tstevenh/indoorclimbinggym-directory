@@ -1,0 +1,126 @@
+---
+/**
+ * CostResultsDisplay Component
+ * Displays calculator results in 4 cards: cost per visit, monthly total, break-even point, annual comparison
+ * Initially hidden, shown after calculation with animation
+ */
+---
+
+<div id="results-container" class="results-display mt-10 space-y-6 hidden" role="region" aria-live="polite" aria-label="Calculation results">
+  <!-- Results Header -->
+  <div id="step4" class="text-center mb-8">
+    <h3 class="text-3xl font-bold text-granite mb-2">Your Cost Analysis</h3>
+    <p class="text-gray-600 text-lg">
+      Based on <span id="visits-display" class="font-semibold text-sage">8</span> visits per month
+    </p>
+  </div>
+
+  <!-- Results Grid (2x2 on desktop, 1 col on mobile) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Card 1: Cost Per Visit -->
+    <div class="result-card bg-white border-2 border-gray-200 rounded-xl p-6 hover:shadow-lg hover:border-sage transition-all duration-200">
+      <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
+        Cost Per Visit
+      </h4>
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-700 font-medium">Day Pass:</span>
+          <span class="text-3xl font-bold text-granite" id="day-pass-per-visit">$20.00</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-700 font-medium">Membership:</span>
+          <span class="text-3xl font-bold text-sage" id="membership-per-visit">$8.13</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: Monthly Total -->
+    <div class="result-card bg-white border-2 border-gray-200 rounded-xl p-6 hover:shadow-lg hover:border-sage transition-all duration-200">
+      <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
+        Monthly Total
+      </h4>
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-700 font-medium">Day Passes:</span>
+          <span class="text-3xl font-bold text-granite" id="day-pass-monthly">$160.00</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-700 font-medium">Membership:</span>
+          <span class="text-3xl font-bold text-sage" id="membership-monthly">$65.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Break-Even Point (HIGHLIGHTED) -->
+    <div class="result-card bg-gradient-to-br from-sage/10 to-sage/5 border-2 border-sage rounded-xl p-6 shadow-md">
+      <h4 class="text-sm font-semibold text-sage uppercase tracking-wide mb-3">
+        Break-Even Point
+      </h4>
+      <p class="text-base text-granite mb-3">
+        A membership becomes cheaper at:
+      </p>
+      <div class="text-5xl font-bold text-sage mb-2" id="break-even-visits">
+        4
+      </div>
+      <p class="text-sm text-gray-700">visits per month</p>
+    </div>
+
+    <!-- Card 4: Annual Comparison -->
+    <div class="result-card bg-white border-2 border-gray-200 rounded-xl p-6 hover:shadow-lg hover:border-sage transition-all duration-200">
+      <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">
+        Annual Spending
+      </h4>
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-700 font-medium">Day Passes:</span>
+          <span class="text-2xl font-bold text-granite" id="annual-day-pass">$1,920.00</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-700 font-medium">Membership:</span>
+          <span class="text-2xl font-bold text-sage" id="annual-membership">$780.00</span>
+        </div>
+      </div>
+      <div class="mt-4 pt-4 border-t-2 border-gray-100">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-700">Annual Savings:</span>
+          <span class="text-xl font-bold text-green-700" id="annual-savings">$1,140.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recommendation Banner (Conditional - populated by JavaScript) -->
+  <div id="recommendation-banner" class="mt-8">
+    <!-- Dynamically populated based on which option is cheaper -->
+  </div>
+</div>
+
+<style>
+  /* Animation for results container */
+  .results-display.animate-in {
+    animation: slideInFromBottom 500ms ease-out;
+  }
+
+  @keyframes slideInFromBottom {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Ensure smooth transitions */
+  .result-card {
+    transition: all 200ms ease-out;
+  }
+
+  /* Print-friendly: show results when printing */
+  @media print {
+    #results-container {
+      display: block !important;
+    }
+  }
+</style>

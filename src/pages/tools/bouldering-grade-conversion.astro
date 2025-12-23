@@ -175,7 +175,7 @@ const schemas = [toolSchema, faqSchema];
   </section>
 
   <!-- Educational Content -->
-  <section class="content-section py-16 bg-white">
+  <section class="content-section py-16">
     <div class="container mx-auto px-4 max-w-4xl">
       <div class="prose prose-lg prose-headings:text-granite prose-p:text-gray-600 prose-a:text-sage hover:prose-a:text-sage/80 max-w-none">
         
@@ -738,7 +738,7 @@ const schemas = [toolSchema, faqSchema];
   </section>
 
   <!-- Full Conversion Table -->
-  <section class="table-section py-20 bg-ivory/50">
+  <section class="table-section py-20">
     <div class="container mx-auto px-4 max-w-6xl">
       <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 md:p-12">
         <ConversionTable
@@ -751,24 +751,22 @@ const schemas = [toolSchema, faqSchema];
   </section>
 
   <!-- Final CTA -->
-  <section class="relative py-24 overflow-hidden">
-    <div class="absolute inset-0 bg-granite">
-       <div class="absolute inset-0 bg-[url('/climbing-gym-pattern.png')] opacity-5 mix-blend-overlay"></div>
-       <div class="absolute inset-0 bg-gradient-to-br from-sage/20 to-transparent"></div>
-    </div>
-    
-    <div class="container mx-auto px-4 relative z-10 text-center text-white">
-      <h2 class="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+  <section class="bg-granite text-white py-16 px-4 rounded-2xl mx-4 mb-16">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">
         Ready to Test Your Grades?
       </h2>
-      <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+      <p class="text-xl text-gray-300 mb-8">
         Find the best bouldering gyms near you and put your skills to the test on real problems.
       </p>
       <a
         href="/search"
-        class="inline-flex items-center justify-center px-10 py-5 bg-white text-granite font-bold text-lg rounded-xl hover:bg-gray-100 transition-all shadow-2xl hover:shadow-white/20 transform hover:-translate-y-1"
+        class="inline-flex items-center justify-center px-8 py-4 bg-sage text-white font-bold text-lg rounded-xl hover:bg-sage/90 transition-all shadow-lg hover:shadow-xl"
       >
-        Find Bouldering Gyms Near You
+        Find Bouldering Gyms
+        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
       </a>
     </div>
   </section>

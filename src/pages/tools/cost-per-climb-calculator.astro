@@ -1,0 +1,696 @@
+---
+/**
+ * Cost Per Climb Calculator Page
+ * Helps climbers decide between day passes and monthly memberships
+ * Features: Manual input, real-time calculation, break-even analysis, annual savings
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CostCalculatorForm from '../../components/tools/CostCalculatorForm.astro';
+import CostResultsDisplay from '../../components/tools/CostResultsDisplay.astro';
+import { serializeSchema } from '../../utils/schema';
+import AffiliateBlock from '../../components/AffiliateBlock.astro';
+
+export const prerender = true;
+
+// SEO Metadata
+const title = 'Climbing Gym Cost Calculator | Day Pass vs Membership';
+const description = 'Free climbing gym calculator. Compare day pass vs membership costs, find break-even point, and see which option saves you money in seconds.';
+const keywords = [
+  'cost per climb calculator',
+  'climbing gym membership calculator',
+  'day pass vs membership',
+  'climbing gym cost comparison',
+  'break even point climbing',
+  'is climbing membership worth it',
+  'climbing gym budget calculator',
+  'membership savings calculator',
+  'how much do climbing gyms cost monthly',
+  'is a gym membership worth it',
+];
+const canonical = 'https://www.indoorclimbinggym.com/tools/cost-per-climb-calculator';
+
+// Social sharing meta tags
+const ogImage = 'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=1200&h=630&fit=crop';
+const ogImageAlt = 'Climber calculating gym membership costs with calculator';
+
+// Breadcrumbs
+const breadcrumbs = [
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
+  { label: 'Tools', url: 'https://www.indoorclimbinggym.com/tools' },
+  { label: 'Cost Per Climb Calculator', url: canonical },
+];
+
+// Schema Markup
+const toolSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Cost Per Climb Calculator",
+  "description": "Calculate whether a day pass or monthly membership is more cost-effective based on your climbing frequency",
+  "url": canonical,
+  "applicationCategory": "UtilityApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Compare day pass vs membership costs",
+    "Calculate cost per climb",
+    "Find break-even point",
+    "Annual savings comparison",
+    "Real-time calculations"
+  ],
+  "author": {
+    "@type": "Organization",
+    "name": "IndoorClimbingGym.com"
+  }
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How accurate is this cost per climb calculator?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The calculator provides mathematically accurate comparisons based on the prices you enter. However, actual costs may vary due to factors like initiation fees, gear rental, guest passes, or promotional discounts. Use this as a baseline comparison tool."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I factor in gear rental when calculating cost per climb?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, if you don't own climbing shoes or a harness. Add the rental cost to your day pass price for an accurate comparison. Many gyms include rentals in membership packages, which can increase the value of a membership."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if I don't climb every week consistently?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If your climbing schedule varies, calculate based on your average monthly visits over 3-6 months. Some gyms offer membership freezing options for travel or breaks. Day passes provide more flexibility for inconsistent climbers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do climbing gym memberships have contracts?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It varies by gym. Some require 3-12 month commitments, while others offer month-to-month memberships. Check your gym's policy before committing. Month-to-month memberships typically cost slightly more but offer flexibility."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I freeze my membership if I travel frequently?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Many gyms allow membership freezing for 1-3 months per year, usually for a small monthly fee ($10-20). This can make memberships more cost-effective for travelers. Check your gym's freeze policy before signing up."
+      }
+    }
+  ]
+};
+
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Calculate Cost Per Climb",
+  "description": "Use our free calculator to determine whether a gym membership or day passes are more cost-effective for you",
+  "totalTime": "PT1M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "USD",
+    "value": "0"
+  },
+  "step": [
+    {
+      "@type": "HowToStep",
+      "position": 1,
+      "name": "Enter Day Pass Price",
+      "text": "Input the cost of a single day pass at your climbing gym (typically $15-25)",
+      "url": canonical + "#step1"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 2,
+      "name": "Enter Monthly Membership Price",
+      "text": "Input the monthly membership cost (typically $60-120)",
+      "url": canonical + "#step2"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 3,
+      "name": "Set Your Climbing Frequency",
+      "text": "Adjust the slider to indicate how many times you climb per month",
+      "url": canonical + "#step3"
+    },
+    {
+      "@type": "HowToStep",
+      "position": 4,
+      "name": "Review Results",
+      "text": "View your cost per climb, break-even point, and annual savings comparison",
+      "url": canonical + "#step4"
+    }
+  ]
+};
+
+// Pass schemas as array directly (BaseLayout will serialize them)
+const schemas = [toolSchema, faqSchema, howToSchema];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  keywords={keywords}
+  canonical={canonical}
+  breadcrumbs={breadcrumbs}
+  schema={schemas}
+  ogImage={ogImage}
+  ogType="website"
+>
+  <!-- Full-Width Hero Section -->
+  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 bg-gradient-to-br from-sage/20 via-ivory to-sage/5 py-20 md:py-32 overflow-hidden">
+    <!-- Decorative background elements -->
+    <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#98a48b_1px,transparent_1px)] [background-size:20px_20px]"></div>
+    
+    <div class="container mx-auto px-4 relative z-10 text-center">
+      <!-- Badge -->
+      <div class="inline-block mb-6">
+        <span class="inline-flex items-center px-4 py-2 bg-sage/10 text-sage font-bold rounded-full text-sm tracking-wide uppercase">
+          Free Utility
+        </span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="text-5xl md:text-6xl font-bold text-granite mb-6 leading-tight">
+        Cost Per Climb <span class="text-sage relative inline-block">
+          Calculator
+          <svg class="absolute w-full h-3 -bottom-1 left-0 text-sage/30" viewBox="0 0 100 10" preserveAspectRatio="none">
+            <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="8" fill="none" />
+          </svg>
+        </span>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+        Should you buy a day pass or get a membership? Find out which option saves you money based on how often you climb.
+      </p>
+
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-10 opacity-80">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-sage">100%</div>
+          <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Free</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-sage">&lt; 1min</div>
+          <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">To Calculate</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-sage">4 Metrics</div>
+          <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Analyzed</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Card (Overlap Effect) -->
+  <section class="container mx-auto px-4 -mt-20 relative z-20 mb-20">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
+      <!-- Form -->
+      <CostCalculatorForm />
+
+      <!-- Results Display (Hidden initially) -->
+      <CostResultsDisplay />
+    </div>
+  </section>
+
+  <!-- Educational Content -->
+  <section class="max-w-4xl mx-auto px-4 mb-16 prose prose-lg">
+    <!-- How It Works -->
+    <h2 class="text-3xl font-bold text-granite mb-6">How It Works</h2>
+    <p class="text-gray-700 leading-relaxed mb-6">
+      Our cost per climb calculator uses simple math to compare the true cost of day passes versus monthly memberships. By dividing your membership price by the number of visits per month, we calculate your actual cost per climb. This reveals the break-even point—the number of visits where a membership becomes more economical than paying for individual day passes.
+    </p>
+    <p class="text-gray-700 leading-relaxed mb-6">
+      The calculator also projects annual spending for both options, helping you visualize long-term savings. Whether you're a casual climber who visits once a week or a dedicated enthusiast climbing daily, this tool provides personalized financial insights to guide your decision.
+    </p>
+    <p class="text-gray-700 leading-relaxed mb-12">
+      Whether you're wondering "is a gym membership worth it", "how much do climbing gyms cost monthly", or "what's cheaper: day pass or membership", this climbing gym membership calculator provides clear answers tailored to your climbing habits. Many climbers are surprised to learn their break-even point—often just 3-4 visits per month makes a membership worthwhile.
+    </p>
+
+    <!-- Internal Links Box -->
+    <div class="bg-sage/10 border-l-4 border-sage p-6 my-8 rounded-r-lg">
+      <p class="text-gray-700 mb-3">
+        <strong class="text-sage">New to climbing?</strong> Check out our <a href="/guides/beginners-guide-to-climbing-gyms" class="text-sage font-semibold hover:underline">complete beginner's guide</a> to learn what to expect at your first gym visit.
+      </p>
+      <p class="text-gray-700">
+        <strong class="text-sage">Looking for a gym?</strong> Search our <a href="/search" class="text-sage font-semibold hover:underline">directory of climbing gyms</a> to find the perfect gym near you.
+      </p>
+    </div>
+
+    <!-- When to Get a Membership -->
+    <h2 class="text-3xl font-bold text-granite mb-6">When to Get a Membership</h2>
+    <p class="text-gray-700 leading-relaxed mb-6">
+      The decision between day passes and memberships depends on your climbing frequency and financial priorities. Generally, if you climb more than 3-4 times per month (based on typical gym pricing), a membership offers better value. However, this varies by gym—some have expensive memberships that require 8+ visits to break even.
+    </p>
+
+    <!-- Comparison Table -->
+    <div class="overflow-x-auto mb-12">
+      <table class="w-full border-collapse border-2 border-gray-200 rounded-lg">
+        <thead class="bg-sage/10">
+          <tr>
+            <th class="border border-gray-300 px-4 py-3 text-left font-semibold text-granite">Monthly Visits</th>
+            <th class="border border-gray-300 px-4 py-3 text-left font-semibold text-granite">Best Option</th>
+            <th class="border border-gray-300 px-4 py-3 text-left font-semibold text-granite">Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="hover:bg-gray-50">
+            <td class="border border-gray-300 px-4 py-3">1-2 visits</td>
+            <td class="border border-gray-300 px-4 py-3 font-medium text-blue-700">Day Passes</td>
+            <td class="border border-gray-300 px-4 py-3 text-gray-700">Pay only when you go, maximum flexibility</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="border border-gray-300 px-4 py-3">3-4 visits</td>
+            <td class="border border-gray-300 px-4 py-3 font-medium text-gray-700">Break-Even Zone</td>
+            <td class="border border-gray-300 px-4 py-3 text-gray-700">Costs are similar, personal preference matters</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="border border-gray-300 px-4 py-3">5-8 visits</td>
+            <td class="border border-gray-300 px-4 py-3 font-medium text-sage">Membership</td>
+            <td class="border border-gray-300 px-4 py-3 text-gray-700">Clear savings, unlimited access benefits</td>
+          </tr>
+          <tr class="hover:bg-gray-50">
+            <td class="border border-gray-300 px-4 py-3">9+ visits</td>
+            <td class="border border-gray-300 px-4 py-3 font-medium text-sage">Membership</td>
+            <td class="border border-gray-300 px-4 py-3 text-gray-700">Maximum savings, best cost per climb</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Hidden Costs to Consider -->
+    <h2 class="text-3xl font-bold text-granite mb-6">Hidden Costs to Consider</h2>
+    <p class="text-gray-700 leading-relaxed mb-6">
+      When comparing day passes and memberships, don't forget these additional expenses that can significantly impact your true cost per climb:
+    </p>
+
+    <ul class="space-y-4 mb-12">
+      <li class="flex items-start">
+        <svg class="w-6 h-6 text-sage mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <div>
+          <strong class="text-granite">Gear Rental Fees:</strong>
+          <p class="text-gray-700">Climbing shoes and harnesses typically cost $5-10 per visit. If you don't own gear, add this to your day pass cost. Many gyms include free rentals with memberships, adding significant value.</p>
+        </div>
+      </li>
+      <li class="flex items-start">
+        <svg class="w-6 h-6 text-sage mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <div>
+          <strong class="text-granite">Initiation Fees:</strong>
+          <p class="text-gray-700">Some gyms charge $50-150 one-time signup fees for new members. Factor this into your first-year cost when comparing options. Ask if the fee can be waived during promotional periods.</p>
+        </div>
+      </li>
+      <li class="flex items-start">
+        <svg class="w-6 h-6 text-sage mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <div>
+          <strong class="text-granite">Parking & Transportation:</strong>
+          <p class="text-gray-700">If you pay for parking ($3-10 per visit) or public transit, multiply this by your monthly visits. Downtown gyms often have higher parking costs that favor nearby climbers with memberships.</p>
+        </div>
+      </li>
+      <li class="flex items-start">
+        <svg class="w-6 h-6 text-sage mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <div>
+          <strong class="text-granite">Guest Passes & Classes:</strong>
+          <p class="text-gray-700">Memberships often include perks like 1-2 free guest passes per month, discounted yoga classes, or free belay lessons. These benefits add value beyond unlimited climbing access.</p>
+        </div>
+      </li>
+    </ul>
+
+    <!-- Affiliate Products: Essential Gear Section -->
+    <AffiliateBlock 
+      title="Save Money: Own Your Gear" 
+      subtitle="Gear rental fees add $5-10 per visit. Buying your own pays for itself in 10-15 climbs."
+      category="shoes"
+      count={3}
+    />
+
+    <!-- Internal Links Box 2 -->
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 my-8 rounded-r-lg">
+      <p class="text-gray-700 font-semibold mb-2">📖 Related Reading:</p>
+      <ul class="space-y-2">
+        <li>
+          <a href="/guides/is-climbing-gym-membership-worth-it" class="text-blue-700 hover:underline">Is a Climbing Gym Membership Worth It?</a> - Deep dive into membership value
+        </li>
+        <li>
+          <a href="/guides/sample-post" class="text-blue-700 hover:underline">How Much Does It Cost to Climb at a Gym?</a> - Complete pricing breakdown
+        </li>
+        <li>
+          <a href="/tools/bouldering-grade-conversion" class="text-blue-700 hover:underline">Bouldering Grade Conversion Tool</a> - Convert V-scale to Font grades
+        </li>
+      </ul>
+    </div>
+
+    <!-- Pros & Cons Comparison -->
+    <h2 class="text-3xl font-bold text-granite mb-6">Day Pass vs Membership: Pros & Cons</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+      <!-- Day Pass Pros/Cons -->
+      <div class="border-2 border-gray-200 rounded-xl p-6">
+        <h3 class="text-xl font-bold text-granite mb-4 flex items-center">
+          <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+          </svg>
+          Day Passes
+        </h3>
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-green-700 mb-2">✓ Pros</h4>
+            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+              <li>• No commitment or contract</li>
+              <li>• Pay only when you climb</li>
+              <li>• Try different gyms easily</li>
+              <li>• Best for irregular schedules</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold text-red-700 mb-2">✗ Cons</h4>
+            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+              <li>• Higher cost per visit</li>
+              <li>• No member perks or discounts</li>
+              <li>• Adds up quickly if frequent</li>
+              <li>• Gear rental not included</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Membership Pros/Cons -->
+      <div class="border-2 border-sage rounded-xl p-6 bg-sage/5">
+        <h3 class="text-xl font-bold text-granite mb-4 flex items-center">
+          <svg class="w-6 h-6 text-sage mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+          </svg>
+          Membership
+        </h3>
+        <div class="space-y-4">
+          <div>
+            <h4 class="font-semibold text-green-700 mb-2">✓ Pros</h4>
+            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+              <li>• Unlimited climbing access</li>
+              <li>• Lower cost per visit</li>
+              <li>• Free gear rental (usually)</li>
+              <li>• Member perks & discounts</li>
+              <li>• Guest passes included</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold text-red-700 mb-2">✗ Cons</h4>
+            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+              <li>• Monthly commitment</li>
+              <li>• Pay even if you don't go</li>
+              <li>• Initiation fees possible</li>
+              <li>• Contracts may apply</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="bg-ivory/50 py-16 px-4">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-granite mb-8 text-center">
+        Frequently Asked Questions
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- FAQ 1 -->
+        <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100 hover:border-sage transition-colors">
+          <h3 class="font-bold text-granite mb-3 text-lg">
+            How accurate is this calculator?
+          </h3>
+          <p class="text-gray-700 text-sm leading-relaxed">
+            The calculator provides mathematically accurate comparisons based on the prices you enter. However, actual costs may vary due to factors like initiation fees, gear rental, guest passes, or promotional discounts. Use this as a baseline comparison tool.
+          </p>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100 hover:border-sage transition-colors">
+          <h3 class="font-bold text-granite mb-3 text-lg">
+            Should I factor in gear rental?
+          </h3>
+          <p class="text-gray-700 text-sm leading-relaxed">
+            Yes, if you don't own climbing shoes or a harness. Add the rental cost to your day pass price for an accurate comparison. Many gyms include rentals in membership packages, which can increase the value of a membership.
+          </p>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100 hover:border-sage transition-colors">
+          <h3 class="font-bold text-granite mb-3 text-lg">
+            What if I don't climb consistently?
+          </h3>
+          <p class="text-gray-700 text-sm leading-relaxed">
+            If your climbing schedule varies, calculate based on your average monthly visits over 3-6 months. Some gyms offer membership freezing options for travel or breaks. Day passes provide more flexibility for inconsistent climbers.
+          </p>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100 hover:border-sage transition-colors">
+          <h3 class="font-bold text-granite mb-3 text-lg">
+            Do memberships have contracts?
+          </h3>
+          <p class="text-gray-700 text-sm leading-relaxed">
+            It varies by gym. Some require 3-12 month commitments, while others offer month-to-month memberships. Check your gym's policy before committing. Month-to-month memberships typically cost slightly more but offer flexibility.
+          </p>
+        </div>
+
+        <!-- FAQ 5 -->
+        <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100 hover:border-sage transition-colors">
+          <h3 class="font-bold text-granite mb-3 text-lg">
+            Can I freeze my membership?
+          </h3>
+          <p class="text-gray-700 text-sm leading-relaxed">
+            Many gyms allow membership freezing for 1-3 months per year, usually for a small monthly fee ($10-20). This can make memberships more cost-effective for travelers. Check your gym's freeze policy before signing up.
+          </p>
+        </div>
+
+        <!-- FAQ 6 -->
+        <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100 hover:border-sage transition-colors">
+          <h3 class="font-bold text-granite mb-3 text-lg">
+            Are there student discounts?
+          </h3>
+          <p class="text-gray-700 text-sm leading-relaxed">
+            Most climbing gyms offer student discounts ranging from 10-25% off memberships with valid student ID. Day pass discounts are less common. Ask your gym about student rates and what documentation is required.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Educational Content -->
+
+  <!-- Final CTA -->
+  <section class="bg-granite text-white py-16 px-4 rounded-2xl mx-4 mb-16">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+        Ready to Find Your Perfect Climbing Gym?
+      </h2>
+      <p class="text-xl text-gray-300 mb-8">
+        Browse climbing gyms near you and compare their pricing
+      </p>
+      <a
+        href="/search"
+        class="inline-flex items-center justify-center px-8 py-4 bg-sage text-white font-bold text-lg rounded-xl hover:bg-sage/90 transition-all shadow-lg hover:shadow-xl"
+      >
+        Search Climbing Gyms
+        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // State
+  let dayPassPrice = 0;
+  let membershipPrice = 0;
+  let visitsPerMonth = 8; // default
+
+  // DOM elements
+  const form = document.getElementById('cost-calculator-form') as HTMLFormElement;
+  const dayPassInput = document.getElementById('day-pass-price') as HTMLInputElement;
+  const membershipInput = document.getElementById('membership-price') as HTMLInputElement;
+  const visitsSlider = document.getElementById('visits-per-month') as HTMLInputElement;
+  const resultsContainer = document.getElementById('results-container') as HTMLElement;
+  const validationError = document.getElementById('validation-error') as HTMLElement;
+  const errorMessage = document.getElementById('error-message') as HTMLElement;
+
+  // Calculation function
+  function calculateCosts() {
+    // Monthly costs
+    const dayPassMonthly = dayPassPrice * visitsPerMonth;
+    const membershipMonthly = membershipPrice;
+
+    // Cost per visit
+    const dayPassCostPerVisit = dayPassPrice;
+    const membershipCostPerVisit = membershipPrice / visitsPerMonth;
+
+    // Break-even point (round up - conservative)
+    const breakEvenVisits = Math.ceil(membershipPrice / dayPassPrice);
+
+    // Annual totals
+    const annualDayPass = dayPassMonthly * 12;
+    const annualMembership = membershipPrice * 12;
+
+    // Winner & savings
+    const membershipIsCheaper = membershipMonthly < dayPassMonthly;
+    const monthlySavings = Math.abs(dayPassMonthly - membershipMonthly);
+    const annualSavings = monthlySavings * 12;
+
+    return {
+      dayPassCostPerVisit: dayPassCostPerVisit.toFixed(2),
+      membershipCostPerVisit: membershipCostPerVisit.toFixed(2),
+      dayPassMonthly: dayPassMonthly.toFixed(2),
+      membershipMonthly: membershipMonthly.toFixed(2),
+      breakEvenVisits,
+      annualDayPass: annualDayPass.toFixed(2),
+      annualMembership: annualMembership.toFixed(2),
+      membershipIsCheaper,
+      monthlySavings: monthlySavings.toFixed(2),
+      annualSavings: annualSavings.toFixed(2),
+    };
+  }
+
+  // Validation function
+  function validateInputs(): string[] {
+    const errors: string[] = [];
+
+    if (!dayPassPrice || dayPassPrice <= 0) {
+      errors.push('Please enter a valid day pass price greater than $0');
+    }
+
+    if (!membershipPrice || membershipPrice <= 0) {
+      errors.push('Please enter a valid membership price greater than $0');
+    }
+
+    if (dayPassPrice > 100) {
+      errors.push('Day pass price seems unusually high ($100+). Please double-check.');
+    }
+
+    if (membershipPrice > 500) {
+      errors.push('Membership price seems unusually high ($500+). Please double-check.');
+    }
+
+    if (visitsPerMonth < 1 || visitsPerMonth > 30) {
+      errors.push('Visits per month must be between 1 and 30');
+    }
+
+    return errors;
+  }
+
+  // Display results function
+  function displayResults(results: any) {
+    // Update result values in DOM
+    (document.getElementById('day-pass-per-visit') as HTMLElement).textContent = `$${results.dayPassCostPerVisit}`;
+    (document.getElementById('membership-per-visit') as HTMLElement).textContent = `$${results.membershipCostPerVisit}`;
+    (document.getElementById('day-pass-monthly') as HTMLElement).textContent = `$${results.dayPassMonthly}`;
+    (document.getElementById('membership-monthly') as HTMLElement).textContent = `$${results.membershipMonthly}`;
+    (document.getElementById('break-even-visits') as HTMLElement).textContent = results.breakEvenVisits.toString();
+    (document.getElementById('annual-day-pass') as HTMLElement).textContent = `$${results.annualDayPass}`;
+    (document.getElementById('annual-membership') as HTMLElement).textContent = `$${results.annualMembership}`;
+    (document.getElementById('annual-savings') as HTMLElement).textContent = `$${results.annualSavings}`;
+    (document.getElementById('visits-display') as HTMLElement).textContent = visitsPerMonth.toString();
+
+    // Build recommendation banner
+    const recommendationBanner = document.getElementById('recommendation-banner') as HTMLElement;
+    if (results.membershipIsCheaper) {
+      recommendationBanner.innerHTML = `
+        <div class="bg-sage text-white rounded-xl p-6 text-center shadow-lg">
+          <h4 class="text-2xl font-bold mb-2">💡 Recommendation: Get a Membership</h4>
+          <p class="text-lg">
+            Based on ${visitsPerMonth} visits/month, you'll save <strong>$${results.monthlySavings}/month</strong>
+            (<strong>$${results.annualSavings}/year</strong>) with a membership.
+          </p>
+        </div>
+      `;
+    } else {
+      recommendationBanner.innerHTML = `
+        <div class="bg-blue-500 text-white rounded-xl p-6 text-center shadow-lg">
+          <h4 class="text-2xl font-bold mb-2">💡 Recommendation: Stick with Day Passes</h4>
+          <p class="text-lg">
+            At ${visitsPerMonth} visits/month, day passes are more economical.
+            A membership becomes worthwhile at <strong>${results.breakEvenVisits} visits/month</strong>.
+          </p>
+        </div>
+      `;
+    }
+
+    // Show results container with animation
+    resultsContainer.classList.remove('hidden');
+    resultsContainer.classList.add('animate-in');
+
+    // Smooth scroll to results
+    setTimeout(() => {
+      resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+  }
+
+  // Show validation error
+  function showValidationError(message: string) {
+    errorMessage.textContent = message;
+    validationError.classList.remove('hidden');
+    validationError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Hide after 5 seconds
+    setTimeout(() => {
+      validationError.classList.add('hidden');
+    }, 5000);
+  }
+
+  // Form submission handler
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Get input values
+    dayPassPrice = parseFloat(dayPassInput.value);
+    membershipPrice = parseFloat(membershipInput.value);
+
+    // Validate
+    const errors = validateInputs();
+    if (errors.length > 0) {
+      showValidationError(errors[0]);
+      return;
+    }
+
+    // Hide validation error if shown
+    validationError.classList.add('hidden');
+
+    // Calculate and display
+    const results = calculateCosts();
+    displayResults(results);
+  });
+
+  // Listen for visits changed event from slider
+  document.addEventListener('visitsChanged', (e: any) => {
+    visitsPerMonth = e.detail.visits;
+
+    // Recalculate if results already shown
+    if (!resultsContainer.classList.contains('hidden')) {
+      const results = calculateCosts();
+      displayResults(results);
+    }
+  });
+</script>

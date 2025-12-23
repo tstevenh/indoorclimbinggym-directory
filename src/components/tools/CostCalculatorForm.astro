@@ -1,0 +1,93 @@
+---
+/**
+ * CostCalculatorForm Component
+ * Interactive form for inputting day pass price, membership price, and visits per month
+ * Features: Validation, real-time calculation, accessibility
+ */
+import VisitsSlider from './VisitsSlider.astro';
+---
+
+<form id="cost-calculator-form" class="space-y-8">
+  <!-- Price Inputs Row (2 columns on desktop) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Day Pass Price -->
+    <div id="step1" class="input-group">
+      <label for="day-pass-price" class="block text-sm font-semibold text-granite mb-2">
+        Day Pass Price
+      </label>
+      <div class="relative">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg">
+          $
+        </span>
+        <input
+          type="number"
+          id="day-pass-price"
+          class="w-full pl-8 pr-4 py-3 border-2 border-gray-300 rounded-lg
+                 focus:border-sage focus:ring-2 focus:ring-sage/20 outline-none
+                 transition-colors text-lg"
+          placeholder="20.00"
+          min="0"
+          step="0.01"
+          required
+          aria-label="Day pass price in dollars"
+          aria-describedby="day-pass-hint"
+        />
+      </div>
+      <span id="day-pass-hint" class="text-xs text-gray-600 mt-1 block">
+        The cost of a single visit with a day pass
+      </span>
+    </div>
+
+    <!-- Monthly Membership Price -->
+    <div id="step2" class="input-group">
+      <label for="membership-price" class="block text-sm font-semibold text-granite mb-2">
+        Monthly Membership
+      </label>
+      <div class="relative">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg">
+          $
+        </span>
+        <input
+          type="number"
+          id="membership-price"
+          class="w-full pl-8 pr-4 py-3 border-2 border-gray-300 rounded-lg
+                 focus:border-sage focus:ring-2 focus:ring-sage/20 outline-none
+                 transition-colors text-lg"
+          placeholder="65.00"
+          min="0"
+          step="0.01"
+          required
+          aria-label="Monthly membership price in dollars"
+          aria-describedby="membership-hint"
+        />
+      </div>
+      <span id="membership-hint" class="text-xs text-gray-600 mt-1 block">
+        The monthly cost of an unlimited membership
+      </span>
+    </div>
+  </div>
+
+  <!-- Visits Slider -->
+  <VisitsSlider id="visits-per-month" defaultValue={8} />
+
+  <!-- Calculate Button -->
+  <button
+    type="submit"
+    class="w-full py-4 bg-sage text-white font-bold text-lg rounded-xl
+           hover:bg-sage/90 transition-all shadow-lg hover:shadow-xl
+           focus:outline-none focus:ring-2 focus:ring-sage focus:ring-offset-2
+           active:scale-[0.98]"
+  >
+    Calculate Cost Per Climb
+  </button>
+</form>
+
+<!-- Validation Error (Hidden initially) -->
+<div id="validation-error" class="hidden mt-4 p-4 bg-red-50 border-2 border-red-200 rounded-lg" role="alert" aria-live="assertive">
+  <div class="flex items-start">
+    <svg class="w-5 h-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+    </svg>
+    <p class="text-red-800 text-sm font-medium" id="error-message"></p>
+  </div>
+</div>
