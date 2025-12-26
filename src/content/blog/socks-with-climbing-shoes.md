@@ -9,7 +9,7 @@ featured: false
 heroImage: "/images/blog/socks-with-climbing-shoes-hero.webp"
 heroImageAlt: "Climber putting on thin liner socks before wearing climbing shoes"
 wordCount: 3850
-readingTime: 15
+readingTime: 8
 ---
 
 ## What does it mean to wear socks with climbing shoes?

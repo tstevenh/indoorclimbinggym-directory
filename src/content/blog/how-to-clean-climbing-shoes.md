@@ -9,7 +9,7 @@ featured: false
 heroImage: "/images/blog/how-to-clean-climbing-shoes-hero.webp"
 heroImageAlt: "Clean climbing shoes drying on a rack after washing"
 wordCount: 5947
-readingTime: 23
+readingTime: 9
 ---
 
 ## What Does It Mean to Clean Climbing Shoes Properly?

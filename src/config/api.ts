@@ -7,6 +7,11 @@
 import { createSimpleClient } from '../lib/supabase'
 import { getCachedGyms, setCachedGyms } from '../utils/buildCache'
 
+// API Base URL for Next.js dashboard API
+export const API_BASE_URL = import.meta.env.DEV
+  ? 'http://localhost:3000'
+  : 'https://dashboard.indoorclimbinggym.com'
+
 /**
  * Fetch all gyms with optional filters
  *

@@ -240,18 +240,18 @@ if (isSpecial) {
 
 const categorySlug = Astro.params.category;
 const pageUrl = currentPage === 1
-  ? `https://www.indoorclimbinggym.com/categories/${categorySlug}`
-  : `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage}`;
+  ? `https://www.indoorclimbinggym.com/categories/${categorySlug}/`
+  : `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage}/`;
 
 // Calculate pagination URLs for rel=prev/next
 const prevUrl = currentPage > 1
   ? (currentPage === 2
-      ? `https://www.indoorclimbinggym.com/categories/${categorySlug}`
-      : `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage - 1}`)
+      ? `https://www.indoorclimbinggym.com/categories/${categorySlug}/`
+      : `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage - 1}/`)
   : undefined;
 
 const nextUrl = currentPage < totalPages
-  ? `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage + 1}`
+  ? `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage + 1}/`
   : undefined;
 
 const seoData = generateSEO({

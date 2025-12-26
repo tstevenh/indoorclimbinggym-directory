@@ -102,7 +102,7 @@ const combinedSchema = [itemListSchema, faqSchema];
 
 // Breadcrumbs
 const breadcrumbs = [
-  { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
+  { label: 'Home', url: '/' },
   { label: region, url: pageUrl },
 ];
 ---
@@ -124,7 +124,7 @@ const breadcrumbs = [
     </ol>
   </nav>
 
-  <!-- Header -->
+  <!-- Reverted Header -->
   <header class="mb-12">
     <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">
       Indoor Climbing Gyms in {region}
@@ -134,7 +134,7 @@ const breadcrumbs = [
       From bouldering-focused facilities to comprehensive climbing centers, find your perfect spot to climb.
     </p>
 
-    <!-- Quick Stats -->
+    <!-- Reverted Quick Stats -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-sage/10 rounded-lg p-6">
       <div class="text-center">
         <div class="text-3xl font-bold text-sage">{stateGyms.length}</div>
@@ -155,7 +155,7 @@ const breadcrumbs = [
     </div>
   </header>
 
-  <!-- City Directory -->
+  <!-- City Directory (KEEPING IMPROVED CARDS) -->
   <section class="mb-12">
     <h2 class="text-3xl font-bold text-granite mb-6">
       Browse Climbing Gyms by City
@@ -163,22 +163,39 @@ const breadcrumbs = [
     <p class="text-gray-700 mb-6">
       Select a city below to view all climbing gyms in that area, compare prices, and find the perfect facility for your needs.
     </p>
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {cities.map(city => {
         const cityGyms = stateGyms.filter(g => g.city === city);
         const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+        const cityAvgRating = (cityGyms.reduce((sum, g) => sum + g.rating, 0) / cityGyms.length).toFixed(1);
+        
         return (
           <a
             href={`/${stateSlug}/${citySlug}/1`}
-            class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300 group"
+            class="group block p-6 bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-sage/20 relative overflow-hidden"
           >
-            <h3 class="font-bold text-granite group-hover:text-sage transition-colors text-lg mb-2">
-              {city}
-            </h3>
-            <p class="text-sm text-gray-600">{cityGyms.length} {cityGyms.length === 1 ? 'gym' : 'gyms'}</p>
-            <p class="text-xs text-gray-500 mt-1">
-              Avg: {(cityGyms.reduce((sum, g) => sum + g.rating, 0) / cityGyms.length).toFixed(1)}★
-            </p>
+            <div class="absolute top-0 right-0 w-20 h-20 bg-sage/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+            
+            <div class="mb-4 relative z-10">
+              <h3 class="text-xl font-bold text-granite group-hover:text-sage transition-colors">
+                {city}
+              </h3>
+            </div>
+            
+            <div class="flex flex-col gap-1 relative z-10">
+                <div class="flex items-center gap-2 text-gray-500 text-sm">
+                    <svg class="w-4 h-4 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    <span>{cityGyms.length} {cityGyms.length === 1 ? 'Gym' : 'Gyms'}</span>
+                </div>
+                <div class="flex items-center gap-2 text-gray-500 text-sm">
+                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    <span>{cityAvgRating} Average</span>
+                </div>
+            </div>
           </a>
         );
       })}
@@ -200,11 +217,6 @@ const breadcrumbs = [
           <GymCard gym={gym} showCity={true} />
         ))}
       </div>
-      <div class="text-center mt-8">
-        <p class="text-gray-600">
-          Showing {Math.min(9, featuredGyms.length)} featured {Math.min(9, featuredGyms.length) === 1 ? 'gym' : 'gyms'} in {region}
-        </p>
-      </div>
     </section>
   )}
 
@@ -219,23 +231,6 @@ const breadcrumbs = [
         across {cities.length} cities. The state's climbing gyms cater to everyone from first-time
         climbers to competitive athletes, offering diverse terrain, comprehensive training facilities,
         and supportive communities.
-      </p>
-      <p>
-        The climbing gyms in {region} range from large multi-discipline centers featuring bouldering,
-        top rope, and lead climbing, to specialized bouldering facilities focused on technical movement
-        and training. Many gyms also offer fitness areas, yoga studios, and social spaces that create
-        welcoming environments for climbers of all levels.
-      </p>
-      <p>
-        With an average rating of {avgRating} stars across all facilities, climbers consistently praise
-        {region}'s gyms for their quality route setting, well-maintained facilities, and engaged communities.
-        Whether you're training for outdoor objectives or enjoying indoor climbing year-round, {region}
-        offers excellent options throughout the state.
-      </p>
-      <p>
-        Day pass prices in {region} typically range from ${minPrice} to ${maxPrice}, with most gyms
-        offering monthly memberships, punch cards, and student discounts. Many facilities also provide
-        gear rental, introductory classes, and youth programs, making climbing accessible to everyone.
       </p>
     </div>
   </section>
@@ -252,19 +247,19 @@ const breadcrumbs = [
           <div class="flex justify-between items-center">
             <span class="text-gray-700">Bouldering</span>
             <span class="font-bold text-sage">
-              {stateGyms.filter(g => g.climbing_types?.includes('bouldering')).length} gyms
+              {stateGyms.filter(g => g.climbing_types?.includes('bouldering')).length} Gyms
             </span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-700">Top Rope</span>
             <span class="font-bold text-sage">
-              {stateGyms.filter(g => g.climbing_types?.includes('top_rope')).length} gyms
+              {stateGyms.filter(g => g.climbing_types?.includes('top_rope')).length} Gyms
             </span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-700">Lead Climbing</span>
             <span class="font-bold text-sage">
-              {stateGyms.filter(g => g.climbing_types?.includes('lead')).length} gyms
+              {stateGyms.filter(g => g.climbing_types?.includes('lead')).length} Gyms
             </span>
           </div>
         </div>
@@ -276,19 +271,19 @@ const breadcrumbs = [
           <div class="flex justify-between items-center">
             <span class="text-gray-700">Showers</span>
             <span class="font-bold text-sage">
-              {stateGyms.filter(g => g.amenities?.includes('showers')).length} gyms
+              {stateGyms.filter(g => g.amenities?.includes('showers')).length} Gyms
             </span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-700">Cafe</span>
             <span class="font-bold text-sage">
-              {stateGyms.filter(g => g.amenities?.includes('cafe')).length} gyms
+              {stateGyms.filter(g => g.amenities?.includes('cafe')).length} Gyms
             </span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-700">Sauna</span>
             <span class="font-bold text-sage">
-              {stateGyms.filter(g => g.amenities?.includes('sauna')).length} gyms
+              {stateGyms.filter(g => g.amenities?.includes('sauna')).length} Gyms
             </span>
           </div>
         </div>
@@ -311,53 +306,8 @@ const breadcrumbs = [
     </div>
   </section>
 
-  <!-- Explore More Section -->
-  <section class="mb-12 bg-white rounded-lg shadow-md p-8">
-    <h2 class="text-3xl font-bold text-granite mb-6">Explore More</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <a
-        href={`/search?state=${stateCode.toLowerCase()}`}
-        class="flex items-center gap-3 p-4 bg-sage/10 rounded-lg hover:bg-sage/20 transition-colors group"
-      >
-        <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <div>
-          <h3 class="font-semibold text-granite group-hover:text-sage">Advanced Search</h3>
-          <p class="text-sm text-gray-600">Filter {region} gyms</p>
-        </div>
-      </a>
-
-      <a
-        href="/categories/best-climbing-gyms-for-beginners/1"
-        class="flex items-center gap-3 p-4 bg-sage/10 rounded-lg hover:bg-sage/20 transition-colors group"
-      >
-        <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-        </svg>
-        <div>
-          <h3 class="font-semibold text-granite group-hover:text-sage">Best for Beginners</h3>
-          <p class="text-sm text-gray-600">Find beginner-friendly gyms</p>
-        </div>
-      </a>
-
-      <a
-        href="/categories/best-bouldering-climbing-gyms/1"
-        class="flex items-center gap-3 p-4 bg-sage/10 rounded-lg hover:bg-sage/20 transition-colors group"
-      >
-        <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-        </svg>
-        <div>
-          <h3 class="font-semibold text-granite group-hover:text-sage">Best Bouldering</h3>
-          <p class="text-sm text-gray-600">Top bouldering facilities</p>
-        </div>
-      </a>
-    </div>
-  </section>
-
   <!-- Affiliate Block -->
-  <div class="max-w-7xl mx-auto mb-16">
+  <div class="mb-16">
     <AffiliateBlock 
       title={`Gear Up for Climbing in ${region}`} 
       subtitle="Essential gear for your local crag or gym."
@@ -366,7 +316,7 @@ const breadcrumbs = [
     />
   </div>
 
-  <!-- CTA -->
+  <!-- CTA Section -->
   <section class="text-center bg-gradient-to-r from-sage to-sage/80 rounded-lg p-12 text-white">
     <h2 class="text-3xl font-bold mb-4">
       Find Your Perfect Climbing Gym in {region}

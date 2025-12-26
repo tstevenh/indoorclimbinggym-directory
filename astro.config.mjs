@@ -12,6 +12,7 @@ import mdx from '@astrojs/mdx';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://www.indoorclimbinggym.com',
+  trailingSlash: 'always', // Enforce trailing slashes for canonical URL consistency
   output: 'static', // SSG mode - only search page uses SSR with prerender: false
   adapter: vercel(),
   vite: {

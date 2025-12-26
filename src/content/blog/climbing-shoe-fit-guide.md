@@ -9,7 +9,7 @@ featured: false
 heroImage: "/images/blog/climbing-shoe-fit-guide.webp"
 heroImageAlt: "Climber trying on climbing shoes to check proper fit"
 wordCount: 4200
-readingTime: 17
+readingTime: 8
 ---
 
 ## What Does "Proper Fit" Mean for Climbing Shoes?

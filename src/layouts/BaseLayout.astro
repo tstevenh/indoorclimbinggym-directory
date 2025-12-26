@@ -93,9 +93,26 @@ const top5Cities = Object.values(cityCounts)
   .sort((a, b) => b.count - a.count)
   .slice(0, 5);
 
-// Build canonical URL
+// Build canonical URL with trailing slash enforcement
 const siteUrl = 'https://www.indoorclimbinggym.com';
-const canonicalURL = canonical || new URL(Astro.url.pathname, siteUrl).href;
+
+let canonicalURL: string;
+
+if (canonical) {
+  // Explicitly provided canonical (for query params, etc.)
+  canonicalURL = canonical;
+} else {
+  // Self-canonical: ensure trailing slash for consistency
+  let path = Astro.url.pathname;
+
+  // Add trailing slash if not present (unless it's a file with extension)
+  if (!path.endsWith('/') && !path.includes('.')) {
+    path = path + '/';
+  }
+
+  // Build canonical URL without query parameters
+  canonicalURL = `${siteUrl}${path}`;
+}
 
 // Ensure title is under 60 characters
 const finalTitle = title.length > 60 ? title.substring(0, 57) + '...' : title;
