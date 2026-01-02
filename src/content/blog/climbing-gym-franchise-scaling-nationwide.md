@@ -21,9 +21,9 @@ In this comprehensive guide, we'll break down the financial reality of climbing 
 
 ## The Franchise Boom in Indoor Climbing
 
-The climbing gym industry has evolved dramatically over the past decade. What started as independent, locally-owned facilities has transformed into a sophisticated market where franchise models dominate growth strategies. According to the [Climbing Business Journal's 2024 Industry Report](https://www.climbingbusinessjournal.com/2024-climbing-gym-industry-report/), franchise climbing gyms now represent approximately 35% of new gym openings, up from just 12% in 2019.
+The climbing gym industry has evolved dramatically over the past decade. What started as independent, locally-owned facilities has transformed into a sophisticated market where franchise models play an increasingly important role in growth strategies. Many newer gym openings now come from franchised brands as the industry continues to mature.
 
-This explosive growth reflects several converging trends. First, climbing's inclusion in the Olympics has driven mainstream awareness and participation rates to all-time highs. The [International Health, Racquet & Sportsclub Association (IHRSA)](https://www.ihrsa.org/) reports that climbing gym memberships grew 22% year-over-year in 2024, outpacing traditional gym membership growth by nearly 3x.
+This explosive growth reflects several converging trends. First, climbing's inclusion in the Olympics has driven mainstream awareness and participation rates to all-time highs. Climbing gym memberships have grown rapidly in recent years, outpacing traditional gym membership growth significantly.
 
 Second, the franchise model solves critical pain points for both franchisors and franchisees. Established brands like [Sender One Climbing](https://www.senderoneclimbing.com/), [VITAL Climbing Gym](https://www.vitalclimbinggym.com/), and [Brooklyn Boulders](https://brooklynboulders.com/) have refined operational playbooks that reduce the risk inherent in launching a climbing facility from scratch. For franchisees, this means faster time-to-market, proven revenue models, and immediate brand recognition in competitive markets.
 
@@ -260,7 +260,6 @@ Ready to explore climbing gym opportunities? Browse our directory of [best bould
 
 **Industry Organizations & Reports:**
 - [International Health, Racquet & Sportsclub Association (IHRSA)](https://www.ihrsa.org/) - Fitness industry research and benchmarking
-- [Climbing Business Journal](https://www.climbingbusinessjournal.com/) - Industry news and franchise analysis
 - [Small Business Administration Franchise Guide](https://www.sba.gov/business-guide/launch-your-business/buy-franchise) - Legal and financial guidance for franchise investment
 
 **Market Analysis:**

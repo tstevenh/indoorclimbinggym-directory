@@ -18,7 +18,7 @@ The indoor climbing industry has experienced unprecedented growth over the past 
 
 Whether you're a gym owner evaluating climbing gym innovation for facility upgrades, or a climber curious about the technology behind your favorite gym, understanding these advancements helps you appreciate how smart climbing systems are reshaping the sport. From auto-belay systems that democratize access to advanced climbing wall equipment that maximizes safety, technology has become the cornerstone of successful gym operations.
 
-According to the [Climbing Business Journal](https://www.climbingbusinessjournal.com/), gyms that invest in modern climbing technology see an average 34% increase in member retention and 28% improvement in operational efficiency. The integration of digital routesetting tools, climbing gym software platforms, and enhanced fall protection tech has made facilities safer, more engaging, and more profitable.
+Many gyms find that investing in modern technology creates more engaging environments that keep members coming back. The integration of digital routesetting tools, climbing gym software platforms, and enhanced fall protection tech has made facilities safer and more enjoyable for climbers.
 
 This comprehensive guide explores the essential equipment and climbing tech integration strategies that are defining the future of indoor climbing. We'll examine climbing equipment ROI, automation benefits, and practical recommendations for gym modernization that balance member experience with business sustainability.
 
@@ -197,7 +197,7 @@ For gym owners, these platforms provide valuable data:
 - **Member engagement scores** identifying at-risk memberships
 - **Community health statistics** showing social network formation
 
-Gyms that actively promote climbing tracking apps report 22-35% higher member retention rates compared to facilities without digital engagement strategies, according to [Climbing Business Journal research](https://www.climbingbusinessjournal.com/).
+Gyms that actively promote climbing tracking apps often see improved member engagement and stronger community connections through these digital tools.
 
 ### Capacity Management and Safety Monitoring
 
@@ -565,7 +565,6 @@ The walls may be the obvious focal point, but it's the invisible infrastructure 
 **Equipment Manufacturer Resources:**
 
 - [Climbing Wall Association](https://www.climbingwallassociation.org/) - Industry standards and best practices
-- [Climbing Business Journal](https://www.climbingbusinessjournal.com/) - Technology trends and case studies
 - [ACCT Standards](https://www.acctinfo.org/) - Safety and inspection protocols
 
 *Planning a gym technology upgrade or curious about equipment at your local facility? Use our [comprehensive gym directory](/search) to find facilities showcasing the latest innovations, from auto-belay systems to interactive LED walls. Filter by amenities, technology features, and member reviews to discover how modern climbing gyms are transforming the sport.*

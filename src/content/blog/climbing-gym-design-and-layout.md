@@ -17,7 +17,7 @@ readingTime: 14
 
 Step into a modern climbing gym and you'll find yourself in a thoughtfully engineered space where architecture, psychology, and sport converge. Today's facilities are light-years beyond the warehouse conversions of the 1990s – they're purpose-built environments designed to maximize climber experience, operational efficiency, and community engagement.
 
-The evolution from basic plywood walls with bolt-on holds to sophisticated facilities with varied angles, integrated training zones, and smart technology represents more than aesthetic improvement. According to the [Climbing Business Journal's 2024 State of the Industry Report](https://www.climbingbusinessjournal.com/), well-designed gyms see 23% higher member retention and 31% better new member acquisition compared to dated facilities.
+The evolution from basic plywood walls with bolt-on holds to sophisticated facilities with varied angles, integrated training zones, and smart technology represents more than aesthetic improvement. Thoughtfully designed gyms create welcoming environments that help members progress faster and stay engaged longer.
 
 Whether you're a gym owner planning a renovation, an entrepreneur launching a new facility, or simply curious about what makes exceptional climbing spaces work, understanding the principles of climbing gym design helps you appreciate the complexity behind seemingly simple walls. For those exploring climbing gyms, our [beginner's guide to climbing gyms](/guides/beginners-guide-to-climbing-gyms) offers insight into what makes these spaces welcoming.
 
@@ -90,7 +90,7 @@ Climbing walls aren't one-size-fits-all. The most engaging gyms offer diverse wa
 
 ### Bouldering Walls: Short, Intense, Social
 
-Bouldering walls (12-20 feet tall with thick crash pads below) have revolutionized climbing gyms over the past decade. According to [Climbing Business Journal research](https://www.climbingbusinessjournal.com/), bouldering-focused or mixed facilities experienced 34% faster growth than rope-only gyms between 2020-2024.
+Bouldering walls (12-20 feet tall with thick crash pads below) have revolutionized climbing gyms over the past decade. Many bouldering-focused facilities have grown rapidly, with their accessible format attracting climbers of all experience levels.
 
 **Why bouldering works commercially:**
 - **No equipment required:** Lower barrier to entry (no harness, no partner, no belay certification)
@@ -463,7 +463,6 @@ That effortlessness represents thousands of intentional design decisions working
 - [Best bouldering gyms directory](/categories/best-bouldering-climbing-gyms) - Examples of exceptional bouldering design
 - [Gyms with premium amenities](/categories/climbing-gyms-with-sauna) - Facilities leading recovery and wellness integration
 - [Beginner-friendly gyms](/categories/best-climbing-gyms-for-beginners) - Learn from facilities excelling at welcoming newcomers
-- [Climbing Business Journal](https://www.climbingbusinessjournal.com/) - Industry insights and design trends
 - [Climbing Wall Association](https://climbingwallassociation.org/) - Safety standards and best practices
 
 *Planning a climbing gym project? Use our [comprehensive directory](/search) to research successful facilities, compare design approaches, and connect with the climbing gym community. From concept to opening day, learning from the industry's best facilities accelerates your success.*

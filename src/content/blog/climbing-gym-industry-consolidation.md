@@ -25,7 +25,7 @@ The climbing gym industry has undergone a remarkable evolution over the past two
 
 **The Independent Era (2000-2015)** was characterized by passionate climbers opening gyms in their communities. These pioneers—often outdoor climbers themselves—built facilities driven more by love of the sport than business acumen. Most remained single-location operations, serving dedicated climbing communities with authentic, locally-flavored experiences. Financial performance varied wildly, with many gyms operating on thin margins and reinvesting profits back into facility upgrades rather than expansion.
 
-**The Professionalization Phase (2015-2020)** marked a turning point as the industry matured. Olympic inclusion in 2020 (postponed to 2021) dramatically elevated climbing's profile, driving participation rates to unprecedented levels. According to the [Climbing Business Journal's Industry Report](https://www.climbingbusinessjournal.com/), climbing gym memberships grew 18% annually during this period—far outpacing traditional gym membership growth of 3-5%.
+**The Professionalization Phase (2015-2020)** marked a turning point as the industry matured. Olympic inclusion in 2020 (postponed to 2021) dramatically elevated climbing's profile, driving participation rates to unprecedented levels. Climbing gym memberships experienced strong annual growth during this period—far outpacing traditional gym membership trends.
 
 This growth attracted experienced operators from other fitness verticals who brought professional management, sophisticated marketing, and operational excellence to the climbing gym business. Facilities grew larger and more sophisticated, with many new gyms opening at 20,000-40,000 square feet compared to the 8,000-15,000 SF facilities common in the independent era. [Modern climbing gyms](/categories/best-bouldering-climbing-gyms) evolved from simple bouldering walls to comprehensive fitness destinations with yoga studios, training areas, cafes, and co-working spaces.
 
@@ -525,7 +525,6 @@ Explore [climbing gyms nationwide](/search) to see how consolidation is reshapin
 ## Additional Resources
 
 **Industry Reports & Analysis:**
-- [Climbing Business Journal](https://www.climbingbusinessjournal.com/) - Industry news, M&A tracking, market analysis
 - IBISWorld Industry Report: Indoor Rock Climbing in the US - Market size, growth trends, competitive landscape
 - [International Health, Racquet & Sportsclub Association (IHRSA)](https://www.ihrsa.org/) - Fitness industry benchmarking and research
 

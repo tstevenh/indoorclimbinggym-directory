@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { API_BASE_URL } from '../config/api';
+import { createSimpleClient } from '../lib/supabase';
 
 // Force SSR - this page should never be statically generated
 export const prerender = false;
@@ -17,6 +17,7 @@ interface FreshRouteGym {
   notes: string | null;
   days_since_reset: number;
   freshness_label: 'fresh' | 'recent' | 'old';
+  gyms: { slug: string } | null;
 }
 
 interface FreshRoutesResponse {
@@ -35,22 +36,74 @@ interface FreshRoutesResponse {
   last_updated: string;
 }
 
-// Fetch fresh routes data from API
+// Fetch fresh routes data directly from Supabase
 let freshRoutesData: FreshRoutesResponse | null = null;
 let error: string | null = null;
 
 try {
-  const response = await fetch(`${API_BASE_URL}/api/fresh-routes`, {
-    headers: {
-      'Accept': 'application/json',
-    },
+  const supabase = createSimpleClient();
+
+  // Calculate date 7 days ago for filtering
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const sevenDaysAgoStr = sevenDaysAgo.toISOString().split('T')[0];
+
+  // Fetch gyms with routes reset in last 7 days, JOIN with gyms table to get slug
+  const { data, error: dbError } = await supabase
+    .from('route_freshness')
+    .select(`
+      *,
+      gyms!route_freshness_gym_id_fkey (
+        slug
+      )
+    `)
+    .gte('last_reset_at', sevenDaysAgoStr)
+    .order('last_reset_at', { ascending: false });
+
+  if (dbError) throw dbError;
+
+  // Calculate days_since and freshness (same logic as API)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const gymsWithFreshness: FreshRouteGym[] = (data || []).map((gym) => {
+    const resetDate = new Date(gym.last_reset_at);
+    resetDate.setHours(0, 0, 0, 0);
+    const diffTime = today.getTime() - resetDate.getTime();
+    const daysSince = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    return {
+      ...gym,
+      days_since_reset: daysSince,
+      freshness_label: daysSince <= 3 ? 'fresh' : daysSince <= 7 ? 'recent' : 'old'
+    };
   });
 
-  if (!response.ok) {
-    throw new Error(`API returned ${response.status}`);
-  }
+  // Group by freshness
+  const fresh = gymsWithFreshness.filter(g => g.freshness_label === 'fresh');
+  const recent = gymsWithFreshness.filter(g => g.freshness_label === 'recent');
+  const old = gymsWithFreshness.filter(g => g.freshness_label === 'old');
 
-  freshRoutesData = await response.json();
+  // Use most recent gym update date as "last_updated" (not current date)
+  const mostRecentUpdate = gymsWithFreshness.length > 0
+    ? gymsWithFreshness[0].last_reset_at  // Already sorted DESC
+    : null;
+
+  freshRoutesData = {
+    gyms: gymsWithFreshness,
+    counts: {
+      total: gymsWithFreshness.length,
+      fresh: fresh.length,
+      recent: recent.length,
+      old: old.length
+    },
+    grouped: {
+      fresh,
+      recent,
+      old
+    },
+    last_updated: mostRecentUpdate || new Date().toISOString()
+  };
 } catch (e) {
   console.error('Error fetching fresh routes:', e);
   error = 'Unable to load fresh routes data. Please try again later.';
@@ -110,10 +163,10 @@ const currentDate = new Date().toLocaleDateString('en-US', { month: 'long', day:
         </p>
 
         <!-- Stats Grid -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 w-full max-w-4xl animate-fade-in-up animation-delay-450">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12 w-full max-w-3xl animate-fade-in-up animation-delay-450">
           <div class="bg-white/40 backdrop-blur-sm border border-white/50 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
             <div class="text-4xl font-bold text-granite mb-1">{counts.total}</div>
-            <div class="text-xs uppercase tracking-wider text-granite/70 font-semibold">Tracked Gyms</div>
+            <div class="text-xs uppercase tracking-wider text-granite/70 font-semibold">This Week</div>
           </div>
           <div class="bg-green-50/50 backdrop-blur-sm border border-green-100 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
             <div class="text-4xl font-bold text-sage mb-1">{counts.fresh}</div>
@@ -122,10 +175,6 @@ const currentDate = new Date().toLocaleDateString('en-US', { month: 'long', day:
           <div class="bg-blue-50/50 backdrop-blur-sm border border-blue-100 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
             <div class="text-4xl font-bold text-blue-600 mb-1">{counts.recent}</div>
             <div class="text-xs uppercase tracking-wider text-blue-600 font-semibold">Recent (4-7 days)</div>
-          </div>
-          <div class="bg-gray-50/50 backdrop-blur-sm border border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
-            <div class="text-4xl font-bold text-gray-500 mb-1">{counts.old}</div>
-            <div class="text-xs uppercase tracking-wider text-gray-500 font-semibold">Old (8+ days)</div>
           </div>
         </div>
       </div>
@@ -139,6 +188,37 @@ const currentDate = new Date().toLocaleDateString('en-US', { month: 'long', day:
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
         <p class="text-red-800 font-medium text-lg">{error}</p>
+      </div>
+    ) : counts.total === 0 ? (
+      <div class="max-w-3xl mx-auto mt-8">
+        <div class="bg-white border border-sage/20 rounded-2xl p-8 md:p-12 text-center shadow-sm relative overflow-hidden">
+           <!-- Subtle background pattern or gradient -->
+           <div class="absolute inset-0 bg-sage/5 opacity-50"></div>
+      
+           <div class="relative z-10">
+              <!-- Icon -->
+              <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-sm mb-6 text-sage">
+                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                 </svg>
+              </div>
+      
+              <h2 class="text-3xl font-bold text-granite mb-4">No fresh sets reported yet</h2>
+              <p class="text-lg text-gray-600 mb-12 max-w-lg mx-auto">
+                We haven't seen any confirmed resets in the last 7 days. Most LA gyms reset mid-week (Tue-Thu).
+              </p>
+      
+              <!-- Buttons -->
+              <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                 <a href="/" class="bg-sage text-white px-8 py-3 rounded-lg font-bold hover:bg-sage/90 transition-all shadow-md shadow-sage/10 w-full sm:w-auto">
+                   Browse All Gyms
+                 </a>
+                 <a href="mailto:hello@indoorclimbinggym.com?subject=Fresh%20Routes%20Update" class="text-granite font-medium px-6 py-3 hover:bg-white/80 rounded-lg transition-all border border-transparent hover:border-gray-200 w-full sm:w-auto">
+                   Report Update
+                 </a>
+              </div>
+           </div>
+        </div>
       </div>
     ) : (
       <div class="space-y-16">
@@ -161,7 +241,10 @@ const currentDate = new Date().toLocaleDateString('en-US', { month: 'long', day:
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {grouped.fresh.map((gym) => (
-                <div class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-sage/20 overflow-hidden flex flex-col h-full relative">
+                <a
+                  href={gym.gyms?.slug ? `/gyms/${gym.gyms.slug}` : '#'}
+                  class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-sage/20 overflow-hidden flex flex-col h-full relative cursor-pointer"
+                >
                   <!-- Top Badge -->
                   <div class="absolute top-0 left-0 w-full h-1 bg-sage"></div>
                   
@@ -207,7 +290,7 @@ const currentDate = new Date().toLocaleDateString('en-US', { month: 'long', day:
                       {formatDaysAgo(gym.days_since_reset)}
                     </span>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </section>
@@ -231,7 +314,10 @@ const currentDate = new Date().toLocaleDateString('en-US', { month: 'long', day:
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {grouped.recent.map((gym) => (
-                <div class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-blue-200 overflow-hidden flex flex-col h-full relative">
+                <a
+                  href={gym.gyms?.slug ? `/gyms/${gym.gyms.slug}` : '#'}
+                  class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-blue-200 overflow-hidden flex flex-col h-full relative cursor-pointer"
+                >
                   <!-- Top Badge -->
                   <div class="absolute top-0 left-0 w-full h-1 bg-blue-400"></div>
 
@@ -277,65 +363,7 @@ const currentDate = new Date().toLocaleDateString('en-US', { month: 'long', day:
                       {formatDaysAgo(gym.days_since_reset)}
                     </span>
                   </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        <!-- Old Section -->
-        {grouped.old.length > 0 && (
-          <section>
-            <div class="flex items-center gap-4 mb-8">
-              <div class="bg-gray-100 p-3 rounded-xl">
-                 <!-- Clock/History Icon for Old -->
-                <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <h2 class="text-3xl font-bold text-granite">Older Sets</h2>
-                <p class="text-gray-500">8+ days without reported resets</p>
-              </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {grouped.old.map((gym) => (
-                <div class="group bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-transparent hover:border-gray-300 overflow-hidden flex flex-col h-full relative opacity-80 hover:opacity-100">
-                  <div class="p-6 flex-1 flex flex-col">
-                    <div class="flex justify-between items-start mb-4">
-                       <h3 class="text-xl font-bold text-granite group-hover:text-gray-900 transition-colors">
-                        {gym.gym_name}
-                      </h3>
-                      <span class="flex-shrink-0 bg-gray-50 text-gray-500 text-xs font-bold px-2 py-1 rounded-md border border-gray-200 uppercase">
-                        {gym.confidence_level}
-                      </span>
-                    </div>
-
-                    <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      {gym.neighborhood || 'Los Angeles'}
-                    </div>
-
-                     <div class="flex flex-wrap gap-2 mb-6">
-                      <span class="px-3 py-1 bg-gray-50 rounded-full text-xs font-medium text-gray-600 border border-gray-100">
-                        {formatClimbingType(gym.climbing_type)}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
-                    <span class="text-sm font-medium text-gray-500 flex items-center gap-2">
-                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      {formatDaysAgo(gym.days_since_reset)}
-                    </span>
-                  </div>
-                </div>
+                </a>
               ))}
             </div>
           </section>
