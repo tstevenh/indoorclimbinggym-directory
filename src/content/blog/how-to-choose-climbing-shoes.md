@@ -6,7 +6,7 @@ author: "IndoorClimbingGym Team"
 category: "gear"
 tags: ["climbing shoes", "gear", "beginners", "fit guide", "equipment"]
 featured: true
-heroImage: "/images/blog/climbing-shoes-guide.jpg"
+heroImage: "/images/blog/how-to-choose-climbing-shoes.webp"
 heroImageAlt: "Climber trying on different climbing shoes in a gym pro shop"
 wordCount: 2987
 readingTime: 11

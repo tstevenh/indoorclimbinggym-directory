@@ -1,12 +1,12 @@
 ---
-title: "How to Break In Climbing Shoes: What Works (and What Doesn't)"
+title: "How to Break In Climbing Shoes: What Works, What Doesn't"
 description: "Learn how to break in climbing shoes properly with proven methods. Covers timeline, techniques, what's normal vs concerning, and when shoes won't work."
-publishedDate: 2026-01-05
+publishedDate: 2026-01-09
 author: "IndoorClimbingGym Team"
 category: "gear"
 tags: ["climbing shoes", "gear", "beginners", "break-in", "fit"]
 featured: true
-heroImage: "/images/blog/break-in-climbing-shoes.jpg"
+heroImage: "/images/blog/how-to-break-in-climbing-shoes.webp"
 heroImageAlt: "Climber adjusting new climbing shoes at indoor gym"
 wordCount: 2847
 readingTime: 11
