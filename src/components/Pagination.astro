@@ -30,8 +30,8 @@ function getPageUrl(page: number): string {
     }
     return `${baseUrl}&page=${page}`;
   } else {
-    // Path-based (category pages): always append page as path segment (including /1 for page 1)
-    return `${baseUrl}/${page}`;
+    // Path-based (category pages): always append page as path segment with trailing slash
+    return `${baseUrl}/${page}/`;
   }
 }
 

@@ -1,0 +1,41 @@
+---
+/**
+ * City Base URL Redirect
+ * Redirects /[state]/[city]/ to /[state]/[city]/1/
+ *
+ * This ensures pagination starts at /1/ and avoids canonical conflicts.
+ * Without this, /washington/seattle/ would 404.
+ */
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const { fetchGyms } = await import('../../../config/api');
+  const { getStateSlug } = await import('../../../utils/states');
+  const gyms = await fetchGyms();
+
+  // Get unique city/state combinations
+  const cityStatePairs = [...new Set(gyms.map(g => `${g.region}|${g.city}`))];
+
+  const paths = [];
+
+  for (const pair of cityStatePairs) {
+    const [region, city] = pair.split('|');
+    const stateSlug = getStateSlug(region);
+    const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+
+    paths.push({
+      params: {
+        state: stateSlug,
+        city: citySlug,
+      }
+    });
+  }
+
+  return paths;
+}
+
+const { state, city } = Astro.params;
+
+// 301 redirect to page 1
+return Astro.redirect(`/${state}/${city}/1/`, 301);
+---

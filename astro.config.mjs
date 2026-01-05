@@ -35,9 +35,14 @@ export default defineConfig({
   build: {
     inlineStylesheets: 'auto', // Inline small CSS for better performance
   },
-  // 301 Redirects for /guides → /blog migration (2025-11-28)
+  // 301 Redirects
   redirects: {
-    '/guides': '/blog',
-    '/guides/[...slug]': '/blog/[...slug]',
+    // Note: /guides → /blog migration handled by actual page files:
+    // - src/pages/guides/index.astro redirects /guides/ to /blog/
+    // - src/pages/guides/[...slug].astro redirects /guides/* to /blog/*
+
+    // Note: Pagination redirects handled by index.astro routes:
+    // - src/pages/categories/[category]/index.astro redirects to /1/
+    // - src/pages/[state]/[city]/index.astro redirects to /1/
   }
 });

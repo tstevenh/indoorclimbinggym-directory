@@ -99,8 +99,9 @@ const siteUrl = 'https://www.indoorclimbinggym.com';
 let canonicalURL: string;
 
 if (canonical) {
-  // Explicitly provided canonical (for query params, etc.)
-  canonicalURL = canonical;
+  // Explicitly provided canonical - ENFORCE trailing slash
+  // This prevents canonical → 308 redirect issues
+  canonicalURL = canonical.endsWith('/') ? canonical : canonical + '/';
 } else {
   // Self-canonical: ensure trailing slash for consistency
   let path = Astro.url.pathname;
@@ -263,7 +264,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
 
           <!-- Desktop Navigation -->
           <div class="hidden md:flex items-center gap-6">
-            <a href="/search" class="text-granite hover:text-sage transition-colors">Search</a>
+            <a href="/search/" class="text-granite hover:text-sage transition-colors">Search</a>
 
             <!-- Categories Dropdown -->
             <div class="relative group">
@@ -275,23 +276,23 @@ if (breadcrumbs && breadcrumbs.length > 0) {
               </button>
               <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div class="py-2">
-                  <a href="/categories/best-bouldering-climbing-gyms/1" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                  <a href="/categories/best-bouldering-climbing-gyms/1/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                     Best Bouldering Gyms
                   </a>
-                  <a href="/categories/best-climbing-gyms-for-beginners/1" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                  <a href="/categories/best-climbing-gyms-for-beginners/1/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                     For Beginners
                   </a>
-                  <a href="/categories/affordable-climbing-gyms/1" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                  <a href="/categories/affordable-climbing-gyms/1/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                     Affordable Gyms
                   </a>
-                  <a href="/categories/climbing-gyms-with-sauna/1" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                  <a href="/categories/climbing-gyms-with-sauna/1/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                     With Sauna
                   </a>
-                  <a href="/categories/climbing-gyms-with-kids-zone/1" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                  <a href="/categories/climbing-gyms-with-kids-zone/1/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                     With Kids Zone
                   </a>
                   <div class="border-t border-gray-200 my-1"></div>
-                  <a href="/categories" class="block px-4 py-2 text-sm text-gray-500 hover:bg-sage/10 hover:text-sage transition-colors">
+                  <a href="/categories/" class="block px-4 py-2 text-sm text-gray-500 hover:bg-sage/10 hover:text-sage transition-colors">
                     View All Categories →
                   </a>
                 </div>
@@ -312,7 +313,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
                     const stateSlug = getStateSlug(stateName);
                     return (
                       <a
-                        href={`/${stateSlug}`}
+                        href={`/${stateSlug}/`}
                         class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors"
                       >
                         {stateName}
@@ -320,15 +321,15 @@ if (breadcrumbs && breadcrumbs.length > 0) {
                     );
                   })}
                   <div class="border-t border-gray-200 my-1"></div>
-                  <a href="/states" class="block px-4 py-2 text-sm text-gray-500 hover:bg-sage/10 hover:text-sage transition-colors">
+                  <a href="/states/" class="block px-4 py-2 text-sm text-gray-500 hover:bg-sage/10 hover:text-sage transition-colors">
                     View All States →
                   </a>
                 </div>
               </div>
             </div>
 
-            <a href="/blog" class="text-granite hover:text-sage transition-colors">Blog</a>
-            <a href="/about" class="text-granite hover:text-sage transition-colors">About</a>
+            <a href="/blog/" class="text-granite hover:text-sage transition-colors">Blog</a>
+            <a href="/about/" class="text-granite hover:text-sage transition-colors">About</a>
 
             <!-- Auth Nav: Populated by client-side script -->
             <div id="desktop-auth-nav" class="flex items-center gap-4">
@@ -391,11 +392,11 @@ if (breadcrumbs && breadcrumbs.length > 0) {
           <div>
             <h4 class="font-semibold mb-3">Explore</h4>
             <ul class="space-y-2 text-sm">
-              <li><a href="/search" class="hover:text-sage">Search Gyms</a></li>
-              <li><a href="/gear" class="hover:text-sage">Recommended Gear</a></li>
-              <li><a href="/tools" class="hover:text-sage">Free Tools</a></li>
-              <li><a href="/blog" class="hover:text-sage">Blog</a></li>
-              <li><a href="/studies" class="hover:text-sage">Studies</a></li>
+              <li><a href="/search/" class="hover:text-sage">Search Gyms</a></li>
+              <li><a href="/gear/" class="hover:text-sage">Recommended Gear</a></li>
+              <li><a href="/tools/" class="hover:text-sage">Free Tools</a></li>
+              <li><a href="/blog/" class="hover:text-sage">Blog</a></li>
+              <li><a href="/studies/" class="hover:text-sage">Studies</a></li>
             </ul>
           </div>
 
@@ -403,11 +404,11 @@ if (breadcrumbs && breadcrumbs.length > 0) {
           <div>
             <h4 class="font-semibold mb-3">Top Categories</h4>
             <ul class="space-y-2 text-sm">
-              <li><a href="/categories/best-bouldering-climbing-gyms/1" class="hover:text-sage">Bouldering Gyms</a></li>
-              <li><a href="/categories/best-climbing-gyms-for-beginners/1" class="hover:text-sage">For Beginners</a></li>
-              <li><a href="/categories/affordable-climbing-gyms/1" class="hover:text-sage">Affordable Gyms</a></li>
-              <li><a href="/categories/climbing-gyms-with-sauna/1" class="hover:text-sage">With Sauna</a></li>
-              <li><a href="/categories" class="hover:text-sage">All Categories</a></li>
+              <li><a href="/categories/best-bouldering-climbing-gyms/1/" class="hover:text-sage">Bouldering Gyms</a></li>
+              <li><a href="/categories/best-climbing-gyms-for-beginners/1/" class="hover:text-sage">For Beginners</a></li>
+              <li><a href="/categories/affordable-climbing-gyms/1/" class="hover:text-sage">Affordable Gyms</a></li>
+              <li><a href="/categories/climbing-gyms-with-sauna/1/" class="hover:text-sage">With Sauna</a></li>
+              <li><a href="/categories/" class="hover:text-sage">All Categories</a></li>
             </ul>
           </div>
 
@@ -420,7 +421,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
                 const stateSlug = getStateSlug(region);
                 return (
                   <li>
-                    <a href={`/${stateSlug}/${slug}/1`} class="hover:text-sage">
+                    <a href={`/${stateSlug}/${slug}/1/`} class="hover:text-sage">
                       {city}, {stateCode}
                     </a>
                   </li>

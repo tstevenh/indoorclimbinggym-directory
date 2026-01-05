@@ -1,0 +1,13 @@
+---
+/**
+ * Blog Index Migration Redirect
+ * Redirects /guides/ to /blog/
+ *
+ * This handles the base URL redirect for the blog migration.
+ */
+
+export const prerender = true;
+
+// 301 redirect to new blog index
+return Astro.redirect('/blog/', 301);
+---

@@ -1,0 +1,78 @@
+---
+/**
+ * Category Base URL Redirect
+ * Redirects /categories/[category]/ to /categories/[category]/1/
+ *
+ * This ensures pagination starts at /1/ and avoids canonical conflicts.
+ * Without this, /categories/bouldering/ would 404.
+ */
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const { fetchGyms } = await import('../../../config/api');
+  const gymsData = await fetchGyms();
+
+  // Parse all amenities and climbing types
+  const allAmenities = new Set<string>();
+  const allClimbingTypes = new Set<string>();
+
+  gymsData.forEach(gym => {
+    gym.amenities?.split('|').forEach(a => allAmenities.add(a.trim()));
+    gym.climbing_types?.split('|').forEach(ct => allClimbingTypes.add(ct.trim()));
+  });
+
+  // Categories to skip from dynamic generation (have static pages)
+  const skipAmenities = ['sauna', 'kids_zone'];
+  const skipClimbingTypes = ['bouldering'];
+
+  const categoryPaths = [];
+
+  // Add special static categories manually (these have static .astro pages)
+  const specialCategories = [
+    'best-bouldering-climbing-gyms',
+    'best-climbing-gyms-for-beginners',
+    'affordable-climbing-gyms',
+    'climbing-gyms-with-sauna',
+    'climbing-gyms-with-kids-zone',
+  ];
+
+  for (const slug of specialCategories) {
+    categoryPaths.push({
+      params: { category: slug }
+    });
+  }
+
+  // Generate amenity-based redirects (only if 3+ gyms)
+  for (const amenity of allAmenities) {
+    if (skipAmenities.includes(amenity)) continue;
+
+    const matchingGyms = gymsData.filter(g => g.amenities?.includes(amenity));
+    if (matchingGyms.length >= 3) {
+      const categorySlug = `climbing-gyms-with-${amenity.replace(/_/g, '-')}`;
+      categoryPaths.push({
+        params: { category: categorySlug }
+      });
+    }
+  }
+
+  // Generate climbing type-based redirects (only if 3+ gyms)
+  for (const climbingType of allClimbingTypes) {
+    if (skipClimbingTypes.includes(climbingType)) continue;
+
+    const matchingGyms = gymsData.filter(g => g.climbing_types?.includes(climbingType));
+    if (matchingGyms.length >= 3) {
+      const categorySlug = `best-${climbingType.replace(/_/g, '-')}-climbing-gyms`;
+      categoryPaths.push({
+        params: { category: categorySlug }
+      });
+    }
+  }
+
+  return categoryPaths;
+}
+
+const { category } = Astro.params;
+
+// 301 redirect to page 1
+return Astro.redirect(`/categories/${category}/1/`, 301);
+---

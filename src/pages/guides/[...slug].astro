@@ -1,0 +1,25 @@
+---
+/**
+ * Blog Post Migration Redirect
+ * Redirects old /guides/* URLs to new /blog/* URLs
+ *
+ * This page generates 301 redirects for all blog posts that were
+ * previously at /guides/* to their new location at /blog/*
+ */
+
+import { getCollection } from 'astro:content';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog');
+  return blogEntries.map((entry) => ({
+    params: { slug: entry.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+// 301 redirect to new blog URL with trailing slash
+return Astro.redirect(`/blog/${slug}/`, 301);
+---

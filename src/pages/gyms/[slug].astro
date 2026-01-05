@@ -70,9 +70,9 @@ const citySlug = gym.city.toLowerCase().replace(/\s+/g, '-');
 // Build breadcrumbs
 const breadcrumbs = [
   { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
-  { label: gym.region, url: `https://www.indoorclimbinggym.com/${stateSlug}` },
-  { label: gym.city, url: `https://www.indoorclimbinggym.com/${stateSlug}/${citySlug}/1` },
-  { label: gym.name, url: `https://www.indoorclimbinggym.com/gyms/${gym.slug}` },
+  { label: gym.region, url: `https://www.indoorclimbinggym.com/${stateSlug}/` },
+  { label: gym.city, url: `https://www.indoorclimbinggym.com/${stateSlug}/${citySlug}/1/` },
+  { label: gym.name, url: `https://www.indoorclimbinggym.com/gyms/${gym.slug}/` },
 ];
 
 // Helper to get the most interesting amenity for SEO
