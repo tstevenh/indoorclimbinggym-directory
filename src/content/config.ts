@@ -22,6 +22,7 @@ const blogCollection = defineCollection({
     heroImageAlt: z.string(),
     wordCount: z.number().optional(),
     readingTime: z.number().optional(), // in minutes
+    canonicalURL: z.string().url().optional(), // For republished content - points to original source
   }),
 });
 

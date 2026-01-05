@@ -190,9 +190,12 @@ const relatedPosts = allPosts.filter(
 );
 
 // SEO setup
-const pageUrl = `https://www.indoorclimbinggym.com/blog/${entry.slug}`;
+const pageUrl = `https://www.indoorclimbinggym.com/blog/${entry.slug}/`;
 const title = generateBlogPostTitle(entry.data.title);
 const keywords = generateBlogKeywords(entry.data.tags, entry.data.category);
+
+// Use canonical URL from frontmatter if provided, otherwise use page URL
+const canonicalUrl = entry.data.canonicalURL || pageUrl;
 
 // Format dates for schema
 const publishedDate = entry.data.publishedDate.toISOString();
@@ -271,7 +274,7 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-gray-100 text-g
 <BaseLayout
   title={title}
   description={entry.data.description}
-  canonical={pageUrl}
+  canonical={canonicalUrl}
   ogImage={entry.data.heroImage}
   ogType="article"
   keywords={keywords}
