@@ -6,7 +6,6 @@
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { fetchGyms } from '../../config/api';
-import AffiliateBlock from '../../components/AffiliateBlock.astro';
 
 export const prerender = true;
 
@@ -290,16 +289,6 @@ const breadcrumbs = [
       </p>
     </div>
   </section>
-
-  <!-- Affiliate Block -->
-  <div class="mb-16">
-    <AffiliateBlock 
-      title="Top Rated Gear" 
-      subtitle="Must-have equipment for every climber."
-      category="gear"
-      count={5}
-    />
-  </div>
 
   <!-- Reverted CTA Section -->
   <section class="bg-sage text-white p-8 rounded-lg shadow-md text-center">

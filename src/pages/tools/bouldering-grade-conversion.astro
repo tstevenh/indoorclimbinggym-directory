@@ -16,6 +16,7 @@ import AffiliateBlock from '../../components/AffiliateBlock.astro';
 
 // Import bouldering grades data
 import boulderingGrades from '../../data/bouldering-grades.json';
+import { AFFILIATE_PRODUCTS } from '../../data/affiliateProducts';
 
 // SEO
 const title = "Bouldering Grade Converter (Free) | V-Scale to Font";
@@ -236,11 +237,14 @@ const schemas = [toolSchema, faqSchema];
           </div>
         </div>
 
-        <AffiliateBlock 
-          title="Gear to Get You There" 
-          subtitle="Essential tools for bouldering progression."
-          category="training"
-          count={3}
+        <AffiliateBlock
+          title="Breaking through V4-V5? Train finger strength"
+          subtitle="Most climbers plateau at V4 because of finger strength, not technique. Hangboards and grip trainers build the strength grades V5+ demand. 15 minutes, 3× per week."
+          products={[
+            AFFILIATE_PRODUCTS.find(p => p.id === 'power-guidance-hangboard'),
+            AFFILIATE_PRODUCTS.find(p => p.id === 'fitbeast-grip-kit'),
+          ].filter(Boolean)}
+          count={2}
         />
 
         <!-- Visual Grade Comparison Chart -->

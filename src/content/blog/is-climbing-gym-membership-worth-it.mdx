@@ -13,6 +13,9 @@ wordCount: 2200
 readingTime: 9
 ---
 
+import AffiliateBlock from '../../components/AffiliateBlock.astro';
+import { AFFILIATE_PRODUCTS } from '../../data/affiliateProducts';
+
 ## Is a Climbing Gym Membership Worth the Money?
 
 You've tried climbing a few times, you're hooked, and now you're staring at membership pricing wondering: "Is a climbing gym membership worth it, or should I stick with day passes?"
@@ -173,6 +176,17 @@ Read the fine print. Some gyms charge if you cancel before a minimum term (often
 - Equipment rental: $7 per visit × 8 visits = $56/month
 - **First month total: $201**
 - **Subsequent months: $151**
+
+<AffiliateBlock
+  title="Membership pays for itself if you own these"
+  subtitle="Members save on rentals. Shoes: $6/visit. Chalk: $3/visit. Own once for $141, or keep paying $9 every session. At 8 visits/month, you save $864/year."
+  products={[
+    AFFILIATE_PRODUCTS.find(p => p.id === 'bd-momentum-mens'),
+    AFFILIATE_PRODUCTS.find(p => p.id === 'generic-chalk-bag'),
+    AFFILIATE_PRODUCTS.find(p => p.id === 'friction-labs-loose'),
+  ].filter(Boolean)}
+  count={3}
+/>
 
 ### Day Pass Hidden Advantages
 

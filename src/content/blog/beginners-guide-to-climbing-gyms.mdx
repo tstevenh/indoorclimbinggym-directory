@@ -13,6 +13,9 @@ wordCount: 2350
 readingTime: 10
 ---
 
+import AffiliateBlock from '../../components/AffiliateBlock.astro';
+import { AFFILIATE_PRODUCTS } from '../../data/affiliateProducts';
+
 ## Your First Visit to a Climbing Gym: What to Expect
 
 Walking into a climbing gym for the first time can feel intimidating. The walls tower above you, experienced climbers seem to float up routes that look impossible, and the terminology sounds like a foreign language. But here's the truth: every single person in that gym was once exactly where you are now.
@@ -89,6 +92,17 @@ Budget for these typical expenses (learn more about [climbing gym costs in detai
 **Total First Visit**: $26-$48 without a class, $51-$88 with an intro class
 
 Many gyms offer first-timer specials or package deals that include the day pass, equipment rental, and a beginner lesson at a discount. If you're considering long-term climbing, our guide on [whether gym memberships are worth it](/blog/is-climbing-gym-membership-worth-it) can help you make an informed decision.
+
+<AffiliateBlock
+  title="Most beginners buy these after 3-5 sessions"
+  subtitle="First few visits? Rent. Climbing regularly? These three items cost $141 total and last years. Rentals cost $9/session—you break even after 16 visits."
+  products={[
+    AFFILIATE_PRODUCTS.find(p => p.id === 'bd-momentum-mens'),
+    AFFILIATE_PRODUCTS.find(p => p.id === 'generic-chalk-bag'),
+    AFFILIATE_PRODUCTS.find(p => p.id === 'friction-labs-loose'),
+  ].filter(Boolean)}
+  count={3}
+/>
 
 ## Your First Experience: Step by Step
 

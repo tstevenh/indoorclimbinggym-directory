@@ -10,7 +10,6 @@ import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
 import { generateStateTitle, generateStateDescription } from '../../utils/seo';
 import { fetchGyms } from '../../config/api';
 import { getStateSlug, getStateCode } from '../../utils/states';
-import AffiliateBlock from '../../components/AffiliateBlock.astro';
 
 export const prerender = true;
 
@@ -305,16 +304,6 @@ const breadcrumbs = [
       ))}
     </div>
   </section>
-
-  <!-- Affiliate Block -->
-  <div class="mb-16">
-    <AffiliateBlock 
-      title={`Gear Up for Climbing in ${region}`} 
-      subtitle="Essential gear for your local crag or gym."
-      category="gear"
-      count={5}
-    />
-  </div>
 
   <!-- CTA Section -->
   <section class="text-center bg-gradient-to-r from-sage to-sage/80 rounded-lg p-12 text-white">

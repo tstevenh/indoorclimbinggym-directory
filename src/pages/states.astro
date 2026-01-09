@@ -9,7 +9,6 @@ import { generateSEO } from '../utils/seo';
 import { generateItemListSchema } from '../utils/schema';
 import { fetchGyms } from '../config/api';
 import { getStateCode, getStateSlug, getStateName } from '../utils/states';
-import AffiliateBlock from '../components/AffiliateBlock.astro';
 
 export const prerender = true;
 
@@ -214,16 +213,6 @@ const breadcrumbs = [
       </p>
     </div>
   </section>
-
-  <!-- Affiliate Block -->
-  <div class="mb-16">
-    <AffiliateBlock 
-      title="Travel Gear for Climbers" 
-      subtitle="Essential gear for your next climbing trip."
-      category="gear"
-      count={5}
-    />
-  </div>
 
   <!-- Original CTA Section -->
   <section class="text-center bg-gradient-to-r from-sage to-sage/80 rounded-lg p-12 text-white">

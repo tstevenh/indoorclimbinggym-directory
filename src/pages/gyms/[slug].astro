@@ -11,6 +11,7 @@ import OptimizedImage from '../../components/OptimizedImage.astro';
 import GymMap from '../../components/GymMap.astro';
 import SubredditCTA from '../../components/SubredditCTA.astro';
 import AffiliateBlock from '../../components/AffiliateBlock.astro';
+import { AFFILIATE_PRODUCTS } from '../../data/affiliateProducts';
 import { generateGymSchema, generateFAQSchema, serializeSchema } from '../../utils/schema';
 import { generateGymTitle, generateGymDescription, generateGymKeywords } from '../../utils/seo';
 import { IMAGE_SIZES } from '../../utils/imageUtils';
@@ -689,9 +690,15 @@ let relatedGyms = allGyms
       </section>
 
       {/* Affiliate Gear Block - Monetization */}
-      <AffiliateBlock 
-        title="Recommended Climbing Gear"
-        subtitle="Don't want to rent? Here is the gear we recommend for gym climbing."
+      <AffiliateBlock
+        title="Skip rentals: Own these 3 items after 10 sessions"
+        subtitle="Shoe rental: $6/visit. Chalk: $3/visit. That's $90 every 10 sessions. These items cost $141 total and last years. Break even in 16 visits."
+        products={[
+          AFFILIATE_PRODUCTS.find(p => p.id === 'bd-momentum-mens'),
+          AFFILIATE_PRODUCTS.find(p => p.id === 'generic-chalk-bag'),
+          AFFILIATE_PRODUCTS.find(p => p.id === 'friction-labs-loose'),
+        ].filter(Boolean)}
+        count={3}
       />
 
       <!-- Pricing - Only show if pricing data exists -->

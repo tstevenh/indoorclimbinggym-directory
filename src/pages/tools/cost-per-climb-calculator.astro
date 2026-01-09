@@ -9,6 +9,7 @@ import CostCalculatorForm from '../../components/tools/CostCalculatorForm.astro'
 import CostResultsDisplay from '../../components/tools/CostResultsDisplay.astro';
 import { serializeSchema } from '../../utils/schema';
 import AffiliateBlock from '../../components/AffiliateBlock.astro';
+import { AFFILIATE_PRODUCTS } from '../../data/affiliateProducts';
 
 export const prerender = true;
 
@@ -338,10 +339,14 @@ const schemas = [toolSchema, faqSchema, howToSchema];
     </ul>
 
     <!-- Affiliate Products: Essential Gear Section -->
-    <AffiliateBlock 
-      title="Save Money: Own Your Gear" 
-      subtitle="Gear rental fees add $5-10 per visit. Buying your own pays for itself in 10-15 climbs."
-      category="shoes"
+    <AffiliateBlock
+      title="Climbing 8+ times a month? These save you $864/year"
+      subtitle="Rentals: $9/session × 8 sessions = $72/month = $864/year. Own shoes, chalk, and a bag once for $141. After two months, everything's free."
+      products={[
+        AFFILIATE_PRODUCTS.find(p => p.id === 'bd-momentum-mens'),
+        AFFILIATE_PRODUCTS.find(p => p.id === 'generic-chalk-bag'),
+        AFFILIATE_PRODUCTS.find(p => p.id === 'friction-labs-loose'),
+      ].filter(Boolean)}
       count={3}
     />
 

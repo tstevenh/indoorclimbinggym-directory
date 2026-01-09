@@ -16,6 +16,7 @@ import AffiliateBlock from '../../components/AffiliateBlock.astro';
 
 // Import sport climbing grades data
 import sportGrades from '../../data/sport-grades.json';
+import { AFFILIATE_PRODUCTS } from '../../data/affiliateProducts';
 
 // SEO
 const title = "Sport Climbing Grade Converter (Free) | YDS to French";
@@ -236,11 +237,14 @@ const schemas = [toolSchema, faqSchema];
           </div>
         </div>
 
-        <AffiliateBlock 
-          title="Essential Sport Climbing Gear" 
-          subtitle="Get ready for the crag with our top picks."
-          category="gear"
-          count={3}
+        <AffiliateBlock
+          title="Moving from gym to outdoor lead climbing?"
+          subtitle="You'll need your own belay device and harness. Here's what gyms recommend for sport climbing transitions."
+          products={[
+            AFFILIATE_PRODUCTS.find(p => p.id === 'petzl-grigri'),
+            AFFILIATE_PRODUCTS.find(p => p.id === 'petzl-corax-harness'),
+          ].filter(Boolean)}
+          count={2}
         />
 
         <!-- Visual Grade Comparison Chart -->

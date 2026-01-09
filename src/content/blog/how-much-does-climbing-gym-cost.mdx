@@ -13,6 +13,9 @@ wordCount: 2400
 readingTime: 10
 ---
 
+import AffiliateBlock from '../../components/AffiliateBlock.astro';
+import { AFFILIATE_PRODUCTS } from '../../data/affiliateProducts';
+
 ## How Much Does It Cost to Climb at a Gym? Complete Pricing Guide
 
 You're curious about climbing but wondering: "How much does it actually cost?" It's a smart question. Before committing to a new hobby, you want to know the real financial investment beyond the Instagram-perfect photos of climbers scaling colorful walls.
@@ -268,6 +271,17 @@ Most gyms offer package pricing that bundles equipment:
 - **Savings: $2**
 
 **Always ask:** "Do you have a rental package?" Most gyms do, but it's not always advertised prominently.
+
+<AffiliateBlock
+  title="The math checks out: Own these after 15 sessions"
+  subtitle="You just saw the rental costs above. Shoes: $6. Chalk: $3. That's $135 every 15 sessions. These three items? $141 total. You break even in 16 visits, then climb free."
+  products={[
+    AFFILIATE_PRODUCTS.find(p => p.id === 'bd-momentum-mens'),
+    AFFILIATE_PRODUCTS.find(p => p.id === 'generic-chalk-bag'),
+    AFFILIATE_PRODUCTS.find(p => p.id === 'friction-labs-loose'),
+  ].filter(Boolean)}
+  count={3}
+/>
 
 ## Climbing Gym Membership Costs (And When They're Worth It)
 

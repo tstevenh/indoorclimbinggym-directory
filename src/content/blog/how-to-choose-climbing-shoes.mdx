@@ -12,6 +12,9 @@ wordCount: 2987
 readingTime: 11
 ---
 
+import AffiliateBlock from '../../components/AffiliateBlock.astro';
+import { AFFILIATE_PRODUCTS } from '../../data/affiliateProducts';
+
 Your first pair of climbing shoes can shape how you feel about climbing. Too tight, and you'll spend more time wincing than climbing. Too loose, and you'll wonder why your feet keep slipping off holds that everyone else sticks.
 
 I've watched people buy aggressive downturned shoes for their first session because they looked like what the advanced climbers wear. Those shoes sat in a locker after two routes. I've also seen climbers struggle for months in shoes that don't match their foot shape, convinced they just need to "break them in more."
@@ -293,6 +296,17 @@ If you're buying your first pair, here's the simple version:
 **Budget $60-$100.** This gets you quality shoes from reputable brands without overpaying for features you don't need yet.
 
 **Try multiple options if possible.** Every foot is different. The shoe your friend loves might not fit your foot shape.
+
+<AffiliateBlock
+  title="Three beginner-friendly options at different price points"
+  subtitle="All three have neutral shapes, comfortable fit, and good all-around performance. Pick based on your budget and whether you prioritize comfort or value."
+  products={[
+    AFFILIATE_PRODUCTS.find(p => p.id === 'ls-tarantulace-mens'),
+    AFFILIATE_PRODUCTS.find(p => p.id === 'bd-momentum-mens'),
+    AFFILIATE_PRODUCTS.find(p => p.id === 'bd-momentum-womens'),
+  ].filter(Boolean)}
+  count={3}
+/>
 
 ### Common Mistakes Beginners Make
 

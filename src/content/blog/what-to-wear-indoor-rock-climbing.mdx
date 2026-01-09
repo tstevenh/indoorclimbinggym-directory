@@ -13,6 +13,9 @@ wordCount: 2850
 readingTime: 11
 ---
 
+import AffiliateBlock from '../../components/AffiliateBlock.astro';
+import { AFFILIATE_PRODUCTS } from '../../data/affiliateProducts';
+
 ## Quick Answer: Indoor Climbing Outfit Essentials
 
 **What to wear rock climbing indoor:** A fitted athletic shirt, stretchy pants or leggings, and climbing shoes (rental or purchased). That's it. You likely already own everything except the shoes, which every gym rents for $5-7.
@@ -275,13 +278,15 @@ For a detailed breakdown of climbing gym costs including equipment rentals, chec
 
 **Purchase Math:** At $6 per rental, buying $90 shoes breaks even after 15 visits. If you climb twice weekly, that's under 2 months.
 
-**Beginner Shoe Recommendations:**
-- **La Sportiva Tarantula:** $89 - Most recommended beginner shoe
-- **Evolv Defy:** $95 - Comfortable, great for wide feet
-- **Scarpa Origin:** $85 - Excellent all-around beginner model
-- **Five Ten Rogue:** $100 - Durable, climbing gym favorite
-
-**Where to buy:** REI, local climbing gym pro shops (get expert fitting), Backcountry.com
+<AffiliateBlock
+  title="Shoes are the only gear that matters for clothing"
+  subtitle="Everything else? Regular athletic wear works fine. But climbing shoes make the difference. Here are two beginner-friendly options under $100."
+  products={[
+    AFFILIATE_PRODUCTS.find(p => p.id === 'ls-tarantulace-mens'),
+    AFFILIATE_PRODUCTS.find(p => p.id === 'bd-momentum-mens'),
+  ].filter(Boolean)}
+  count={2}
+/>
 
 ### How Climbing Shoes Should Fit
 
