@@ -293,10 +293,10 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-gray-100 text-g
       <ol class="flex flex-wrap items-center gap-2">
         <li><a href="/" class="hover:text-sage">Home</a></li>
         <li>/</li>
-        <li><a href="/blog" class="hover:text-sage">Guides</a></li>
+        <li><a href="/blog/" class="hover:text-sage">Guides</a></li>
         <li>/</li>
         <li>
-          <a href={`/blog/${entry.data.category}`} class="hover:text-sage">
+          <a href={`/blog/${entry.data.category}/`} class="hover:text-sage">
             {entry.data.category.charAt(0).toUpperCase() + entry.data.category.slice(1)}
           </a>
         </li>

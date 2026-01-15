@@ -42,17 +42,17 @@ const title = page.currentPage === 1
   ? 'Climbing Guides & Tips | Expert Advice for Climbers'
   : `Climbing Guides & Tips - Page ${page.currentPage}`;
 const description = `${postCount} expert guides on indoor climbing. Techniques, gear reviews, gym costs & more. Written by climbers for beginners & pros.`;
-const pageUrl = `https://www.indoorclimbinggym.com/blog${page.currentPage > 1 ? `/${page.currentPage}` : ''}`;
+const pageUrl = `https://www.indoorclimbinggym.com/blog/${page.currentPage > 1 ? `${page.currentPage}/` : ''}`;
 
 // Calculate pagination URLs for rel=prev/next
 const prevUrl = page.currentPage > 1
   ? (page.currentPage === 2
-      ? 'https://www.indoorclimbinggym.com/blog'
-      : `https://www.indoorclimbinggym.com/blog/${page.currentPage - 1}`)
+      ? 'https://www.indoorclimbinggym.com/blog/'
+      : `https://www.indoorclimbinggym.com/blog/${page.currentPage - 1}/`)
   : undefined;
 
 const nextUrl = page.currentPage < page.lastPage
-  ? `https://www.indoorclimbinggym.com/blog/${page.currentPage + 1}`
+  ? `https://www.indoorclimbinggym.com/blog/${page.currentPage + 1}/`
   : undefined;
 
 // Generate ItemList schema for blog posts
@@ -84,8 +84,8 @@ const itemListSchema = generateItemListSchema(
 
 // Breadcrumbs
 const breadcrumbs = [
-  { label: 'Home', url: 'https://www.indoorclimbinggym.com' },
-  { label: 'Guides', url: 'https://www.indoorclimbinggym.com/blog' },
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
+  { label: 'Guides', url: 'https://www.indoorclimbinggym.com/blog/' },
 ];
 
 if (page.currentPage > 1) {
@@ -165,7 +165,7 @@ const keywords = [
 
       {Array.from({ length: page.lastPage }, (_, i) => i + 1).map((pageNum) => (
         <a
-          href={pageNum === 1 ? '/blog' : `/blog/${pageNum}`}
+          href={pageNum === 1 ? '/blog/' : `/blog/${pageNum}/`}
           class={`px-4 py-2 rounded ${
             pageNum === page.currentPage
               ? 'bg-sage text-white'

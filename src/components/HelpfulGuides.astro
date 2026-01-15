@@ -15,22 +15,22 @@ const { beginner_friendly = false, includeAll = false } = Astro.props;
 const guides = [
   {
     title: "Beginner's Guide to Climbing Gyms",
-    url: '/blog/beginners-guide-to-climbing-gyms',
+    url: '/blog/beginners-guide-to-climbing-gyms/',
     showIf: beginner_friendly || includeAll,
   },
   {
     title: 'What to Wear Indoor Rock Climbing',
-    url: '/blog/what-to-wear-indoor-rock-climbing',
+    url: '/blog/what-to-wear-indoor-rock-climbing/',
     showIf: true,
   },
   {
     title: 'Is Climbing Gym Membership Worth It?',
-    url: '/blog/is-climbing-gym-membership-worth-it',
+    url: '/blog/is-climbing-gym-membership-worth-it/',
     showIf: true,
   },
   {
     title: 'Bouldering vs Rope Climbing',
-    url: '/blog/bouldering-vs-rope-climbing',
+    url: '/blog/bouldering-vs-rope-climbing/',
     showIf: includeAll,
   },
 ];
@@ -69,7 +69,7 @@ const visibleGuides = guides.filter(g => g.showIf).slice(0, 3);
       ))}
     </div>
     <a
-      href="/blog"
+      href="/blog/"
       class="block mt-4 text-sage text-sm font-medium hover:underline"
     >
       View all guides →

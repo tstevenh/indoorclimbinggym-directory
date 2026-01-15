@@ -201,7 +201,7 @@ const description = `Search ${totalGyms}+ climbing gyms in ${uniqueStates} state
             : "Highly rated gyms from climbers like you"}
         </p>
       </div>
-      <a href="/search" class="text-sage font-medium hover:underline">
+      <a href="/search/" class="text-sage font-medium hover:underline">
         View All →
       </a>
     </div>
@@ -292,7 +292,7 @@ const description = `Search ${totalGyms}+ climbing gyms in ${uniqueStates} state
         <h2 class="text-3xl font-bold text-granite mb-2">Browse by State</h2>
         <p class="text-gray-600">Find climbing gyms across America by state</p>
       </div>
-      <a href="/states" class="text-sage hover:text-sage/80 font-medium flex items-center gap-2">
+      <a href="/states/" class="text-sage hover:text-sage/80 font-medium flex items-center gap-2">
         View All States
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -308,7 +308,7 @@ const description = `Search ${totalGyms}+ climbing gyms in ${uniqueStates} state
 
         return (
           <a
-            href={`/${stateSlug}`}
+            href={`/${stateSlug}/`}
             class="group block p-6 bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-sage/20 relative overflow-hidden"
           >
             <div class="absolute top-0 right-0 w-24 h-24 bg-sage/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
@@ -340,7 +340,7 @@ const description = `Search ${totalGyms}+ climbing gyms in ${uniqueStates} state
         <h2 class="text-3xl font-bold text-granite mb-2">Browse by Category</h2>
         <p class="text-gray-600">Find gyms that match your specific needs</p>
       </div>
-      <a href="/categories" class="text-sage hover:text-sage/80 font-medium flex items-center gap-2">
+      <a href="/categories/" class="text-sage hover:text-sage/80 font-medium flex items-center gap-2">
         View All Categories
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -427,7 +427,7 @@ const description = `Search ${totalGyms}+ climbing gyms in ${uniqueStates} state
 
     <div class="text-center">
       <a
-        href="/blog/beginners-guide-to-climbing-gyms"
+        href="/blog/beginners-guide-to-climbing-gyms/"
         class="inline-block bg-sage text-white px-8 py-3 rounded-lg font-bold hover:bg-sage/90 transition-colors"
       >
         Read Our Beginner's Guide
@@ -435,57 +435,72 @@ const description = `Search ${totalGyms}+ climbing gyms in ${uniqueStates} state
     </div>
   </section>
 
-  <!-- Guides Section (REVERTED) -->
+  <!-- Tools Section -->
   <section class="mb-16 bg-gradient-to-br from-sage/10 to-ivory rounded-lg p-8">
     <div class="mb-8">
-      <h2 class="text-3xl font-bold text-granite mb-2">Climbing Guides & Resources</h2>
-      <p class="text-gray-600">Learn everything you need to know about indoor climbing</p>
+      <h2 class="text-3xl font-bold text-granite mb-2">Climbing Tools & Calculators</h2>
+      <p class="text-gray-600">Helpful tools for climbers of all levels</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <a
-        href="/blog/beginners-guide-to-climbing-gyms"
+        href="/tools/bouldering-grade-conversion/"
         class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow group"
       >
-        <h3 class="font-bold text-granite group-hover:text-sage transition-colors mb-2">
-          Beginner's Guide
-        </h3>
+        <div class="flex items-center gap-3 mb-3">
+          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          <h3 class="font-bold text-granite group-hover:text-sage transition-colors text-lg">
+            Bouldering Grade Converter
+          </h3>
+        </div>
         <p class="text-sm text-gray-600">
-          Everything you need to know before your first visit
+          Convert between V-scale, Font, and other bouldering grade systems instantly
         </p>
       </a>
 
       <a
-        href="/blog/what-to-wear-indoor-rock-climbing"
+        href="/tools/sport-climbing-grade-conversion/"
         class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow group"
       >
-        <h3 class="font-bold text-granite group-hover:text-sage transition-colors mb-2">
-          What to Wear
-        </h3>
+        <div class="flex items-center gap-3 mb-3">
+          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+          <h3 class="font-bold text-granite group-hover:text-sage transition-colors text-lg">
+            Sport Grade Converter
+          </h3>
+        </div>
         <p class="text-sm text-gray-600">
-          Complete guide to climbing clothing and gear
+          Convert between Yosemite Decimal, French, and other sport climbing grades
         </p>
       </a>
 
       <a
-        href="/blog/is-climbing-gym-membership-worth-it"
+        href="/tools/cost-per-climb-calculator/"
         class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow group"
       >
-        <h3 class="font-bold text-granite group-hover:text-sage transition-colors mb-2">
-          Membership Guide
-        </h3>
+        <div class="flex items-center gap-3 mb-3">
+          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 class="font-bold text-granite group-hover:text-sage transition-colors text-lg">
+            Cost Per Climb Calculator
+          </h3>
+        </div>
         <p class="text-sm text-gray-600">
-          Is a climbing gym membership worth it?
+          Calculate your actual cost per visit to see if a membership saves you money
         </p>
       </a>
     </div>
 
     <div class="text-center mt-8">
       <a
-        href="/blog"
+        href="/tools/"
         class="inline-block text-sage font-medium hover:underline"
       >
-        View all guides →
+        View all tools →
       </a>
     </div>
   </section>
@@ -586,13 +601,13 @@ const description = `Search ${totalGyms}+ climbing gyms in ${uniqueStates} state
     </p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
       <a
-        href="/search"
+        href="/search/"
         class="inline-block bg-white text-sage px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
       >
         Advanced Search
       </a>
       <a
-        href="/blog"
+        href="/blog/"
         class="inline-block bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white/10 transition-colors"
       >
         Read Our Guides

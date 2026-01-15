@@ -30,8 +30,12 @@ function getPageUrl(page: number): string {
     }
     return `${baseUrl}&page=${page}`;
   } else {
-    // Path-based (category pages): always append page as path segment with trailing slash
-    return `${baseUrl}/${page}/`;
+    // Path-based (category pages): append page number
+    // Base URL should have trailing slash (e.g., /categories/slug/)
+    // For page 1, return /categories/slug/1/
+    // For page 2+, return /categories/slug/2/
+    const baseWithoutSlash = baseUrl.replace(/\/$/, ''); // Remove trailing slash
+    return `${baseWithoutSlash}/${page}/`;
   }
 }
 

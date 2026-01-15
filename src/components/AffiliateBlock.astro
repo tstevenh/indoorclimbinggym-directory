@@ -63,7 +63,7 @@ const imageContainerClasses = variant === 'vertical'
         href={product.link} 
         target="_blank" 
         rel="noopener noreferrer sponsored"
-        class={`group ${cardClasses} border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg hover:border-sage/30 transition-all duration-300`}
+        class={`group ${cardClasses} border border-gray-100 rounded-lg overflow-hidden hover:shadow-lg hover:border-sage/30 transition-all duration-300 no-underline !no-underline`}
       >
         <div class={`relative bg-gray-50 p-4 flex items-center justify-center overflow-hidden ${imageContainerClasses}`}>
           <img 
@@ -104,7 +104,7 @@ const imageContainerClasses = variant === 'vertical'
   </div>
 
   <div class="mt-6 text-center border-t border-gray-100 pt-4">
-    <a href="/gear" class="inline-flex items-center gap-2 text-sm text-sage font-medium hover:text-sage/80 transition-colors group">
+    <a href="/gear/" class="inline-flex items-center gap-2 text-sm text-sage font-medium hover:text-sage/80 transition-colors group no-underline !no-underline">
       View All Recommended Gear
       <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />

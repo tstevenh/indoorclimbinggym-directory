@@ -429,7 +429,7 @@ Beyond physical infrastructure, the best ${formattedValue.toLowerCase()} climbin
     <Pagination
       currentPage={currentPage}
       totalPages={totalPages}
-      baseUrl={`/categories/${categorySlug}`}
+      baseUrl={`/categories/${categorySlug}/`}
     />
   </section>
 
@@ -464,7 +464,7 @@ Beyond physical infrastructure, the best ${formattedValue.toLowerCase()} climbin
           {gyms.map((gym, index) => (
             <tr class={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
               <td class="px-6 py-4">
-                <a href={`/gyms/${gym.slug}`} class="text-sage hover:underline font-medium">
+                <a href={`/gyms/${gym.slug}/`} class="text-sage hover:underline font-medium">
                   {gym.name}
                 </a>
               </td>
