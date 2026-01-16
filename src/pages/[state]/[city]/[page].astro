@@ -329,6 +329,35 @@ const breadcrumbs = [
     </div>
   </section>
 
+  <!-- Fresh Routes Feature - LA Only -->
+  {(city === 'Los Angeles' && region === 'California') && (
+    <section class="bg-gradient-to-br from-sage/10 to-sage/5 rounded-2xl p-8 md:p-12 my-12 border border-sage/20">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sage/20 text-sage text-sm font-semibold mb-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            New Feature
+          </div>
+          <h2 class="text-3xl font-bold text-granite mb-3">Track Fresh Routes in LA</h2>
+          <p class="text-lg text-gray-600 mb-4">
+            We're now tracking weekly route resets at Los Angeles climbing gyms. See which gyms have fresh sets this week.
+          </p>
+          <p class="text-sm text-gray-500">
+            Updated every Friday with data from 13+ LA gyms.
+          </p>
+        </div>
+        <a href="/fresh-routes-this-week/" class="flex-shrink-0 bg-sage text-white px-8 py-4 rounded-lg font-bold hover:bg-sage/90 transition-all shadow-lg shadow-sage/20 flex items-center gap-2">
+          See Fresh Routes
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      </div>
+    </section>
+  )}
+
   <!-- About Climbing in [City] -->
   <section class="mb-12 bg-gradient-to-br from-sage/10 to-ivory rounded-lg p-8">
     <h2 class="text-3xl font-bold text-granite mb-6">
