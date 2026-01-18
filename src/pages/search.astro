@@ -60,13 +60,14 @@ if (stateParam) {
 }
 
 // City filter
+let cityDisplay: string | null = null;
 const cityParam = searchParams.get('city');
 if (cityParam) {
   filteredGyms = filteredGyms.filter(
     (g) => g.city.toLowerCase() === cityParam.toLowerCase()
   );
   // Capitalize city name for display
-  const cityDisplay = cityParam.charAt(0).toUpperCase() + cityParam.slice(1).toLowerCase();
+  cityDisplay = cityParam.charAt(0).toUpperCase() + cityParam.slice(1).toLowerCase();
   activeFilters.push({ label: `City: ${cityDisplay}`, param: 'city', value: cityParam });
 }
 
@@ -208,6 +209,21 @@ const breadcrumbs = [
         : `Browse all ${totalCount} climbing gyms or use filters to refine your search`}
     </p>
   </header>
+
+  {cityParam && cityDisplay && (
+    <div class="bg-white border border-sage/20 rounded-xl p-5 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <div class="text-sm font-semibold text-granite mb-1">Climbers in {cityDisplay} are ranked here</div>
+        <p class="text-sm text-gray-600">See how your city stacks up this month on the leaderboard.</p>
+      </div>
+      <a
+        href="/leaderboard/"
+        class="inline-flex items-center gap-2 bg-sage text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-sage/90 transition-colors"
+      >
+        View Leaderboard →
+      </a>
+    </div>
+  )}
 
   <!-- API Error Alert -->
   {apiError && (

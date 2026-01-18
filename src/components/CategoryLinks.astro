@@ -22,7 +22,7 @@ const categoryLinks: { label: string; url: string }[] = [];
 if (gym.beginner_friendly) {
   categoryLinks.push({
     label: 'Best for Beginners',
-    url: '/categories/best-climbing-gyms-for-beginners/1',
+    url: '/categories/best-climbing-gyms-for-beginners/1/',
   });
 }
 
@@ -30,7 +30,7 @@ if (gym.beginner_friendly) {
 if (gym.amenities?.includes('sauna')) {
   categoryLinks.push({
     label: 'Gyms with Sauna',
-    url: '/categories/climbing-gyms-with-sauna/1',
+    url: '/categories/climbing-gyms-with-sauna/1/',
   });
 }
 
@@ -38,7 +38,7 @@ if (gym.amenities?.includes('sauna')) {
 if (gym.amenities?.includes('kids_zone')) {
   categoryLinks.push({
     label: 'Gyms with Kids Zone',
-    url: '/categories/climbing-gyms-with-kids-zone/1',
+    url: '/categories/climbing-gyms-with-kids-zone/1/',
   });
 }
 
@@ -46,7 +46,7 @@ if (gym.amenities?.includes('kids_zone')) {
 if (gym.climbing_types?.includes('bouldering')) {
   categoryLinks.push({
     label: 'Best Bouldering Gyms',
-    url: '/categories/best-bouldering-climbing-gyms/1',
+    url: '/categories/best-bouldering-climbing-gyms/1/',
   });
 }
 
@@ -54,7 +54,7 @@ if (gym.climbing_types?.includes('bouldering')) {
 if (gym.day_pass_price_local && gym.day_pass_price_local <= 22) {
   categoryLinks.push({
     label: 'Affordable Gyms',
-    url: '/categories/affordable-climbing-gyms/1',
+    url: '/categories/affordable-climbing-gyms/1/',
   });
 }
 ---

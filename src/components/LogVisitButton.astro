@@ -1,0 +1,91 @@
+---
+/**
+ * Log Visit Button Component
+ * Allows logged-in users to log climbing sessions at gyms
+ */
+interface Props {
+  gym: {
+    id: string;
+    name: string;
+    city: string;
+  };
+}
+
+const { gym } = Astro.props;
+const dashboardUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.indoorclimbinggym.com';
+---
+
+<div id="log-visit-button-container" class="mt-6">
+  <a
+    id="log-visit-link"
+    href={`${dashboardUrl}/dashboard/log-visit?gym_id=${gym.id}&gym_name=${encodeURIComponent(gym.name)}&city=${encodeURIComponent(gym.city)}&return=${encodeURIComponent(Astro.url.href)}`}
+    class="block w-full bg-sage text-white text-center py-3 px-6 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+    title="Log this climbing session"
+  >
+    <span class="inline-flex items-center justify-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span>Log Visit</span>
+    </span>
+  </a>
+</div>
+
+<script define:vars={{ dashboardUrl }}>
+  // Check login status and update button
+  async function checkLoginStatus() {
+    const container = document.getElementById('log-visit-button-container');
+
+    if (!container) {
+      console.error('Log visit button container not found');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${dashboardUrl}/api/auth/status`, {
+        credentials: 'include',
+        mode: 'cors',
+      });
+
+      if (!response.ok) {
+        console.warn('Auth status check failed, showing default button');
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.logged_in) {
+        // User is logged in - ensure button is fully visible
+        const link = container.querySelector('a');
+        link?.classList.remove('opacity-50', 'cursor-not-allowed');
+      } else {
+        // User not logged in - show login prompt
+        container.innerHTML = `
+          <a
+            href="${dashboardUrl}/login?redirectTo=${encodeURIComponent(window.location.href)}"
+            class="block w-full bg-white border-2 border-sage text-sage text-center py-3 px-6 rounded-lg font-medium hover:bg-sage/10 transition-colors"
+          >
+            Login to Log Visit
+          </a>
+        `;
+      }
+    } catch (e) {
+      // On error, keep default button visible
+      console.error('Failed to check login status:', e);
+      // Button remains as-is - user can still click and will be redirected to login if needed
+    }
+  }
+
+  // Run when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkLoginStatus);
+  } else {
+    checkLoginStatus();
+  }
+</script>
+
+<style>
+  #log-visit-button-container a {
+    text-decoration: none;
+  }
+</style>

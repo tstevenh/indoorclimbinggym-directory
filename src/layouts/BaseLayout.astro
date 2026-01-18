@@ -88,17 +88,17 @@ gymsData.forEach(gym => {
   }
 });
 
-// Sort cities by count DESC and take top 5
-const top5Cities = Object.values(cityCounts)
+// Sort cities by count DESC and take top 6
+const top6Cities = Object.values(cityCounts)
   .sort((a, b) => b.count - a.count)
-  .slice(0, 5);
+  .slice(0, 6);
 
 // Build canonical URL with trailing slash enforcement
 const siteUrl = 'https://www.indoorclimbinggym.com';
 
 let canonicalURL: string;
 
-if (canonical) {
+if (canonical && typeof canonical === 'string') {
   // Explicitly provided canonical - ENFORCE trailing slash
   // This prevents canonical → 308 redirect issues
   canonicalURL = canonical.endsWith('/') ? canonical : canonical + '/';
@@ -328,6 +328,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
               </div>
             </div>
 
+            <a href="/leaderboard/" class="text-granite hover:text-sage transition-colors">Leaderboard</a>
             <a href="/blog/" class="text-granite hover:text-sage transition-colors">Blog</a>
             <a href="/about/" class="text-granite hover:text-sage transition-colors">About</a>
 
@@ -385,6 +386,11 @@ if (breadcrumbs && breadcrumbs.length > 0) {
                   <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
                 </svg>
               </a>
+              <a href="https://digg.com/indoorclimbing" target="_blank" rel="noopener noreferrer" class="text-ivory hover:text-sage transition-colors" aria-label="Follow us on Digg">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.76 8.16v8.16h3.84v.96h-3.84v1.92H24V8.16h-6.24zm-7.2 0v8.16h3.84v.96h-3.84v1.92h6.24V8.16h-6.24zM3.84 4.8v3.36H0v8.16h6.24V4.8h-2.4zM9.6 8.16H7.2v8.16h2.4V8.16zm12 6.24h-1.44v-4.32h1.44v4.32zm-17.76 0H2.4v-4.32h1.44v4.32zm10.56 0h-1.44v-4.32h1.44v4.32zM9.6 4.8H7.2v2.4h2.4V4.8z"/>
+                </svg>
+              </a>
             </div>
           </div>
 
@@ -393,6 +399,7 @@ if (breadcrumbs && breadcrumbs.length > 0) {
             <h4 class="font-semibold mb-3">Explore</h4>
             <ul class="space-y-2 text-sm">
               <li><a href="/search/" class="hover:text-sage">Search Gyms</a></li>
+              <li><a href="/leaderboard/" class="hover:text-sage">Leaderboard</a></li>
               <li><a href="/gear/" class="hover:text-sage">Recommended Gear</a></li>
               <li><a href="/tools/" class="hover:text-sage">Free Tools</a></li>
               <li><a href="/blog/" class="hover:text-sage">Blog</a></li>
@@ -408,15 +415,16 @@ if (breadcrumbs && breadcrumbs.length > 0) {
               <li><a href="/categories/best-climbing-gyms-for-beginners/1/" class="hover:text-sage">For Beginners</a></li>
               <li><a href="/categories/affordable-climbing-gyms/1/" class="hover:text-sage">Affordable Gyms</a></li>
               <li><a href="/categories/climbing-gyms-with-sauna/1/" class="hover:text-sage">With Sauna</a></li>
+              <li><a href="/categories/climbing-gyms-with-kids-zone/1/" class="hover:text-sage">With Kids Zone</a></li>
               <li><a href="/categories/" class="hover:text-sage">All Categories</a></li>
             </ul>
           </div>
 
-          <!-- Column 4: Popular Cities (Dynamic - Top 5 by gym count) -->
+          <!-- Column 4: Popular Cities (Dynamic - Top 6 by gym count) -->
           <div>
             <h4 class="font-semibold mb-3">Popular Cities</h4>
             <ul class="space-y-2 text-sm">
-              {top5Cities.map(({ city, region, slug }) => {
+              {top6Cities.map(({ city, region, slug }) => {
                 const stateCode = getStateCode(region);
                 const stateSlug = getStateSlug(region);
                 return (
@@ -647,6 +655,12 @@ if (breadcrumbs && breadcrumbs.length > 0) {
                   </svg>
                   <span class="font-medium">Search</span>
                 </a>
+                <a href="/leaderboard/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span class="font-medium">Leaderboard</span>
+                </a>
                 <a href="/states/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -719,6 +733,12 @@ if (breadcrumbs && breadcrumbs.length > 0) {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                   <span class="font-medium">Search</span>
+                </a>
+                <a href="/leaderboard/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span class="font-medium">Leaderboard</span>
                 </a>
                 <a href="/states/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

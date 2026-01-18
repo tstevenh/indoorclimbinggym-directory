@@ -246,6 +246,19 @@ const breadcrumbs = [
         <div class="text-sm text-gray-600">Beginner Friendly</div>
       </div>
     </div>
+
+    <div class="mt-6 bg-white border border-sage/20 rounded-xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <div class="text-sm font-semibold text-granite mb-1">Climbers in {city} are ranked here</div>
+        <p class="text-sm text-gray-600">Log visits and help {city} rise on the leaderboard.</p>
+      </div>
+      <a
+        href="/leaderboard/"
+        class="inline-flex items-center gap-2 bg-sage text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-sage/90 transition-colors"
+      >
+        View Leaderboard →
+      </a>
+    </div>
   </header>
 
   <!-- Featured Gyms -->
@@ -388,11 +401,20 @@ const breadcrumbs = [
     <h2 class="text-3xl font-bold text-granite mb-6">
       Frequently Asked Questions
     </h2>
-    <div class="space-y-6">
+    <div class="space-y-4">
       {faqs.map(faq => (
-        <div class="bg-white rounded-lg shadow-md p-6">
-          <h3 class="font-bold text-granite text-lg mb-3">{faq.question}</h3>
-          <p class="text-gray-700">{faq.answer}</p>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+          <details class="group">
+            <summary class="flex justify-between items-center font-bold text-granite cursor-pointer p-6 list-none text-lg">
+              <span>{faq.question}</span>
+              <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+              </span>
+            </summary>
+            <div class="text-gray-600 px-6 pb-6 leading-relaxed">
+              {faq.answer}
+            </div>
+          </details>
         </div>
       ))}
     </div>
