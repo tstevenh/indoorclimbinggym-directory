@@ -162,7 +162,7 @@ const breadcrumbs = [
               <p class="text-gray-500 mb-8 text-sm">Best for light-colored backgrounds (white, gray).</p>
             </div>
             <button
-              onclick="copyCode('dark')"
+              onclick="copyCode('dark', event)"
               class="w-full py-4 rounded-xl bg-granite text-white font-bold hover:bg-gray-800 transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
@@ -183,7 +183,7 @@ const breadcrumbs = [
               <p class="text-gray-500 mb-8 text-sm">Best for dark-colored footers or backgrounds.</p>
             </div>
             <button
-              onclick="copyCode('light')"
+              onclick="copyCode('light', event)"
               class="w-full py-4 rounded-xl bg-sage text-white font-bold hover:bg-sage/90 transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
@@ -316,28 +316,47 @@ const breadcrumbs = [
 
   <!-- Copy to Clipboard Script -->
   <script is:inline>
-    function copyCode(type) {
+    async function copyCode(type, evt) {
       const codeId = type === 'dark' ? 'code-dark' : 'code-light';
       const textarea = document.getElementById(codeId);
+      const code = textarea.value;
 
-      // Select and copy
-      textarea.select();
-      textarea.setSelectionRange(0, 99999); // For mobile
-      document.execCommand('copy');
+      // Use modern Clipboard API
+      try {
+        await navigator.clipboard.writeText(code);
 
-      // Show feedback
-      const button = event.target.closest('button'); // Use closest in case icon is clicked
-      const originalHTML = button.innerHTML;
-      
-      button.innerHTML = '<span class="flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Copied!</span>';
-      button.style.backgroundColor = '#10b981'; // green-500
-      button.style.color = 'white';
+        // Show feedback
+        const button = evt.target.closest('button');
+        const originalHTML = button.innerHTML;
 
-      setTimeout(() => {
-        button.innerHTML = originalHTML;
-        button.style.backgroundColor = '';
-        button.style.color = '';
-      }, 2000);
+        button.innerHTML = '<span class="flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Copied!</span>';
+        button.style.backgroundColor = '#10b981';
+        button.style.color = 'white';
+
+        setTimeout(() => {
+          button.innerHTML = originalHTML;
+          button.style.backgroundColor = '';
+          button.style.color = '';
+        }, 2000);
+      } catch (err) {
+        // Fallback for older browsers
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+
+        const button = evt.target.closest('button');
+        const originalHTML = button.innerHTML;
+
+        button.innerHTML = '<span class="flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Copied!</span>';
+        button.style.backgroundColor = '#10b981';
+        button.style.color = 'white';
+
+        setTimeout(() => {
+          button.innerHTML = originalHTML;
+          button.style.backgroundColor = '';
+          button.style.color = '';
+        }, 2000);
+      }
     }
   </script>
 </BaseLayout>
