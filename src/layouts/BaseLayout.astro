@@ -9,6 +9,7 @@ import { getStateCode, getStateSlug } from '../utils/states';
 import SpeedInsights from '@vercel/speed-insights/astro';
 import Analytics from '@vercel/analytics/astro';
 import CookieConsent from '../components/CookieConsent.astro';
+import PromoNavbar from '../components/PromoNavbar.astro';
 
 interface Props {
   title: string;
@@ -254,8 +255,11 @@ if (breadcrumbs && breadcrumbs.length > 0) {
       Skip to main content
     </a>
 
+    <!-- Promo Navbar -->
+    <PromoNavbar />
+
   <!-- Header will go here -->
-    <header class="bg-white shadow-sm">
+    <header id="main-header" class="bg-white shadow-sm lg:sticky lg:top-14 lg:z-50 transition-[top] duration-300 ease-in-out">
       <div class="container mx-auto px-4 py-4">
         <nav class="flex items-center justify-between">
           <a href="/" class="text-2xl font-bold text-sage">

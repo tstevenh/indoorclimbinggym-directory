@@ -1,0 +1,142 @@
+---
+/**
+ * PromoNavbar
+ * Sticky promotional banner at the top of the page
+ * Features:
+ * - Sticky positioning above main navigation
+ * - Sage green background matching brand
+ * - Dismissible with localStorage persistence
+ * - Compelling copy for leaderboard signup
+ * - Responsive design
+ */
+---
+
+<div
+  id="promo-navbar"
+  class="fixed top-0 left-0 right-0 z-[60] bg-sage text-white transform transition-transform duration-300 ease-in-out"
+>
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between py-3 min-h-[56px]">
+      <!-- Left: Trophy Icon + Copy -->
+      <div class="flex items-center gap-3 flex-1">
+        <!-- Trophy Icon -->
+        <svg
+          class="w-6 h-6 flex-shrink-0"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <path d="M5 3h4v2H5V3zm0 4h4v2H5V7zm10-4h4v2h-4V3zm0 4h4v2h-4V7zM5 11h2v3H5v-3zm12 0h2v3h-2v-3zM8 4h8v16H8V4zm2 2v12h4V6h-4z"/>
+          <path d="M12 2C9.243 2 7 4.243 7 7v10c0 2.757 2.243 5 5 5s5-2.243 5-5V7c0-2.757-2.243-5-5-5zm0 2c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3s-3-1.346-3-3V7c0-1.654 1.346-3 3-3z"/>
+        </svg>
+
+        <!-- Headline + Subtext -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+          <span class="font-semibold text-sm sm:text-base">
+            Join the Climber Leaderboard
+          </span>
+          <span class="text-xs sm:text-sm text-white/90 hidden sm:inline">
+            — Track gym visits, earn badges, and compete with climbers near you
+          </span>
+        </div>
+      </div>
+
+      <!-- Right: CTA Button + Dismiss Button -->
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <!-- CTA Button -->
+        <a
+          href="/leaderboard/"
+          class="bg-white text-sage px-4 py-2 rounded font-semibold text-sm hover:bg-ivory transition-colors shadow-sm"
+        >
+          Join Leaderboard
+        </a>
+
+        <!-- Dismiss Button -->
+        <button
+          id="promo-dismiss"
+          type="button"
+          class="p-1 hover:bg-white/10 rounded transition-colors"
+          aria-label="Dismiss promotion"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Spacer to prevent content jump when promo is visible -->
+<div id="promo-spacer" class="h-[56px] transition-all duration-300 ease-in-out"></div>
+
+<script>
+  // LocalStorage key for dismiss state
+  const DISMISS_KEY = 'promo-navbar-dismissed';
+
+  // Get elements
+  const promoNavbar = document.getElementById('promo-navbar');
+  const promoDismiss = document.getElementById('promo-dismiss');
+  const promoSpacer = document.getElementById('promo-spacer');
+  const mainHeader = document.getElementById('main-header');
+
+  // Check if user has dismissed the promo
+  const isDismissed = localStorage.getItem(DISMISS_KEY) === 'true';
+
+  if (isDismissed) {
+    // Hide immediately if previously dismissed
+    hidePromo();
+  }
+
+  // Handle dismiss button click
+  promoDismiss?.addEventListener('click', () => {
+    // Save to localStorage
+    localStorage.setItem(DISMISS_KEY, 'true');
+    // Hide the promo
+    hidePromo();
+  });
+
+  function hidePromo() {
+    if (promoNavbar && promoSpacer && mainHeader) {
+      // Slide up animation
+      promoNavbar.style.transform = 'translateY(-100%)';
+      // Update main header to stick to top after promo disappears
+      mainHeader.classList.remove('lg:top-14');
+      mainHeader.classList.add('lg:top-0');
+      // Remove spacer height after animation
+      setTimeout(() => {
+        promoSpacer.style.height = '0';
+      }, 300); // Wait for animation to complete
+    }
+  }
+
+  // Optional: Reset after 30 days (uncomment if needed)
+  // const RESET_DAYS = 30;
+  // const dismissTimestamp = localStorage.getItem(DISMISS_KEY + '-timestamp');
+  // if (dismissTimestamp) {
+  //   const daysSinceDismiss = (Date.now() - parseInt(dismissTimestamp)) / (1000 * 60 * 60 * 24);
+  //   if (daysSinceDismiss > RESET_DAYS) {
+  //     localStorage.removeItem(DISMISS_KEY);
+  //     localStorage.removeItem(DISMISS_KEY + '-timestamp');
+  //   }
+  // }
+</script>
+
+<style>
+  /* Ensure smooth transform */
+  #promo-navbar {
+    will-change: transform;
+  }
+</style>
