@@ -380,7 +380,7 @@ let relatedGyms = allGyms
       </section>
 
       <!-- Why Climbers Like It Section -->
-      {gym.why_climbers_like_it && gym.why_climbers_like_it.length > 0 && (
+      {Array.isArray(gym.why_climbers_like_it) && gym.why_climbers_like_it.length > 0 && (
         <section class="bg-sage/5 rounded-lg shadow-md p-6 border-l-4 border-sage">
           <h2 class="text-2xl font-bold text-granite mb-4">
             Why Climbers Love {gym.name}
