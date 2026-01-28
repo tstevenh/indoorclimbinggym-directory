@@ -12,6 +12,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import GymCard from '../components/GymCard.astro';
 import FilterSidebar from '../components/FilterSidebar.astro';
 import Pagination from '../components/Pagination.astro';
+import SearchBar from '../components/SearchBar.astro';
 import { fetchGyms } from '../config/api';
 import { getStateName } from '../utils/states';
 
@@ -203,11 +204,16 @@ const breadcrumbs = [
     <h1 class="text-4xl font-bold text-granite mb-3">
       {hasFilters ? 'Search Results' : 'Search Climbing Gyms'}
     </h1>
-    <p class="text-lg text-gray-600">
+    <p class="text-lg text-gray-600 mb-6">
       {hasFilters
         ? `Found ${resultsCount} ${resultsCount === 1 ? 'gym' : 'gyms'} matching your criteria`
         : `Browse all ${totalCount} climbing gyms or use filters to refine your search`}
     </p>
+
+    <!-- Search Bar -->
+    <div class="max-w-8xl">
+      <SearchBar placeholder="Search by city, gym name, or zip code..." initialValue={query || ''} />
+    </div>
   </header>
 
   {cityParam && cityDisplay && (
