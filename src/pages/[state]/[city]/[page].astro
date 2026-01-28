@@ -7,6 +7,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import GymCard from '../../../components/GymCard.astro';
 import Pagination from '../../../components/Pagination.astro';
+import OtherCitiesInState from '../../../components/OtherCitiesInState.astro';
 import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
 import { generateCityTitle, generateCityDescription } from '../../../utils/seo';
 import { fetchGyms } from '../../../config/api';
@@ -71,6 +72,29 @@ const GYMS_PER_PAGE = 12;
 const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
 const endIndex = startIndex + GYMS_PER_PAGE;
 const paginatedGyms = cityGyms.slice(startIndex, endIndex);
+
+// Fetch all gyms in the same state for OtherCitiesInState component
+const allGyms = await fetchGyms();
+const stateGyms = allGyms.filter(g => g.region === region);
+
+// Get unique cities in this state, excluding current city
+const cityMap = new Map<string, { count: number; slug: string }>();
+stateGyms.forEach(gym => {
+  if (gym.city !== city) { // Exclude current city
+    const gymCitySlug = gym.city.toLowerCase().replace(/\s+/g, '-');
+    if (!cityMap.has(gym.city)) {
+      cityMap.set(gym.city, { count: 1, slug: gymCitySlug });
+    } else {
+      const current = cityMap.get(gym.city)!;
+      cityMap.set(gym.city, { count: current.count + 1, slug: current.slug });
+    }
+  }
+});
+
+// Convert to array and sort alphabetically
+const otherCities = Array.from(cityMap.entries())
+  .map(([name, data]) => ({ name, ...data }))
+  .sort((a, b) => a.name.localeCompare(b.name));
 
 // Calculate stats
 const avgRating = (cityGyms.reduce((sum, g) => sum + g.rating, 0) / cityGyms.length).toFixed(1);
@@ -464,6 +488,14 @@ const breadcrumbs = [
       </a>
     </div>
   </section>
+
+  <!-- Other Cities in State -->
+  <OtherCitiesInState
+    currentState={region}
+    currentCity={city}
+    stateSlug={stateAbbr}
+    cities={otherCities}
+  />
 
   <!-- Related Guides -->
   <section class="mb-12 bg-gradient-to-br from-sage/10 to-ivory rounded-lg p-8">
