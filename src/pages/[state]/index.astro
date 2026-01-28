@@ -104,6 +104,9 @@ const breadcrumbs = [
   { label: 'Home', url: '/' },
   { label: region, url: pageUrl },
 ];
+
+// Helper function for singular/plural gym label
+const gymLabel = (count: number) => count === 1 ? 'Gym' : 'Gyms';
 ---
 
 <BaseLayout
@@ -259,19 +262,19 @@ const breadcrumbs = [
           <div class="flex justify-between items-center">
             <span class="text-gray-700">Bouldering</span>
             <span class="font-bold text-sage">
-              {stateGyms.filter(g => g.climbing_types?.includes('bouldering')).length} Gyms
+              {stateGyms.filter(g => g.climbing_types?.includes('bouldering')).length} {gymLabel(stateGyms.filter(g => g.climbing_types?.includes('bouldering')).length)}
             </span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-700">Top Rope</span>
             <span class="font-bold text-sage">
-              {stateGyms.filter(g => g.climbing_types?.includes('top_rope')).length} Gyms
+              {stateGyms.filter(g => g.climbing_types?.includes('top_rope')).length} {gymLabel(stateGyms.filter(g => g.climbing_types?.includes('top_rope')).length)}
             </span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-700">Lead Climbing</span>
             <span class="font-bold text-sage">
-              {stateGyms.filter(g => g.climbing_types?.includes('lead')).length} Gyms
+              {stateGyms.filter(g => g.climbing_types?.includes('lead')).length} {gymLabel(stateGyms.filter(g => g.climbing_types?.includes('lead')).length)}
             </span>
           </div>
         </div>
@@ -283,19 +286,19 @@ const breadcrumbs = [
           <div class="flex justify-between items-center">
             <span class="text-gray-700">Showers</span>
             <span class="font-bold text-sage">
-              {stateGyms.filter(g => g.amenities?.includes('showers')).length} Gyms
+              {stateGyms.filter(g => g.amenities?.includes('showers')).length} {gymLabel(stateGyms.filter(g => g.amenities?.includes('showers')).length)}
             </span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-700">Cafe</span>
             <span class="font-bold text-sage">
-              {stateGyms.filter(g => g.amenities?.includes('cafe')).length} Gyms
+              {stateGyms.filter(g => g.amenities?.includes('cafe')).length} {gymLabel(stateGyms.filter(g => g.amenities?.includes('cafe')).length)}
             </span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-gray-700">Sauna</span>
             <span class="font-bold text-sage">
-              {stateGyms.filter(g => g.amenities?.includes('sauna')).length} Gyms
+              {stateGyms.filter(g => g.amenities?.includes('sauna')).length} {gymLabel(stateGyms.filter(g => g.amenities?.includes('sauna')).length)}
             </span>
           </div>
         </div>
