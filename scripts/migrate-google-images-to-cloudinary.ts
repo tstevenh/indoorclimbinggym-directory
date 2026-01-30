@@ -19,17 +19,27 @@ import { v2 as cloudinary } from 'cloudinary';
 const COMPARISON_CSV = '/Users/tsth/Coding/rockclimbing/gym_comparison_result.csv';
 const OUTSCRAPER_CSV = '/Users/tsth/Coding/rockclimbing/Outscraper-20260118105518m27_rock_climbing_gym.csv';
 
-// Supabase
-const SUPABASE_URL = 'https://yfdxgdnpyexumypcusie.supabase.co';
-const SUPABASE_SERVICE_KEY = 'REDACTED_SERVICE_ROLE_KEY';
+// Supabase (from environment variables)
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://yfdxgdnpyexumypcusie.supabase.co';
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-// Cloudinary
-cloudinary.config({
-  cloud_name: 'REDACTED_CLOUD_NAME',
-  api_key: 'REDACTED_API_KEY',
-  api_secret: 'REDACTED_API_SECRET',
+if (!SUPABASE_SERVICE_KEY) {
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY environment variable is required');
+}
+
+// Cloudinary (from environment variables)
+const cloudinaryConfig = {
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || '',
+  api_key: process.env.CLOUDINARY_API_KEY || '',
+  api_secret: process.env.CLOUDINARY_API_SECRET || '',
   secure: true,
-});
+};
+
+if (!cloudinaryConfig.cloud_name || !cloudinaryConfig.api_key || !cloudinaryConfig.api_secret) {
+  throw new Error('CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET environment variables are required');
+}
+
+cloudinary.config(cloudinaryConfig);
 
 const CLOUDINARY_FOLDER = 'indoorclimbing-gym/gyms';
 
