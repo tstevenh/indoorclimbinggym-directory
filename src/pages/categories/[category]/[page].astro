@@ -251,11 +251,15 @@ const nextUrl = currentPage < totalPages
   ? `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage + 1}/`
   : undefined;
 
+const noindex = currentPage > 1;
+
 const seoData = generateSEO({
-  title: currentPage > 1 ? `${pageTitle} - Page ${currentPage}` : pageTitle,
+  // Keep pagination titles short (BaseLayout also truncates, but we avoid relying on truncation).
+  title: currentPage > 1 ? `${pageTitle} (Page ${currentPage})` : pageTitle,
   description: pageDescription,
   canonical: pageUrl,
   keywords: keywords,
+  noindex,
 });
 
 // Stats
@@ -361,6 +365,7 @@ Beyond physical infrastructure, the best ${formattedValue.toLowerCase()} climbin
   description={seoData.description}
   canonical={seoData.canonical}
   keywords={seoData.keywords.split(', ')}
+  noindex={noindex}
   schema={combinedSchema}
   breadcrumbs={breadcrumbs}
   prevUrl={prevUrl}
