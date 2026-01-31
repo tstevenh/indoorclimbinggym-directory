@@ -1,18 +1,23 @@
 ---
 /**
- * Category Base URL Redirect
- * Redirects /categories/[category]/ to /categories/[category]/1/
- *
- * This ensures pagination starts at /1/ and avoids canonical conflicts.
- * Without this, /categories/bouldering/ would 404.
+ * Category Landing Page (Page 1)
+ * Canonical page 1 URL: /categories/[category]/
+ * Page 2+: /categories/[category]/2/ ...
  */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import GymCard from '../../../components/GymCard.astro';
+import Pagination from '../../../components/Pagination.astro';
+import { generateSEO } from '../../../utils/seo';
+import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
+import { fetchGyms } from '../../../config/api';
+
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const { fetchGyms } = await import('../../../config/api');
   const gymsData = await fetchGyms();
 
-  // Parse all amenities and climbing types
+  const GYMS_PER_PAGE = 12;
+
   const allAmenities = new Set<string>();
   const allClimbingTypes = new Set<string>();
 
@@ -21,58 +26,245 @@ export async function getStaticPaths() {
     gym.climbing_types?.split('|').forEach(ct => allClimbingTypes.add(ct.trim()));
   });
 
-  // Categories to skip from dynamic generation (have static pages)
   const skipAmenities = ['sauna', 'kids_zone'];
   const skipClimbingTypes = ['bouldering'];
 
   const categoryPaths = [];
 
-  // Add special static categories manually (these have static .astro pages)
-  const specialCategories = [
-    'best-bouldering-climbing-gyms',
-    'best-climbing-gyms-for-beginners',
-    'affordable-climbing-gyms',
-    'climbing-gyms-with-sauna',
-    'climbing-gyms-with-kids-zone',
-  ];
-
-  for (const slug of specialCategories) {
-    categoryPaths.push({
-      params: { category: slug }
-    });
-  }
-
-  // Generate amenity-based redirects (only if 3+ gyms)
+  // Amenity categories (>=3 gyms)
   for (const amenity of allAmenities) {
     if (skipAmenities.includes(amenity)) continue;
 
     const matchingGyms = gymsData.filter(g => g.amenities?.includes(amenity));
     if (matchingGyms.length >= 3) {
+      const sortedGyms = matchingGyms.sort((a, b) => {
+        if (a.featured !== b.featured) return b.featured ? 1 : -1;
+        if (a.rating !== b.rating) return b.rating - a.rating;
+        return a.name.localeCompare(b.name);
+      });
+
       const categorySlug = `climbing-gyms-with-${amenity.replace(/_/g, '-')}`;
+      const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
+
       categoryPaths.push({
-        params: { category: categorySlug }
+        params: { category: categorySlug },
+        props: {
+          type: 'amenity',
+          value: amenity,
+          gyms: sortedGyms,
+          currentPage: 1,
+          totalPages
+        }
       });
     }
   }
 
-  // Generate climbing type-based redirects (only if 3+ gyms)
+  // Climbing type categories (>=3 gyms)
   for (const climbingType of allClimbingTypes) {
     if (skipClimbingTypes.includes(climbingType)) continue;
 
     const matchingGyms = gymsData.filter(g => g.climbing_types?.includes(climbingType));
     if (matchingGyms.length >= 3) {
+      const sortedGyms = matchingGyms.sort((a, b) => {
+        if (a.featured !== b.featured) return b.featured ? 1 : -1;
+        if (a.rating !== b.rating) return b.rating - a.rating;
+        return a.name.localeCompare(b.name);
+      });
+
       const categorySlug = `best-${climbingType.replace(/_/g, '-')}-climbing-gyms`;
+      const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
+
       categoryPaths.push({
-        params: { category: categorySlug }
+        params: { category: categorySlug },
+        props: {
+          type: 'climbing_type',
+          value: climbingType,
+          gyms: sortedGyms,
+          currentPage: 1,
+          totalPages
+        }
       });
     }
+  }
+
+  // Special categories (these have their own intent)
+  const specialCategories = [
+    {
+      slug: 'best-bouldering-climbing-gyms',
+      filter: (gym) => gym.climbing_types?.includes('bouldering'),
+      type: 'climbing_type',
+      value: 'bouldering'
+    },
+    {
+      slug: 'best-climbing-gyms-for-beginners',
+      filter: (gym) => gym.beginner_friendly === true,
+      type: 'special',
+      value: 'beginners'
+    },
+    {
+      slug: 'affordable-climbing-gyms',
+      filter: (gym) => gym.day_pass_price_local <= 20,
+      type: 'special',
+      value: 'affordable'
+    },
+    {
+      slug: 'climbing-gyms-with-sauna',
+      filter: (gym) => gym.amenities?.includes('sauna'),
+      type: 'amenity',
+      value: 'sauna'
+    },
+    {
+      slug: 'climbing-gyms-with-kids-zone',
+      filter: (gym) => gym.amenities?.includes('kids_zone'),
+      type: 'amenity',
+      value: 'kids_zone'
+    }
+  ];
+
+  for (const category of specialCategories) {
+    const matchingGyms = gymsData.filter(category.filter);
+
+    const sortedGyms = matchingGyms.sort((a, b) => {
+      if (a.featured !== b.featured) return b.featured ? 1 : -1;
+      if (a.rating !== b.rating) return b.rating - a.rating;
+      return a.name.localeCompare(b.name);
+    });
+
+    const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
+
+    categoryPaths.push({
+      params: { category: category.slug },
+      props: {
+        type: category.type,
+        value: category.value,
+        gyms: sortedGyms,
+        currentPage: 1,
+        totalPages
+      }
+    });
   }
 
   return categoryPaths;
 }
 
+// Props from getStaticPaths
+const { type, value, gyms, currentPage, totalPages } = Astro.props;
 const { category } = Astro.params;
 
-// 301 redirect to page 1
-return Astro.redirect(`/categories/${category}/1/`, 301);
+const categorySlug = category;
+
+// Pagination
+const GYMS_PER_PAGE = 12;
+const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
+const endIndex = currentPage * GYMS_PER_PAGE;
+const paginatedGyms = gyms.slice(startIndex, endIndex);
+
+function formatText(text: string): string {
+  return text.replace(/_/g, ' ')
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+const formattedValue = formatText(value);
+const isAmenity = type === 'amenity';
+const isSpecial = type === 'special';
+
+let pageTitle: string;
+let pageDescription: string;
+let keywords: string[];
+
+if (isSpecial) {
+  if (value === 'beginners') {
+    pageTitle = 'Best Climbing Gyms for Beginners';
+    pageDescription = `Find the best climbing gyms for beginners. Compare ${gyms.length} beginner-friendly gyms with intro classes, patient instruction, and supportive communities.`;
+    keywords = ['climbing gyms for beginners', 'beginner climbing gym', 'intro climbing classes'];
+  } else if (value === 'affordable') {
+    pageTitle = 'Affordable Climbing Gyms (Best Value)';
+    pageDescription = `Find affordable climbing gyms with great value. Compare ${gyms.length} gyms with lower day pass prices and membership deals.`;
+    keywords = ['affordable climbing gym', 'cheap climbing gym', 'climbing gym prices'];
+  } else {
+    pageTitle = formattedValue;
+    pageDescription = `Browse climbing gyms in this category.`;
+    keywords = [];
+  }
+} else {
+  pageTitle = isAmenity
+    ? `Climbing Gyms with ${formattedValue}`
+    : `Best ${formattedValue} Climbing Gyms`;
+
+  pageDescription = isAmenity
+    ? `Find climbing gyms with ${formattedValue}. Compare ${gyms.length} gyms with this amenity, including prices, hours, and ratings.`
+    : `Find the best ${formattedValue} climbing gyms. Compare ${gyms.length} gyms with this climbing type, including prices, hours, and ratings.`;
+
+  keywords = isAmenity
+    ? [`climbing gyms with ${formattedValue}`, `${formattedValue} climbing gym`]
+    : [`best ${formattedValue} climbing gyms`, `${formattedValue} climbing gyms`];
+}
+
+const seo = generateSEO({
+  title: pageTitle,
+  description: pageDescription,
+  keywords,
+  canonical: `https://www.indoorclimbinggym.com/categories/${categorySlug}/`,
+});
+
+const canonicalUrl = `https://www.indoorclimbinggym.com/categories/${categorySlug}/`;
+const nextUrl = totalPages > 1
+  ? `https://www.indoorclimbinggym.com/categories/${categorySlug}/2/`
+  : undefined;
+
+const itemListSchema = generateItemListSchema(
+  gyms,
+  pageTitle,
+  canonicalUrl
+);
+
+const faqSchema = generateFAQSchema([
+  {
+    question: `How many gyms are in this category?`,
+    answer: `There are ${gyms.length} gyms in this category.`
+  }
+]);
+
+const combinedSchema = [itemListSchema, faqSchema];
 ---
+
+<BaseLayout
+  title={seo.title}
+  description={seo.description}
+  canonical={canonicalUrl}
+  schemas={combinedSchema}
+  nextUrl={nextUrl}
+>
+  <header class="mb-12">
+    <div class="flex items-center gap-2 text-sm text-gray-600 mb-4">
+      <a href="/" class="hover:text-sage">Home</a>
+      <span>/</span>
+      <a href="/categories/" class="hover:text-sage">Categories</a>
+      <span>/</span>
+      <span class="text-granite font-medium">{pageTitle}</span>
+    </div>
+
+    <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">{pageTitle}</h1>
+    <p class="text-lg text-gray-700 max-w-3xl">{pageDescription}</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
+      <div>
+        <p class="text-3xl font-bold text-sage">{gyms.length}</p>
+        <p class="text-sm text-gray-600">Gyms</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="mb-16">
+    <h2 class="text-3xl font-bold text-granite mb-6">{pageTitle}</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {paginatedGyms.map(gym => (
+        <GymCard gym={gym} showCity={true} />
+      ))}
+    </div>
+
+    <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl={`/categories/${categorySlug}/`} />
+  </section>
+</BaseLayout>
