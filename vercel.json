@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/:state/:city/1/",
+      "destination": "/:state/:city/",
+      "permanent": true
+    },
+    {
+      "source": "/categories/:category/1/",
+      "destination": "/categories/:category/",
+      "permanent": true
+    }
+  ]
+}
