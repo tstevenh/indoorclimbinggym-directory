@@ -53,7 +53,7 @@ New climbers often confuse the different styles. Here's how they split.
 
 ### Bouldering vs Sport Climbing
 
-Sport climbing uses [ropes and top rope anchors](/categories/best-top-rope-climbing-gyms/1/) or [lead climbing with clips](/categories/best-lead-climbing-gyms/1/). Routes run 50 to 100 feet or more. The focus is endurance: can you keep moving when pumped and tired?
+Sport climbing uses [ropes and top rope anchors](/categories/best-top-rope-climbing-gyms/) or [lead climbing with clips](/categories/best-lead-climbing-gyms/). Routes run 50 to 100 feet or more. The focus is endurance: can you keep moving when pumped and tired?
 
 Bouldering is shorter. More powerful. You might only make five moves, but each one demands maximum effort and precision. Safety comes from crash pads and spotters, not rope systems.
 
@@ -185,7 +185,7 @@ Outdoor bouldering carries more risk. Landings are uneven. Pads shift. Real rock
 
 Almost everyone.
 
-Beginners and first-timers find bouldering approachable. [Beginner-friendly climbing gyms](/categories/best-climbing-gyms-for-beginners/1/) offer intro classes, rental equipment, and staff guidance to help you start safely. No partner needed. No complicated systems to learn. Walk into a gym, rent shoes, start climbing.
+Beginners and first-timers find bouldering approachable. [Beginner-friendly climbing gyms](/categories/best-climbing-gyms-for-beginners/) offer intro classes, rental equipment, and staff guidance to help you start safely. No partner needed. No complicated systems to learn. Walk into a gym, rent shoes, start climbing.
 
 Fitness-focused people like the workout. Climbing uses muscles differently than running or lifting. It builds functional strength and keeps things interesting.
 

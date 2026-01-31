@@ -120,7 +120,7 @@ The primary value proposition of franchising isn't the brand name—it's the ope
 
 - **Owner/Manager Certification**: 2-4 week intensive program covering operations, financial management, staff training, route setting, risk management, and customer service protocols.
 
-- **Staff Training Systems**: Standardized curriculum for front desk, [youth programs](/categories/climbing-gyms-with-kids-zone/1), fitness classes, and route setters with certification programs that ensure quality across locations.
+- **Staff Training Systems**: Standardized curriculum for front desk, [youth programs](/categories/climbing-gyms-with-kids-zone/), fitness classes, and route setters with certification programs that ensure quality across locations.
 
 - **Ongoing Education**: Quarterly training updates, annual conferences, webinars on industry trends, and access to a knowledge base of best practices.
 
