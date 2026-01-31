@@ -74,7 +74,7 @@ Wearing socks makes practical sense in specific situations. Rental shoes at [cli
 - Fungal infection prevention
 - Quick transitions between climbing and walking shoes
 
-**Example scenario:** A new climber attending their first session at a [beginner-friendly gym](/categories/best-climbing-gyms-for-beginners/1/) rents shoes. Wearing thin socks provides a hygiene barrier, reduces break-in discomfort, and prevents blisters on uncallused feet.
+**Example scenario:** A new climber attending their first session at a [beginner-friendly gym](/categories/best-climbing-gyms-for-beginners/) rents shoes. Wearing thin socks provides a hygiene barrier, reduces break-in discomfort, and prevents blisters on uncallused feet.
 
 ---
 
@@ -166,7 +166,7 @@ Thin liner socks differ significantly from regular athletic socks. Liner socks m
 
 ### Can wearing socks help with shoe odor?
 
-Socks significantly reduce climbing shoe odor. Foot sweat absorbs into sock material rather than shoe liners and rubber. Socks can be washed after each session, removing bacteria that cause smell. Shoes worn barefoot absorb sweat directly into materials difficult to clean. Climbers with chronic shoe odor issues often find socks provide the most effective solution. Many [gyms with locker facilities](/categories/climbing-gyms-with-lockers/1/) provide secure storage where you can air out your shoes between sessions.
+Socks significantly reduce climbing shoe odor. Foot sweat absorbs into sock material rather than shoe liners and rubber. Socks can be washed after each session, removing bacteria that cause smell. Shoes worn barefoot absorb sweat directly into materials difficult to clean. Climbers with chronic shoe odor issues often find socks provide the most effective solution. Many [gyms with locker facilities](/categories/climbing-gyms-with-lockers/) provide secure storage where you can air out your shoes between sessions.
 
 ### Should you wear socks in rental climbing shoes?
 
@@ -191,6 +191,6 @@ Wearing socks in rental climbing shoes is widely recommended. Rental shoes conta
 
 ## Ready to Find Your Perfect Climbing Gym?
 
-Whether you choose socks or barefoot, having access to a quality climbing facility is essential. [Search for climbing gyms near you](/search) to find the perfect place to train, learn, and develop your climbing skills. Our directory helps you discover [beginner-friendly facilities](/categories/best-climbing-gyms-for-beginners/1/) with rental equipment, experienced staff, and welcoming communities.
+Whether you choose socks or barefoot, having access to a quality climbing facility is essential. [Search for climbing gyms near you](/search) to find the perfect place to train, learn, and develop your climbing skills. Our directory helps you discover [beginner-friendly facilities](/categories/best-climbing-gyms-for-beginners/) with rental equipment, experienced staff, and welcoming communities.
 
 For more guidance on climbing equipment and gear choices, explore our [complete climbing gear guide](/gear) with expert recommendations on shoes, chalk, harnesses, and essential accessories.

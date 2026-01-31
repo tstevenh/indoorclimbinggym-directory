@@ -76,7 +76,7 @@ Climbing shoes should feel snug with no dead space, mild toe curl depending on s
 
 For most climbers, toes should touch or lightly curl against the front of the shoe. This is not pain. It is contact. The heel should feel cupped securely. Laces or straps should close the shoe firmly around the midfoot without creating pressure points.
 
-Beginners at [beginner-friendly climbing gyms](/categories/best-climbing-gyms-for-beginners/1/) often benefit from flatter fits that allow longer sessions and skill development. Advanced climbers pursuing hard grades may accept more aggressive compression for short bursts of performance.
+Beginners at [beginner-friendly climbing gyms](/categories/best-climbing-gyms-for-beginners/) often benefit from flatter fits that allow longer sessions and skill development. Advanced climbers pursuing hard grades may accept more aggressive compression for short bursts of performance.
 
 Signs shoes are too tight: numbness, tingling, hot spots, inability to stand on flat ground, pain that increases rather than decreases during warm-up. Signs shoes are too loose: heel slipping, toes sliding inside the shoe, inability to edge on small holds.
 
@@ -93,7 +93,7 @@ Signs shoes are too tight: numbness, tingling, hot spots, inability to stand on 
 
 Fit requirements change based on climbing discipline. Bouldering, sport climbing, and trad climbing demand different balances between precision and comfort.
 
-Bouldering sessions are short and intense. Problems rarely last more than a few minutes. This allows tighter, more aggressive fits that maximize power and precision. Many boulderers at [dedicated bouldering gyms](/categories/best-bouldering-climbing-gyms/1/) size down significantly for project shoes, accepting discomfort for performance on specific moves.
+Bouldering sessions are short and intense. Problems rarely last more than a few minutes. This allows tighter, more aggressive fits that maximize power and precision. Many boulderers at [dedicated bouldering gyms](/categories/best-bouldering-climbing-gyms/) size down significantly for project shoes, accepting discomfort for performance on specific moves.
 
 Sport climbing balances power with endurance. Routes last 5 to 15 minutes of sustained climbing. Overly tight shoes cause foot fatigue that degrades performance on later moves. Most sport climbers choose moderately snug fits that hold precision without restricting circulation.
 
@@ -211,6 +211,6 @@ Moderate discomfort should improve within 5-10 sessions for leather shoes, less 
 
 ## Find Your Perfect Climbing Gym
 
-Proper shoe fit starts with regular climbing practice. [Search for climbing gyms near you](/search) to find facilities where you can test different shoes, get expert fitting advice, and develop the experience to understand your personal fit preferences. Whether you're exploring [bouldering-specific facilities](/categories/best-bouldering-climbing-gyms/1/) or [beginner-friendly gyms](/categories/best-climbing-gyms-for-beginners/1/) with rental programs, our comprehensive directory helps you discover the right place to climb.
+Proper shoe fit starts with regular climbing practice. [Search for climbing gyms near you](/search) to find facilities where you can test different shoes, get expert fitting advice, and develop the experience to understand your personal fit preferences. Whether you're exploring [bouldering-specific facilities](/categories/best-bouldering-climbing-gyms/) or [beginner-friendly gyms](/categories/best-climbing-gyms-for-beginners/) with rental programs, our comprehensive directory helps you discover the right place to climb.
 
 For more equipment guidance and climbing tips, explore our [complete gear guide](/gear) with expert recommendations on shoes, chalk, harnesses, and essential climbing accessories.

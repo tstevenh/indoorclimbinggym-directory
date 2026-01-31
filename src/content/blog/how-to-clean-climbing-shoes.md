@@ -111,7 +111,7 @@ Cleaning frequency depends on session frequency, sweat output, and whether you c
 
 ## What Are Common Mistakes When Cleaning Climbing Shoes?
 
-New climbers at [beginner-friendly climbing gyms](/categories/best-climbing-gyms-for-beginners/1/) frequently damage shoes through well-intentioned cleaning mistakes that compromise materials. Hot water ranks as the most common error, softening adhesives and causing leather to shrink. Harsh detergents strip oils from leather and leave residue that affects rubber grip. Full submersion allows water to penetrate bonded seams where it stays trapped and weakens adhesives over time. Drying shoes in direct sunlight or near heaters accelerates rubber degradation and can cause permanent deformation. Using alcohol-based sprays or strong deodorants may mask odor temporarily but often damages interior linings.
+New climbers at [beginner-friendly climbing gyms](/categories/best-climbing-gyms-for-beginners/) frequently damage shoes through well-intentioned cleaning mistakes that compromise materials. Hot water ranks as the most common error, softening adhesives and causing leather to shrink. Harsh detergents strip oils from leather and leave residue that affects rubber grip. Full submersion allows water to penetrate bonded seams where it stays trapped and weakens adhesives over time. Drying shoes in direct sunlight or near heaters accelerates rubber degradation and can cause permanent deformation. Using alcohol-based sprays or strong deodorants may mask odor temporarily but often damages interior linings.
 
 **Common mistakes:**
 
@@ -160,7 +160,7 @@ Odor prevention through drying habits and targeted treatments reduces the need f
 - Rotate between two pairs if training frequently
 - Sprinkle baking soda overnight weekly
 - Store with cedar or charcoal inserts
-- Use gym lockers at [gyms with locker facilities](/categories/climbing-gyms-with-lockers/1/) to air shoes between sessions
+- Use gym lockers at [gyms with locker facilities](/categories/climbing-gyms-with-lockers/) to air shoes between sessions
 
 **Example scenario:** A climber finishes a session, clips shoes to the outside of their gym bag, and hangs them in a ventilated mudroom at home. Once weekly, baking soda goes in overnight. Shoes remain odor-free for months without full cleaning.
 
@@ -221,6 +221,6 @@ Dry climbing shoes by maximizing airflow while avoiding heat. Remove any insoles
 
 ## Ready to Find Your Local Climbing Gym?
 
-Proper shoe maintenance starts with climbing regularly. Explore [climbing gyms near you](/search) to build the training routine that keeps your gear in top shape. Whether you're [looking for beginner-friendly gyms](/categories/best-climbing-gyms-for-beginners/1/) or searching for specific features like [gyms with showers](/categories/climbing-gyms-with-showers/1/), our directory helps you find the perfect place to climb. The best maintenance routine is the one you'll actually stick to—and that starts with easy access to quality climbing facilities.
+Proper shoe maintenance starts with climbing regularly. Explore [climbing gyms near you](/search) to build the training routine that keeps your gear in top shape. Whether you're [looking for beginner-friendly gyms](/categories/best-climbing-gyms-for-beginners/) or searching for specific features like [gyms with showers](/categories/climbing-gyms-with-showers/), our directory helps you find the perfect place to climb. The best maintenance routine is the one you'll actually stick to—and that starts with easy access to quality climbing facilities.
 
 For more gear tips and climbing guides, check out our [complete climbing gear guide](/gear) and [beginner's guide to climbing gyms](/blog/beginners-guide-to-climbing-gyms).
