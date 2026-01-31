@@ -13,7 +13,7 @@ import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogCard from '../../components/blog/BlogCard.astro';
 import BlogCategories from '../../components/blog/BlogCategories.astro';
-import { generateItemListSchema } from '../../utils/schema';
+import { generateBlogItemListSchema } from '../../utils/schema';
 
 export async function getStaticPaths({ paginate }: { paginate: any }) {
   const allPosts = await getCollection('blog');
@@ -56,27 +56,12 @@ const nextUrl = page.currentPage < page.lastPage
   : undefined;
 
 // Generate ItemList schema for blog posts
-const itemListSchema = generateItemListSchema(
-  page.data.map((post, index) => ({
-    id: index,
-    name: post.data.title,
+const itemListSchema = generateBlogItemListSchema(
+  page.data.map((post) => ({
+    title: post.data.title,
     slug: post.slug,
-    full_address: '',
-    city: '',
-    region: '',
-    postal_code: '',
-    country: '',
-    latitude: 0,
-    longtitude: 0,
-    phone: '',
-    website: `https://www.indoorclimbinggym.com/blog/${post.slug}`,
-    photo: post.data.heroImage,
-    rating: 0,
-    day_pass_price_local: 0,
-    working_hour: '',
-    amenities: '',
-    climbing_types: '',
-    description_short: post.data.description,
+    description: post.data.description,
+    heroImage: post.data.heroImage,
   })),
   'Indoor Climbing Guides and Articles',
   pageUrl
