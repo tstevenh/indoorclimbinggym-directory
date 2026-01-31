@@ -1,17 +1,24 @@
 ---
 /**
- * City Base URL Redirect
- * Redirects /[state]/[city]/ to /[state]/[city]/1/
- *
- * This ensures pagination starts at /1/ and avoids canonical conflicts.
- * Without this, /washington/seattle/ would 404.
+ * City Landing Page (Page 1)
+ * Canonical page 1 URL: /[state]/[city]/
+ * Page 2+: /[state]/[city]/2/ ...
  */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import GymCard from '../../../components/GymCard.astro';
+import Pagination from '../../../components/Pagination.astro';
+import OtherCitiesInState from '../../../components/OtherCitiesInState.astro';
+import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
+import { generateCityTitle, generateCityDescription } from '../../../utils/seo';
+import { fetchGyms } from '../../../config/api';
+import { getStateSlug } from '../../../utils/states';
+
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const { fetchGyms } = await import('../../../config/api');
-  const { getStateSlug } = await import('../../../utils/states');
   const gyms = await fetchGyms();
+
+  const GYMS_PER_PAGE = 12;
 
   // Get unique city/state combinations
   const cityStatePairs = [...new Set(gyms.map(g => `${g.region}|${g.city}`))];
@@ -23,10 +30,25 @@ export async function getStaticPaths() {
     const stateSlug = getStateSlug(region);
     const citySlug = city.toLowerCase().replace(/\s+/g, '-');
 
+    const cityGyms = gyms.filter(g => g.city === city && g.region === region);
+
+    // Sort gyms: featured DESC, rating DESC, name ASC
+    const sortedGyms = cityGyms.sort((a, b) => {
+      if (a.featured !== b.featured) return b.featured ? 1 : -1;
+      if (a.rating !== b.rating) return b.rating - a.rating;
+      return a.name.localeCompare(b.name);
+    });
+
+    const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
+
     paths.push({
-      params: {
-        state: stateSlug,
-        city: citySlug,
+      params: { state: stateSlug, city: citySlug },
+      props: {
+        gyms: sortedGyms,
+        currentPage: 1,
+        totalPages,
+        state: region,
+        city
       }
     });
   }
@@ -34,8 +56,219 @@ export async function getStaticPaths() {
   return paths;
 }
 
-const { state, city } = Astro.params;
+const { gyms: cityGyms, currentPage, totalPages, state: region, city } = Astro.props;
+const { state: stateAbbr, city: citySlug } = Astro.params;
 
-// 301 redirect to page 1
-return Astro.redirect(`/${state}/${city}/1/`, 301);
+// Pagination logic
+const GYMS_PER_PAGE = 12;
+const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
+const endIndex = startIndex + GYMS_PER_PAGE;
+const paginatedGyms = cityGyms.slice(startIndex, endIndex);
+
+// Fetch all gyms in the same state for OtherCitiesInState component
+const allGyms = await fetchGyms();
+const stateGyms = allGyms.filter(g => g.region === region);
+
+// Get unique cities in this state, excluding current city
+const cityMap = new Map<string, { count: number; slug: string }>();
+stateGyms.forEach(gym => {
+  if (gym.city !== city) {
+    const gymCitySlug = gym.city.toLowerCase().replace(/\s+/g, '-');
+    if (!cityMap.has(gym.city)) {
+      cityMap.set(gym.city, { count: 1, slug: gymCitySlug });
+    } else {
+      const current = cityMap.get(gym.city)!;
+      cityMap.set(gym.city, { count: current.count + 1, slug: current.slug });
+    }
+  }
+});
+
+// Convert to array and sort alphabetically
+const otherCities = Array.from(cityMap.entries())
+  .map(([name, data]) => ({ name, ...data }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+// Calculate stats
+const avgRating = (cityGyms.reduce((sum, g) => sum + g.rating, 0) / cityGyms.length).toFixed(1);
+const minPrice = Math.min(...cityGyms.map(g => g.day_pass_price_local));
+const maxPrice = Math.max(...cityGyms.map(g => g.day_pass_price_local));
+
+// Get featured gyms only (sorted by rating, then alphabetically)
+const featuredGyms = cityGyms
+  .filter(g => g.featured === true)
+  .sort((a, b) => {
+    if (a.rating !== b.rating) return b.rating - a.rating;
+    return a.name.localeCompare(b.name);
+  });
+
+// Calculate valid price range for SEO (filter out zeros/nulls)
+const validPrices = cityGyms
+  .map(g => g.day_pass_price_local)
+  .filter(p => p && p > 0);
+const seoPriceMin = validPrices.length > 0 ? Math.min(...validPrices) : undefined;
+const seoPriceMax = validPrices.length > 0 ? Math.max(...validPrices) : undefined;
+
+// SEO
+const title = generateCityTitle(city, region, cityGyms.length);
+const description = generateCityDescription(
+  city,
+  region,
+  cityGyms.length,
+  parseFloat(avgRating),
+  seoPriceMin,
+  seoPriceMax
+);
+
+const pageUrl = `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/`;
+
+// rel=prev/next
+const prevUrl = undefined;
+const nextUrl = totalPages > 1
+  ? `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/2/`
+  : undefined;
+
+// Schema
+const itemListSchema = generateItemListSchema(
+  cityGyms,
+  `Climbing Gyms in ${city}, ${region}`,
+  pageUrl
+);
+
+const faqs = [
+  {
+    question: `How many climbing gyms are in ${city}?`,
+    answer: `There are ${cityGyms.length} indoor climbing gyms in ${city}, ${region}. These facilities offer a variety of climbing styles including bouldering, top rope, and lead climbing.`,
+  },
+  {
+    question: `What's the average day pass price in ${city}?`,
+    answer: `Day pass prices in ${city} range from $${minPrice} to $${maxPrice}, with an average of around $${Math.round((minPrice + maxPrice) / 2)}. Many gyms also offer monthly memberships and student discounts.`,
+  },
+  {
+    question: `Which ${city} gym is best for beginners?`,
+    answer: cityGyms.filter(g => g.beginner_friendly).length > 0
+      ? `${cityGyms.filter(g => g.beginner_friendly).length} gyms in ${city} are marked as beginner-friendly. Use the search page to filter by "Beginner Friendly" to find gyms with introductory classes and easier routes.`
+      : `All gyms in ${city} welcome climbers of all skill levels. Check individual gym pages for class schedules and beginner programs.`,
+  },
+  {
+    question: `Are there 24-hour climbing gyms in ${city}?`,
+    answer: cityGyms.some(g => g.working_hour?.includes('00:00-23:59'))
+      ? `Yes, ${city} has 24-hour climbing gyms. Check the hours listed on individual gym pages for details.`
+      : `Most climbing gyms in ${city} have extended hours, typically from early morning to late evening. Check individual gym pages for specific hours.`,
+  },
+  {
+    question: `Which ${city} gyms have saunas?`,
+    answer: cityGyms.filter(g => g.amenities?.includes('sauna')).length > 0
+      ? `${cityGyms.filter(g => g.amenities?.includes('sauna')).map(g => g.name).join(', ')} in ${city} feature saunas as part of their amenities.`
+      : `Check individual gym pages for the most up-to-date amenity information.`,
+  },
+  {
+    question: `What's the cheapest climbing gym in ${city}?`,
+    answer: `The most affordable day pass in ${city} is $${minPrice}. Compare prices across all ${cityGyms.length} gyms below to find the best value for your budget.`,
+  },
+  {
+    question: `Do ${city} gyms offer student discounts?`,
+    answer: cityGyms.filter(g => g.student_discount).length > 0
+      ? `Yes! ${cityGyms.filter(g => g.student_discount).length} gyms in ${city} offer student discounts. Bring your valid student ID to take advantage of these savings.`
+      : `Student discount availability varies by gym. Contact gyms directly or check their websites for current promotions.`,
+  },
+  {
+    question: `Where can I boulder in ${city}?`,
+    answer: cityGyms.filter(g => g.climbing_types?.includes('bouldering')).length > 0
+      ? `${cityGyms.filter(g => g.climbing_types?.includes('bouldering')).length} of ${cityGyms.length} gyms in ${city} offer bouldering. Use the search page to filter by "Bouldering" to find facilities with bouldering walls.`
+      : `Many gyms in ${city} offer bouldering. Use the search page to filter by climbing type to find gyms with bouldering walls.`,
+  },
+  {
+    question: `What's the best climbing gym in ${city}?`,
+    answer: `Based on ratings, ${[...cityGyms].sort((a, b) => b.rating - a.rating)[0]?.name} is the highest-rated climbing gym in ${city} with a ${[...cityGyms].sort((a, b) => b.rating - a.rating)[0]?.rating}★ rating. However, the "best" gym depends on your preferences for climbing style, location, and amenities.`,
+  },
+  {
+    question: `Which ${city} gyms have kids zones?`,
+    answer: cityGyms.filter(g => g.amenities?.includes('kids_zone')).length > 0
+      ? `${cityGyms.filter(g => g.amenities?.includes('kids_zone')).map(g => g.name).join(', ')} offer dedicated kids zones, making them great family-friendly options in ${city}.`
+      : `Check individual gym pages for family-friendly amenities and kids programs.`,
+  },
+];
+
+const faqSchema = generateFAQSchema(faqs);
+const combinedSchema = [itemListSchema, faqSchema];
+
+// Breadcrumbs
+const breadcrumbs = [
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
+  { label: region, url: `https://www.indoorclimbinggym.com/${stateAbbr}/` },
+  { label: city, url: `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/` },
+];
 ---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={pageUrl}
+  breadcrumbs={breadcrumbs}
+  schemas={combinedSchema}
+  prevUrl={prevUrl}
+  nextUrl={nextUrl}
+>
+  <header class="mb-12">
+    <div class="flex items-center gap-2 text-sm text-gray-600 mb-4">
+      <a href="/" class="hover:text-sage">Home</a>
+      <span>/</span>
+      <a href={`/${stateAbbr}/`} class="hover:text-sage">{region}</a>
+      <span>/</span>
+      <span class="text-granite font-medium">{city}</span>
+    </div>
+
+    <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">{title}</h1>
+    <p class="text-lg text-gray-700 max-w-3xl">{description}</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
+      <div>
+        <p class="text-3xl font-bold text-sage">{cityGyms.length}</p>
+        <p class="text-sm text-gray-600">Gyms</p>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-sage">{avgRating}★</p>
+        <p class="text-sm text-gray-600">Avg Rating</p>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-sage">${seoPriceMin ?? 0}-${seoPriceMax ?? 0}</p>
+        <p class="text-sm text-gray-600">Day Pass Range</p>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-sage">{cityGyms.filter(g => g.beginner_friendly).length}</p>
+        <p class="text-sm text-gray-600">Beginner Friendly</p>
+      </div>
+    </div>
+  </header>
+
+  {featuredGyms.length > 0 && (
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-granite mb-6">Featured Gyms</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {featuredGyms.slice(0, 6).map(gym => (
+          <GymCard gym={gym} showCity={false} />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="mb-12">
+    <h2 class="text-3xl font-bold text-granite mb-6">All Climbing Gyms in {city}</h2>
+    <p class="text-gray-700 mb-6">
+      Browse all {cityGyms.length} climbing facilities in {city}. Filter by climbing type, amenities,
+      price range, and more to find the gym that matches your preferences.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {paginatedGyms.map(gym => (
+        <GymCard gym={gym} showCity={false} />
+      ))}
+    </div>
+
+    <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl={`/${stateAbbr}/${citySlug}/`} />
+  </section>
+
+  <section class="mb-12">
+    <OtherCitiesInState state={region} stateSlug={stateAbbr} cities={otherCities} />
+  </section>
+</BaseLayout>
