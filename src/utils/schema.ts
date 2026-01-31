@@ -34,14 +34,13 @@ interface Gym {
  */
 export function generateGymSchema(gym: Gym, pageUrl: string) {
   const openingHours = parseOpeningHours(gym.working_hour);
-  const amenitiesList = gym.amenities?.split('|') || [];
+  const amenitiesList = gym.amenities?.split('|').map((a) => a.trim()).filter(Boolean) || [];
 
-  return {
+  const schema: any = {
     '@context': 'https://schema.org',
     '@type': ['SportsActivityLocation', 'LocalBusiness'],
     '@id': pageUrl,
     name: gym.name,
-    image: gym.photo,
     description: gym.about || gym.description_short,
     address: {
       '@type': 'PostalAddress',
@@ -56,70 +55,54 @@ export function generateGymSchema(gym: Gym, pageUrl: string) {
       latitude: gym.latitude,
       longitude: gym.longtitude, // Note: uses misspelled field from schema
     },
-    telephone: gym.phone,
+    // For LocalBusiness, url is typically the official site; we keep gym.website here.
+    // The schema @id is the canonical pageUrl.
     url: gym.website,
-    priceRange: `$${gym.day_pass_price_local}`,
-    openingHoursSpecification: openingHours,
-    // Only include aggregateRating if we have reviews (Google requires reviewCount > 0)
-    ...(gym.review_count && gym.review_count > 0 && {
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: gym.rating_overall || gym.rating,
-        reviewCount: gym.review_count,
-        bestRating: 5,
-        worstRating: 1,
-      },
-    }),
-    // Add detailed rating breakdown as additional properties
-    ...(gym.rating_route_quality > 0 && {
-      additionalProperty: [
-        ...(gym.rating_route_quality > 0 ? [{
-          '@type': 'PropertyValue',
-          name: 'Route Quality Rating',
-          value: gym.rating_route_quality,
-          maxValue: 5,
-          minValue: 0
-        }] : []),
-        ...(gym.rating_cleanliness > 0 ? [{
-          '@type': 'PropertyValue',
-          name: 'Cleanliness Rating',
-          value: gym.rating_cleanliness,
-          maxValue: 5,
-          minValue: 0
-        }] : []),
-        ...(gym.rating_staff_friendliness > 0 ? [{
-          '@type': 'PropertyValue',
-          name: 'Staff Friendliness Rating',
-          value: gym.rating_staff_friendliness,
-          maxValue: 5,
-          minValue: 0
-        }] : []),
-        ...(gym.rating_facilities > 0 ? [{
-          '@type': 'PropertyValue',
-          name: 'Facilities Rating',
-          value: gym.rating_facilities,
-          maxValue: 5,
-          minValue: 0
-        }] : []),
-        ...(gym.rating_value_for_money > 0 ? [{
-          '@type': 'PropertyValue',
-          name: 'Value for Money Rating',
-          value: gym.rating_value_for_money,
-          maxValue: 5,
-          minValue: 0
-        }] : [])
-      ].filter(Boolean)
-    }),
-    amenityFeature: amenitiesList.map(amenity => ({
+    sport: 'Rock Climbing',
+  };
+
+  if (gym.photo) schema.image = gym.photo;
+  if (gym.phone) schema.telephone = gym.phone;
+
+  // Avoid invalid placeholder values like "$null".
+  if (typeof gym.day_pass_price_local === 'number' && gym.day_pass_price_local > 0) {
+    schema.priceRange = `$${gym.day_pass_price_local}`;
+  }
+
+  if (openingHours.length) schema.openingHoursSpecification = openingHours;
+
+  // Only include aggregateRating if we have reviews (Google requires reviewCount > 0)
+  if (gym.review_count && gym.review_count > 0) {
+    schema.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: gym.rating_overall || gym.rating,
+      reviewCount: gym.review_count,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
+
+  const ratingProps: any[] = [];
+  if (gym.rating_route_quality > 0) ratingProps.push({ '@type': 'PropertyValue', name: 'Route Quality Rating', value: gym.rating_route_quality, maxValue: 5, minValue: 0 });
+  if (gym.rating_cleanliness > 0) ratingProps.push({ '@type': 'PropertyValue', name: 'Cleanliness Rating', value: gym.rating_cleanliness, maxValue: 5, minValue: 0 });
+  if (gym.rating_staff_friendliness > 0) ratingProps.push({ '@type': 'PropertyValue', name: 'Staff Friendliness Rating', value: gym.rating_staff_friendliness, maxValue: 5, minValue: 0 });
+  if (gym.rating_facilities > 0) ratingProps.push({ '@type': 'PropertyValue', name: 'Facilities Rating', value: gym.rating_facilities, maxValue: 5, minValue: 0 });
+  if (gym.rating_value_for_money > 0) ratingProps.push({ '@type': 'PropertyValue', name: 'Value for Money Rating', value: gym.rating_value_for_money, maxValue: 5, minValue: 0 });
+  if (ratingProps.length) schema.additionalProperty = ratingProps;
+
+  if (amenitiesList.length) {
+    schema.amenityFeature = amenitiesList.map((amenity) => ({
       '@type': 'LocationFeatureSpecification',
       name: amenity.replace(/_/g, ' '),
       value: true,
-    })),
-    sport: 'Rock Climbing',
-    ...(gym.why_climbers_like_it && gym.why_climbers_like_it.length > 0 && {
-      knowsAbout: gym.why_climbers_like_it
-    }),
-  };
+    }));
+  }
+
+  if (gym.why_climbers_like_it && gym.why_climbers_like_it.length > 0) {
+    schema.knowsAbout = gym.why_climbers_like_it;
+  }
+
+  return schema;
 }
 
 /**
@@ -166,7 +149,7 @@ export function generateItemListSchema(
       item: {
         '@type': 'LocalBusiness',
         name: gym.name,
-        url: `https://www.indoorclimbinggym.com/gyms/${gym.slug}`,
+        url: `https://www.indoorclimbinggym.com/gyms/${gym.slug}/`,
         address: {
           '@type': 'PostalAddress',
           addressLocality: gym.city,
@@ -182,6 +165,35 @@ export function generateItemListSchema(
             worstRating: 1,
           },
         }),
+      },
+    })),
+  };
+}
+
+/**
+ * Generate ItemList schema for blog listing pages.
+ * Uses BlogPosting items (NOT LocalBusiness).
+ */
+export function generateBlogItemListSchema(
+  posts: Array<{ title: string; slug: string; description?: string; heroImage?: string }>,
+  listName: string,
+  pageUrl: string
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: listName,
+    url: pageUrl,
+    numberOfItems: posts.length,
+    itemListElement: posts.map((post, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'BlogPosting',
+        headline: post.title,
+        url: `https://www.indoorclimbinggym.com/blog/${post.slug}/`,
+        ...(post.description && { description: post.description }),
+        ...(post.heroImage && { image: post.heroImage }),
       },
     })),
   };
@@ -324,19 +336,26 @@ function parseOpeningHours(hoursString: string) {
     sun: 'Sunday',
   };
 
-  return hoursString.split('|').map(entry => {
-    const colonIndex = entry.indexOf(':');
-    const day = entry.substring(0, colonIndex);
-    const timeRange = entry.substring(colonIndex + 1);
-    const [opens, closes] = timeRange.split('-');
+  return hoursString
+    .split('|')
+    .map((entry) => {
+      const colonIndex = entry.indexOf(':');
+      if (colonIndex < 0) return null;
 
-    return {
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: dayMap[day.toLowerCase()] || day,
-      opens: opens,
-      closes: closes,
-    };
-  });
+      const day = entry.substring(0, colonIndex);
+      const timeRange = entry.substring(colonIndex + 1);
+      const [opens, closes] = timeRange.split('-');
+
+      if (!opens || !closes) return null;
+
+      return {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: dayMap[day.toLowerCase()] || day,
+        opens,
+        closes,
+      };
+    })
+    .filter(Boolean);
 }
 
 /**

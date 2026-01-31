@@ -43,7 +43,7 @@ export async function getStaticPaths() {
     const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
 
     // Generate path for EACH page number
-    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+    for (let pageNum = 2; pageNum <= totalPages; pageNum++) {
       paths.push({
         params: {
           state: stateSlug,
@@ -118,9 +118,8 @@ const seoPriceMin = validPrices.length > 0 ? Math.min(...validPrices) : undefine
 const seoPriceMax = validPrices.length > 0 ? Math.max(...validPrices) : undefined;
 
 // Generate SEO data with CTR-optimized parameters
-const title = currentPage > 1
-  ? `${generateCityTitle(city, region, cityGyms.length)} - Page ${currentPage}`
-  : generateCityTitle(city, region, cityGyms.length);
+// Note: this route only builds page 2+ (page 1 lives at /[state]/[city]/)
+const title = `${generateCityTitle(city, region, cityGyms.length)} - Page ${currentPage}`;
 const description = generateCityDescription(
   city,
   region,
@@ -129,12 +128,13 @@ const description = generateCityDescription(
   seoPriceMin,
   seoPriceMax
 );
+const baseUrl = `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/`;
 const pageUrl = `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/${currentPage}/`;
 
 // Calculate pagination URLs for rel=prev/next
-const prevUrl = currentPage > 1
-  ? `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/${currentPage - 1}/`
-  : undefined;
+const prevUrl = currentPage === 2
+  ? baseUrl
+  : `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/${currentPage - 1}/`;
 
 const nextUrl = currentPage < totalPages
   ? `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/${currentPage + 1}/`
@@ -210,7 +210,7 @@ const combinedSchema = [itemListSchema, faqSchema];
 const breadcrumbs = [
   { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
   { label: region, url: `https://www.indoorclimbinggym.com/${stateAbbr}/` },
-  { label: city, url: `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/1/` },
+  { label: city, url: `https://www.indoorclimbinggym.com/${stateAbbr}/${citySlug}/` },
 ];
 ---
 

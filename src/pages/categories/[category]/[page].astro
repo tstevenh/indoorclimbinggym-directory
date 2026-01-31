@@ -57,7 +57,7 @@ export async function getStaticPaths() {
       const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
 
       // Generate pages for this category
-      for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+      for (let pageNum = 2; pageNum <= totalPages; pageNum++) {
         categoryPaths.push({
           params: {
             category: categorySlug,
@@ -92,7 +92,7 @@ export async function getStaticPaths() {
       const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
 
       // Generate pages for this category
-      for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+      for (let pageNum = 2; pageNum <= totalPages; pageNum++) {
         categoryPaths.push({
           params: {
             category: categorySlug,
@@ -160,7 +160,7 @@ export async function getStaticPaths() {
     const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
 
     // Generate pages for this category
-    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+    for (let pageNum = 2; pageNum <= totalPages; pageNum++) {
       categoryPaths.push({
         params: {
           category: category.slug,
@@ -239,20 +239,21 @@ if (isSpecial) {
 }
 
 const categorySlug = Astro.params.category;
-// Always include page number in canonical (page 1 = /1/, page 2 = /2/, etc.)
+// Note: this route only builds page 2+ (page 1 lives at /categories/[category]/)
+const baseUrl = `https://www.indoorclimbinggym.com/categories/${categorySlug}/`;
 const pageUrl = `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage}/`;
 
 // Calculate pagination URLs for rel=prev/next
-const prevUrl = currentPage > 1
-  ? `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage - 1}/`
-  : undefined;
+const prevUrl = currentPage === 2
+  ? baseUrl
+  : `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage - 1}/`;
 
 const nextUrl = currentPage < totalPages
   ? `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage + 1}/`
   : undefined;
 
 const seoData = generateSEO({
-  title: currentPage > 1 ? `${pageTitle} - Page ${currentPage}` : pageTitle,
+  title: `${pageTitle} - Page ${currentPage}`,
   description: pageDescription,
   canonical: pageUrl,
   keywords: keywords,
@@ -324,8 +325,8 @@ const combinedSchema = {
 // Breadcrumbs
 const breadcrumbs = [
   { label: 'Home', url: '/' },
-  { label: 'Categories', url: '/categories' },
-  { label: pageTitle, url: `/categories/${categorySlug}` },
+  { label: 'Categories', url: '/categories/' },
+  { label: pageTitle, url: `/categories/${categorySlug}/` },
 ];
 
 // Generate intro paragraph based on type
@@ -504,28 +505,28 @@ Beyond physical infrastructure, the best ${formattedValue.toLowerCase()} climbin
     <h2 class="text-3xl font-bold text-granite mb-6">Explore More Categories</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <a
-        href="/categories/best-bouldering-climbing-gyms/1/"
+        href="/categories/best-bouldering-climbing-gyms/"
         class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
       >
         <h3 class="text-lg font-bold text-sage mb-2">Best Bouldering Gyms</h3>
         <p class="text-sm text-gray-600">Top facilities for bouldering</p>
       </a>
       <a
-        href="/categories/climbing-gyms-with-sauna/1/"
+        href="/categories/climbing-gyms-with-sauna/"
         class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
       >
         <h3 class="text-lg font-bold text-sage mb-2">Gyms with Sauna</h3>
         <p class="text-sm text-gray-600">Recovery-focused facilities</p>
       </a>
       <a
-        href="/categories/best-climbing-gyms-for-beginners/1/"
+        href="/categories/best-climbing-gyms-for-beginners/"
         class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
       >
         <h3 class="text-lg font-bold text-sage mb-2">Beginner Friendly Gyms</h3>
         <p class="text-sm text-gray-600">Perfect for newcomers</p>
       </a>
       <a
-        href="/categories/climbing-gyms-with-kids-zone/1/"
+        href="/categories/climbing-gyms-with-kids-zone/"
         class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
       >
         <h3 class="text-lg font-bold text-sage mb-2">Gyms with Kids Zone</h3>

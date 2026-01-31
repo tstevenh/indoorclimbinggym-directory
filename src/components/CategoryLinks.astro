@@ -1,76 +1,52 @@
 ---
 /**
- * CategoryLinks Component
- * Displays relevant category links as pills/tags based on gym data
+ * Category Links Component
+ * Canonical category URLs do NOT include /1/.
  */
-
-interface Props {
-  gym: {
-    amenities?: string;
-    beginner_friendly?: boolean;
-    climbing_types?: string;
-    day_pass_price_local?: number;
-  };
-}
-
-const { gym } = Astro.props;
-
-// Map gym features to category pages
-const categoryLinks: { label: string; url: string }[] = [];
-
-// Check for beginner friendly
-if (gym.beginner_friendly) {
-  categoryLinks.push({
-    label: 'Best for Beginners',
-    url: '/categories/best-climbing-gyms-for-beginners/1/',
-  });
-}
-
-// Check for sauna
-if (gym.amenities?.includes('sauna')) {
-  categoryLinks.push({
-    label: 'Gyms with Sauna',
-    url: '/categories/climbing-gyms-with-sauna/1/',
-  });
-}
-
-// Check for kids zone
-if (gym.amenities?.includes('kids_zone')) {
-  categoryLinks.push({
-    label: 'Gyms with Kids Zone',
-    url: '/categories/climbing-gyms-with-kids-zone/1/',
-  });
-}
-
-// Check for bouldering
-if (gym.climbing_types?.includes('bouldering')) {
-  categoryLinks.push({
-    label: 'Best Bouldering Gyms',
-    url: '/categories/best-bouldering-climbing-gyms/1/',
-  });
-}
-
-// Check for affordable (under $22)
-if (gym.day_pass_price_local && gym.day_pass_price_local <= 22) {
-  categoryLinks.push({
-    label: 'Affordable Gyms',
-    url: '/categories/affordable-climbing-gyms/1/',
-  });
-}
+const categories = [
+  {
+    title: 'For Beginners',
+    description: 'Beginner-friendly gyms with intro classes and supportive communities',
+    url: '/categories/best-climbing-gyms-for-beginners/',
+  },
+  {
+    title: 'With Sauna',
+    description: 'Gyms featuring sauna facilities for post-climb recovery',
+    url: '/categories/climbing-gyms-with-sauna/',
+  },
+  {
+    title: 'With Kids Zone',
+    description: 'Family-friendly gyms with dedicated kids climbing areas',
+    url: '/categories/climbing-gyms-with-kids-zone/',
+  },
+  {
+    title: 'Bouldering Gyms',
+    description: 'Best gyms specializing in bouldering walls and problems',
+    url: '/categories/best-bouldering-climbing-gyms/',
+  },
+  {
+    title: 'Affordable Gyms',
+    description: 'Budget-friendly climbing gyms with great value',
+    url: '/categories/affordable-climbing-gyms/',
+  },
+];
 ---
 
-{categoryLinks.length > 0 && (
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h3 class="font-bold text-granite mb-3">Relevant Categories</h3>
-    <div class="flex flex-wrap gap-2">
-      {categoryLinks.map((link) => (
-        <a
-          href={link.url}
-          class="inline-block bg-sage/10 text-sage px-4 py-2 rounded-full text-sm font-medium hover:bg-sage hover:!text-white transition-colors"
-        >
-          {link.label}
-        </a>
-      ))}
-    </div>
+<section class="mb-16">
+  <div class="flex justify-between items-center mb-8">
+    <h2 class="text-3xl font-bold text-granite">Browse by Category</h2>
+    <a href="/categories/" class="text-sage hover:underline font-medium">View All →</a>
   </div>
-)}
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {categories.map((category) => (
+      <a
+        href={category.url}
+        class="block bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-100"
+      >
+        <h3 class="text-xl font-bold text-granite mb-2">{category.title}</h3>
+        <p class="text-gray-600">{category.description}</p>
+      </a>
+    ))}
+  </div>
+</section>

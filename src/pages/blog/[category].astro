@@ -11,7 +11,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogCard from '../../components/blog/BlogCard.astro';
 import BlogCategories from '../../components/blog/BlogCategories.astro';
-import { generateItemListSchema } from '../../utils/schema';
+import { generateBlogItemListSchema } from '../../utils/schema';
 
 // Generate static paths for all unique categories
 export async function getStaticPaths() {
@@ -41,27 +41,12 @@ const description = `Browse all ${categoryLabel.toLowerCase()} articles about in
 const pageUrl = `https://www.indoorclimbinggym.com/blog/${category}`;
 
 // Generate schema
-const itemListSchema = generateItemListSchema(
-  sortedPosts.map((post, index) => ({
-    id: index,
-    name: post.data.title,
+const itemListSchema = generateBlogItemListSchema(
+  sortedPosts.map((post) => ({
+    title: post.data.title,
     slug: post.slug,
-    full_address: '',
-    city: '',
-    region: '',
-    postal_code: '',
-    country: '',
-    latitude: 0,
-    longtitude: 0,
-    phone: '',
-    website: `https://www.indoorclimbinggym.com/blog/${post.slug}`,
-    photo: post.data.heroImage,
-    rating: 0,
-    day_pass_price_local: 0,
-    working_hour: '',
-    amenities: '',
-    climbing_types: '',
-    description_short: post.data.description,
+    description: post.data.description,
+    heroImage: post.data.heroImage,
   })),
   `Climbing ${categoryLabel}`,
   pageUrl

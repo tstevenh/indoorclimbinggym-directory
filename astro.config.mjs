@@ -24,7 +24,18 @@ export default defineConfig({
   },
   integrations: [
     react(),
-    sitemap(),
+    sitemap({
+      // Only include canonical URLs.
+      // We canonicalize listing page 1 to the base URL, and redirect /1/ → base.
+      filter: (page) => {
+        try {
+          const path = new URL(page, 'https://www.indoorclimbinggym.com').pathname;
+          return !path.endsWith('/1/');
+        } catch {
+          return true;
+        }
+      }
+    }),
     mdx(),
     partytown({
       config: {
@@ -41,8 +52,10 @@ export default defineConfig({
     // - src/pages/guides/index.astro redirects /guides/ to /blog/
     // - src/pages/guides/[...slug].astro redirects /guides/* to /blog/*
 
-    // Note: Pagination redirects handled by index.astro routes:
-    // - src/pages/categories/[category]/index.astro redirects to /1/
-    // - src/pages/[state]/[city]/index.astro redirects to /1/
+    // Note: Listing pagination/canonicalization handled by:
+    // - src/pages/[state]/[city]/index.astro (page 1)
+    // - src/pages/[state]/[city]/[page].astro (page 2+)
+    // - src/pages/categories/[category]/index.astro (page 1)
+    // - src/pages/categories/[category]/[page].astro (page 2+)
   }
 });

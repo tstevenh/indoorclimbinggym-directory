@@ -5,15 +5,19 @@
  * Features:
  * - Sticky positioning above main navigation
  * - Sage green background matching brand
- * - Dismissible with localStorage persistence
+ * - Dismissible with localStorage persistence (7 days)
  * - Compelling copy for leaderboard signup
  * - Responsive design
  */
+
+const DISMISS_KEY = 'promo-navbar-dismissed';
+const DISMISS_TIMESTAMP_KEY = 'promo-navbar-dismissed-timestamp';
+const RESET_DAYS = 7; // Promo reappears after 7 days
 ---
 
 <div
   id="promo-navbar"
-  class="fixed top-0 left-0 right-0 z-[60] bg-sage text-white transform transition-transform duration-300 ease-in-out"
+  class="fixed top-0 left-0 right-0 z-[60] bg-sage text-white"
 >
   <div class="container mx-auto px-4">
     <div class="flex items-center justify-between py-3 min-h-[56px]">
@@ -80,30 +84,36 @@
 </div>
 
 <!-- Spacer to prevent content jump when promo is visible -->
-<div id="promo-spacer" class="h-[56px] transition-all duration-300 ease-in-out"></div>
+<div id="promo-spacer" class="h-[56px]"></div>
 
-<script>
-  // LocalStorage key for dismiss state
-  const DISMISS_KEY = 'promo-navbar-dismissed';
-
+<script define:vars={{ DISMISS_KEY, DISMISS_TIMESTAMP_KEY, RESET_DAYS }}>
   // Get elements
   const promoNavbar = document.getElementById('promo-navbar');
   const promoDismiss = document.getElementById('promo-dismiss');
   const promoSpacer = document.getElementById('promo-spacer');
   const mainHeader = document.getElementById('main-header');
 
-  // Check if user has dismissed the promo
+  // Check if user has dismissed the promo and if it's time to reset
+  const dismissTimestamp = localStorage.getItem(DISMISS_TIMESTAMP_KEY);
   const isDismissed = localStorage.getItem(DISMISS_KEY) === 'true';
+  const shouldReset = dismissTimestamp && (Date.now() - parseInt(dismissTimestamp)) > (RESET_DAYS * 24 * 60 * 60 * 1000);
 
-  if (isDismissed) {
-    // Hide immediately if previously dismissed
+  // Reset if past the reset period
+  if (shouldReset) {
+    localStorage.removeItem(DISMISS_KEY);
+    localStorage.removeItem(DISMISS_TIMESTAMP_KEY);
+  }
+
+  // Only hide if dismissed and not past reset period
+  if (isDismissed && !shouldReset) {
     hidePromo();
   }
 
   // Handle dismiss button click
   promoDismiss?.addEventListener('click', () => {
-    // Save to localStorage
+    // Save to localStorage with timestamp
     localStorage.setItem(DISMISS_KEY, 'true');
+    localStorage.setItem(DISMISS_TIMESTAMP_KEY, String(Date.now()));
     // Hide the promo
     hidePromo();
   });
@@ -121,22 +131,16 @@
       }, 300); // Wait for animation to complete
     }
   }
-
-  // Optional: Reset after 30 days (uncomment if needed)
-  // const RESET_DAYS = 30;
-  // const dismissTimestamp = localStorage.getItem(DISMISS_KEY + '-timestamp');
-  // if (dismissTimestamp) {
-  //   const daysSinceDismiss = (Date.now() - parseInt(dismissTimestamp)) / (1000 * 60 * 60 * 24);
-  //   if (daysSinceDismiss > RESET_DAYS) {
-  //     localStorage.removeItem(DISMISS_KEY);
-  //     localStorage.removeItem(DISMISS_KEY + '-timestamp');
-  //   }
-  // }
 </script>
 
 <style>
   /* Ensure smooth transform */
   #promo-navbar {
     will-change: transform;
+    transition: transform 300ms ease-in-out;
+  }
+
+  #promo-spacer {
+    transition: height 300ms ease-in-out;
   }
 </style>

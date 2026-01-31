@@ -7,7 +7,7 @@
 export interface Props {
   currentPage: number;
   totalPages: number;
-  baseUrl: string; // URL without page param (e.g., "/categories/best-bouldering" or "/search?q=seattle")
+  baseUrl: string; // URL without page param (e.g., "/categories/best-bouldering/" or "/search?q=seattle")
 }
 
 const { currentPage, totalPages, baseUrl } = Astro.props;
@@ -19,24 +19,26 @@ if (totalPages <= 1) {
 
 /**
  * Generate pagination URLs
- * Handles both path-based pagination (/categories/slug/2) and query params (/search?q=test&page=2)
+ * Handles both path-based pagination (/categories/slug/2/) and query params (/search?q=test&page=2)
  */
 function getPageUrl(page: number): string {
-  // Check if baseUrl has query params (search page) or is path-based (category pages)
+  // Query param based (search page)
   if (baseUrl.includes('?')) {
-    // Query param based (search page): append page as query param
+    // Ensure baseUrl is absolute for URL parsing; then return a path+query string
+    const u = new URL(baseUrl, 'https://www.indoorclimbinggym.com');
     if (page === 1) {
-      return baseUrl.split('?')[0]; // Remove page param for page 1
+      u.searchParams.delete('page');
+    } else {
+      u.searchParams.set('page', String(page));
     }
-    return `${baseUrl}&page=${page}`;
-  } else {
-    // Path-based (category pages): append page number
-    // Base URL should have trailing slash (e.g., /categories/slug/)
-    // For page 1, return /categories/slug/1/
-    // For page 2+, return /categories/slug/2/
-    const baseWithoutSlash = baseUrl.replace(/\/$/, ''); // Remove trailing slash
-    return `${baseWithoutSlash}/${page}/`;
+    return u.pathname + (u.search ? u.search : '');
   }
+
+  // Path-based pagination
+  // Page 1 should be the base URL (canonical)
+  const baseWithoutTrailing = baseUrl.replace(/\/+$/, '');
+  if (page === 1) return `${baseWithoutTrailing}/`;
+  return `${baseWithoutTrailing}/${page}/`;
 }
 
 /**
@@ -118,9 +120,7 @@ const nextPage = currentPage < totalPages ? currentPage + 1 : null;
   <div class="flex items-center gap-1">
     {pageNumbers.map((pageNum) => {
       if (pageNum === '...') {
-        return (
-          <span class="px-3 py-2 text-granite">...</span>
-        );
+        return <span class="px-3 py-2 text-granite">...</span>;
       }
 
       const isActive = pageNum === currentPage;

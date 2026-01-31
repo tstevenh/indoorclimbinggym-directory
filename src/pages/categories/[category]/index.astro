@@ -1,18 +1,23 @@
 ---
 /**
- * Category Base URL Redirect
- * Redirects /categories/[category]/ to /categories/[category]/1/
- *
- * This ensures pagination starts at /1/ and avoids canonical conflicts.
- * Without this, /categories/bouldering/ would 404.
+ * Category Landing Page (Page 1)
+ * Canonical page 1 URL: /categories/[category]/
+ * Page 2+: /categories/[category]/2/ ...
  */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import GymCard from '../../../components/GymCard.astro';
+import Pagination from '../../../components/Pagination.astro';
+import { generateSEO } from '../../../utils/seo';
+import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
+import { fetchGyms } from '../../../config/api';
+
 export const prerender = true;
 
 export async function getStaticPaths() {
-  const { fetchGyms } = await import('../../../config/api');
   const gymsData = await fetchGyms();
 
-  // Parse all amenities and climbing types
+  const GYMS_PER_PAGE = 12;
+
   const allAmenities = new Set<string>();
   const allClimbingTypes = new Set<string>();
 
@@ -21,58 +26,486 @@ export async function getStaticPaths() {
     gym.climbing_types?.split('|').forEach(ct => allClimbingTypes.add(ct.trim()));
   });
 
-  // Categories to skip from dynamic generation (have static pages)
   const skipAmenities = ['sauna', 'kids_zone'];
   const skipClimbingTypes = ['bouldering'];
 
   const categoryPaths = [];
 
-  // Add special static categories manually (these have static .astro pages)
-  const specialCategories = [
-    'best-bouldering-climbing-gyms',
-    'best-climbing-gyms-for-beginners',
-    'affordable-climbing-gyms',
-    'climbing-gyms-with-sauna',
-    'climbing-gyms-with-kids-zone',
-  ];
-
-  for (const slug of specialCategories) {
-    categoryPaths.push({
-      params: { category: slug }
-    });
-  }
-
-  // Generate amenity-based redirects (only if 3+ gyms)
+  // Amenity categories (>=3 gyms)
   for (const amenity of allAmenities) {
     if (skipAmenities.includes(amenity)) continue;
 
     const matchingGyms = gymsData.filter(g => g.amenities?.includes(amenity));
     if (matchingGyms.length >= 3) {
+      const sortedGyms = matchingGyms.sort((a, b) => {
+        if (a.featured !== b.featured) return b.featured ? 1 : -1;
+        if (a.rating !== b.rating) return b.rating - a.rating;
+        return a.name.localeCompare(b.name);
+      });
+
       const categorySlug = `climbing-gyms-with-${amenity.replace(/_/g, '-')}`;
+      const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
+
       categoryPaths.push({
-        params: { category: categorySlug }
+        params: { category: categorySlug },
+        props: {
+          type: 'amenity',
+          value: amenity,
+          gyms: sortedGyms,
+          currentPage: 1,
+          totalPages
+        }
       });
     }
   }
 
-  // Generate climbing type-based redirects (only if 3+ gyms)
+  // Climbing type categories (>=3 gyms)
   for (const climbingType of allClimbingTypes) {
     if (skipClimbingTypes.includes(climbingType)) continue;
 
     const matchingGyms = gymsData.filter(g => g.climbing_types?.includes(climbingType));
     if (matchingGyms.length >= 3) {
+      const sortedGyms = matchingGyms.sort((a, b) => {
+        if (a.featured !== b.featured) return b.featured ? 1 : -1;
+        if (a.rating !== b.rating) return b.rating - a.rating;
+        return a.name.localeCompare(b.name);
+      });
+
       const categorySlug = `best-${climbingType.replace(/_/g, '-')}-climbing-gyms`;
+      const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
+
       categoryPaths.push({
-        params: { category: categorySlug }
+        params: { category: categorySlug },
+        props: {
+          type: 'climbing_type',
+          value: climbingType,
+          gyms: sortedGyms,
+          currentPage: 1,
+          totalPages
+        }
       });
     }
+  }
+
+  // Special categories (these have their own intent)
+  const specialCategories = [
+    {
+      slug: 'best-bouldering-climbing-gyms',
+      filter: (gym) => gym.climbing_types?.includes('bouldering'),
+      type: 'climbing_type',
+      value: 'bouldering'
+    },
+    {
+      slug: 'best-climbing-gyms-for-beginners',
+      filter: (gym) => gym.beginner_friendly === true,
+      type: 'special',
+      value: 'beginners'
+    },
+    {
+      slug: 'affordable-climbing-gyms',
+      filter: (gym) => gym.day_pass_price_local <= 20,
+      type: 'special',
+      value: 'affordable'
+    },
+    {
+      slug: 'climbing-gyms-with-sauna',
+      filter: (gym) => gym.amenities?.includes('sauna'),
+      type: 'amenity',
+      value: 'sauna'
+    },
+    {
+      slug: 'climbing-gyms-with-kids-zone',
+      filter: (gym) => gym.amenities?.includes('kids_zone'),
+      type: 'amenity',
+      value: 'kids_zone'
+    }
+  ];
+
+  for (const category of specialCategories) {
+    const matchingGyms = gymsData.filter(category.filter);
+
+    const sortedGyms = matchingGyms.sort((a, b) => {
+      if (a.featured !== b.featured) return b.featured ? 1 : -1;
+      if (a.rating !== b.rating) return b.rating - a.rating;
+      return a.name.localeCompare(b.name);
+    });
+
+    const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
+
+    categoryPaths.push({
+      params: { category: category.slug },
+      props: {
+        type: category.type,
+        value: category.value,
+        gyms: sortedGyms,
+        currentPage: 1,
+        totalPages
+      }
+    });
   }
 
   return categoryPaths;
 }
 
+// Props from getStaticPaths
+const { type, value, gyms, currentPage, totalPages } = Astro.props;
 const { category } = Astro.params;
 
-// 301 redirect to page 1
-return Astro.redirect(`/categories/${category}/1/`, 301);
+const categorySlug = category;
+
+// Pagination
+const GYMS_PER_PAGE = 12;
+const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
+const endIndex = currentPage * GYMS_PER_PAGE;
+const paginatedGyms = gyms.slice(startIndex, endIndex);
+
+function formatText(text: string): string {
+  return text.replace(/_/g, ' ')
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+const formattedValue = formatText(value);
+const isAmenity = type === 'amenity';
+const isSpecial = type === 'special';
+
+// Page metadata - with special handling for special categories
+let pageTitle: string;
+let pageDescription: string;
+let keywords: string[];
+
+if (isSpecial) {
+  // Handle special categories (beginners, affordable)
+  if (value === 'beginners') {
+    pageTitle = 'Best Climbing Gyms for Beginners';
+    pageDescription = `Find the best climbing gyms for beginners. Compare ${gyms.length} beginner-friendly gyms with intro classes, patient instruction, and supportive communities.`;
+    keywords = ['climbing gyms for beginners', 'beginner climbing gym', 'beginner friendly climbing', 'first time climbing gym'];
+  } else if (value === 'affordable') {
+    pageTitle = 'Affordable Climbing Gyms';
+    pageDescription = `Discover affordable climbing gyms with day passes under $20. Browse ${gyms.length} budget-friendly gyms offering great value without compromising quality.`;
+    keywords = ['affordable climbing gyms', 'cheap climbing gym', 'budget climbing gym', 'climbing gym deals'];
+  } else {
+    pageTitle = `Best ${formattedValue} Climbing Gyms`;
+    pageDescription = `Discover the best ${formattedValue.toLowerCase()} climbing gyms. Browse ${gyms.length} top-rated facilities.`;
+    keywords = [`${formattedValue.toLowerCase()} climbing gyms`, `best ${formattedValue.toLowerCase()} climbing`];
+  }
+} else if (isAmenity) {
+  pageTitle = `Climbing Gyms with ${formattedValue}`;
+  pageDescription = `Find climbing gyms with ${formattedValue.toLowerCase()}. Compare ${gyms.length} gyms offering ${formattedValue.toLowerCase()} amenities with ratings, prices, and reviews.`;
+  keywords = [`climbing gyms with ${formattedValue.toLowerCase()}`, `${formattedValue.toLowerCase()} climbing gym`, `climbing gym ${formattedValue.toLowerCase()}`];
+} else {
+  pageTitle = `Best ${formattedValue} Climbing Gyms`;
+  pageDescription = `Discover the best ${formattedValue.toLowerCase()} climbing gyms. Browse ${gyms.length} top-rated facilities specializing in ${formattedValue.toLowerCase()} climbing.`;
+  keywords = [`${formattedValue.toLowerCase()} climbing gyms`, `best ${formattedValue.toLowerCase()} climbing`, `${formattedValue.toLowerCase()} climbing near me`];
+}
+
+const canonicalUrl = `https://www.indoorclimbinggym.com/categories/${categorySlug}/`;
+const nextUrl = totalPages > 1
+  ? `https://www.indoorclimbinggym.com/categories/${categorySlug}/2/`
+  : undefined;
+
+// Stats
+const avgRating = (gyms.reduce((sum, gym) => sum + gym.rating, 0) / gyms.length).toFixed(1);
+const avgPrice = Math.round(gyms.reduce((sum, gym) => sum + gym.day_pass_price_local, 0) / gyms.length);
+const priceRange = {
+  min: Math.min(...gyms.map(g => g.day_pass_price_local)),
+  max: Math.max(...gyms.map(g => g.day_pass_price_local)),
+};
+
+// Generate FAQs based on type
+const faqs = isAmenity ? [
+  {
+    question: `Why are ${formattedValue.toLowerCase()} important at climbing gyms?`,
+    answer: `${formattedValue} enhance the climbing experience by providing essential conveniences. These amenities make your visit more comfortable and allow you to focus on your climbing session without worrying about basic needs. Many climbers consider ${formattedValue.toLowerCase()} a key factor when choosing a gym.`,
+  },
+  {
+    question: `How many climbing gyms offer ${formattedValue.toLowerCase()}?`,
+    answer: `We've identified ${gyms.length} climbing gyms that offer ${formattedValue.toLowerCase()}. These facilities range across different cities and states, with an average rating of ${avgRating} stars. Gyms with ${formattedValue.toLowerCase()} typically charge between $${priceRange.min}-$${priceRange.max} for day passes.`,
+  },
+  {
+    question: `Are ${formattedValue.toLowerCase()} included in membership fees?`,
+    answer: `Most climbing gyms include access to ${formattedValue.toLowerCase()} as part of standard membership or day pass fees. However, policies can vary by facility. Some premium gyms may offer enhanced ${formattedValue.toLowerCase()} amenities as part of upgraded membership tiers. Always check with the specific gym for their policies.`,
+  },
+  {
+    question: `What should I look for in climbing gyms with ${formattedValue.toLowerCase()}?`,
+    answer: `When evaluating gyms with ${formattedValue.toLowerCase()}, consider the quality and availability of these amenities, especially during peak hours. Check reviews to see what other climbers say about the ${formattedValue.toLowerCase()} facilities. Also consider the gym's location, climbing variety, and overall rating alongside the ${formattedValue.toLowerCase()} amenities.`,
+  },
+] : [
+  {
+    question: `What is ${formattedValue.toLowerCase()} climbing?`,
+    answer: `${formattedValue} climbing is a specific discipline in the sport that requires particular skills and equipment. These gyms specialize in providing quality ${formattedValue.toLowerCase()} climbing experiences with properly set routes, safety equipment, and trained staff. Whether you're a beginner or advanced climber, dedicated ${formattedValue.toLowerCase()} facilities offer the best environment for this climbing style.`,
+  },
+  {
+    question: `How many gyms offer ${formattedValue.toLowerCase()} climbing?`,
+    answer: `We've identified ${gyms.length} climbing gyms that offer ${formattedValue.toLowerCase()} climbing. These facilities have an average rating of ${avgRating} stars and day pass prices ranging from $${priceRange.min} to $${priceRange.max}. Most are located in major metropolitan areas with active climbing communities.`,
+  },
+  {
+    question: `Do I need special equipment for ${formattedValue.toLowerCase()} climbing?`,
+    answer: `${formattedValue} climbing may require specific equipment depending on the discipline. Most gyms offering ${formattedValue.toLowerCase()} climbing provide rental gear or have pro shops where you can purchase necessary equipment. First-time visitors can typically rent everything needed, and staff can guide you on proper equipment use and safety protocols.`,
+  },
+  {
+    question: `Is ${formattedValue.toLowerCase()} climbing good for beginners?`,
+    answer: `Many gyms with ${formattedValue.toLowerCase()} climbing welcome beginners and offer introductory classes. ${gyms.filter(g => g.beginner_friendly).length} of the ${gyms.length} gyms in this category are marked as beginner-friendly. Look for facilities that offer instruction, have beginner-appropriate routes, and maintain a supportive community atmosphere.`,
+  },
+  {
+    question: `What's the average cost for ${formattedValue.toLowerCase()} climbing?`,
+    answer: `Day passes at ${formattedValue.toLowerCase()} climbing gyms average around $${avgPrice}, with prices ranging from $${priceRange.min} to $${priceRange.max}. Monthly memberships typically offer better value for regular climbers. Many gyms also offer student discounts, punch cards, and family packages to make ${formattedValue.toLowerCase()} climbing more affordable.`,
+  },
+];
+
+// Generate schemas
+const itemListSchema = generateItemListSchema(
+  gyms,
+  pageTitle,
+  canonicalUrl
+);
+
+const faqSchema = generateFAQSchema(faqs);
+
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [itemListSchema, faqSchema],
+};
+
+// Breadcrumbs
+const breadcrumbs = [
+  { label: 'Home', url: '/' },
+  { label: 'Categories', url: '/categories/' },
+  { label: pageTitle, url: `/categories/${categorySlug}/` },
+];
+
+// Generate intro paragraph based on type
+const introText = isAmenity
+  ? `Finding a climbing gym with ${formattedValue.toLowerCase()} can significantly enhance your training experience. These ${gyms.length} facilities understand that modern climbers value convenience and comfort alongside great climbing. Whether you're looking for post-session amenities or essential conveniences, gyms with ${formattedValue.toLowerCase()} provide the complete package for dedicated climbers.`
+  : `${formattedValue} climbing requires specialized facilities, proper equipment, and expert setting. These ${gyms.length} gyms excel at providing world-class ${formattedValue.toLowerCase()} climbing experiences. From beginner-friendly instruction to challenging routes for advanced climbers, these facilities offer everything you need to master ${formattedValue.toLowerCase()} climbing technique and push your limits in a safe, supportive environment.`;
+
+// Generate detailed content based on type
+const aboutTitle = isAmenity
+  ? `Why Choose Climbing Gyms with ${formattedValue}?`
+  : `The ${formattedValue} Climbing Experience`;
+
+const aboutContent = isAmenity
+  ? `Modern climbing gyms recognize that the complete climbing experience extends beyond the walls. ${formattedValue} represent an essential amenity that separates good gyms from great ones. These facilities invest in comprehensive amenities because they understand climbers need more than just routes - they need a supportive environment that makes training convenient and enjoyable.
+
+When evaluating climbing gyms, ${formattedValue.toLowerCase()} availability can significantly impact your satisfaction and training consistency. Gyms that prioritize these amenities typically show attention to detail across all aspects of their operation. The ${gyms.length} facilities in this category average ${avgRating} stars in ratings, demonstrating that quality amenities correlate with overall gym excellence.
+
+The presence of ${formattedValue.toLowerCase()} also indicates a gym's commitment to creating a complete climbing community hub. These aren't just places to train - they're destinations where climbers can spend extended sessions, socialize with fellow enthusiasts, and fully immerse themselves in climbing culture. Whether you're training for outdoor projects or simply enjoy indoor climbing, having access to ${formattedValue.toLowerCase()} enhances every visit.
+
+Location, climbing variety, and route quality remain crucial factors, but ${formattedValue.toLowerCase()} can be the deciding factor between similar gyms. Our directory highlights facilities that understand this balance, offering both exceptional climbing and the amenities that make regular training sustainable. Browse gyms by city and region to find the perfect facility combining world-class climbing with ${formattedValue.toLowerCase()} near you.`
+  : `${formattedValue} climbing demands specific wall configurations, safety systems, and route setting expertise. The ${gyms.length} gyms in this category specialize in creating optimal ${formattedValue.toLowerCase()} climbing environments. Whether you're developing technique, building endurance, or preparing for outdoor climbs, these facilities provide dedicated spaces for ${formattedValue.toLowerCase()} climbing progression.
+
+What separates exceptional ${formattedValue.toLowerCase()} climbing facilities from average ones? Professional route setting that challenges climbers at every level, regular route rotation keeping problems fresh and engaging, and comprehensive safety systems maintained by trained staff. The gyms featured here average ${avgRating} stars in ratings because they excel in these critical areas while fostering welcoming communities around ${formattedValue.toLowerCase()} climbing.
+
+Many climbers seeking ${formattedValue.toLowerCase()} climbing opportunities wonder about equipment requirements and learning curves. Most facilities offering ${formattedValue.toLowerCase()} climbing provide rental gear and introductory classes making this discipline accessible to newcomers. ${gyms.filter(g => g.beginner_friendly).length} of these ${gyms.length} gyms are marked as beginner-friendly, offering instruction programs that safely introduce ${formattedValue.toLowerCase()} climbing fundamentals.
+
+Beyond physical infrastructure, the best ${formattedValue.toLowerCase()} climbing gyms cultivate communities of passionate climbers who share knowledge, encouragement, and enthusiasm. These social environments accelerate learning and make consistent training more enjoyable. Browse our complete directory to find ${formattedValue.toLowerCase()} climbing facilities in your area, compare amenities and pricing, and discover the gym that matches your goals and skill level.`;
 ---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  keywords={keywords}
+  schema={combinedSchema}
+  breadcrumbs={breadcrumbs}
+  nextUrl={nextUrl}
+>
+  <!-- Breadcrumb Navigation -->
+  <nav class="text-sm mb-6" aria-label="Breadcrumb">
+    <ol class="flex items-center gap-2">
+      {breadcrumbs.map((crumb, index) => (
+        <li class="flex items-center gap-2">
+          {index > 0 && <span class="text-gray-400">/</span>}
+          {index === breadcrumbs.length - 1 ? (
+            <span class="text-sage font-medium">{crumb.label}</span>
+          ) : (
+            <a href={crumb.url} class="text-granite hover:text-sage">
+              {crumb.label}
+            </a>
+          )}
+        </li>
+      ))}
+    </ol>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="mb-12">
+    <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">
+      {pageTitle}
+    </h1>
+    <p class="text-xl text-gray-700 mb-6 leading-relaxed">
+      {introText}
+    </p>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white p-6 rounded-lg shadow-md">
+      <div>
+        <p class="text-3xl font-bold text-sage">{gyms.length}</p>
+        <p class="text-sm text-gray-600">Total Gyms</p>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-sage">{avgRating}★</p>
+        <p class="text-sm text-gray-600">Average Rating</p>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-sage">${avgPrice}</p>
+        <p class="text-sm text-gray-600">Avg Day Pass</p>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-sage">
+          ${priceRange.min}-${priceRange.max}
+        </p>
+        <p class="text-sm text-gray-600">Price Range</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Gym Grid -->
+  <section class="mb-16">
+    <h2 class="text-3xl font-bold text-granite mb-6">{pageTitle}</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {paginatedGyms.map(gym => (
+        <GymCard gym={gym} showCity={true} />
+      ))}
+    </div>
+
+    <!-- Pagination -->
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      baseUrl={`/categories/${categorySlug}/`}
+    />
+  </section>
+
+  <!-- About Section -->
+  <section class="mb-16 bg-white p-8 rounded-lg shadow-md">
+    <h2 class="text-3xl font-bold text-granite mb-6">{aboutTitle}</h2>
+
+    <div class="prose prose-lg max-w-none">
+      {aboutContent.split('\n\n').map(paragraph => (
+        <p class="text-gray-700 mb-4 leading-relaxed">
+          {paragraph}
+        </p>
+      ))}
+    </div>
+  </section>
+
+  <!-- Comparison Table -->
+  <section class="mb-16">
+    <h2 class="text-3xl font-bold text-granite mb-6">Compare {isAmenity ? 'Gyms with' : ''} {formattedValue} {isAmenity ? '' : 'Climbing Gyms'}</h2>
+    <div class="overflow-x-auto bg-white rounded-lg shadow-md">
+      <table class="w-full text-left">
+        <thead class="bg-sage text-white">
+          <tr>
+            <th class="px-6 py-3 font-semibold">Gym Name</th>
+            <th class="px-6 py-3 font-semibold">Location</th>
+            <th class="px-6 py-3 font-semibold">Rating</th>
+            <th class="px-6 py-3 font-semibold">Day Pass</th>
+            <th class="px-6 py-3 font-semibold">{isAmenity ? 'Other Amenities' : 'Climbing Types'}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          {paginatedGyms.map((gym, index) => (
+            <tr class={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+              <td class="px-6 py-4">
+                <a href={`/gyms/${gym.slug}/`} class="text-sage hover:underline font-medium">
+                  {gym.name}
+                </a>
+              </td>
+              <td class="px-6 py-4 text-gray-700">
+                {gym.city}, {gym.region}
+              </td>
+              <td class="px-6 py-4 font-medium">{gym.rating}★</td>
+              <td class="px-6 py-4 text-gray-700">${gym.day_pass_price_local}</td>
+              <td class="px-6 py-4 text-gray-700 text-sm">
+                {isAmenity
+                  ? gym.amenities?.split('|').filter(a => a !== value).slice(0, 3).map(a => formatText(a)).join(', ')
+                  : gym.climbing_types?.split('|').map(ct => formatText(ct)).join(', ')
+                }
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="mb-16">
+    <h2 class="text-3xl font-bold text-granite mb-6">
+      Frequently Asked Questions
+    </h2>
+    <div class="space-y-4">
+      {faqs.map(faq => (
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+          <details class="group">
+            <summary class="flex justify-between items-center font-bold text-granite cursor-pointer p-6 list-none text-lg">
+              <span>{faq.question}</span>
+              <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+              </span>
+            </summary>
+            <div class="text-gray-600 px-6 pb-6 leading-relaxed">
+              {faq.answer}
+            </div>
+          </details>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Related Categories -->
+  <section class="mb-16">
+    <h2 class="text-3xl font-bold text-granite mb-6">Explore More Categories</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <a
+        href="/categories/best-bouldering-climbing-gyms/"
+        class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+      >
+        <h3 class="text-lg font-bold text-sage mb-2">Best Bouldering Gyms</h3>
+        <p class="text-sm text-gray-600">Top facilities for bouldering</p>
+      </a>
+      <a
+        href="/categories/climbing-gyms-with-sauna/"
+        class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+      >
+        <h3 class="text-lg font-bold text-sage mb-2">Gyms with Sauna</h3>
+        <p class="text-sm text-gray-600">Recovery-focused facilities</p>
+      </a>
+      <a
+        href="/categories/best-climbing-gyms-for-beginners/"
+        class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+      >
+        <h3 class="text-lg font-bold text-sage mb-2">Beginner Friendly Gyms</h3>
+        <p class="text-sm text-gray-600">Perfect for newcomers</p>
+      </a>
+      <a
+        href="/categories/climbing-gyms-with-kids-zone/"
+        class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
+      >
+        <h3 class="text-lg font-bold text-sage mb-2">Gyms with Kids Zone</h3>
+        <p class="text-sm text-gray-600">Family-friendly facilities</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="bg-sage text-white p-8 rounded-lg shadow-md text-center">
+    <h2 class="text-3xl font-bold mb-4">
+      {isAmenity ? `Find Your Perfect Gym with ${formattedValue}` : `Start Your ${formattedValue} Climbing Journey`}
+    </h2>
+    <p class="text-lg mb-6">
+      {isAmenity
+        ? `Discover climbing gyms with ${formattedValue.toLowerCase()} amenities near you.`
+        : `Find the best ${formattedValue.toLowerCase()} climbing facilities in your area.`
+      }
+    </p>
+    <a
+      href="/search/"
+      class="inline-block bg-white text-sage px-8 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors"
+    >
+      Search All Gyms
+    </a>
+  </section>
+</BaseLayout>
