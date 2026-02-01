@@ -135,6 +135,13 @@ if (studentDiscountParam === 'true') {
 const GYMS_PER_PAGE = 12;
 const currentPage = parseInt(searchParams.get('page') || '1');
 const totalPages = Math.ceil(filteredGyms.length / GYMS_PER_PAGE);
+
+// If someone requests an invalid pagination page, return a real 404.
+// (Avoids thin/duplicate pages like /search?page=999)
+if (!Number.isFinite(currentPage) || currentPage < 1 || (totalPages > 0 && currentPage > totalPages)) {
+  return new Response(null, { status: 404, statusText: 'Not Found' });
+}
+
 const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
 const endIndex = startIndex + GYMS_PER_PAGE;
 const paginatedGyms = filteredGyms.slice(startIndex, endIndex);
@@ -143,8 +150,20 @@ const paginatedGyms = filteredGyms.slice(startIndex, endIndex);
 const paginationParams = new URLSearchParams(Astro.url.search);
 paginationParams.delete('page'); // Remove page param to build clean baseUrl
 const baseUrl = paginationParams.toString()
-  ? `/search?${paginationParams.toString()}&`
-  : '/search?';
+  ? `/search?${paginationParams.toString()}`
+  : '/search/';
+
+// rel=prev/next URLs for <head>
+const siteOrigin = 'https://www.indoorclimbinggym.com';
+const buildPageUrl = (page: number) => {
+  const u = new URL(baseUrl, siteOrigin);
+  if (page === 1) u.searchParams.delete('page');
+  else u.searchParams.set('page', String(page));
+  return siteOrigin + u.pathname + u.search;
+};
+
+const prevUrl = currentPage > 1 ? buildPageUrl(currentPage - 1) : undefined;
+const nextUrl = currentPage < totalPages ? buildPageUrl(currentPage + 1) : undefined;
 
 // SEO setup
 const hasFilters = activeFilters.length > 0;
@@ -160,8 +179,8 @@ const description = hasFilters
   ? `Browse ${resultsCount} indoor climbing gyms matching your criteria. Find the perfect climbing gym with our advanced search and filtering tools.`
   : `Search ${totalGyms}+ climbing gyms. Filter by state, city, climbing type, amenities & price. Compare ratings & find your perfect gym.`;
 
-// Only index the base search page (no parameters)
-const noindex = hasFilters;
+// Only index the base search page. Filtered/search-result pages and page>=2 should be noindex.
+const noindex = hasFilters || currentPage > 1;
 
 // Canonical URL: always point to clean /search/ URL (no query params)
 const canonical = 'https://www.indoorclimbinggym.com/search/';
@@ -178,6 +197,8 @@ const breadcrumbs = [
   canonical={canonical}
   noindex={noindex}
   breadcrumbs={breadcrumbs}
+  prevUrl={prevUrl}
+  nextUrl={nextUrl}
 >
   <!-- Breadcrumb Navigation -->
   <nav aria-label="Breadcrumb" class="mb-6">
