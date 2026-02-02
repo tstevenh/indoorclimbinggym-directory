@@ -119,17 +119,21 @@ const RESET_DAYS = 7; // Promo reappears after 7 days
   });
 
   function hidePromo() {
-    if (promoNavbar && promoSpacer && mainHeader) {
-      // Slide up animation
-      promoNavbar.style.transform = 'translateY(-100%)';
-      // Update main header to stick to top after promo disappears
-      mainHeader.classList.remove('lg:top-14');
-      mainHeader.classList.add('lg:top-0');
-      // Remove spacer height after animation
-      setTimeout(() => {
-        promoSpacer.style.height = '0';
-      }, 300); // Wait for animation to complete
+    if (!promoNavbar || !promoSpacer) return;
+
+    // Slide up animation
+    promoNavbar.style.transform = 'translateY(-100%)';
+
+    // Update main header to stick to top after promo disappears
+    if (mainHeader) {
+      mainHeader.classList.remove('top-14', 'lg:top-14');
+      mainHeader.classList.add('top-0', 'lg:top-0');
     }
+
+    // Remove spacer height after animation
+    setTimeout(() => {
+      promoSpacer.style.height = '0';
+    }, 300);
   }
 </script>
 
