@@ -9,7 +9,6 @@ import { getStateCode, getStateSlug } from '../utils/states';
 import SpeedInsights from '@vercel/speed-insights/astro';
 import Analytics from '@vercel/analytics/astro';
 import CookieConsent from '../components/CookieConsent.astro';
-import PromoNavbar from '../components/PromoNavbar.astro';
 
 interface Props {
   title: string;
@@ -53,7 +52,15 @@ const {
 } = Astro.props;
 
 // Fetch gyms to calculate top 5 states dynamically
-const gymsData = await fetchGyms();
+// NOTE: In some environments (local dev without Supabase access), this can fail.
+// The site should still render core pages/tools without blocking.
+let gymsData = [];
+try {
+  gymsData = await fetchGyms();
+} catch (e) {
+  console.warn('BaseLayout: failed to fetch gyms (continuing without dynamic nav data).');
+  gymsData = [];
+}
 
 // Count gyms by state (normalize to full name)
 const stateCounts: Record<string, number> = {};
@@ -255,11 +262,8 @@ if (breadcrumbs && breadcrumbs.length > 0) {
       Skip to main content
     </a>
 
-    <!-- Promo Navbar -->
-    <PromoNavbar />
-
   <!-- Header will go here -->
-    <header id="main-header" class="bg-white shadow-sm lg:sticky lg:top-14 lg:z-50 transition-[top] duration-300 ease-in-out">
+    <header id="main-header" class="bg-white shadow-sm sticky top-0 z-50">
       <div class="container mx-auto px-4 py-4">
         <nav class="flex items-center justify-between">
           <a href="/" class="text-2xl font-bold text-sage">

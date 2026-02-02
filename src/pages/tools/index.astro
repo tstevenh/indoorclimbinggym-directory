@@ -48,6 +48,13 @@ const schema = {
       url: 'https://www.indoorclimbinggym.com/tools/cost-per-climb-calculator',
       applicationCategory: 'UtilitiesApplication',
       offers: { '@type': 'Offer', price: '0' }
+    },
+    {
+      '@type': 'WebApplication',
+      name: 'Training Load & Recovery Planner',
+      url: 'https://www.indoorclimbinggym.com/tools/training-load-recovery-planner',
+      applicationCategory: 'HealthApplication',
+      offers: { '@type': 'Offer', price: '0' }
     }
   ]
 };
@@ -201,6 +208,44 @@ const breadcrumbs = [
 
         <div class="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between text-sage font-bold group-hover:gap-4 transition-all relative z-10">
           <span>Use Calculator</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </div>
+      </a>
+
+      <!-- Training Load & Recovery Planner -->
+      <a
+        href="/tools/training-load-recovery-planner/"
+        class="group bg-white rounded-2xl shadow-xl border border-gray-100 p-8 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col relative overflow-hidden"
+      >
+        <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+          <svg class="w-32 h-32 text-sage" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h18v2H3V3zm0 14h18v2H3v-2zm0-7h18v2H3v-2zm2-3h2v10H5V7zm4 2h2v8H9V9zm4-4h2v12h-2V5zm4 6h2v6h-2v-6z"/></svg>
+        </div>
+
+        <div class="flex items-start gap-6 mb-6 relative z-10">
+          <div class="w-16 h-16 bg-sage/10 rounded-2xl flex items-center justify-center text-sage group-hover:bg-sage transition-colors duration-300 flex-shrink-0 shadow-sm">
+            <svg class="w-8 h-8 text-sage group-hover:!text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19V5m0 14h16M8 17v-3m4 3v-7m4 7v-5m4 5V8" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-granite mb-2 group-hover:text-sage transition-colors">
+              Training Load & Recovery Planner
+            </h2>
+            <p class="text-gray-600 mb-4 leading-relaxed">
+              Track session load (minutes × RPE), see acute vs chronic load, and spot spikes with an easy Acute:Chronic ratio.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="bg-gray-50 text-gray-600 text-xs font-bold px-3 py-1 rounded-full border border-gray-100">RPE</span>
+              <span class="bg-gray-50 text-gray-600 text-xs font-bold px-3 py-1 rounded-full border border-gray-100">ACR</span>
+              <span class="bg-gray-50 text-gray-600 text-xs font-bold px-3 py-1 rounded-full border border-gray-100">CSV Export</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between text-sage font-bold group-hover:gap-4 transition-all relative z-10">
+          <span>Open Planner</span>
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
