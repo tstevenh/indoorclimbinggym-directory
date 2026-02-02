@@ -60,11 +60,11 @@ const RESET_DAYS = 7; // Promo reappears after 7 days
         <button
           id="promo-dismiss"
           type="button"
-          class="p-1 hover:bg-white/10 rounded transition-colors"
+          class="p-2 hover:bg-white/10 rounded transition-colors"
           aria-label="Dismiss promotion"
         >
           <svg
-            class="w-5 h-5"
+            class="w-5 h-5 pointer-events-none"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -87,54 +87,80 @@ const RESET_DAYS = 7; // Promo reappears after 7 days
 <div id="promo-spacer" class="h-[56px]"></div>
 
 <script define:vars={{ DISMISS_KEY, DISMISS_TIMESTAMP_KEY, RESET_DAYS }}>
-  // Get elements
-  const promoNavbar = document.getElementById('promo-navbar');
-  const promoDismiss = document.getElementById('promo-dismiss');
-  const promoSpacer = document.getElementById('promo-spacer');
-  const mainHeader = document.getElementById('main-header');
+  (function() {
+    // Wait for DOM to be ready
+    function init() {
+      const promoNavbar = document.getElementById('promo-navbar');
+      const promoDismiss = document.getElementById('promo-dismiss');
+      const promoSpacer = document.getElementById('promo-spacer');
+      const mainHeader = document.getElementById('main-header');
 
-  // Check if user has dismissed the promo and if it's time to reset
-  const dismissTimestamp = localStorage.getItem(DISMISS_TIMESTAMP_KEY);
-  const isDismissed = localStorage.getItem(DISMISS_KEY) === 'true';
-  const shouldReset = dismissTimestamp && (Date.now() - parseInt(dismissTimestamp)) > (RESET_DAYS * 24 * 60 * 60 * 1000);
+      if (!promoNavbar || !promoDismiss || !promoSpacer) {
+        console.warn('PromoNavbar: Required elements not found', { promoNavbar, promoDismiss, promoSpacer });
+        return;
+      }
 
-  // Reset if past the reset period
-  if (shouldReset) {
-    localStorage.removeItem(DISMISS_KEY);
-    localStorage.removeItem(DISMISS_TIMESTAMP_KEY);
-  }
+      // Check if user has dismissed the promo and if it's time to reset
+      const dismissTimestamp = localStorage.getItem(DISMISS_TIMESTAMP_KEY);
+      const isDismissed = localStorage.getItem(DISMISS_KEY) === 'true';
+      const shouldReset = dismissTimestamp && (Date.now() - parseInt(dismissTimestamp)) > (RESET_DAYS * 24 * 60 * 60 * 1000);
 
-  // Only hide if dismissed and not past reset period
-  if (isDismissed && !shouldReset) {
-    hidePromo();
-  }
+      // Reset if past the reset period
+      if (shouldReset) {
+        localStorage.removeItem(DISMISS_KEY);
+        localStorage.removeItem(DISMISS_TIMESTAMP_KEY);
+      }
 
-  // Handle dismiss button click
-  promoDismiss?.addEventListener('click', () => {
-    // Save to localStorage with timestamp
-    localStorage.setItem(DISMISS_KEY, 'true');
-    localStorage.setItem(DISMISS_TIMESTAMP_KEY, String(Date.now()));
-    // Hide the promo
-    hidePromo();
-  });
+      // Function to hide promo immediately (for already-dismissed state)
+      function hidePromoImmediate() {
+        promoNavbar.style.display = 'none';
+        promoSpacer.style.display = 'none';
+        if (mainHeader) {
+          mainHeader.classList.remove('top-14', 'lg:top-14');
+          mainHeader.classList.add('top-0', 'lg:top-0');
+        }
+      }
 
-  function hidePromo() {
-    if (!promoNavbar || !promoSpacer) return;
+      // Function to hide promo with animation (for user dismiss action)
+      function hidePromoAnimated() {
+        // Slide up animation
+        promoNavbar.style.transform = 'translateY(-100%)';
 
-    // Slide up animation
-    promoNavbar.style.transform = 'translateY(-100%)';
+        // Update main header to stick to top after promo disappears
+        if (mainHeader) {
+          mainHeader.classList.remove('top-14', 'lg:top-14');
+          mainHeader.classList.add('top-0', 'lg:top-0');
+        }
 
-    // Update main header to stick to top after promo disappears
-    if (mainHeader) {
-      mainHeader.classList.remove('top-14', 'lg:top-14');
-      mainHeader.classList.add('top-0', 'lg:top-0');
+        // Remove spacer height after animation
+        setTimeout(() => {
+          promoSpacer.style.height = '0';
+        }, 300);
+      }
+
+      // Only hide if dismissed and not past reset period
+      if (isDismissed && !shouldReset) {
+        hidePromoImmediate();
+      }
+
+      // Handle dismiss button click
+      promoDismiss.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Save to localStorage with timestamp
+        localStorage.setItem(DISMISS_KEY, 'true');
+        localStorage.setItem(DISMISS_TIMESTAMP_KEY, String(Date.now()));
+        // Hide the promo with animation
+        hidePromoAnimated();
+      });
     }
 
-    // Remove spacer height after animation
-    setTimeout(() => {
-      promoSpacer.style.height = '0';
-    }, 300);
-  }
+    // Run immediately or wait for DOM
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
 </script>
 
 <style>
