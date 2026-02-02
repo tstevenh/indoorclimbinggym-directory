@@ -1,0 +1,455 @@
+---
+/**
+ * Training Load & Recovery Planner (MVP)
+ * Client-side tool: session-RPE load, acute/chronic, ACR, charts, CSV export
+ */
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export const prerender = true;
+
+const pageUrl = 'https://www.indoorclimbinggym.com/tools/training-load-recovery-planner';
+const title = 'Climbing Training Load & Recovery Planner (Acute:Chronic Ratio)';
+const description =
+  'Track climbing training load with session RPE. See acute vs chronic load, acute:chronic ratio (ACR), and spot spikes. Private by default (saved locally).';
+
+const breadcrumbs = [
+  { label: 'Home', url: '/' },
+  { label: 'Tools', url: '/tools/' },
+  { label: 'Training Load & Recovery Planner', url: '/tools/training-load-recovery-planner/' }
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Training Load & Recovery Planner',
+  url: pageUrl,
+  applicationCategory: 'HealthApplication',
+  offers: { '@type': 'Offer', price: '0' }
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={pageUrl}
+  breadcrumbs={breadcrumbs}
+  schema={schema}
+>
+  <section class="container mx-auto px-4 py-10 max-w-5xl">
+    <header class="mb-8">
+      <h1 class="text-4xl md:text-5xl font-bold text-granite mb-3">Training Load & Recovery Planner</h1>
+      <p class="text-lg text-gray-600 max-w-3xl">
+        Track your climbing training load (minutes × RPE), compare acute vs chronic load, and spot spikes with an easy Acute:Chronic Ratio.
+        Your data stays on your device.
+      </p>
+      <p class="text-sm text-gray-500 mt-3">
+        Disclaimer: Informational only. Not medical advice.
+      </p>
+    </header>
+
+    <div id="tlrp-app" class="bg-white border border-gray-100 rounded-2xl shadow-sm p-6">
+      <p class="text-gray-600">Loading…</p>
+    </div>
+
+    <section class="mt-10 prose max-w-none">
+      <h2>Quick guide</h2>
+      <ul>
+        <li><strong>Session load</strong> = minutes × RPE (1–10).</li>
+        <li><strong>Acute load</strong> = last 7 days.</li>
+        <li><strong>Chronic load</strong> = last 28 days.</li>
+        <li><strong>ACR</strong> = acute ÷ chronic (higher can indicate a spike).</li>
+      </ul>
+
+      <h3>RPE cheat sheet</h3>
+      <ul>
+        <li>3–4: easy technique / warmup</li>
+        <li>5–6: moderate session</li>
+        <li>7–8: hard session</li>
+        <li>9–10: max effort / limit</li>
+      </ul>
+    </section>
+  </section>
+
+  <script type="module">
+    const STORAGE_KEY = 'icg.tlrp.sessions.v1';
+
+    /** @typedef {{ id:string, date:string, discipline:string, minutes:number, rpe:number, notes:string }} Session */
+
+    function uid() {
+      return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+    }
+
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function parseSessions() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed
+          .map((s) => ({
+            id: String(s.id || uid()),
+            date: String(s.date || ''),
+            discipline: String(s.discipline || 'boulder'),
+            minutes: Number(s.minutes || 0),
+            rpe: Number(s.rpe || 0),
+            notes: String(s.notes || '')
+          }))
+          .filter((s) => /^\d{4}-\d{2}-\d{2}$/.test(s.date) && s.minutes > 0 && s.rpe >= 1 && s.rpe <= 10);
+      } catch {
+        return [];
+      }
+    }
+
+    function saveSessions(sessions) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    }
+
+    function formatISODate(d) {
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function addDays(date, days) {
+      const d = new Date(date);
+      d.setDate(d.getDate() + days);
+      return d;
+    }
+
+    function sum(arr) {
+      return arr.reduce((a, b) => a + b, 0);
+    }
+
+    function sessionLoad(s) {
+      return (s.minutes || 0) * (s.rpe || 0);
+    }
+
+    function groupByDate(sessions) {
+      const m = new Map();
+      for (const s of sessions) {
+        const load = sessionLoad(s);
+        m.set(s.date, (m.get(s.date) || 0) + load);
+      }
+      return m;
+    }
+
+    function rollingSum(series, window) {
+      // series: array of numbers, oldest -> newest
+      const out = [];
+      for (let i = 0; i < series.length; i++) {
+        const start = Math.max(0, i - window + 1);
+        out.push(sum(series.slice(start, i + 1)));
+      }
+      return out;
+    }
+
+    function render(appEl) {
+      const sessions = parseSessions().sort((a, b) => a.date.localeCompare(b.date));
+
+      const today = new Date();
+      const end = formatISODate(today);
+      const start = formatISODate(addDays(today, -27));
+      const dayLoads = groupByDate(sessions);
+
+      const labels = [];
+      const loads = [];
+      for (let i = 0; i < 28; i++) {
+        const d = formatISODate(addDays(new Date(start), i));
+        labels.push(d);
+        loads.push(dayLoads.get(d) || 0);
+      }
+
+      const acute = rollingSum(loads, 7);
+      const chronic = rollingSum(loads, 28);
+      const eps = 1e-6;
+      const acr = acute.map((a, i) => a / Math.max(chronic[i], eps));
+
+      const latestIdx = labels.length - 1;
+      const acuteNow = acute[latestIdx] || 0;
+      const chronicNow = chronic[latestIdx] || 0;
+      const acrNow = acr[latestIdx] || 0;
+
+      let status = 'Stable';
+      if (acrNow > 1.5) status = 'Spike';
+      else if (acrNow >= 1.3) status = 'Caution';
+      else if (acrNow < 0.8 && chronicNow > 0) status = 'Underload';
+
+      const fmt = (n) => Math.round(n);
+      const fmt2 = (n) => (Math.round(n * 100) / 100).toFixed(2);
+
+      appEl.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-1">
+            <div class="bg-sage/5 border border-sage/20 rounded-xl p-4 mb-4">
+              <div class="text-sm text-gray-600 mb-1">Today (last updated)</div>
+              <div class="text-2xl font-bold text-granite mb-2">${status}</div>
+              <div class="grid grid-cols-2 gap-3 text-sm">
+                <div><div class="text-gray-500">Acute (7d)</div><div class="font-semibold">${fmt(acuteNow)}</div></div>
+                <div><div class="text-gray-500">Chronic (28d)</div><div class="font-semibold">${fmt(chronicNow)}</div></div>
+                <div><div class="text-gray-500">ACR</div><div class="font-semibold">${fmt2(acrNow)}</div></div>
+                <div><div class="text-gray-500">Sessions</div><div class="font-semibold">${sessions.length}</div></div>
+              </div>
+              <div class="text-xs text-gray-500 mt-3">
+                Non-medical guidance only. If you’re hurt or unsure, talk to a qualified professional.
+              </div>
+            </div>
+
+            <form id="tlrp-form" class="border border-gray-100 rounded-xl p-4">
+              <div class="font-bold text-granite mb-3">Add session</div>
+              <div class="grid grid-cols-2 gap-3">
+                <label class="text-sm">
+                  <span class="text-gray-600">Date</span>
+                  <input name="date" type="date" value="${end}" class="mt-1 w-full border rounded-lg px-3 py-2" />
+                </label>
+                <label class="text-sm">
+                  <span class="text-gray-600">Discipline</span>
+                  <select name="discipline" class="mt-1 w-full border rounded-lg px-3 py-2">
+                    <option value="boulder">Boulder</option>
+                    <option value="rope">Rope</option>
+                    <option value="board">Board</option>
+                    <option value="conditioning">Conditioning</option>
+                  </select>
+                </label>
+                <label class="text-sm">
+                  <span class="text-gray-600">Minutes</span>
+                  <input name="minutes" type="number" min="1" step="1" placeholder="60" class="mt-1 w-full border rounded-lg px-3 py-2" />
+                </label>
+                <label class="text-sm">
+                  <span class="text-gray-600">RPE (1–10)</span>
+                  <input name="rpe" type="number" min="1" max="10" step="1" placeholder="7" class="mt-1 w-full border rounded-lg px-3 py-2" />
+                </label>
+              </div>
+
+              <label class="text-sm block mt-3">
+                <span class="text-gray-600">Notes</span>
+                <textarea name="notes" rows="2" placeholder="Optional" class="mt-1 w-full border rounded-lg px-3 py-2"></textarea>
+              </label>
+
+              <div class="flex items-center gap-3 mt-4">
+                <button type="submit" class="bg-sage text-white font-semibold px-4 py-2 rounded-lg hover:bg-sage/90">Add</button>
+                <button type="button" id="tlrp-export" class="border border-gray-200 font-semibold px-4 py-2 rounded-lg hover:bg-gray-50">Export CSV</button>
+              </div>
+
+              <div class="text-xs text-gray-500 mt-3">
+                RPE cheat sheet: 3–4 easy · 5–6 moderate · 7–8 hard · 9–10 max.
+              </div>
+            </form>
+          </div>
+
+          <div class="lg:col-span-2">
+            <div class="border border-gray-100 rounded-xl p-4">
+              <div class="flex items-baseline justify-between mb-3">
+                <div class="font-bold text-granite">Last 28 days</div>
+                <div class="text-xs text-gray-500">Load = minutes × RPE</div>
+              </div>
+              <canvas id="tlrp-chart" height="240" class="w-full"></canvas>
+              <div class="text-xs text-gray-500 mt-2">
+                Bars: daily session load · Lines: acute (7d), chronic (28d), ACR
+              </div>
+            </div>
+
+            <div class="border border-gray-100 rounded-xl p-4 mt-6">
+              <div class="font-bold text-granite mb-3">Recent sessions</div>
+              <div class="overflow-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="text-left text-gray-500 border-b">
+                      <th class="py-2 pr-2">Date</th>
+                      <th class="py-2 pr-2">Discipline</th>
+                      <th class="py-2 pr-2">Min</th>
+                      <th class="py-2 pr-2">RPE</th>
+                      <th class="py-2 pr-2">Load</th>
+                      <th class="py-2 pr-2">Notes</th>
+                      <th class="py-2"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${sessions.slice(-12).reverse().map((s) => {
+                      const load = sessionLoad(s);
+                      const safeNotes = (s.notes || '').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                      return `
+                        <tr class="border-b">
+                          <td class="py-2 pr-2 whitespace-nowrap">${s.date}</td>
+                          <td class="py-2 pr-2">${s.discipline}</td>
+                          <td class="py-2 pr-2">${s.minutes}</td>
+                          <td class="py-2 pr-2">${s.rpe}</td>
+                          <td class="py-2 pr-2 font-semibold">${Math.round(load)}</td>
+                          <td class="py-2 pr-2 max-w-[260px] truncate" title="${safeNotes}">${safeNotes}</td>
+                          <td class="py-2 text-right">
+                            <button data-del="${s.id}" class="text-red-600 hover:underline">Delete</button>
+                          </td>
+                        </tr>
+                      `;
+                    }).join('') || `
+                      <tr><td class="py-3 text-gray-500" colspan="7">No sessions yet. Add one on the left.</td></tr>
+                    `}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Handlers
+      const form = appEl.querySelector('#tlrp-form');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const date = String(fd.get('date') || '');
+        const discipline = String(fd.get('discipline') || 'boulder');
+        const minutes = Number(fd.get('minutes') || 0);
+        const rpe = Number(fd.get('rpe') || 0);
+        const notes = String(fd.get('notes') || '');
+
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert('Please pick a valid date.');
+        if (!Number.isFinite(minutes) || minutes <= 0) return alert('Minutes must be > 0.');
+        if (!Number.isFinite(rpe) || rpe < 1 || rpe > 10) return alert('RPE must be 1–10.');
+
+        const next = parseSessions();
+        next.push({ id: uid(), date, discipline, minutes: Math.round(minutes), rpe: clamp(Math.round(rpe), 1, 10), notes });
+        saveSessions(next);
+        render(appEl);
+      });
+
+      appEl.querySelector('#tlrp-export').addEventListener('click', () => {
+        const all = parseSessions().sort((a,b)=>a.date.localeCompare(b.date));
+        const rows = [
+          ['date','discipline','minutes','rpe','session_load','notes'],
+          ...all.map((s)=>[
+            s.date,
+            s.discipline,
+            String(s.minutes),
+            String(s.rpe),
+            String(Math.round(sessionLoad(s))),
+            (s.notes || '').replace(/\n/g,' ')
+          ])
+        ];
+        const csv = rows.map(r => r.map(v => {
+          const s = String(v ?? '');
+          if (/[\",\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+          return s;
+        }).join(',')).join('\n');
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'training-load-sessions.csv';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      });
+
+      appEl.querySelectorAll('[data-del]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-del');
+          const next = parseSessions().filter((s) => s.id !== id);
+          saveSessions(next);
+          render(appEl);
+        });
+      });
+
+      // Chart (simple canvas)
+      const canvas = appEl.querySelector('#tlrp-chart');
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.clientWidth;
+      const h = canvas.height;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      ctx.scale(dpr, dpr);
+
+      // Determine scales
+      const maxLoad = Math.max(10, ...loads);
+      const maxLine = Math.max(maxLoad, ...acute, ...chronic);
+      const maxAcr = Math.max(1.8, ...acr);
+
+      // padding
+      const padL = 36, padR = 10, padT = 10, padB = 28;
+      const plotW = w - padL - padR;
+      const plotH = h - padT - padB;
+
+      function x(i) {
+        return padL + (i / (labels.length - 1)) * plotW;
+      }
+      function yLoad(v) {
+        return padT + (1 - v / maxLine) * plotH;
+      }
+      function yAcr(v) {
+        return padT + (1 - v / maxAcr) * plotH;
+      }
+
+      // axes
+      ctx.clearRect(0, 0, w, h);
+      ctx.strokeStyle = '#E5E7EB';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padL, padT);
+      ctx.lineTo(padL, padT + plotH);
+      ctx.lineTo(padL + plotW, padT + plotH);
+      ctx.stroke();
+
+      // bars
+      const barW = plotW / labels.length;
+      ctx.fillStyle = 'rgba(152, 164, 139, 0.45)';
+      for (let i = 0; i < loads.length; i++) {
+        const bx = padL + i * barW;
+        const bh = (loads[i] / maxLine) * plotH;
+        ctx.fillRect(bx + 1, padT + plotH - bh, Math.max(1, barW - 2), bh);
+      }
+
+      // line helper
+      function drawLine(series, yFn, color) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i < series.length; i++) {
+          const px = x(i);
+          const py = yFn(series[i]);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+      }
+
+      drawLine(acute, yLoad, '#5B7A5B');
+      drawLine(chronic, yLoad, '#1F3D2B');
+      drawLine(acr, yAcr, '#2563EB');
+
+      // x labels (sparse)
+      ctx.fillStyle = '#6B7280';
+      ctx.font = '10px system-ui, -apple-system, Segoe UI, Roboto';
+      const labelEvery = 7;
+      for (let i = 0; i < labels.length; i += labelEvery) {
+        const text = labels[i].slice(5); // MM-DD
+        ctx.fillText(text, x(i) - 12, padT + plotH + 16);
+      }
+
+      // legend
+      ctx.fillStyle = '#374151';
+      ctx.font = '11px system-ui, -apple-system, Segoe UI, Roboto';
+      ctx.fillText('Acute', padL, 12);
+      ctx.fillStyle = '#5B7A5B';
+      ctx.fillRect(padL + 40, 5, 10, 3);
+      ctx.fillStyle = '#374151';
+      ctx.fillText('Chronic', padL + 60, 12);
+      ctx.fillStyle = '#1F3D2B';
+      ctx.fillRect(padL + 112, 5, 10, 3);
+      ctx.fillStyle = '#374151';
+      ctx.fillText('ACR', padL + 132, 12);
+      ctx.fillStyle = '#2563EB';
+      ctx.fillRect(padL + 158, 5, 10, 3);
+    }
+
+    const app = document.getElementById('tlrp-app');
+    render(app);
+  </script>
+</BaseLayout>
