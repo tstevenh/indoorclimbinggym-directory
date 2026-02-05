@@ -119,7 +119,11 @@ const seoPriceMax = validPrices.length > 0 ? Math.max(...validPrices) : undefine
 
 // Generate SEO data with CTR-optimized parameters
 // Note: this route only builds page 2+ (page 1 lives at /[state]/[city]/)
-const title = `${generateCityTitle(city, region, cityGyms.length)} - Page ${currentPage}`;
+const baseTitle = generateCityTitle(city, region, cityGyms.length);
+// Use short pagination format: " (P2)" instead of " - Page 2" to save characters
+const title = currentPage > 1
+  ? `${city} Climbing Gyms (P${currentPage}) | ${region}`
+  : baseTitle;
 const description = generateCityDescription(
   city,
   region,
@@ -222,6 +226,7 @@ const breadcrumbs = [
   breadcrumbs={breadcrumbs}
   prevUrl={prevUrl}
   nextUrl={nextUrl}
+  noindex={currentPage > 1}
 >
   <!-- Breadcrumb Navigation -->
   <nav class="text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
