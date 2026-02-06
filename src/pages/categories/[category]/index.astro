@@ -7,7 +7,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import GymCard from '../../../components/GymCard.astro';
 import Pagination from '../../../components/Pagination.astro';
-import { generateSEO } from '../../../utils/seo';
+import { generateCategoryTitle, generateCategoryDescription } from '../../../utils/seo';
 import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
 import { fetchGyms } from '../../../config/api';
 
@@ -300,11 +300,15 @@ What separates exceptional ${formattedValue.toLowerCase()} climbing facilities f
 Many climbers seeking ${formattedValue.toLowerCase()} climbing opportunities wonder about equipment requirements and learning curves. Most facilities offering ${formattedValue.toLowerCase()} climbing provide rental gear and introductory classes making this discipline accessible to newcomers. ${gyms.filter(g => g.beginner_friendly).length} of these ${gyms.length} gyms are marked as beginner-friendly, offering instruction programs that safely introduce ${formattedValue.toLowerCase()} climbing fundamentals.
 
 Beyond physical infrastructure, the best ${formattedValue.toLowerCase()} climbing gyms cultivate communities of passionate climbers who share knowledge, encouragement, and enthusiasm. These social environments accelerate learning and make consistent training more enjoyable. Browse our complete directory to find ${formattedValue.toLowerCase()} climbing facilities in your area, compare amenities and pricing, and discover the gym that matches your goals and skill level.`;
+// Generate SEO titles using utility functions for brand consistency
+const seoTitle = generateCategoryTitle(pageTitle, 1);
+const seoDescription = generateCategoryDescription(pageTitle, gyms.length, 1);
+
 ---
 
 <BaseLayout
-  title={pageTitle}
-  description={pageDescription}
+  title={seoTitle}
+  description={seoDescription}
   canonical={canonicalUrl}
   keywords={keywords}
   schema={combinedSchema}

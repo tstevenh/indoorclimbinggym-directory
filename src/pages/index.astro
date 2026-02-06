@@ -10,6 +10,7 @@ import AsSeenOn from '../components/AsSeenOn.astro';
 import { generateOrganizationSchema, generateWebSiteSchema } from '../utils/schema';
 import { fetchGyms } from '../config/api';
 import { getStateCode, getStateSlug, getStateName } from '../utils/states';
+import { addBrandSuffix } from '../utils/seo';
 
 export const prerender = true;
 
@@ -125,7 +126,8 @@ const combinedSchema = [orgSchema, websiteSchema];
 const totalGyms = gyms.length;
 const uniqueStates = [...new Set(gyms.map(g => g.region))].length;
 
-const title = `Find Climbing Gyms Near You | ${totalGyms}+ Gyms`;
+const baseTitle = `Find ${totalGyms}+ Climbing Gyms Near You`;
+const title = addBrandSuffix(baseTitle, 'IndoorClimbingGym');
 const description = `Search ${totalGyms}+ climbing gyms in ${uniqueStates} states. Compare ratings, prices & amenities. Bouldering, lead & top rope. Free gym finder with reviews.`;
 ---
 

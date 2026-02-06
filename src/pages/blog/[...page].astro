@@ -14,6 +14,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogCard from '../../components/blog/BlogCard.astro';
 import BlogCategories from '../../components/blog/BlogCategories.astro';
 import { generateBlogItemListSchema } from '../../utils/schema';
+import { addBrandSuffix, truncateAtWord } from '../../utils/seo';
 
 export async function getStaticPaths({ paginate }: { paginate: any }) {
   const allPosts = await getCollection('blog');
@@ -37,10 +38,11 @@ const sortedPosts = allPosts.sort(
 );
 const postCount = sortedPosts.length;
 
-// SEO metadata
-const title = page.currentPage === 1
-  ? 'Climbing Guides & Tips | Expert Advice for Climbers'
-  : `Climbing Guides & Tips - Page ${page.currentPage}`;
+// SEO metadata - use utility functions for consistent branding
+const baseTitle = page.currentPage === 1
+  ? 'Climbing Guides & Tips | Expert Advice'
+  : `Climbing Guides & Tips (P${page.currentPage})`;
+const title = addBrandSuffix(baseTitle, 'IndoorClimbingGym');
 const description = `${postCount} expert guides on indoor climbing. Techniques, gear reviews, gym costs & more. Written by climbers for beginners & pros.`;
 const pageUrl = `https://www.indoorclimbinggym.com/blog/${page.currentPage > 1 ? `${page.currentPage}/` : ''}`;
 
@@ -96,6 +98,7 @@ const keywords = [
   breadcrumbs={breadcrumbs}
   prevUrl={prevUrl}
   nextUrl={nextUrl}
+  noindex={page.currentPage > 1}
 >
   <!-- Hero Section -->
   <section class="mb-12">
