@@ -244,8 +244,8 @@ const baseUrl = `https://www.indoorclimbinggym.com/categories/${categorySlug}/`;
 const pageUrl = `https://www.indoorclimbinggym.com/categories/${categorySlug}/${currentPage}/`;
 
 // Use new utility functions for consistent SEO
-title = generateCategoryTitle(pageTitle, currentPage);
-description = generateCategoryDescription(pageTitle, gyms.length, currentPage);
+const title = generateCategoryTitle(pageTitle, currentPage);
+const description = generateCategoryDescription(pageTitle, gyms.length, currentPage);
 
 // Calculate pagination URLs for rel=prev/next
 const prevUrl = currentPage === 2
