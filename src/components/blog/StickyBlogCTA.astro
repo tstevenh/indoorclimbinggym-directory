@@ -1,0 +1,126 @@
+---
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+---
+
+<div class={`sticky-blog-cta ${compact ? 'compact' : ''}`} role="complementary" aria-label="Find climbing gyms near you">
+  <div class="cta-content">
+    <p class="cta-title">Find a climbing gym near you</p>
+    <p class="cta-subtitle">Skip the guesswork. Search 700+ gyms by city and state.</p>
+  </div>
+  <div class="cta-actions">
+    <a href="/search" class="cta-btn cta-btn-primary">Search gyms</a>
+    <a href="/categories" class="cta-btn cta-btn-secondary">Browse categories</a>
+  </div>
+</div>
+
+<style>
+  .sticky-blog-cta {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
+    width: min(980px, calc(100% - 1.5rem));
+    background: rgba(29, 29, 29, 0.96);
+    color: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1rem;
+    backdrop-filter: blur(8px);
+  }
+
+  .cta-content {
+    min-width: 0;
+  }
+
+  .cta-title {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.2;
+  }
+
+  .cta-subtitle {
+    margin: 0.2rem 0 0;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.84rem;
+    line-height: 1.25;
+  }
+
+  .cta-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border-radius: 0.55rem;
+    padding: 0.5rem 0.75rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .cta-btn-primary {
+    background: #98a48b;
+    color: #fff;
+  }
+
+  .cta-btn-primary:hover {
+    background: #7f8d71;
+  }
+
+  .cta-btn-secondary {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+
+  .cta-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    .sticky-blog-cta {
+      width: calc(100% - 1rem);
+      bottom: 0.5rem;
+      padding: 0.75rem;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.6rem;
+    }
+
+    .cta-subtitle {
+      display: none;
+    }
+
+    .cta-actions {
+      width: 100%;
+      gap: 0.5rem;
+    }
+
+    .cta-btn {
+      flex: 1;
+    }
+  }
+
+  .sticky-blog-cta.compact {
+    position: static;
+    transform: none;
+    width: 100%;
+    margin: 1rem 0;
+  }
+</style>

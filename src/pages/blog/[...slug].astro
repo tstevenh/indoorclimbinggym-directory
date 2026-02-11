@@ -11,6 +11,7 @@ import AuthorBio from '../../components/blog/AuthorBio.astro';
 import RelatedPosts from '../../components/blog/RelatedPosts.astro';
 import SocialShare from '../../components/blog/SocialShare.astro';
 import TableOfContents from '../../components/blog/TableOfContents.astro';
+import StickyBlogCTA from '../../components/blog/StickyBlogCTA.astro';
 import SubredditCTA from '../../components/SubredditCTA.astro';
 import AffiliateBlock from '../../components/AffiliateBlock.astro';
 import { generateArticleSchema, generateBreadcrumbSchema, generateFAQSchema, generateHowToSchema, generateVideoSchema } from '../../utils/schema';
@@ -287,7 +288,7 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-gray-100 text-g
   articleTags={entry.data.tags}
 >
   <!-- Article Header -->
-  <article class="max-w-4xl mx-auto">
+  <article class="max-w-4xl mx-auto pb-32 md:pb-24">
     <!-- Breadcrumb Navigation -->
     <nav class="text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
       <ol class="flex flex-wrap items-center gap-2">
@@ -388,6 +389,9 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-gray-100 text-g
 
     <!-- Related Posts -->
     <RelatedPosts posts={relatedPosts} currentSlug={entry.slug} />
+
+    <!-- Sticky CTA to push blog readers into directory/search -->
+    <StickyBlogCTA />
   </article>
 </BaseLayout>
 
