@@ -1,5 +1,5 @@
 ---
-title: "How Tight Should Climbing Shoes Be? The Complete Fit Guide"
+title: "How Tight Should Climbing Shoes Be? (How They Should Fit)"
 description: "Climbing shoes should feel snug with slight toe curl—uncomfortable but not painful. Learn proper fit for every style, break-in tips, and sizing guide."
 publishedDate: 2025-12-31
 author: "Indoor Climbing Gym Team"
@@ -12,7 +12,7 @@ wordCount: 5800
 readingTime: 23
 ---
 
-# How Tight Should Climbing Shoes Be? The Complete Fit Guide
+# How Tight Should Climbing Shoes Be? (How They Should Fit)
 
 **Meta description:** Climbing shoes should feel snug with slight toe curl—uncomfortable but not painful. Learn proper fit for every climbing style, break-in timelines, and when shoes are too tight.
 
