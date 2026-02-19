@@ -48,6 +48,10 @@ export default defineConfig({
   },
   // 301 Redirects
   redirects: {
+    // Deduplicated article redirects
+    '/blog/climbing-shoe-fit-guide/': '/blog/climbing-shoes-fit/',
+    '/blog/how-to-get-into-rock-climbing/': '/blog/how-to-start-rock-climbing/',
+
     // Note: /guides → /blog migration handled by actual page files:
     // - src/pages/guides/index.astro redirects /guides/ to /blog/
     // - src/pages/guides/[...slug].astro redirects /guides/* to /blog/*

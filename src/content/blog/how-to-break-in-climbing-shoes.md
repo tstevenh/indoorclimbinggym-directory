@@ -76,7 +76,7 @@ Some discomfort is expected. Sharp pain is not.
 
 **Hot spots that persist** after multiple sessions mean the shoe's shape doesn't match your foot. You might have a pressure point on your big toe, pinky toe, or heel that never goes away. That's not going to magically resolve with more time.
 
-If you're experiencing any of these, check out our [climbing shoe fit guide](/blog/climbing-shoe-fit-guide) for troubleshooting specific fit issues.
+If you're experiencing any of these, check out our [climbing shoe fit guide](/blog/climbing-shoes-fit) for troubleshooting specific fit issues.
 
 ## Proven Methods to Break In Climbing Shoes
 

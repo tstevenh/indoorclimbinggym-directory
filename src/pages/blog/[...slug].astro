@@ -358,8 +358,10 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-gray-100 text-g
 
     <!-- Affiliate Block -->
     <AffiliateBlock 
-      title="Recommended Gear" 
-      subtitle="Our top picks for climbers."
+      title={entry.data.category === 'gear' ? 'Top-rated gear picks for this guide' : entry.data.category === 'bouldering' ? 'Bouldering essentials worth buying first' : 'Climber favorites to level up your next session'}
+      subtitle={entry.data.category === 'gear' ? 'Compare beginner, value, and performance options before you buy.' : 'Picked for reliability and value so you can buy once and climb more.'}
+      category={entry.data.category === 'gear' ? 'gear' : entry.data.category === 'bouldering' ? 'shoes' : undefined}
+      ctaLabel="Check price on Amazon"
       count={3}
     />
 
