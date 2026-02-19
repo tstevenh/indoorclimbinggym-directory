@@ -1,4 +1,4 @@
-# Week 3 SEO Sprint Plan (Feb 19)
+# Week 3 SEO + Affiliate Conversion Sprint Plan (Feb 19)
 
 ## Goal
 Publish 5 net-new US-focused SEO articles with high opportunity (good volume + lower KD + commercial/local intent), while avoiding overlap with existing blog topics and routes.
