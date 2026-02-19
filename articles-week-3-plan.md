@@ -21,10 +21,12 @@ Already covered themes include:
 | rock climbing harness | Commercial | 2400 | 18 | 0.35 | `rock-climbing-harness-guide` | Strong commercial intent, low KD, high relevance to beginner/intermediate conversion paths. |
 | rock climbing holds | Commercial | 1600 | 25 | 0.43 | `rock-climbing-holds-guide` | Product-driven keyword with DIY + buying intent; complements existing wall content without duplicating it. |
 | rock climbing birthday party | Commercial | 1900 | 10 | 1.35 | `rock-climbing-birthday-party-guide` | Very low KD and high local/commercial intent; supports gym discovery and event conversions. |
-| bouldering grades | Informational | 880 | 29 | 0.00 | `bouldering-grades-explained` | High beginner demand and confusion gap; strong internal link potential to existing beginner technique content. |
-| bouldering shoes | Commercial | 2400 | 37 | 0.34 | `bouldering-shoes-guide` | Commercial footwear intent adjacent to existing shoe content, but specific to bouldering use-case and fit/performance tradeoffs. |
+| bouldering crash pad | Commercial | 2400 | 28 | 0.00 | `bouldering-crash-pad-guide` | Strong gear-buying intent with clear affiliate fit, lower overlap with existing content, and practical safety angle. |
+| kids climbing shoes | Commercial | 1000 | 14 | 0.00 | `kids-climbing-shoes-guide` | Low-KD, parent purchase intent, and new segment coverage without cannibalizing existing adult shoe guides. |
 
 ## Exclusions (to prevent duplication)
+- `bouldering grades` (overlaps existing `climbing-grades-explained` cluster)
+- `bouldering shoes` (overlaps existing shoe cluster)
 - `beginner climbing shoes` (already close to existing beginner shoe content)
 - `best climbing shoes` (likely overlaps current shoe decision content)
 - `home bouldering wall` (too close to existing "how to build a climbing wall")
