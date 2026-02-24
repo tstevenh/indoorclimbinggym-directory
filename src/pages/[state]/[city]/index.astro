@@ -12,6 +12,7 @@ import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema
 import { generateCityTitle, generateCityDescription } from '../../../utils/seo';
 import { fetchGyms } from '../../../config/api';
 import { getStateSlug } from '../../../utils/states';
+import { getCategoryDefinitions, gymMatchesCategory } from '../../../utils/cityCategory';
 
 export const prerender = true;
 
@@ -100,6 +101,15 @@ const featuredGyms = cityGyms
     if (a.rating !== b.rating) return b.rating - a.rating;
     return a.name.localeCompare(b.name);
   });
+
+const cityCategoryLinks = getCategoryDefinitions(allGyms)
+  .map((category) => ({
+    ...category,
+    count: cityGyms.filter((gym) => gymMatchesCategory(gym, category)).length,
+  }))
+  .filter((category) => category.count > 0)
+  .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+  .slice(0, 8);
 
 // Calculate valid price range for SEO (filter out zeros/nulls)
 const validPrices = cityGyms
@@ -283,6 +293,40 @@ const breadcrumbs = [
         </a>
       </div>
     </header>
+
+    {cityCategoryLinks.length > 0 && (
+      <section class="mb-12">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-3xl font-display font-bold text-white mb-2">Popular Categories in {city}</h2>
+            <p class="text-white/50">
+              Jump straight to filtered pages like bouldering, sauna, beginner-friendly, and more.
+            </p>
+          </div>
+          <a
+            href={`/${stateAbbr}/${citySlug}/categories/`}
+            class="inline-flex items-center gap-2 text-[#00e676] font-mono text-sm hover:text-[#00c853] transition-colors"
+          >
+            View all city categories
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {cityCategoryLinks.map((category) => (
+            <a
+              href={`/${stateAbbr}/${citySlug}/categories/${category.slug}/`}
+              class="p-4 rounded-xl border border-white/10 bg-[#1f1f1f] hover:border-[#00e676]/40 transition-colors"
+            >
+              <div class="text-white font-display font-semibold mb-1">{category.name}</div>
+              <div class="text-sm text-white/50 font-mono">{category.count} {category.count === 1 ? 'gym' : 'gyms'}</div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
 
     <!-- Featured Gyms -->
     {featuredGyms.length > 0 && (
@@ -477,15 +521,15 @@ const breadcrumbs = [
         </a>
 
         <a
-          href="/categories/"
+          href={`/${stateAbbr}/${citySlug}/categories/`}
           class="flex items-center gap-3 p-4 bg-gradient-to-br from-[#2d2d2d] to-[#1f1f1f] rounded-xl border border-white/5 hover:border-[#ff2d7a]/30 transition-all group"
         >
           <svg class="w-6 h-6 text-[#ff2d7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
           </svg>
           <div>
-            <h3 class="font-display font-semibold text-white group-hover:text-[#ff2d7a] transition-colors">Browse Categories</h3>
-            <p class="text-sm text-white/40">Find specialized gyms</p>
+            <h3 class="font-display font-semibold text-white group-hover:text-[#ff2d7a] transition-colors">City Categories</h3>
+            <p class="text-sm text-white/40">Find specialized gyms in {city}</p>
           </div>
         </a>
       </div>

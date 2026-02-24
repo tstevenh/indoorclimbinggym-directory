@@ -1,0 +1,181 @@
+---
+import BaseLayout from '../../../../../layouts/BaseLayout.astro';
+import GymCard from '../../../../../components/GymCard.astro';
+import Pagination from '../../../../../components/Pagination.astro';
+import { fetchGyms } from '../../../../../config/api';
+import { getStateSlug } from '../../../../../utils/states';
+import {
+  getCategoryDefinitions,
+  gymMatchesCategory,
+  MIN_GYMS_FOR_PAGE_GENERATION,
+  sortGymsForListings,
+} from '../../../../../utils/cityCategory';
+import { generateItemListSchema } from '../../../../../utils/schema';
+
+export const prerender = true;
+
+const GYMS_PER_PAGE = 12;
+
+function getCategoryLabel(category) {
+  if (category.slug === 'best-climbing-gyms-for-beginners') return 'Best Climbing Gyms for Beginners';
+  if (category.slug === 'best-bouldering-climbing-gyms') return 'Best Bouldering Climbing Gyms';
+  if (category.slug === 'affordable-climbing-gyms') return 'Affordable Climbing Gyms';
+  if (category.slug.startsWith('climbing-gyms-with-')) return `Climbing Gyms with ${category.name.replace(/^Gyms with /, '')}`;
+  if (category.slug.startsWith('best-') && category.slug.endsWith('-climbing-gyms')) return category.name.replace(/ Gyms$/, ' Climbing Gyms');
+  return category.name;
+}
+
+export async function getStaticPaths() {
+  const gymsPerPage = 12;
+  const gyms = await fetchGyms();
+  const categories = getCategoryDefinitions(gyms);
+  const cityStatePairs = [...new Set(gyms.map((gym) => `${gym.region}|${gym.city}`))];
+
+  const paths = [];
+
+  for (const pair of cityStatePairs) {
+    const [region, city] = pair.split('|');
+    const cityGyms = gyms.filter((gym) => gym.region === region && gym.city === city);
+    const stateSlug = getStateSlug(region);
+    const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+
+    for (const category of categories) {
+      const matchedGyms = sortGymsForListings(cityGyms.filter((gym) => gymMatchesCategory(gym, category)));
+      if (matchedGyms.length < MIN_GYMS_FOR_PAGE_GENERATION) continue;
+      if (matchedGyms.length <= gymsPerPage) continue;
+
+      const totalPages = Math.ceil(matchedGyms.length / gymsPerPage);
+
+      for (let pageNum = 2; pageNum <= totalPages; pageNum++) {
+        paths.push({
+          params: {
+            state: stateSlug,
+            city: citySlug,
+            category: category.slug,
+            page: String(pageNum),
+          },
+          props: {
+            region,
+            city,
+            category,
+            gyms: matchedGyms,
+            currentPage: pageNum,
+            totalPages,
+          },
+        });
+      }
+    }
+  }
+
+  return paths;
+}
+
+const { state, city: citySlug, category: categorySlug } = Astro.params;
+const { region, city, category, gyms, currentPage, totalPages } = Astro.props;
+
+const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
+const endIndex = startIndex + GYMS_PER_PAGE;
+const paginatedGyms = gyms.slice(startIndex, endIndex);
+
+const categoryLabel = getCategoryLabel(category);
+const title = `${categoryLabel} in ${city}, ${region} (Page ${currentPage})`;
+const description = `Page ${currentPage} of ${categoryLabel.toLowerCase()} listings in ${city}, ${region}.`;
+const canonicalUrl = `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/${categorySlug}/${currentPage}/`;
+
+const prevUrl = currentPage === 2
+  ? `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/${categorySlug}/`
+  : `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/${categorySlug}/${currentPage - 1}/`;
+const nextUrl = currentPage < totalPages
+  ? `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/${categorySlug}/${currentPage + 1}/`
+  : undefined;
+
+const breadcrumbs = [
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
+  { label: region, url: `https://www.indoorclimbinggym.com/${state}/` },
+  { label: city, url: `https://www.indoorclimbinggym.com/${state}/${citySlug}/` },
+  { label: 'Categories', url: `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/` },
+  { label: categoryLabel, url: `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/${categorySlug}/` },
+];
+
+const itemListSchema = generateItemListSchema(
+  paginatedGyms,
+  `${categoryLabel} in ${city}, ${region} - Page ${currentPage}`,
+  canonicalUrl
+);
+itemListSchema['@id'] = canonicalUrl + '#itemlist';
+const collectionPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: title,
+  description,
+  url: canonicalUrl,
+  inLanguage: 'en-US',
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'IndoorClimbingGym.com',
+    url: 'https://www.indoorclimbinggym.com/',
+  },
+  about: [
+    { '@type': 'Place', name: `${city}, ${region}` },
+    { '@type': 'Thing', name: categoryLabel },
+  ],
+  mainEntity: { '@id': canonicalUrl + '#itemlist' },
+};
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [collectionPageSchema, itemListSchema],
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonicalUrl}
+  schema={combinedSchema}
+  breadcrumbs={breadcrumbs}
+  prevUrl={prevUrl}
+  nextUrl={nextUrl}
+  noindex={true}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <nav class="text-sm mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center gap-2 flex-wrap">
+        {breadcrumbs.map((crumb, index) => (
+          <li class="flex items-center gap-2">
+            {index > 0 && <span class="text-white/20">/</span>}
+            {index === breadcrumbs.length - 1 ? (
+              <span class="text-white/60 font-medium">{crumb.label}</span>
+            ) : (
+              <a href={crumb.url} class="text-white/40 hover:text-[#00e676] transition-colors">{crumb.label}</a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <header class="mb-8">
+      <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">
+        {categoryLabel.toUpperCase()}
+        <br />
+        <span class="text-white/40">IN {city.toUpperCase()} (PAGE {currentPage})</span>
+      </h1>
+      <p class="text-xl text-white/50">
+        Browse additional matching gyms in this category.
+      </p>
+    </header>
+
+    <section class="mb-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {paginatedGyms.map((gym, index) => (
+          <GymCard gym={gym} showCity={false} delay={index * 0.05} />
+        ))}
+      </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl={`/${state}/${citySlug}/categories/${categorySlug}/`}
+      />
+    </section>
+  </div>
+</BaseLayout>
