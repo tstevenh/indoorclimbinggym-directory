@@ -1,6 +1,6 @@
 ---
 /**
- * Gym Detail Page
+ * Gym Detail Page - Dark Theme
  * Dynamic page for each gym with rich content (800-1200 words) and full schema markup
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -148,89 +148,90 @@ let relatedGyms = allGyms
   breadcrumbs={breadcrumbs}
   ogImage={gym.photo}
 >
-  <div class="max-w-4xl mx-auto">
-  <!-- Breadcrumb Navigation -->
-  <nav class="text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
-    <ol class="flex items-center gap-2 flex-wrap">
-      {breadcrumbs.map((crumb, index) => (
-        <li class="flex items-center gap-2">
-          {index > 0 && <span class="text-gray-400">/</span>}
-          {index === breadcrumbs.length - 1 ? (
-            <span class="text-granite font-medium">{crumb.label}</span>
-          ) : (
-            <a href={crumb.url} class="hover:text-sage">{crumb.label}</a>
-          )}
-        </li>
-      ))}
-    </ol>
-  </nav>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb Navigation -->
+    <nav class="text-sm text-white/40 mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center gap-2 flex-wrap">
+        {breadcrumbs.map((crumb, index) => (
+          <li class="flex items-center gap-2">
+            {index > 0 && <span class="text-white/20">/</span>}
+            {index === breadcrumbs.length - 1 ? (
+              <span class="text-white/60 font-medium">{crumb.label}</span>
+            ) : (
+              <a href={crumb.url} class="hover:text-[#00e676] transition-colors">{crumb.label}</a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
 
-  <!-- Hero Image -->
-  <div class="relative h-64 md:h-96 rounded-t-lg overflow-hidden mb-0">
-    <OptimizedImage
-      src={gym.photo}
-      alt={`${gym.name} climbing gym in ${gym.city}, ${gym.region}`}
-      width={IMAGE_SIZES.HERO.width}
-      height={IMAGE_SIZES.HERO.height}
-      srcsetSizes={IMAGE_SIZES.HERO.sizes}
-      sizes="100vw"
-      quality={IMAGE_SIZES.HERO.quality}
-      loading="eager"
-      class="!absolute !inset-0 !h-full !aspect-auto [&>img]:!h-full"
-    />
-    {gym.featured && (
-      <span class="absolute top-4 left-4 bg-sage text-white px-4 py-2 rounded-full font-medium shadow-lg z-10">
-        Featured
-      </span>
-    )}
-    {gym.beginner_friendly && (
-      <span class="absolute top-4 right-4 bg-sage text-white px-4 py-2 rounded-full font-medium shadow-lg z-10">
-        Beginner Friendly
-      </span>
-    )}
-  </div>
+    <!-- Hero Image -->
+    <div class="relative h-64 md:h-96 rounded-t-2xl overflow-hidden mb-0">
+      <OptimizedImage
+        src={gym.photo}
+        alt={`${gym.name} climbing gym in ${gym.city}, ${gym.region}`}
+        width={IMAGE_SIZES.HERO.width}
+        height={IMAGE_SIZES.HERO.height}
+        srcsetSizes={IMAGE_SIZES.HERO.sizes}
+        sizes="100vw"
+        quality={IMAGE_SIZES.HERO.quality}
+        loading="eager"
+        class="!absolute !inset-0 !h-full !aspect-auto [&>img]:!h-full"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent"></div>
+      {gym.featured && (
+        <span class="absolute top-4 left-4 bg-[#ffea00] text-black px-4 py-2 rounded-full font-mono font-bold text-sm shadow-lg z-10">
+          Featured
+        </span>
+      )}
+      {gym.beginner_friendly && (
+        <span class="absolute top-4 right-4 bg-[#00e676] text-black px-4 py-2 rounded-full font-mono font-bold text-sm shadow-lg z-10">
+          Beginner Friendly
+        </span>
+      )}
+    </div>
 
-  <!-- Hero Section with Essential Info -->
-  <section class="bg-white rounded-b-lg shadow-lg px-6 pb-6 pt-4 md:px-8 md:pb-8 md:pt-6 mb-8">
-    <!-- Title & Rating -->
-    <header class="mb-6">
-      <div class="flex items-start justify-between mb-3 flex-wrap gap-4">
-        <div class="flex items-center gap-3 flex-wrap">
-          <h1 class="text-4xl font-bold text-granite">{gym.name}</h1>
-          {(gym.verified || gym.claimed) && (
-            <span class="bg-sage text-white px-4 py-2 rounded-full text-sm font-medium">
-              Verified
-            </span>
-          )}
+    <!-- Hero Section with Essential Info -->
+    <section class="bg-[#1f1f1f] rounded-b-2xl border border-white/10 border-t-0 px-6 pb-6 pt-4 md:px-8 md:pb-8 md:pt-6 mb-8" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+      <!-- Title & Rating -->
+      <header class="mb-6">
+        <div class="flex items-start justify-between mb-3 flex-wrap gap-4">
+          <div class="flex items-center gap-3 flex-wrap">
+            <h1 class="text-3xl md:text-4xl font-display font-bold text-white">{gym.name}</h1>
+            {(gym.verified || gym.claimed) && (
+              <span class="bg-[#00e676] text-black px-3 py-1 rounded-full text-xs font-mono font-bold">
+                Verified
+              </span>
+            )}
+          </div>
+
+          <!-- Favorite Button (Right Side) -->
+          <button
+            id="favorite-btn"
+            data-gym-id={gym.id}
+            data-gym-slug={gym.slug}
+            class="flex items-center gap-2 px-4 py-2 border-2 border-[#00e676] text-[#00e676] rounded-full hover:bg-[#00e676] transition-colors group"
+            title="Save to favorites"
+          >
+            <svg id="favorite-icon" class="w-5 h-5 group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            <span id="favorite-text" class="text-sm font-medium hidden sm:inline group-hover:text-black transition-colors">Save to Favorites</span>
+          </button>
         </div>
 
-        <!-- Favorite Button (Right Side) -->
-        <button
-          id="favorite-btn"
-          data-gym-id={gym.id}
-          data-gym-slug={gym.slug}
-          class="flex items-center gap-2 px-4 py-2 border-2 border-sage text-sage rounded-full hover:bg-sage transition-colors group"
-          title="Save to favorites"
-        >
-          <svg id="favorite-icon" class="w-5 h-5 group-hover:stroke-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-          </svg>
-          <span id="favorite-text" class="text-sm font-medium hidden sm:inline group-hover:text-white transition-colors">Save to Favorites</span>
-        </button>
-      </div>
-
-      <div class="flex items-center gap-4 mb-6">
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="flex flex-wrap items-center gap-2">
             {Array.from({ length: 5 }).map((_, i) => (
               <svg
-                class={`w-5 h-5 flex-shrink-0 ${i < Math.floor(gym.rating_overall || gym.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
+                class={`w-5 h-5 flex-shrink-0 ${i < Math.floor(gym.rating_overall || gym.rating || 0) ? 'text-[#ffea00]' : 'text-white/20'}`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
             ))}
-            <span class="text-lg font-bold text-granite">
+            <span class="text-lg font-bold text-white font-mono">
               {(gym.rating_overall || gym.rating || 0).toFixed(1)}
             </span>
           </div>
@@ -238,53 +239,53 @@ let relatedGyms = allGyms
       </header>
 
       <!-- Essential Contact Info Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 pb-6 border-b border-gray-200 items-start">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 pb-6 border-b border-white/10 items-start">
         <!-- Address -->
         <div>
-          <div class="flex items-center gap-2 text-gray-600 mb-1">
+          <div class="flex items-center gap-2 text-white/50 mb-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            <span class="text-sm font-semibold">Address</span>
+            <span class="text-sm font-mono">Address</span>
           </div>
-          <p class="text-gray-700 text-sm leading-relaxed">{gym.address}</p>
+          <p class="text-white/70 text-sm leading-relaxed">{gym.address}</p>
         </div>
 
         <!-- Phone -->
         <div>
-          <div class="flex items-center gap-2 text-gray-600 mb-1">
+          <div class="flex items-center gap-2 text-white/50 mb-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
-            <span class="text-sm font-semibold">Phone</span>
+            <span class="text-sm font-mono">Phone</span>
           </div>
-          <a href={`tel:${gym.phone}`} class="text-sage font-medium text-sm leading-relaxed hover:underline inline-block">
+          <a href={`tel:${gym.phone}`} class="text-[#00e676] font-medium text-sm leading-relaxed hover:text-[#00c853] transition-colors inline-block">
             {gym.phone}
           </a>
         </div>
 
         <!-- Price -->
         <div>
-          <div class="flex items-center gap-2 text-gray-600 mb-1">
+          <div class="flex items-center gap-2 text-white/50 mb-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span class="text-sm font-semibold">Day Pass</span>
+            <span class="text-sm font-mono">Day Pass</span>
           </div>
-          <p class="text-gray-700 text-sm font-medium leading-relaxed">
+          <p class="text-white font-mono font-bold text-lg leading-relaxed">
             ${gym.day_pass_price_local || 'N/A'}
           </p>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <a
           href={gym.website}
           target="_blank"
           rel="noopener noreferrer"
-          class="block w-full bg-sage text-white text-center py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+          class="btn-jug text-black text-center py-3 text-sm"
         >
           Visit Website
         </a>
@@ -292,14 +293,14 @@ let relatedGyms = allGyms
           href={gym.google_maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(gym.address)}`}
           target="_blank"
           rel="noopener noreferrer"
-          class="block w-full bg-white border-2 border-sage text-sage text-center py-3 rounded-lg font-medium hover:bg-sage/10 transition-colors"
+          class="block w-full bg-[#2d2d2d] border border-white/10 text-white text-center py-3 rounded-xl font-medium hover:bg-[#3d3d3d] hover:border-white/20 transition-colors text-sm"
         >
           Get Directions
         </a>
         {!gym.claimed && gym.status === 'published' && (
           <button
             id="claim-listing-btn"
-            class="block w-full bg-white border-2 border-sage text-sage text-center py-3 rounded-lg font-medium hover:bg-sage hover:!text-white transition-colors"
+            class="block w-full bg-[#2d2d2d] border border-white/10 text-white text-center py-3 rounded-xl font-medium hover:bg-[#3d3d3d] hover:border-[#00e676]/30 transition-colors text-sm"
           >
             Claim This Listing
           </button>
@@ -309,15 +310,15 @@ let relatedGyms = allGyms
       <!-- Log Visit CTA + Leaderboard Teaser -->
       <div class="space-y-4">
         <LogVisitButton gym={gym} />
-        <div class="bg-white border-2 border-sage/20 rounded-lg px-4 py-3 flex flex-col gap-2">
-          <div class="text-sm font-semibold text-granite">Boost your city ranking</div>
+        <div class="bg-[#2d2d2d] border border-white/10 rounded-xl px-4 py-3 flex flex-col gap-2">
+          <div class="text-sm font-display font-semibold text-white">Boost your city ranking</div>
           <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-            <p class="text-sm text-gray-600">
+            <p class="text-sm text-white/50">
               Log a visit to add points to your city and climb the leaderboard.
             </p>
             <a
               href="/leaderboard/"
-              class="inline-flex items-center gap-2 text-sage font-semibold hover:underline whitespace-nowrap"
+              class="inline-flex items-center gap-2 text-[#00e676] font-semibold hover:text-[#00c853] transition-colors whitespace-nowrap font-mono text-sm"
             >
               See the leaderboard →
             </a>
@@ -328,30 +329,30 @@ let relatedGyms = allGyms
 
     <!-- Main Content (Single Column) -->
     <div class="space-y-8">
-      <p class="text-xl text-gray-700 leading-relaxed">{gym.description_long}</p>
+      <p class="text-xl text-white/60 leading-relaxed">{gym.description_long}</p>
 
       <!-- About Section -->
-      <section class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-2xl font-bold text-granite mb-4">About {gym.name}</h2>
+      <section class="bg-[#1f1f1f] rounded-2xl border border-white/10 p-6" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+        <h2 class="text-2xl font-display font-bold text-white mb-4">About {gym.name}</h2>
         <div class="prose max-w-none">
           {gym.about ? (
             <!-- Use custom about text if available -->
-            <p class="text-gray-700 leading-relaxed whitespace-pre-line">{gym.about}</p>
+            <p class="text-white/60 leading-relaxed whitespace-pre-line">{gym.about}</p>
           ) : (
             <!-- Fallback to templated content -->
             <>
-              <p class="text-gray-700 leading-relaxed mb-4">
+              <p class="text-white/60 leading-relaxed mb-4">
                 Located in {gym.city}, {gym.region}, {gym.name} is a premier indoor climbing facility offering
                 world-class climbing experiences for enthusiasts of all skill levels. {gym.beginner_friendly
                   ? 'Whether you\'re just starting your climbing journey or you\'re a seasoned climber, our facility welcomes everyone with open arms.'
                   : 'Our facility caters to climbers looking to push their limits and improve their skills.'}
               </p>
-              <p class="text-gray-700 leading-relaxed mb-4">
+              <p class="text-white/60 leading-relaxed mb-4">
                 The gym features {climbingTypes.map(t => t.replace(/_/g, ' ')).join(', ')} climbing across
                 {gym.total_routes || 'numerous'} routes and problems. With walls reaching up to {gym.wall_height_meters}
                 meters high, climbers can experience everything from technical boulder problems to challenging lead routes.
               </p>
-              <p class="text-gray-700 leading-relaxed">
+              <p class="text-white/60 leading-relaxed">
                 {gym.crowd_peak_notes ? `Pro tip: ${gym.crowd_peak_notes}` : `Visit during off-peak hours for the best climbing experience.`}
               </p>
             </>
@@ -360,38 +361,38 @@ let relatedGyms = allGyms
       </section>
 
       <!-- Hours of Operation -->
-      <section class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-2xl font-bold text-granite mb-4">Hours of Operation</h2>
-        <div class="space-y-3">
+      <section class="bg-[#1f1f1f] rounded-2xl border border-white/10 p-6" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+        <h2 class="text-2xl font-display font-bold text-white mb-4">Hours of Operation</h2>
+        <div class="space-y-2">
           {hours.map((day) => (
-            <div class="flex justify-between items-center py-3 px-4 rounded-lg bg-gray-50">
-              <span class="font-medium text-granite">
+            <div class="flex justify-between items-center py-3 px-4 rounded-xl bg-[#2d2d2d]">
+              <span class="font-display font-semibold text-white">
                 {day.day}
               </span>
-              <span class="text-gray-700">
+              <span class="text-white/60 font-mono">
                 {day.opens} - {day.closes}
               </span>
             </div>
           ))}
         </div>
-        <p class="text-sm text-gray-600 mt-4">
+        <p class="text-sm text-white/40 mt-4">
           * Hours may vary on holidays. Please call ahead to confirm.
         </p>
       </section>
 
       <!-- Why Climbers Like It Section -->
       {Array.isArray(gym.why_climbers_like_it) && gym.why_climbers_like_it.length > 0 && (
-        <section class="bg-sage/5 rounded-lg shadow-md p-6 border-l-4 border-sage">
-          <h2 class="text-2xl font-bold text-granite mb-4">
+        <section class="bg-gradient-to-br from-[#00e676]/10 to-[#2979ff]/10 rounded-2xl border border-[#00e676]/20 p-6">
+          <h2 class="text-2xl font-display font-bold text-white mb-4">
             Why Climbers Love {gym.name}
           </h2>
           <ul class="space-y-3">
             {gym.why_climbers_like_it.map((reason: string) => (
               <li class="flex items-start gap-3">
-                <svg class="w-6 h-6 text-sage flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="w-6 h-6 text-[#00e676] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                 </svg>
-                <span class="text-gray-700 leading-relaxed text-lg">{reason}</span>
+                <span class="text-white/70 leading-relaxed text-lg">{reason}</span>
               </li>
             ))}
           </ul>
@@ -400,12 +401,12 @@ let relatedGyms = allGyms
 
       <!-- Rating Breakdown - Only show if detailed ratings exist -->
       {(gym.rating_route_quality > 0 || gym.rating_cleanliness > 0) && (
-        <section class="bg-gray-50 rounded-lg shadow-md p-6">
-          <h2 class="text-2xl font-bold text-granite mb-4">Our Expert Evaluation</h2>
+        <section class="bg-[#1f1f1f] rounded-2xl border border-white/10 p-6" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+          <h2 class="text-2xl font-display font-bold text-white mb-4">Our Expert Evaluation</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {gym.rating_route_quality > 0 && (
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Route Quality:</span>
+                <span class="text-white/60">Route Quality:</span>
                 <div class="flex items-center gap-1">
                   {Array.from({ length: 5 }).map((_, i) => {
                     const rating = gym.rating_route_quality;
@@ -415,8 +416,8 @@ let relatedGyms = allGyms
                       <svg class="w-4 h-4" viewBox="0 0 20 20">
                         <defs>
                           <linearGradient id={`star-gradient-route-${i}`}>
-                            <stop offset={`${fillPercentage}%`} stop-color="#FCD34D" />
-                            <stop offset={`${fillPercentage}%`} stop-color="#D1D5DB" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#ffea00" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#3d3d3d" />
                           </linearGradient>
                         </defs>
                         <path
@@ -426,13 +427,13 @@ let relatedGyms = allGyms
                       </svg>
                     )
                   })}
-                  <span class="text-sm font-medium text-granite ml-1">{gym.rating_route_quality.toFixed(1)}</span>
+                  <span class="text-sm font-medium text-white font-mono ml-1">{gym.rating_route_quality.toFixed(1)}</span>
                 </div>
               </div>
             )}
             {gym.rating_cleanliness > 0 && (
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Cleanliness:</span>
+                <span class="text-white/60">Cleanliness:</span>
                 <div class="flex items-center gap-1">
                   {Array.from({ length: 5 }).map((_, i) => {
                     const rating = gym.rating_cleanliness;
@@ -442,8 +443,8 @@ let relatedGyms = allGyms
                       <svg class="w-4 h-4" viewBox="0 0 20 20">
                         <defs>
                           <linearGradient id={`star-gradient-clean-${i}`}>
-                            <stop offset={`${fillPercentage}%`} stop-color="#FCD34D" />
-                            <stop offset={`${fillPercentage}%`} stop-color="#D1D5DB" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#ffea00" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#3d3d3d" />
                           </linearGradient>
                         </defs>
                         <path
@@ -453,13 +454,13 @@ let relatedGyms = allGyms
                       </svg>
                     )
                   })}
-                  <span class="text-sm font-medium text-granite ml-1">{gym.rating_cleanliness.toFixed(1)}</span>
+                  <span class="text-sm font-medium text-white font-mono ml-1">{gym.rating_cleanliness.toFixed(1)}</span>
                 </div>
               </div>
             )}
             {gym.rating_staff_friendliness > 0 && (
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Staff Friendliness:</span>
+                <span class="text-white/60">Staff Friendliness:</span>
                 <div class="flex items-center gap-1">
                   {Array.from({ length: 5 }).map((_, i) => {
                     const rating = gym.rating_staff_friendliness;
@@ -469,8 +470,8 @@ let relatedGyms = allGyms
                       <svg class="w-4 h-4" viewBox="0 0 20 20">
                         <defs>
                           <linearGradient id={`star-gradient-staff-${i}`}>
-                            <stop offset={`${fillPercentage}%`} stop-color="#FCD34D" />
-                            <stop offset={`${fillPercentage}%`} stop-color="#D1D5DB" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#ffea00" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#3d3d3d" />
                           </linearGradient>
                         </defs>
                         <path
@@ -480,13 +481,13 @@ let relatedGyms = allGyms
                       </svg>
                     )
                   })}
-                  <span class="text-sm font-medium text-granite ml-1">{gym.rating_staff_friendliness.toFixed(1)}</span>
+                  <span class="text-sm font-medium text-white font-mono ml-1">{gym.rating_staff_friendliness.toFixed(1)}</span>
                 </div>
               </div>
             )}
             {gym.rating_facilities > 0 && (
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Facilities:</span>
+                <span class="text-white/60">Facilities:</span>
                 <div class="flex items-center gap-1">
                   {Array.from({ length: 5 }).map((_, i) => {
                     const rating = gym.rating_facilities;
@@ -496,8 +497,8 @@ let relatedGyms = allGyms
                       <svg class="w-4 h-4" viewBox="0 0 20 20">
                         <defs>
                           <linearGradient id={`star-gradient-facilities-${i}`}>
-                            <stop offset={`${fillPercentage}%`} stop-color="#FCD34D" />
-                            <stop offset={`${fillPercentage}%`} stop-color="#D1D5DB" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#ffea00" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#3d3d3d" />
                           </linearGradient>
                         </defs>
                         <path
@@ -507,13 +508,13 @@ let relatedGyms = allGyms
                       </svg>
                     )
                   })}
-                  <span class="text-sm font-medium text-granite ml-1">{gym.rating_facilities.toFixed(1)}</span>
+                  <span class="text-sm font-medium text-white font-mono ml-1">{gym.rating_facilities.toFixed(1)}</span>
                 </div>
               </div>
             )}
             {gym.rating_value_for_money > 0 && (
               <div class="flex justify-between items-center">
-                <span class="text-gray-600">Value for Money:</span>
+                <span class="text-white/60">Value for Money:</span>
                 <div class="flex items-center gap-1">
                   {Array.from({ length: 5 }).map((_, i) => {
                     const rating = gym.rating_value_for_money;
@@ -523,8 +524,8 @@ let relatedGyms = allGyms
                       <svg class="w-4 h-4" viewBox="0 0 20 20">
                         <defs>
                           <linearGradient id={`star-gradient-value-${i}`}>
-                            <stop offset={`${fillPercentage}%`} stop-color="#FCD34D" />
-                            <stop offset={`${fillPercentage}%`} stop-color="#D1D5DB" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#ffea00" />
+                            <stop offset={`${fillPercentage}%`} stop-color="#3d3d3d" />
                           </linearGradient>
                         </defs>
                         <path
@@ -534,17 +535,17 @@ let relatedGyms = allGyms
                       </svg>
                     )
                   })}
-                  <span class="text-sm font-medium text-granite ml-1">{gym.rating_value_for_money.toFixed(1)}</span>
+                  <span class="text-sm font-medium text-white font-mono ml-1">{gym.rating_value_for_money.toFixed(1)}</span>
                 </div>
               </div>
             )}
 
             <!-- Overall Average - Outstanding Display -->
-            <div class="col-span-full mt-6 pt-6 border-t-2 border-sage/20">
-              <div class="bg-sage/10 rounded-lg p-4 sm:p-6 border-l-4 border-sage">
+            <div class="col-span-full mt-6 pt-6 border-t border-white/10">
+              <div class="bg-gradient-to-r from-[#00e676]/10 to-[#2979ff]/10 rounded-xl p-4 sm:p-6 border border-[#00e676]/20">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div class="flex-1">
-                    <p class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">Overall Rating</p>
+                    <p class="text-sm font-mono text-white/50 uppercase tracking-wide mb-2">Overall Rating</p>
                     <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
                       {/* Show 5 stars with gradient fill for overall rating */}
                       <div class="flex items-center gap-1">
@@ -556,8 +557,8 @@ let relatedGyms = allGyms
                             <svg class="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 20 20">
                               <defs>
                                 <linearGradient id={`star-gradient-overall-${i}`}>
-                                  <stop offset={`${fillPercentage}%`} stop-color="#FCD34D" />
-                                  <stop offset={`${fillPercentage}%`} stop-color="#D1D5DB" />
+                                  <stop offset={`${fillPercentage}%`} stop-color="#ffea00" />
+                                  <stop offset={`${fillPercentage}%`} stop-color="#3d3d3d" />
                                 </linearGradient>
                               </defs>
                               <path
@@ -568,60 +569,60 @@ let relatedGyms = allGyms
                           )
                         })}
                       </div>
-                      <span class="text-3xl sm:text-4xl font-bold text-sage">{gym.rating_overall.toFixed(1)}</span>
-                      <span class="text-gray-500 text-base sm:text-lg">/ 5.0</span>
+                      <span class="text-3xl sm:text-4xl font-bold text-[#00e676] font-mono">{gym.rating_overall.toFixed(1)}</span>
+                      <span class="text-white/40 text-base sm:text-lg font-mono">/ 5.0</span>
                     </div>
                   </div>
                   <div class="text-left sm:text-right">
-                    <p class="text-xs text-gray-500 uppercase tracking-wide">Based on</p>
-                    <p class="text-xl sm:text-2xl font-bold text-granite whitespace-nowrap">5 Categories</p>
+                    <p class="text-xs text-white/40 font-mono uppercase tracking-wide">Based on</p>
+                    <p class="text-xl sm:text-2xl font-bold text-white whitespace-nowrap font-display">5 Categories</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <p class="text-xs text-gray-500 mt-4 italic border-t border-gray-200 pt-4">
+          <p class="text-xs text-white/30 mt-4 italic border-t border-white/10 pt-4">
             We evaluate climbing gyms using detailed ratings across route quality, cleanliness, staff friendliness, facilities, and value. Ratings are based on climber reviews, expert assessments, and facility inspections.
           </p>
         </section>
       )}
 
       <!-- Climbing Types & Grades -->
-      <section class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-2xl font-bold text-granite mb-4">Climbing Types & Grades</h2>
+      <section class="bg-[#1f1f1f] rounded-2xl border border-white/10 p-6" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+        <h2 class="text-2xl font-display font-bold text-white mb-4">Climbing Types & Grades</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h3 class="font-semibold text-granite mb-3">Available Climbing Styles</h3>
+            <h3 class="font-display font-semibold text-white mb-3">Available Climbing Styles</h3>
             <ul class="space-y-2">
               {climbingTypes.map(type => (
                 <li class="flex items-center gap-2">
-                  <svg class="w-5 h-5 text-sage" fill="currentColor" viewBox="0 0 20 20">
+                  <svg class="w-5 h-5 text-[#00e676]" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                   </svg>
-                  <span class="capitalize">{type.replace(/_/g, ' ')}</span>
+                  <span class="capitalize text-white/70">{type.replace(/_/g, ' ')}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div>
-            <h3 class="font-semibold text-granite mb-3">Grading Systems</h3>
-            <p class="text-gray-700 mb-2">
-              <strong>Grade System:</strong> {gym.difficulty_grades?.replace(/\|/g, ', ') || 'N/A'}
+            <h3 class="font-display font-semibold text-white mb-3">Grading Systems</h3>
+            <p class="text-white/60 mb-2">
+              <strong class="text-white">Grade System:</strong> {gym.difficulty_grades?.replace(/\|/g, ', ') || 'N/A'}
             </p>
-            <p class="text-gray-700 mb-2">
-              <strong>Total Routes:</strong> {gym.total_routes || 'N/A'} problems/routes
+            <p class="text-white/60 mb-2">
+              <strong class="text-white">Total Routes:</strong> {gym.total_routes || 'N/A'} problems/routes
             </p>
-            <p class="text-gray-700 mb-4">
-              <strong>Route Setting:</strong> Routes reset {gym.route_reset_frequency || 'regularly'}
+            <p class="text-white/60 mb-4">
+              <strong class="text-white">Route Setting:</strong> Routes reset {gym.route_reset_frequency || 'regularly'}
             </p>
 
             <!-- Grade Converter Links -->
-            <div class="bg-ivory rounded-lg p-4 border-l-4 border-sage">
-              <p class="text-sm font-semibold text-granite mb-2">Not sure what these grades mean?</p>
+            <div class="bg-[#2d2d2d] rounded-xl p-4 border border-white/10">
+              <p class="text-sm font-display font-semibold text-white mb-2">Not sure what these grades mean?</p>
               <div class="flex flex-wrap gap-2">
                 <a
                   href="/tools/bouldering-grade-conversion/"
-                  class="inline-flex items-center gap-1 text-xs bg-sage text-white px-3 py-1.5 rounded-full hover:bg-sage/90 transition-colors"
+                  class="inline-flex items-center gap-1 text-xs bg-[#ff2d7a] text-white px-3 py-1.5 rounded-full hover:bg-[#ff2d7a]/80 transition-colors font-mono"
                 >
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -630,7 +631,7 @@ let relatedGyms = allGyms
                 </a>
                 <a
                   href="/tools/sport-climbing-grade-conversion/"
-                  class="inline-flex items-center gap-1 text-xs bg-sage text-white px-3 py-1.5 rounded-full hover:bg-sage/90 transition-colors"
+                  class="inline-flex items-center gap-1 text-xs bg-[#2979ff] text-white px-3 py-1.5 rounded-full hover:bg-[#2979ff]/80 transition-colors font-mono"
                 >
                   <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -644,29 +645,29 @@ let relatedGyms = allGyms
       </section>
 
       <!-- Amenities -->
-      <section class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-2xl font-bold text-granite mb-4">Amenities & Facilities</h2>
+      <section class="bg-[#1f1f1f] rounded-2xl border border-white/10 p-6" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+        <h2 class="text-2xl font-display font-bold text-white mb-4">Amenities & Facilities</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           {amenitiesList.map(amenity => (
-            <div class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-              <svg class="w-5 h-5 text-sage flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <div class="flex items-center gap-2 p-3 bg-[#2d2d2d] rounded-xl border border-white/5">
+              <svg class="w-5 h-5 text-[#00e676] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
               </svg>
-              <span class="text-sm">{amenity.replace(/_/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
+              <span class="text-sm text-white/70">{amenity.replace(/_/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
             </div>
           ))}
         </div>
 
         {trainingFacilities.length > 0 && (
-          <div class="mt-6">
-            <h3 class="font-semibold text-granite mb-3">Training Facilities</h3>
+          <div class="mt-6 pt-6 border-t border-white/10">
+            <h3 class="font-display font-semibold text-white mb-3">Training Facilities</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
               {trainingFacilities.map(facility => (
-                <div class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                  <svg class="w-5 h-5 text-sage flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <div class="flex items-center gap-2 p-3 bg-[#2d2d2d] rounded-xl border border-white/5">
+                  <svg class="w-5 h-5 text-[#2979ff] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                   </svg>
-                  <span class="text-sm">
+                  <span class="text-sm text-white/70">
                     {facility.replace(/_/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                   </span>
                 </div>
@@ -676,15 +677,15 @@ let relatedGyms = allGyms
         )}
 
         {gearRental.length > 0 && (
-          <div class="mt-6">
-            <h3 class="font-semibold text-granite mb-3">Gear Rental Available</h3>
+          <div class="mt-6 pt-6 border-t border-white/10">
+            <h3 class="font-display font-semibold text-white mb-3">Gear Rental Available</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
               {gearRental.map(gear => (
-                <div class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                  <svg class="w-5 h-5 text-sage flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <div class="flex items-center gap-2 p-3 bg-[#2d2d2d] rounded-xl border border-white/5">
+                  <svg class="w-5 h-5 text-[#ff2d7a] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                   </svg>
-                  <span class="text-sm">
+                  <span class="text-sm text-white/70">
                     {gear.replace(/_/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                   </span>
                 </div>
@@ -694,15 +695,15 @@ let relatedGyms = allGyms
         )}
 
         {customAmenitiesList.length > 0 && (
-          <div class="mt-6 pt-6 border-t border-gray-200">
-            <h3 class="font-semibold text-granite mb-4">Additional Amenities</h3>
+          <div class="mt-6 pt-6 border-t border-white/10">
+            <h3 class="font-display font-semibold text-white mb-4">Additional Amenities</h3>
             <div class="flex flex-wrap gap-2">
               {customAmenitiesList.map(amenity => (
-                <div class="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-sage rounded-full">
-                  <svg class="w-4 h-4 text-sage flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-[#2d2d2d] border border-white/10 rounded-full">
+                  <svg class="w-4 h-4 text-[#00e676] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                   </svg>
-                  <span class="text-sm font-medium text-granite">{amenity.replace(/_/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
+                  <span class="text-sm font-medium text-white/70">{amenity.replace(/_/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
                 </div>
               ))}
             </div>
@@ -724,82 +725,80 @@ let relatedGyms = allGyms
 
       <!-- Pricing - Only show if pricing data exists -->
       {(gym.day_pass_price_local || gym.membership_from_local) && (
-        <section class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-2xl font-bold text-granite mb-4">Pricing</h2>
+        <section class="bg-[#1f1f1f] rounded-2xl border border-white/10 p-6" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+          <h2 class="text-2xl font-display font-bold text-white mb-4">Pricing</h2>
           <div class="overflow-x-auto">
             <table class="w-full">
               <thead>
-                <tr class="border-b-2 border-gray-200">
-                  <th class="text-left py-3 px-4 font-semibold text-granite">Pass Type</th>
-                  <th class="text-left py-3 px-4 font-semibold text-granite">Price</th>
-                  <th class="text-left py-3 px-4 font-semibold text-granite">Details</th>
+                <tr class="border-b border-white/10">
+                  <th class="text-left py-3 px-4 font-display font-semibold text-white">Pass Type</th>
+                  <th class="text-left py-3 px-4 font-display font-semibold text-white">Price</th>
+                  <th class="text-left py-3 px-4 font-display font-semibold text-white">Details</th>
                 </tr>
               </thead>
               <tbody>
                 {gym.day_pass_price_local && (
-                  <tr class="border-b border-gray-100">
-                    <td class="py-3 px-4">Day Pass</td>
-                    <td class="py-3 px-4 font-bold text-sage">${gym.day_pass_price_local}</td>
-                    <td class="py-3 px-4 text-sm text-gray-600">Valid for one day</td>
+                  <tr class="border-b border-white/5">
+                    <td class="py-3 px-4 text-white/70">Day Pass</td>
+                    <td class="py-3 px-4 font-bold text-[#00e676] font-mono">${gym.day_pass_price_local}</td>
+                    <td class="py-3 px-4 text-sm text-white/50">Valid for one day</td>
                   </tr>
                 )}
                 {gym.membership_from_local && (
-                  <tr class="border-b border-gray-100">
-                    <td class="py-3 px-4">Monthly Membership</td>
-                    <td class="py-3 px-4 font-bold text-sage">From ${gym.membership_from_local}/mo</td>
-                    <td class="py-3 px-4 text-sm text-gray-600">Unlimited access</td>
+                  <tr class="border-b border-white/5">
+                    <td class="py-3 px-4 text-white/70">Monthly Membership</td>
+                    <td class="py-3 px-4 font-bold text-[#00e676] font-mono">From ${gym.membership_from_local}/mo</td>
+                    <td class="py-3 px-4 text-sm text-white/50">Unlimited access</td>
                   </tr>
                 )}
                 {gym.student_discount && (
-                  <tr class="border-b border-gray-100">
-                    <td class="py-3 px-4">Student Discount</td>
-                    <td class="py-3 px-4 font-bold text-sage">Available</td>
-                    <td class="py-3 px-4 text-sm text-gray-600">Valid student ID required</td>
+                  <tr class="border-b border-white/5">
+                    <td class="py-3 px-4 text-white/70">Student Discount</td>
+                    <td class="py-3 px-4 font-bold text-[#00e676] font-mono">Available</td>
+                    <td class="py-3 px-4 text-sm text-white/50">Valid student ID required</td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
-          <p class="text-sm text-gray-600 mt-4">
+          <p class="text-sm text-white/40 mt-4">
             * Prices subject to change. Contact {gym.name} directly for current rates and membership options.
           </p>
         </section>
       )}
 
       <!-- Cost Calculator CTA -->
-      <div class="calculator-cta mt-8 p-6 bg-sage/5 border-2 border-sage/20 rounded-xl text-center">
-        <h3 class="text-xl font-bold text-granite mb-2">
+      <div class="mt-8 p-6 bg-gradient-to-r from-[#00e676]/10 to-[#2979ff]/10 border border-[#00e676]/20 rounded-2xl text-center">
+        <h3 class="text-xl font-display font-bold text-white mb-2">
           Wondering if a membership is worth it?
         </h3>
-        <p class="text-gray-700 mb-4">
+        <p class="text-white/50 mb-4">
           Use our free calculator to compare day passes vs membership based on how often you climb.
         </p>
         <a
           href="/tools/cost-per-climb-calculator/"
-          class="inline-flex items-center justify-center px-6 py-3 bg-sage text-white font-bold rounded-lg hover:bg-sage/90 transition-all shadow-lg"
+          class="btn-jug text-black inline-flex items-center gap-2"
         >
           Calculate Your Cost Per Climb →
         </a>
       </div>
 
       <!-- FAQ Section -->
-      <section class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-2xl font-bold text-granite mb-6">Frequently Asked Questions</h2>
+      <section class="bg-[#1f1f1f] rounded-2xl border border-white/10 p-6" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+        <h2 class="text-2xl font-display font-bold text-white mb-6">Frequently Asked Questions</h2>
         <div class="space-y-4">
           {(gym.faq && gym.faq.length > 0 ? gym.faq : faqs).map((faq: any, index: number) => (
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-              <details class="group">
-                <summary class="flex justify-between items-center font-bold text-granite cursor-pointer p-6 list-none text-lg">
-                  <span>{faq.question}</span>
-                  <span class="transition group-open:rotate-180">
-                    <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
-                  </span>
-                </summary>
-                <div class="text-gray-600 px-6 pb-6 leading-relaxed">
-                  {faq.answer}
-                </div>
-              </details>
-            </div>
+            <details class="group bg-[#2d2d2d] rounded-xl border border-white/5 overflow-hidden hover:border-white/10 transition-colors">
+              <summary class="flex justify-between items-center font-display font-semibold text-white cursor-pointer p-6 list-none text-lg">
+                <span>{faq.question}</span>
+                <span class="transition group-open:rotate-180">
+                  <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                </span>
+              </summary>
+              <div class="text-white/60 px-6 pb-6 leading-relaxed">
+                {faq.answer}
+              </div>
+            </details>
           ))}
         </div>
       </section>
@@ -809,9 +808,9 @@ let relatedGyms = allGyms
 
       <!-- Full-Width Interactive Map -->
       {gym.latitude && gym.longtitude && gym.latitude !== 0 && gym.longtitude !== 0 && (
-        <section class="bg-white rounded-lg shadow-md p-6">
-          <h2 class="text-2xl font-bold text-granite mb-4">Location</h2>
-          <div class="h-96">
+        <section class="bg-[#1f1f1f] rounded-2xl border border-white/10 p-6" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+          <h2 class="text-2xl font-display font-bold text-white mb-4">Location</h2>
+          <div class="h-96 rounded-xl overflow-hidden">
             <GymMap
               latitude={gym.latitude}
               longitude={gym.longtitude}
@@ -820,7 +819,7 @@ let relatedGyms = allGyms
             />
           </div>
           {gym.access_notes && (
-            <p class="text-sm text-gray-600 mt-4">{gym.access_notes}</p>
+            <p class="text-sm text-white/50 mt-4">{gym.access_notes}</p>
           )}
         </section>
       )}
@@ -832,50 +831,51 @@ let relatedGyms = allGyms
       <HelpfulGuides beginner_friendly={gym.beginner_friendly} />
     </div>
 
-  <!-- Related Gyms Section -->
-  {relatedGyms.length > 0 && (
-    <section class="mt-12">
-      <h2 class="text-3xl font-bold text-granite mb-6">
-        Other Climbing Gyms in {gym.city}
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {relatedGyms.map(relatedGym => (
-          <GymCard gym={relatedGym} showCity={relatedGym.city !== gym.city} />
-        ))}
-      </div>
-    </section>
-  )}
+    <!-- Related Gyms Section -->
+    {relatedGyms.length > 0 && (
+      <section class="mt-12">
+        <h2 class="text-3xl font-display font-bold text-white mb-6">
+          Other Climbing Gyms in {gym.city}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {relatedGyms.map((relatedGym, index) => (
+            <GymCard gym={relatedGym} showCity={relatedGym.city !== gym.city} delay={index * 0.05} />
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
 
   {/* Claim Listing Modal */}
   {!gym.claimed && gym.status === 'published' && (
     <div id="claim-modal" class="hidden fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-lg max-w-md w-full p-6 relative border-t-4 border-sage shadow-2xl">
+      <div class="bg-[#1f1f1f] rounded-2xl max-w-md w-full p-6 relative border border-white/10 shadow-2xl">
         {/* Close Button */}
-        <button id="close-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <button id="close-modal" class="absolute top-4 right-4 text-white/40 hover:text-white transition-colors">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
         {/* Modal Content */}
-        <h2 class="text-2xl font-bold text-granite mb-4">Claim this gym</h2>
+        <h2 class="text-2xl font-display font-bold text-white mb-4">Claim this gym</h2>
         <div class="space-y-4 mb-6">
-          <p class="text-gray-700">
+          <p class="text-white/60">
             Own or manage this gym? Claim your listing to update hours, pricing, photos, and mark it as Verified.
           </p>
-          <p class="text-gray-700">
+          <p class="text-white/60">
             You'll just need a work email (like name@yourgym.com).
           </p>
         </div>
 
         {/* CTA Button */}
         <div class="flex gap-3">
-          <button id="maybe-later" class="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+          <button id="maybe-later" class="flex-1 px-4 py-3 border border-white/10 text-white/70 rounded-xl font-medium hover:bg-white/5 transition-colors">
             Maybe Later
           </button>
           <a
             href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/dashboard/claim-listing?gym_id=${gym.id}`}
-            class="flex-1 px-4 py-3 bg-sage text-white text-center rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+            class="flex-1 px-4 py-3 bg-[#00e676] text-black text-center rounded-xl font-medium hover:bg-[#00c853] transition-colors"
           >
             Continue to Claim
           </a>
@@ -980,15 +980,15 @@ let relatedGyms = allGyms
         if (isFavorited) {
           // Show filled heart with sage green
           favoriteIcon.setAttribute('fill', 'currentColor');
-          favoriteIcon.classList.add('text-sage', 'group-hover:text-white');
-          favoriteIcon.classList.remove('group-hover:stroke-white');
+          favoriteIcon.classList.add('text-[#00e676]', 'group-hover:text-black');
+          favoriteIcon.classList.remove('group-hover:text-black');
           favoriteText.textContent = 'In Your Favorites';
           favoriteBtn.title = 'Remove from favorites';
         } else {
           // Show empty heart
           favoriteIcon.setAttribute('fill', 'none');
-          favoriteIcon.classList.remove('text-sage', 'group-hover:text-white');
-          favoriteIcon.classList.add('group-hover:stroke-white');
+          favoriteIcon.classList.remove('text-[#00e676]', 'group-hover:text-black');
+          favoriteIcon.classList.add('group-hover:text-black');
           favoriteText.textContent = 'Save to Favorites';
           favoriteBtn.title = 'Save to favorites';
         }
@@ -1036,35 +1036,35 @@ let relatedGyms = allGyms
 
   {/* Report Info Modal */}
   <div id="report-modal" class="hidden fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg max-w-md w-full p-6 relative border-t-4 border-sage shadow-2xl">
+    <div class="bg-[#1f1f1f] rounded-2xl max-w-md w-full p-6 relative border border-white/10 shadow-2xl">
       {/* Close Button */}
-      <button id="close-report-modal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+      <button id="close-report-modal" class="absolute top-4 right-4 text-white/40 hover:text-white transition-colors">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
 
       {/* Modal Content */}
-      <h2 class="text-2xl font-bold text-granite mb-4">Report Incorrect Info</h2>
+      <h2 class="text-2xl font-display font-bold text-white mb-4">Report Incorrect Info</h2>
       <div class="space-y-4 mb-6">
-        <p class="text-gray-700">
+        <p class="text-white/60">
           To ensure data quality, we require users to login or register to report incorrect information.
         </p>
-        <p class="text-gray-700">
+        <p class="text-white/60">
            You will be redirected to our dashboard to submit your correction.
         </p>
       </div>
 
       {/* CTA Button */}
       <div class="flex gap-3">
-        <button id="report-maybe-later" class="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+        <button id="report-maybe-later" class="flex-1 px-4 py-3 border border-white/10 text-white/70 rounded-xl font-medium hover:bg-white/5 transition-colors">
           Maybe Later
         </button>
         <a
           href={`${import.meta.env.PUBLIC_DASHBOARD_URL}/corrections/submit?gym_id=${gym.id}&gym_name=${encodeURIComponent(gym.name)}`}
           target="_blank"
           rel="noopener noreferrer"
-          class="flex-1 px-4 py-3 bg-sage text-white text-center rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+          class="flex-1 px-4 py-3 bg-[#00e676] text-black text-center rounded-xl font-medium hover:bg-[#00c853] transition-colors"
         >
           Login to Report
         </a>
@@ -1110,7 +1110,7 @@ let relatedGyms = allGyms
   <!-- Floating Report Incorrect Info Button -->
   <button
     id="report-info-btn"
-    class="fixed bottom-6 right-6 bg-white border-2 border-sage text-sage px-4 py-3 rounded-full font-medium shadow-xl hover:shadow-2xl hover:bg-sage hover:!text-white transition-all duration-200 flex items-center gap-2 z-50"
+    class="fixed bottom-6 right-6 bg-[#1f1f1f] border border-white/10 text-white/70 px-4 py-3 rounded-full font-medium shadow-xl hover:shadow-2xl hover:bg-[#00e676] hover:text-black hover:border-[#00e676] transition-all duration-200 flex items-center gap-2 z-50 font-mono text-sm"
     aria-label="Report incorrect gym information"
   >
     <span class="hidden sm:inline">Report Incorrect Info</span>
@@ -1119,19 +1119,19 @@ let relatedGyms = allGyms
 
   <!-- Fresh Routes CTA - LA Only -->
   {(gym.region === 'California' && gym.city === 'Los Angeles') && (
-    <section class="bg-gradient-to-br from-sage/10 to-sage/5 rounded-2xl p-8 md:p-12 mt-12 border border-sage/20">
+    <section class="bg-gradient-to-r from-[#00e676]/10 to-[#2979ff]/10 rounded-2xl p-8 md:p-12 mt-12 border border-[#00e676]/20">
       <div class="flex flex-col md:flex-row items-center justify-between gap-6">
         <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sage/20 text-sage text-sm font-semibold mb-3">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00e676]/20 text-[#00e676] text-sm font-mono font-bold mb-3">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
             New Feature
           </div>
-          <h3 class="text-2xl md:text-3xl font-bold text-granite mb-2">Track Fresh Routes in Los Angeles</h3>
-          <p class="text-gray-600">See which LA gyms reset this week. Updated every Friday.</p>
+          <h3 class="text-2xl md:text-3xl font-display font-bold text-white mb-2">Track Fresh Routes in Los Angeles</h3>
+          <p class="text-white/50">See which LA gyms reset this week. Updated every Friday.</p>
         </div>
-        <a href="/fresh-routes-this-week/" class="flex-shrink-0 bg-sage text-white px-8 py-4 rounded-lg font-bold hover:bg-sage/90 transition-all shadow-lg shadow-sage/20 flex items-center gap-2">
+        <a href="/fresh-routes-this-week/" class="btn-jug text-black flex-shrink-0 inline-flex items-center gap-2">
           View Fresh Routes
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />

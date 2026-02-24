@@ -13,40 +13,40 @@ interface Props {
 
 const { level, showLabel = true, size = 'md' } = Astro.props;
 
-// Map confidence levels to colors, icons, and descriptions
+// Map confidence levels to colors, icons, and descriptions (dark theme)
 const confidenceConfig = {
   'high': {
-    color: 'bg-green-100 text-green-800 border-green-300',
+    color: 'bg-[#00e676]/20 text-[#00e676] border-[#00e676]/30',
     icon: '✓',
     label: 'High Confidence',
     description: 'Well-established, standardized conversion'
   },
   'medium-high': {
-    color: 'bg-green-100 text-green-700 border-green-300',
+    color: 'bg-[#00e676]/20 text-[#00e676] border-[#00e676]/30',
     icon: '✓',
     label: 'High Confidence',
     description: 'Widely accepted conversion with strong consensus'
   },
   'medium': {
-    color: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+    color: 'bg-[#ffea00]/20 text-[#ffea00] border-[#ffea00]/30',
     icon: '≈',
     label: 'Approximate',
     description: 'Generally accurate, some regional variation'
   },
   'medium-low': {
-    color: 'bg-orange-100 text-orange-800 border-orange-300',
+    color: 'bg-[#ff9100]/20 text-[#ff9100] border-[#ff9100]/30',
     icon: '≈',
     label: 'Approximate',
     description: 'Conversion varies by region and gym'
   },
   'low': {
-    color: 'bg-orange-100 text-orange-900 border-orange-400',
+    color: 'bg-[#ff9100]/20 text-[#ff9100] border-[#ff9100]/30',
     icon: '~',
     label: 'Subjective',
     description: 'Route-dependent, varies significantly'
   },
   'very-low': {
-    color: 'bg-red-100 text-red-900 border-red-400',
+    color: 'bg-[#ff2d7a]/20 text-[#ff2d7a] border-[#ff2d7a]/30',
     icon: '~',
     label: 'Highly Variable',
     description: 'Elite grades, cutting-edge difficulty'
@@ -80,18 +80,18 @@ const sizeClass = sizeClasses[size];
   <div class="tooltip-wrapper relative inline-block">
     <button
       type="button"
-      class="info-icon w-5 h-5 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors flex items-center justify-center text-xs font-bold"
+      class="info-icon w-5 h-5 rounded-full bg-[#2d2d2d] text-white/70 hover:bg-[#3d3d3d] transition-colors flex items-center justify-center text-xs font-bold"
       aria-label="More information about confidence level"
       title={config.description}
     >
       i
     </button>
 
-    <div class="tooltip hidden absolute z-50 w-64 p-3 bg-granite text-white text-sm rounded-lg shadow-xl right-full mr-2 top-1/2 -translate-y-1/2">
+    <div class="tooltip hidden absolute z-50 w-64 p-3 bg-[#1f1f1f] text-white text-sm rounded-lg shadow-xl right-full mr-2 top-1/2 -translate-y-1/2 border border-white/10">
       <p class="font-semibold mb-1">{config.label}</p>
-      <p class="text-gray-200">{config.description}</p>
+      <p class="text-white/70">{config.description}</p>
       <!-- Arrow pointing right toward icon -->
-      <div class="arrow absolute w-2 h-2 bg-granite transform rotate-45 -right-1 top-1/2 -translate-y-1/2"></div>
+      <div class="arrow absolute w-2 h-2 bg-[#1f1f1f] border-r border-t border-white/10 transform rotate-45 -right-1 top-1/2 -translate-y-1/2"></div>
     </div>
   </div>
 </div>

@@ -1,7 +1,8 @@
 ---
 /**
- * Homepage
- * Main landing page with hero, featured gyms, and popular cities
+ * Homepage - Dark Climbing Gym Theme
+ * Replicated from app 2/ design
+ * All SEO content preserved
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import GymCard from '../components/GymCard.astro';
@@ -14,45 +15,36 @@ import { addBrandSuffix } from '../utils/seo';
 
 export const prerender = true;
 
-// Fetch gyms from API at build time
 const gyms = await fetchGyms();
-
-// Get featured gyms (if any)
 const allFeaturedGyms = gyms.filter(g => g.featured);
+const topRatedGyms = [...gyms].sort((a, b) => b.rating - a.rating);
+const displayGyms = allFeaturedGyms.length >= 3 ? allFeaturedGyms.slice(0, 6) : topRatedGyms.slice(0, 6);
 
-// Get top-rated gyms as fallback
-const topRatedGyms = [...gyms].sort((a, b) => {
-  // By rating (highest first)
-  if (a.rating !== b.rating) return b.rating - a.rating;
-  // Then alphabetically
-  return a.name.localeCompare(b.name);
-});
-
-// Show featured if we have 3+, otherwise show top-rated
-const displayGyms = allFeaturedGyms.length >= 3
-  ? allFeaturedGyms.slice(0, 6)
-  : topRatedGyms.slice(0, 6);
-
-const sectionTitle = allFeaturedGyms.length >= 3
-  ? "Featured Climbing Gyms"
-  : "Top Rated Climbing Gyms";
-
-// Calculate states by gym count
 const stateCounts = gyms.reduce((acc, gym) => {
   const state = gym.region?.toLowerCase();
-  if (state) {
-    acc[state] = (acc[state] || 0) + 1;
-  }
+  if (state) acc[state] = (acc[state] || 0) + 1;
   return acc;
 }, {} as Record<string, number>);
 
-// Get top 9 states sorted by gym count
 const topStates = Object.entries(stateCounts)
-  .sort(([, countA], [, countB]) => countB - countA)
-  .slice(0, 9)
+  .sort(([, a], [, b]) => b - a)
+  .slice(0, 12)
   .map(([state, count]) => ({ state, count }));
 
-// Get unique cities (deduplicate by city+region combination)
+// Get top cities by gym count for footer
+const cityGymCounts = gyms.reduce((acc, gym) => {
+  const key = `${gym.city}-${gym.region}`;
+  if (!acc[key]) {
+    acc[key] = { city: gym.city, region: gym.region, count: 0, slug: gym.slug };
+  }
+  acc[key].count++;
+  return acc;
+}, {} as Record<string, { city: string; region: string; count: number; slug: string }>);
+
+const topCities = Object.values(cityGymCounts)
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 18);
+
 const uniqueCities = new Map();
 gyms.forEach(gym => {
   const key = `${gym.city}-${gym.region}`;
@@ -61,68 +53,20 @@ gyms.forEach(gym => {
   }
 });
 const cities = Array.from(uniqueCities.values());
-const popularCities = cities.slice(0, 6);
 
-// Define top 8 curated categories with gym counts
 const topCategories = [
-  {
-    name: 'Best Bouldering Gyms',
-    slug: 'best-bouldering-climbing-gyms',
-    description: 'Top-rated facilities focused on bouldering excellence',
-    count: gyms.filter(g => g.climbing_types?.includes('bouldering')).length
-  },
-  {
-    name: 'For Beginners',
-    slug: 'best-climbing-gyms-for-beginners',
-    description: 'Welcoming gyms perfect for first-time climbers with intro classes',
-    count: gyms.filter(g => g.beginner_friendly).length
-  },
-  {
-    name: 'Best Lead Climbing Gyms',
-    slug: 'best-lead-climbing-gyms',
-    description: 'Top facilities specializing in lead climbing and endurance',
-    count: gyms.filter(g => g.climbing_types?.includes('lead')).length
-  },
-  {
-    name: 'Best Top Rope Gyms',
-    slug: 'best-top-rope-climbing-gyms',
-    description: 'Gyms featuring tall walls and extensive top rope selections',
-    count: gyms.filter(g => g.climbing_types?.includes('top_rope')).length
-  },
-  {
-    name: 'Affordable Gyms',
-    slug: 'affordable-climbing-gyms',
-    description: 'Budget-friendly climbing gyms with great value',
-    count: gyms.filter(g => g.day_pass_price_local && g.day_pass_price_local <= 20).length
-  },
-  {
-    name: 'With Sauna',
-    slug: 'climbing-gyms-with-sauna',
-    description: 'Recovery-focused gyms with sauna amenities',
-    count: gyms.filter(g => g.amenities?.includes('sauna')).length
-  },
-  {
-    name: 'With Kids Zone',
-    slug: 'climbing-gyms-with-kids-zone',
-    description: 'Family-friendly gyms with dedicated kids areas',
-    count: gyms.filter(g => g.amenities?.includes('kids_zone')).length
-  },
-  {
-    name: 'With WiFi',
-    slug: 'climbing-gyms-with-wifi',
-    description: 'Gyms with dedicated spaces for working and climbing',
-    count: gyms.filter(g => g.amenities?.includes('wifi')).length
-  },
+  { name: 'Best Bouldering Gyms', slug: 'best-bouldering-climbing-gyms', description: 'Top-rated facilities focused on bouldering excellence', count: gyms.filter(g => g.climbing_types?.includes('bouldering')).length, color: '#ff2d7a' },
+  { name: 'For Beginners', slug: 'best-climbing-gyms-for-beginners', description: 'Welcoming gyms perfect for first-time climbers', count: gyms.filter(g => g.beginner_friendly).length, color: '#00e676' },
+  { name: 'Best Lead Climbing', slug: 'best-lead-climbing-gyms', description: 'Top facilities specializing in lead climbing', count: gyms.filter(g => g.climbing_types?.includes('lead')).length, color: '#2979ff' },
+  { name: 'Affordable Gyms', slug: 'affordable-climbing-gyms', description: 'Budget-friendly climbing gyms with great value', count: gyms.filter(g => g.day_pass_price_local && g.day_pass_price_local <= 20).length, color: '#ffea00' },
+  { name: 'With Sauna', slug: 'climbing-gyms-with-sauna', description: 'Recovery-focused gyms with sauna amenities', count: gyms.filter(g => g.amenities?.includes('sauna')).length, color: '#ff1744' },
+  { name: 'Kids Zone', slug: 'climbing-gyms-with-kids-zone', description: 'Family-friendly gyms with dedicated kids areas', count: gyms.filter(g => g.amenities?.includes('kids_zone')).length, color: '#ff9100' },
 ];
 
-// State utilities imported above
-
-// Generate homepage schemas
 const orgSchema = generateOrganizationSchema();
 const websiteSchema = generateWebSiteSchema();
 const combinedSchema = [orgSchema, websiteSchema];
 
-// Dynamic SEO with counts
 const totalGyms = gyms.length;
 const uniqueStates = [...new Set(gyms.map(g => g.region))].length;
 
@@ -131,575 +75,654 @@ const title = addBrandSuffix(baseTitle, 'IndoorClimbingGym');
 const description = `Search ${totalGyms}+ climbing gyms in ${uniqueStates} states. Compare ratings, prices & amenities. Bouldering, lead & top rope. Free gym finder with reviews.`;
 ---
 
-<BaseLayout
-  title={title}
-  description={description}
-  schema={combinedSchema}
->
+<BaseLayout title={title} description={description} schema={combinedSchema}>
   <Fragment slot="head">
     <meta name="impact-site-verification" value="bab4af13-beab-4e5b-b1a9-66b2af7b9921" />
   </Fragment>
 
-  <!-- Hero Section -->
-  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 min-h-[600px] bg-[#f8f8f5] py-16 md:py-24 overflow-hidden">
-    <!-- Abstract Background Elements (KEPT) -->
+  <!-- Hero Section - Fit one screen -->
+  <section class="relative h-[calc(100vh-80px)] min-h-[600px] max-h-[750px] flex flex-col overflow-hidden bg-[#1a1a1a]">
+    <!-- Background holds image -->
     <div class="absolute inset-0 z-0">
-      <div class="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-[#98a48b] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-      <div class="absolute top-[20%] left-[-10%] w-[600px] h-[600px] bg-[#e8e6d9] rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000"></div>
-      <div class="absolute bottom-[-10%] right-[20%] w-[700px] h-[700px] bg-[#98a48b] rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-4000"></div>
+      <img
+        src="/holds-hero.jpg"
+        alt=""
+        class="w-full h-full object-cover opacity-40"
+      />
+      <div class="absolute inset-0 bg-gradient-to-b from-[#1a1a1a] via-transparent to-[#1a1a1a]"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/80 via-transparent to-[#1a1a1a]/80"></div>
     </div>
 
-    <div class="container mx-auto px-4 relative z-10">
-      <div class="max-w-4xl mx-auto text-center flex flex-col items-center">
-        <!-- New Badge (KEPT) -->
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-md border border-sage/20 shadow-sm mb-8 animate-fade-in-up">
-          <span class="relative flex h-3 w-3">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sage opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-3 w-3 bg-sage"></span>
+    <!-- Subtle gradient orbs (static, no animation) -->
+    <div class="absolute inset-0 z-0">
+      <div class="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-[#ff2d7a] rounded-full mix-blend-screen filter blur-3xl opacity-5"></div>
+      <div class="absolute top-[20%] left-[-10%] w-[400px] h-[400px] bg-[#00e676] rounded-full mix-blend-screen filter blur-3xl opacity-5"></div>
+      <div class="absolute bottom-[-10%] right-[20%] w-[500px] h-[500px] bg-[#2979ff] rounded-full mix-blend-screen filter blur-3xl opacity-5"></div>
+    </div>
+
+    <!-- Main content -->
+    <div class="relative z-10 flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8 pt-2 pb-4">
+      <div class="max-w-5xl mx-auto w-full">
+        <!-- Eyebrow -->
+        <div class="mb-2">
+          <span class="inline-flex items-center gap-2 px-3 py-1.5 bg-[#2d2d2d]/80 backdrop-blur-sm rounded-full border border-white/10">
+            <span class="w-2 h-2 rounded-full bg-[#00e676]"></span>
+            <span class="text-xs text-white/70 font-mono">The #1 Climbing Gym Directory</span>
           </span>
-          <span class="text-sm font-semibold text-granite tracking-wide uppercase">The #1 Climbing Directory</span>
         </div>
 
-        <!-- Original Title & Description (REVERTED TEXT) -->
-        <h1 class="text-4xl md:text-6xl font-bold text-granite mb-6 animate-fade-in-up animation-delay-150">
-          Find the Best Indoor Climbing Gyms Near You
+        <!-- Main headline - SEO preserved -->
+        <h1 class="font-display font-bold text-5xl sm:text-6xl lg:text-8xl text-white mb-2 leading-[0.9] tracking-tight text-glow">
+          FIND YOUR
+          <br />
+          <span class="relative inline-block">
+            <span class="bg-gradient-to-r from-[#00e676] via-[#2979ff] to-[#ff2d7a] bg-clip-text text-transparent">
+              NEXT CLIMB
+            </span>
+            <svg class="absolute -bottom-1 left-0 w-full h-3" viewBox="0 0 400 20" fill="none">
+              <path d="M0 10 Q100 0 200 10 T400 10" stroke="url(#lineGradient)" stroke-width="3" fill="none" stroke-linecap="round" class="route-line"/>
+              <defs>
+                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#00e676" />
+                  <stop offset="50%" stop-color="#2979ff" />
+                  <stop offset="100%" stop-color="#ff2d7a" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </span>
         </h1>
-        <p class="text-xl md:text-2xl text-granite mb-8 animate-fade-in-up animation-delay-300">
-          Your complete guide to indoor climbing gyms across America. Search by location, amenities, and climbing type.
+
+        <!-- Subheadline - SEO preserved -->
+        <p class="text-xl sm:text-2xl text-white/60 mb-3 max-w-xl">
+          The complete directory of indoor climbing gyms across America. 
+          Search by location, grade, or climbing style.
         </p>
 
-        <!-- Hero Search Bar (KEPT WRAPPER) -->
-        <div class="w-full max-w-2xl mx-auto mb-12 animate-fade-in-up animation-delay-450">
-          <SearchBar large={true} placeholder="Search by city, state, or gym name..." />
+        <!-- Search bar -->
+        <div class="mb-6 max-w-2xl">
+          <SearchBar large={true} placeholder="Enter city, state, or gym name..." />
         </div>
 
-        <!-- Quick Stats (KEPT NEW STYLING) -->
-        <div class="grid grid-cols-3 gap-4 mt-12 max-w-2xl mx-auto w-full animate-fade-in-up animation-delay-600">
-          <div class="bg-white/40 backdrop-blur-sm border border-white/50 p-4 rounded-2xl shadow-sm">
-            <div class="text-3xl font-bold text-sage">{gyms.length}</div>
-            <div class="text-sm text-granite">Gyms</div>
+        <!-- Stats -->
+        <div class="flex items-center gap-8 sm:gap-12">
+          <div class="text-center">
+            <div class="font-mono font-bold text-4xl sm:text-5xl text-[#00e676]">{totalGyms}</div>
+            <div class="text-white/40 text-xs font-mono tracking-widest mt-1">GYMS</div>
           </div>
-          <div class="bg-white/40 backdrop-blur-sm border border-white/50 p-4 rounded-2xl shadow-sm">
-            <div class="text-3xl font-bold text-sage">{cities.length}</div>
-            <div class="text-sm text-granite">Cities</div>
+          <div class="text-center">
+            <div class="font-mono font-bold text-4xl sm:text-5xl text-[#2979ff]">{cities.length}</div>
+            <div class="text-white/40 text-xs font-mono tracking-widest mt-1">CITIES</div>
           </div>
-          <div class="bg-white/40 backdrop-blur-sm border border-white/50 p-4 rounded-2xl shadow-sm">
-            <div class="text-3xl font-bold text-sage">
-              {[...new Set(gyms.map(g => g.region))].length}
-            </div>
-            <div class="text-sm text-granite">States</div>
+          <div class="text-center">
+            <div class="font-mono font-bold text-4xl sm:text-5xl text-[#ff2d7a]">{uniqueStates}</div>
+            <div class="text-white/40 text-xs font-mono tracking-widest mt-1">STATES</div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex flex-col items-center gap-0.5">
+      <span class="text-white/30 text-[10px] font-mono">SCROLL TO EXPLORE</span>
+      <svg class="w-4 h-4 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+      </svg>
+    </div>
   </section>
 
+  <!-- Social Proof / As Seen On -->
   <AsSeenOn />
 
-  <!-- Featured Gyms Section (REVERTED) -->
-  <section class="mb-16">
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h2 class="text-3xl font-bold text-granite mb-2">{sectionTitle}</h2>
-        <p class="text-gray-600">
-          {allFeaturedGyms.length >= 3
-            ? "Premium climbing gyms featured on our platform"
-            : "Highly rated gyms from climbers like you"}
-        </p>
-      </div>
-      <a href="/search/" class="text-sage font-medium hover:underline">
-        View All →
-      </a>
+  {/* Featured Gyms Section - Only show if there are featured gyms */}
+  {allFeaturedGyms.length > 0 && (
+  <section class="relative py-12 lg:py-16 bg-[#1a1a1a] overflow-hidden">
+    <!-- Background texture -->
+    <div class="absolute inset-0 opacity-30">
+      <div class="w-full h-full chalk-texture"></div>
     </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {displayGyms.map(gym => (
-        <GymCard gym={gym} />
-      ))}
-    </div>
-  </section>
-
-  <!-- Leaderboard Banner -->
-  <section class="mb-16">
-    <div class="bg-white rounded-2xl border border-sage/20 shadow-md p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-      <div>
-        <h2 class="text-2xl md:text-3xl font-bold text-granite mb-2">See how your city ranks this month</h2>
-        <p class="text-gray-700">
-          Log visits, climb the ranks, and help your community reach the top of the leaderboard.
-        </p>
-      </div>
-      <div class="flex flex-col sm:flex-row gap-3">
-        <a
-          href="/leaderboard/"
-          class="inline-flex items-center justify-center bg-sage text-white px-6 py-3 rounded-xl font-semibold hover:bg-sage/90 transition-colors"
-        >
-          View Leaderboard
-        </a>
-        <a
-          href={`${import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.indoorclimbinggym.com'}/signup`}
-          class="inline-flex items-center justify-center bg-white border-2 border-sage text-sage px-6 py-3 rounded-xl font-semibold hover:bg-sage/10 transition-colors"
-        >
-          Join the Competition
+    
+    <!-- Route lines SVG -->
+    <svg class="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 1200 800" fill="none" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#00e676" />
+          <stop offset="50%" stop-color="#2979ff" />
+          <stop offset="100%" stop-color="#ff2d7a" />
+        </linearGradient>
+      </defs>
+      <path d="M100 150 Q300 100 500 200 T900 180 T1100 250" stroke="url(#routeGradient)" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="8 4" class="route-line"/>
+      <path d="M200 400 Q400 350 600 420 T1000 380" stroke="url(#routeGradient)" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="8 4" class="route-line" style="animation-delay: 0.3s"/>
+      <path d="M150 650 Q350 600 550 680 T950 640" stroke="url(#routeGradient)" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="8 4" class="route-line" style="animation-delay: 0.6s"/>
+    </svg>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Section header -->
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+        <div>
+          <span class="text-[#00e676] text-sm font-mono tracking-widest mb-1 block">THE WALL</span>
+          <h2 class="font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-white">
+            FEATURED
+            <br />
+            <span class="text-white/40">GYMS</span>
+          </h2>
+        </div>
+        
+        <a href="/search/" class="inline-flex items-center gap-2 text-white/60 hover:text-[#00e676] transition-colors font-mono">
+          VIEW ALL ROUTES
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
         </a>
       </div>
-    </div>
-  </section>
-
-  <!-- Why Use IndoorClimbingGym.com Section (REVERTED) -->
-  <section class="bg-white rounded-lg shadow-md p-6 md:p-12 mb-16">
-    <div class="text-center mb-12">
-      <h2 class="text-2xl md:text-3xl font-bold text-granite mb-4 break-words px-2">Why Use IndoorClimbingGym.com?</h2>
-      <p class="text-gray-600 text-base md:text-lg px-2">Your trusted partner for finding the perfect indoor climbing gym</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-      <div class="text-center">
-        <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        </div>
-        <h3 class="font-bold text-granite mb-2 text-lg">Comprehensive Directory</h3>
-        <p class="text-gray-600 text-sm">
-          {gyms.length}+ climbing gyms across {cities.length} cities, from bouldering havens to full-service facilities
-        </p>
+      
+      <!-- Gym cards grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {displayGyms.map((gym, index) => (
+          <div class={index % 2 === 1 ? 'lg:mt-8' : ''}>
+            <GymCard gym={gym} delay={index * 0.1} />
+          </div>
+        ))}
       </div>
-
-      <div class="text-center">
-        <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      
+      <!-- Bottom CTA -->
+      <div class="mt-10 text-center">
+        <a href="/search/" class="btn-jug text-black inline-flex items-center gap-2 text-sm">
+          EXPLORE ALL {totalGyms} GYMS
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
           </svg>
-        </div>
-        <h3 class="font-bold text-granite mb-2 text-lg">Detailed Information</h3>
-        <p class="text-gray-600 text-sm">
-          Hours, prices, amenities, and directions for every gym—everything you need to plan your visit
-        </p>
-      </div>
-
-      <div class="text-center">
-        <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-          </svg>
-        </div>
-        <h3 class="font-bold text-granite mb-2 text-lg">Smart Filters</h3>
-        <p class="text-gray-600 text-sm">
-          Find gyms by climbing type, amenities, budget, and location—exactly what you're looking for
-        </p>
-      </div>
-
-      <div class="text-center">
-        <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-        </div>
-        <h3 class="font-bold text-granite mb-2 text-lg">Expert Guides</h3>
-        <p class="text-gray-600 text-sm">
-          Learn about climbing techniques, gear, gym etiquette, and training tips from experienced climbers
-        </p>
+        </a>
       </div>
     </div>
   </section>
+  )}
 
-  <!-- Explore Climbing Gyms by Region Section (REVERTED) -->
-  <section class="mb-16 bg-gradient-to-br from-sage/10 to-ivory rounded-lg p-8 md:p-12">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-3xl font-bold text-granite mb-4 text-center">Explore Indoor Climbing Gyms by Region</h2>
-      <p class="text-gray-700 leading-relaxed text-center">
-        From the Pacific Northwest's legendary bouldering scene in Seattle to the booming climbing community in Denver,
-        indoor climbing gyms are transforming how people experience vertical sports. Whether you're in Texas's sunny Austin,
-        California's vibrant Los Angeles, or New York City's bustling boroughs, there's a climbing gym waiting for you.
-        Each region brings its unique climbing culture, from competitive bouldering walls to family-friendly facilities with
-        beginner classes and youth programs.
-      </p>
+  <!-- Leaderboard CTA Section -->
+  <section class="relative py-24 bg-[#1a1a1a] overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-[#00e676]/5 via-transparent to-[#2979ff]/5"></div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <!-- Left content -->
+        <div>
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-[#ffea00]/10 rounded-full mb-6">
+            <svg class="w-4 h-4 text-[#ffea00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+            </svg>
+            <span class="text-sm font-mono text-[#ffea00]">COMMUNITY COMPETITION</span>
+          </div>
+          
+          <h2 class="font-display font-bold text-4xl sm:text-5xl text-white mb-4">
+            CLIMB THE
+            <br />
+            <span class="text-[#ffea00]">LEADERBOARD</span>
+          </h2>
+          
+          <p class="text-white/60 text-lg mb-8 max-w-md">
+            Log your gym visits, compete with other cities, and track your climbing progress. Join the monthly competition!
+          </p>
+          
+          <div class="flex flex-wrap gap-4">
+            <a href="/leaderboard/" class="btn-jug text-black inline-flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+              </svg>
+              VIEW LEADERBOARD
+            </a>
+            <a href={`${import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.indoorclimbinggym.com'}/signup`} class="btn-crimp text-white inline-flex items-center gap-2">
+              JOIN NOW
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Right - Preview cards showing what leaderboard offers -->
+        <div class="space-y-4">
+          <div class="text-white/40 text-sm font-mono mb-4">HOW IT WORKS</div>
+          
+          <div class="flex items-center gap-4 p-4 bg-[#2d2d2d] rounded-xl" style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}>
+            <div class="w-10 h-10 flex items-center justify-center font-mono font-bold rounded-lg bg-[#ffea00] text-black">
+              1
+            </div>
+            <div class="flex-1">
+              <div class="font-display font-bold text-white">Log Your Sessions</div>
+              <div class="text-white/40 text-sm font-mono">Track every gym visit</div>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-4 p-4 bg-[#2d2d2d] rounded-xl" style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}>
+            <div class="w-10 h-10 flex items-center justify-center font-mono font-bold rounded-lg bg-white/20 text-white">
+              2
+            </div>
+            <div class="flex-1">
+              <div class="font-display font-bold text-white">Compete With Cities</div>
+              <div class="text-white/40 text-sm font-mono">City vs City rankings</div>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-4 p-4 bg-[#2d2d2d] rounded-xl" style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}>
+            <div class="w-10 h-10 flex items-center justify-center font-mono font-bold rounded-lg bg-[#ff9100] text-black">
+              3
+            </div>
+            <div class="flex-1">
+              <div class="font-display font-bold text-white">Earn Rankings</div>
+              <div class="text-white/40 text-sm font-mono">Climb the explorer board</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Browse by State Section (KEPT NEW STYLING) -->
-  <section class="mb-16">
-    <div class="flex justify-between items-center mb-8">
-      <div>
-        <h2 class="text-3xl font-bold text-granite mb-2">Browse by State</h2>
-        <p class="text-gray-600">Find climbing gyms across America by state</p>
-      </div>
-      <a href="/states/" class="text-sage hover:text-sage/80 font-medium flex items-center gap-2">
-        View All States
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </a>
+
+  <!-- Why Use Section -->
+  <section class="relative py-24 bg-[#1a1a1a]">
+    <div class="absolute inset-0 opacity-15">
+      <div class="w-full h-full chalk-texture"></div>
     </div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="text-[#00e676] text-sm font-mono tracking-widest mb-2 block">WHY CLIMBERS CHOOSE US</span>
+        <h2 class="font-display font-bold text-4xl sm:text-5xl text-white">
+          BUILT BY CLIMBERS,
+          <br />
+          <span class="text-white/40">FOR CLIMBERS</span>
+        </h2>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { icon: 'database', title: 'COMPLETE DIRECTORY', description: `${totalGyms}+ gyms across ${cities.length} cities. From bouldering caves to full-service facilities.`, color: '#ff2d7a' },
+          { icon: 'info', title: 'DETAILED INFO', description: 'Hours, prices, amenities, directions—everything you need to plan your session.', color: '#2979ff' },
+          { icon: 'sliders', title: 'SMART FILTERS', description: 'Find by climbing type, grade, amenities, budget, location. Exactly what you need.', color: '#00e676' },
+          { icon: 'book', title: 'EXPERT GUIDES', description: 'Techniques, gear, etiquette, training tips from experienced climbers.', color: '#ffea00' },
+        ].map((feature, index) => (
+          <div class="relative p-6 bg-gradient-to-br from-[#2d2d2d] to-[#1f1f1f] rounded-2xl group hover:-translate-y-2 transition-transform" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+            <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" style={{ background: `radial-gradient(circle, ${feature.color}20 0%, transparent 70%)` }}></div>
+            <div class="relative w-14 h-14 flex items-center justify-center rounded-xl mb-5" style={{ background: `${feature.color}15`, boxShadow: `0 4px 16px ${feature.color}20` }}>
+              {feature.icon === 'database' && (
+                <svg class="w-7 h-7" style={{ color: feature.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+                </svg>
+              )}
+              {feature.icon === 'info' && (
+                <svg class="w-7 h-7" style={{ color: feature.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              )}
+              {feature.icon === 'sliders' && (
+                <svg class="w-7 h-7" style={{ color: feature.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                </svg>
+              )}
+              {feature.icon === 'book' && (
+                <svg class="w-7 h-7" style={{ color: feature.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+              )}
+            </div>
+            <h3 class="relative font-display font-bold text-white mb-2">{feature.title}</h3>
+            <p class="relative text-white/50 text-sm leading-relaxed">{feature.description}</p>
+            <div class="absolute bottom-0 left-6 right-6 h-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: feature.color }}></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {topStates.map(({ state, count }) => {
-        const stateCode = getStateCode(state);
-        const stateSlug = getStateSlug(state);
-        const fullName = getStateName(state);
-
-        return (
-          <a
-            href={`/${stateSlug}/`}
-            class="group block p-6 bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-sage/20 relative overflow-hidden"
-          >
-            <div class="absolute top-0 right-0 w-24 h-24 bg-sage/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-            
-            <div class="flex items-center justify-between mb-4 relative z-10">
-              <h3 class="text-xl font-bold text-granite group-hover:text-sage transition-colors">
-                {fullName}
-              </h3>
-              <span class="px-3 py-1 text-xs font-bold bg-sage/10 text-sage rounded-full border border-sage/20 uppercase">
+  <!-- Browse by State Section -->
+  <section class="relative py-24 bg-[#1a1a1a] border-y border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-12">
+        <div>
+          <span class="text-[#2979ff] text-sm font-mono tracking-widest mb-2 block">EXPLORE BY REGION</span>
+          <h2 class="font-display font-bold text-4xl sm:text-5xl text-white">
+            BROWSE
+            <br />
+            <span class="text-white/40">BY STATE</span>
+          </h2>
+        </div>
+        
+        <a href="/states/" class="inline-flex items-center gap-2 text-white/60 hover:text-[#2979ff] transition-colors font-mono">
+          ALL {uniqueStates} STATES
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+      
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        {topStates.map(({ state, count }, index) => {
+          const stateCode = getStateCode(state);
+          const stateSlug = getStateSlug(state);
+          const fullName = getStateName(state);
+          const colors = ['#ff2d7a', '#00e676', '#2979ff', '#ffea00', '#ff9100', '#e040fb'];
+          const color = colors[index % colors.length];
+          
+          return (
+            <a
+              href={`/${stateSlug}/`}
+              class="group relative p-5 bg-[#2d2d2d] rounded-xl text-center hover:-translate-y-1 hover:scale-[1.02] transition-all"
+              style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
+            >
+              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full mb-3 font-mono font-bold text-lg" style={{ background: `${color}20`, color: color, boxShadow: `0 4px 16px ${color}20` }}>
                 {stateCode}
+              </div>
+              <div class="font-display font-semibold text-white mb-1 group-hover:text-white transition-colors">{fullName}</div>
+              <div class="flex items-center justify-center gap-1 text-white/40 text-sm">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <span class="font-mono">{count} gyms</span>
+              </div>
+              <div class="absolute bottom-0 left-4 right-4 h-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: color }}></div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- Browse by Category Section -->
+  <section class="relative py-24 bg-[#1a1a1a]">
+    <div class="absolute inset-0 opacity-15">
+      <div class="w-full h-full chalk-texture"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-12">
+        <div>
+          <span class="text-[#ff2d7a] text-sm font-mono tracking-widest mb-2 block">FIND YOUR STYLE</span>
+          <h2 class="font-display font-bold text-4xl sm:text-5xl text-white">
+            BROWSE
+            <br />
+            <span class="text-white/40">BY CATEGORY</span>
+          </h2>
+        </div>
+        
+        <a href="/categories/" class="inline-flex items-center gap-2 text-white/60 hover:text-[#ff2d7a] transition-colors font-mono">
+          ALL CATEGORIES
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {topCategories.map((cat, index) => (
+          <a
+            href={`/categories/${cat.slug}/`}
+            class="group relative p-6 bg-gradient-to-br from-[#2d2d2d] to-[#1f1f1f] rounded-2xl overflow-hidden hover:-translate-y-2 transition-transform"
+            style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}
+          >
+            <div class="absolute top-0 left-0 right-0 h-1" style={{ background: cat.color }}></div>
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 50% 0%, ${cat.color}15 0%, transparent 60%)` }}></div>
+            <div class="relative">
+              <h3 class="font-display font-bold text-xl mb-1" style={{ color: cat.color }}>{cat.name.toUpperCase()}</h3>
+              <p class="text-white/50 text-sm mb-4">{cat.description}</p>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold" style={{ background: `${cat.color}15`, color: cat.color }}>
+                {cat.count} GYMS
+              </div>
+            </div>
+            <svg class="absolute bottom-6 right-6 w-5 h-5 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0" style={{ color: cat.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+
+  <!-- How It Works Section -->
+  <section class="relative py-24 bg-[#1a1a1a] border-y border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <span class="text-[#ffea00] text-sm font-mono tracking-widest mb-2 block">THE BETA</span>
+        <h2 class="font-display font-bold text-4xl sm:text-5xl text-white">
+          HOW IT
+          <br />
+          <span class="text-white/40">WORKS</span>
+        </h2>
+      </div>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        {[
+          { number: '01', icon: 'search', title: 'FIND YOUR GYM', description: 'Browse our directory of climbing gyms in your city and nearby areas.', color: '#ff2d7a' },
+          { number: '02', icon: 'sliders', title: 'CHECK AMENITIES', description: 'Filter by climbing type, grade, amenities, or budget.', color: '#00e676' },
+          { number: '03', icon: 'star', title: 'READ REVIEWS', description: 'See ratings and reviews from real climbers in the community.', color: '#2979ff' },
+          { number: '04', icon: 'rocket', title: 'SEND IT', description: 'Most gyms offer day passes and intro classes for first-timers.', color: '#ffea00' },
+        ].map((step, index) => (
+          <div class="relative text-center">
+            {index < 3 && (
+              <div class="hidden lg:block absolute top-16 left-[60%] w-[80%] h-px bg-gradient-to-r from-white/10 to-transparent"></div>
+            )}
+            <div class="relative inline-flex items-center justify-center mb-6">
+              <div class="w-20 h-20 flex items-center justify-center rounded-2xl" style={{ background: `linear-gradient(145deg, ${step.color}20, ${step.color}10)`, boxShadow: `0 8px 32px ${step.color}20` }}>
+                {step.icon === 'search' && (
+                  <svg class="w-8 h-8" style={{ color: step.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                  </svg>
+                )}
+                {step.icon === 'sliders' && (
+                  <svg class="w-8 h-8" style={{ color: step.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                  </svg>
+                )}
+                {step.icon === 'star' && (
+                  <svg class="w-8 h-8" style={{ color: step.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                  </svg>
+                )}
+                {step.icon === 'rocket' && (
+                  <svg class="w-8 h-8" style={{ color: step.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                )}
+              </div>
+              <span class="absolute -top-2 -right-2 w-8 h-8 flex items-center justify-center rounded-full font-mono font-bold text-xs" style={{ background: step.color, color: step.color === '#ffea00' ? '#000' : '#fff' }}>
+                {step.number}
               </span>
             </div>
-            <div class="flex items-center gap-2 text-gray-500 relative z-10">
-              <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-              <span>{count} {count === 1 ? 'Gym' : 'Gyms'}</span>
-            </div>
-          </a>
-        );
-      })}
-    </div>
-  </section>
-
-  <!-- Categories Section (REVERTED) -->
-  <section class="mb-16">
-    <div class="flex justify-between items-center mb-8">
-      <div>
-        <h2 class="text-3xl font-bold text-granite mb-2">Browse by Category</h2>
-        <p class="text-gray-600">Find gyms that match your specific needs</p>
+            <h3 class="font-display font-bold text-white mb-2">{step.title}</h3>
+            <p class="text-white/50 text-sm leading-relaxed">{step.description}</p>
+          </div>
+        ))}
       </div>
-      <a href="/categories/" class="text-sage hover:text-sage/80 font-medium flex items-center gap-2">
-        View All Categories
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </a>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {topCategories.slice(0, 8).map(category => (
-        <a
-          href={`/categories/${category.slug}/1`}
-          class="group block p-6 bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-sage/20 relative overflow-hidden"
-        >
-          <div class="absolute top-0 right-0 w-24 h-24 bg-sage/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-          
-          <div class="flex items-center justify-between mb-4 relative z-10">
-            <h3 class="text-xl font-bold text-granite group-hover:text-sage transition-colors">
-              {category.name}
-            </h3>
-            <span class="px-3 py-1 text-xs font-bold bg-sage/10 text-sage rounded-full border border-sage/20 uppercase">
-              {category.count} {category.count === 1 ? 'Gym' : 'Gyms'}
-            </span>
-          </div>
-          <p class="text-gray-500 mb-4 relative z-10 leading-relaxed text-sm">{category.description}</p>
-          <div class="flex items-center text-sage font-semibold relative z-10 group-hover:gap-2 transition-all text-sm">
-            <span>Explore Gym</span>
-            <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </div>
+      
+      <div class="text-center">
+        <a href="/blog/beginners-guide-to-climbing-gyms/" class="btn-crimp text-white inline-flex items-center gap-2">
+          READ THE BEGINNER'S GUIDE
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
         </a>
-      ))}
-    </div>
-  </section>
-
-  <!-- Getting Started Section (REVERTED) -->
-  <section class="mb-16 bg-white rounded-lg shadow-md p-8 md:p-12">
-    <div class="text-center mb-10">
-      <h2 class="text-3xl font-bold text-granite mb-4">New to Indoor Climbing?</h2>
-      <p class="text-gray-600 text-lg">We make it easy to start your climbing journey</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-      <div class="text-center">
-        <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold text-sage">
-          1
-        </div>
-        <h3 class="font-bold text-granite mb-2">Find Your Gym</h3>
-        <p class="text-gray-600 text-sm">
-          Browse our directory of indoor climbing gyms in your city and nearby areas
-        </p>
       </div>
-
-      <div class="text-center">
-        <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold text-sage">
-          2
-        </div>
-        <h3 class="font-bold text-granite mb-2">Check Amenities</h3>
-        <p class="text-gray-600 text-sm">
-          Filter by bouldering, top rope, lead climbing, or specialized training facilities
-        </p>
-      </div>
-
-      <div class="text-center">
-        <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold text-sage">
-          3
-        </div>
-        <h3 class="font-bold text-granite mb-2">Read Reviews</h3>
-        <p class="text-gray-600 text-sm">
-          See ratings and reviews from real climbers to find the best fit for you
-        </p>
-      </div>
-
-      <div class="text-center">
-        <div class="w-16 h-16 bg-sage/20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold text-sage">
-          4
-        </div>
-        <h3 class="font-bold text-granite mb-2">Visit & Climb</h3>
-        <p class="text-gray-600 text-sm">
-          Most gyms offer day passes and intro classes—perfect for first-timers
-        </p>
-      </div>
-    </div>
-
-    <div class="text-center">
-      <a
-        href="/blog/beginners-guide-to-climbing-gyms/"
-        class="inline-block bg-sage text-white px-8 py-3 rounded-lg font-bold hover:bg-sage/90 transition-colors"
-      >
-        Read Our Beginner's Guide
-      </a>
     </div>
   </section>
 
   <!-- Tools Section -->
-  <section class="mb-16 bg-gradient-to-br from-sage/10 to-ivory rounded-lg p-8">
-    <div class="mb-8">
-      <h2 class="text-3xl font-bold text-granite mb-2">Climbing Tools & Calculators</h2>
-      <p class="text-gray-600">Helpful tools for climbers of all levels</p>
+  <section class="relative py-24 bg-[#1a1a1a]">
+    <div class="absolute inset-0 opacity-15">
+      <div class="w-full h-full chalk-texture"></div>
     </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <a
-        href="/tools/bouldering-grade-conversion/"
-        class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow group"
-      >
-        <div class="flex items-center gap-3 mb-3">
-          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-          <h3 class="font-bold text-granite group-hover:text-sage transition-colors text-lg">
-            Bouldering Grade Converter
-          </h3>
-        </div>
-        <p class="text-sm text-gray-600">
-          Convert between V-scale, Font, and other bouldering grade systems instantly
-        </p>
-      </a>
-
-      <a
-        href="/tools/sport-climbing-grade-conversion/"
-        class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow group"
-      >
-        <div class="flex items-center gap-3 mb-3">
-          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-          </svg>
-          <h3 class="font-bold text-granite group-hover:text-sage transition-colors text-lg">
-            Sport Grade Converter
-          </h3>
-        </div>
-        <p class="text-sm text-gray-600">
-          Convert between Yosemite Decimal, French, and other sport climbing grades
-        </p>
-      </a>
-
-      <a
-        href="/tools/cost-per-climb-calculator/"
-        class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow group"
-      >
-        <div class="flex items-center gap-3 mb-3">
-          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <h3 class="font-bold text-granite group-hover:text-sage transition-colors text-lg">
-            Cost Per Climb Calculator
-          </h3>
-        </div>
-        <p class="text-sm text-gray-600">
-          Calculate your actual cost per visit to see if a membership saves you money
-        </p>
-      </a>
-
-      <a
-        href="/tools/training-load-recovery-planner/"
-        class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow group"
-      >
-        <div class="flex items-center gap-3 mb-3">
-          <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19V5m0 14h16M8 17v-3m4 3v-7m4 7v-5m4 5V8" />
-          </svg>
-          <h3 class="font-bold text-granite group-hover:text-sage transition-colors text-lg">
-            Training Load Planner
-          </h3>
-        </div>
-        <p class="text-sm text-gray-600">
-          Track minutes×RPE, compare acute vs chronic load, and watch your ACR trend
-        </p>
-      </a>
-    </div>
-
-    <div class="text-center mt-8">
-      <a
-        href="/tools/"
-        class="inline-block text-sage font-medium hover:underline"
-      >
-        View all tools →
-      </a>
-    </div>
-  </section>
-
-  <!-- FAQ Section (KEPT NEW ACCORDION STYLING) -->
-  <section class="mb-12">
-    <h2 class="text-3xl font-bold text-granite mb-8">
-      Frequently Asked Questions
-    </h2>
-    <div class="space-y-4">
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-        <details class="group">
-          <summary class="flex justify-between items-center font-bold text-granite cursor-pointer p-6 list-none text-lg">
-            <span>How much does it cost to climb at an indoor climbing gym?</span>
-            <span class="transition group-open:rotate-180">
-              <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
-            </span>
-          </summary>
-          <div class="text-gray-600 px-6 pb-6 leading-relaxed">
-            Day passes typically range from $15-$30, depending on the facility and location. Monthly memberships usually cost
-            between $50-$100, with many gyms offering student discounts and family packages. Most gyms also offer punch cards
-            and multi-visit packages for better value.
-          </div>
-        </details>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-12">
+        <span class="text-[#00e676] text-sm font-mono tracking-widest mb-2 block">THE RACK</span>
+        <h2 class="font-display font-bold text-4xl sm:text-5xl text-white">
+          CLIMBING
+          <br />
+          <span class="text-white/40">TOOLS</span>
+        </h2>
       </div>
-
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-        <details class="group">
-          <summary class="flex justify-between items-center font-bold text-granite cursor-pointer p-6 list-none text-lg">
-            <span>What should I wear to an indoor climbing gym?</span>
-            <span class="transition group-open:rotate-180">
-              <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
-            </span>
-          </summary>
-          <div class="text-gray-600 px-6 pb-6 leading-relaxed">
-            Wear comfortable athletic clothing that allows full range of motion—think yoga pants, athletic shorts, or joggers
-            with a t-shirt or tank top. Climbing shoes are essential (available to rent at most gyms for $3-$7). Avoid baggy
-            clothes that might catch on holds, and remove jewelry before climbing.
-          </div>
-        </details>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          { name: 'BOULDERING GRADE CONVERTER', description: 'Convert V-scale to Font and back. Know what you\'re climbing.', icon: 'chart', href: '/tools/bouldering-grade-conversion/', color: '#ff2d7a' },
+          { name: 'SPORT GRADE CONVERTER', description: 'YDS, French, UIAA—translate any grade system instantly.', icon: 'trending', href: '/tools/sport-climbing-grade-conversion/', color: '#2979ff' },
+          { name: 'COST PER CLIMB CALCULATOR', description: 'Figure out if that membership is actually worth it.', icon: 'calc', href: '/tools/cost-per-climb-calculator/', color: '#00e676' },
+          { name: 'TRAINING LOAD PLANNER', description: 'Track volume, intensity, and recovery. Train smarter.', icon: 'activity', href: '/tools/training-load-recovery-planner/', color: '#ffea00' },
+        ].map((tool, index) => (
+          <a
+            href={tool.href}
+            class="group relative p-6 bg-gradient-to-br from-[#2d2d2d] to-[#1f1f1f] rounded-2xl hover:-translate-y-2 transition-transform"
+            style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}
+          >
+            <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 30% 30%, ${tool.color}15 0%, transparent 60%)` }}></div>
+            <div class="relative w-12 h-12 flex items-center justify-center rounded-xl mb-4" style={{ background: `${tool.color}15` }}>
+              {tool.icon === 'chart' && (
+                <svg class="w-6 h-6" style={{ color: tool.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+              )}
+              {tool.icon === 'trending' && (
+                <svg class="w-6 h-6" style={{ color: tool.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+              )}
+              {tool.icon === 'calc' && (
+                <svg class="w-6 h-6" style={{ color: tool.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+              )}
+              {tool.icon === 'activity' && (
+                <svg class="w-6 h-6" style={{ color: tool.color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+              )}
+            </div>
+            <h3 class="relative font-display font-bold text-white text-sm mb-2">{tool.name}</h3>
+            <p class="relative text-white/50 text-sm leading-relaxed mb-4">{tool.description}</p>
+            <div class="relative inline-flex items-center gap-1 text-sm font-mono font-bold opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: tool.color }}>
+              USE TOOL
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </div>
+          </a>
+        ))}
       </div>
-
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-        <details class="group">
-          <summary class="flex justify-between items-center font-bold text-granite cursor-pointer p-6 list-none text-lg">
-            <span>Do I need experience to start indoor rock climbing?</span>
-            <span class="transition group-open:rotate-180">
-              <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
-            </span>
-          </summary>
-          <div class="text-gray-600 px-6 pb-6 leading-relaxed">
-            No experience needed! Indoor climbing gyms welcome beginners and most offer introductory classes, belay certification
-            courses, and routes marked by difficulty level. Staff members are always available to help you get started safely.
-            Many gyms require a brief orientation or safety video for first-time visitors.
-          </div>
-        </details>
-      </div>
-
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-        <details class="group">
-          <summary class="flex justify-between items-center font-bold text-granite cursor-pointer p-6 list-none text-lg">
-            <span>What's the difference between bouldering and rope climbing?</span>
-            <span class="transition group-open:rotate-180">
-              <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
-            </span>
-          </summary>
-          <div class="text-gray-600 px-6 pb-6 leading-relaxed">
-            Bouldering involves climbing shorter walls (10-15 feet) without ropes, with padded mats below for protection.
-            Rope climbing uses harnesses and belay systems for climbing taller walls (30-60 feet). Bouldering focuses on
-            powerful, technical moves, while rope climbing emphasizes endurance and route-finding over longer distances.
-          </div>
-        </details>
-      </div>
-
-      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-        <details class="group">
-          <summary class="flex justify-between items-center font-bold text-granite cursor-pointer p-6 list-none text-lg">
-            <span>Can I go to a climbing gym alone?</span>
-            <span class="transition group-open:rotate-180">
-              <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
-            </span>
-          </summary>
-          <div class="text-gray-600 px-6 pb-6 leading-relaxed">
-            Absolutely! Bouldering is perfect for solo climbers since no partner is needed. For rope climbing, many gyms
-            offer auto-belay systems that let you climb alone, or have staff-run belay services. Climbing gyms are also
-            great places to meet other climbers and make new friends who share your passion.
-          </div>
-        </details>
+      
+      <div class="mt-8 text-center">
+        <a href="/tools/" class="inline-flex items-center gap-2 text-white/50 hover:text-[#00e676] transition-colors font-mono">
+          VIEW ALL TOOLS
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- CTA Section (REVERTED) -->
-  <section class="text-center bg-sage rounded-lg p-12 text-white">
-    <h2 class="text-3xl font-bold mb-4">Ready to Find Your Next Climb?</h2>
-    <p class="text-lg mb-8 text-white/90">
-      Explore hundreds of climbing gyms and start your adventure today
-    </p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-      <a
-        href="/search/"
-        class="inline-block bg-white text-sage px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
-      >
-        Advanced Search
-      </a>
-      <a
-        href="/blog/"
-        class="inline-block bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white/10 transition-colors"
-      >
-        Read Our Guides
-      </a>
+  <!-- FAQ Section -->
+  <section class="relative py-24 bg-[#1a1a1a] border-y border-white/5">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <span class="text-[#2979ff] text-sm font-mono tracking-widest mb-2 block">ASK THE SETTER</span>
+        <h2 class="font-display font-bold text-4xl sm:text-5xl text-white">
+          FREQUENTLY ASKED
+          <br />
+          <span class="text-white/40">QUESTIONS</span>
+        </h2>
+      </div>
+      
+      <div class="space-y-4">
+        {[
+          { q: 'How much does it cost to climb at an indoor gym?', a: 'Day passes typically range from $15-$30 depending on location and facility. Monthly memberships usually cost $50-$100, with most gyms offering student discounts and family packages. Many also offer punch cards for better value.' },
+          { q: 'What should I wear to an indoor climbing gym?', a: 'Wear comfortable athletic clothing that allows full range of motion—yoga pants, athletic shorts, or joggers with a t-shirt or tank top. Climbing shoes are essential (rentals typically $3-$7). Avoid baggy clothes that might catch on holds, and remove jewelry before climbing.' },
+          { q: 'Do I need experience to start indoor rock climbing?', a: 'No experience needed! Indoor climbing gyms welcome beginners and most offer introductory classes, belay certification courses, and routes marked by difficulty level. Staff members are always available to help you get started safely.' },
+          { q: "What's the difference between bouldering and rope climbing?", a: 'Bouldering involves climbing shorter walls (10-15 feet) without ropes, with padded mats below for protection. Rope climbing uses harnesses and belay systems for taller walls (30-60 feet). Bouldering focuses on powerful, technical moves while rope climbing emphasizes endurance.' },
+          { q: 'Can I go to a climbing gym alone?', a: 'Absolutely! Bouldering is perfect for solo climbers since no partner is needed. For rope climbing, many gyms offer auto-belay systems that let you climb alone. Climbing gyms are also great places to meet other climbers and make new friends.' },
+        ].map((faq, index) => (
+          <details class="group border border-white/10 rounded-xl overflow-hidden bg-[#1f1f1f] hover:border-white/20 transition-colors">
+            <summary class="w-full flex items-center justify-between p-5 text-left cursor-pointer list-none">
+              <span class="font-display font-semibold text-white pr-4">{faq.q}</span>
+              <svg class="w-5 h-5 text-white/50 transform group-open:rotate-180 transition-transform flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </summary>
+            <div class="px-5 pb-5 text-white/60 leading-relaxed">
+              {faq.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA Section -->
+  <section class="relative py-24 lg:py-32 bg-[#1a1a1a] overflow-hidden">
+    <div class="absolute inset-0">
+      <div class="absolute inset-0 bg-gradient-to-br from-[#00e676]/10 via-transparent to-[#2979ff]/10"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-[#1a1a1a]"></div>
+    </div>
+    <div class="absolute inset-0 opacity-20 chalk-texture"></div>
+    
+    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="font-display font-bold text-5xl sm:text-6xl lg:text-7xl text-white mb-6">
+        READY TO
+        <br />
+        <span class="bg-gradient-to-r from-[#00e676] via-[#2979ff] to-[#ff2d7a] bg-clip-text text-transparent">
+          SEND IT?
+        </span>
+      </h2>
+      
+      <p class="text-xl text-white/60 mb-10 max-w-xl mx-auto">
+        Explore hundreds of climbing gyms across America and start your adventure today.
+      </p>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/search/" class="btn-jug text-black inline-flex items-center justify-center gap-2 text-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          FIND YOUR GYM
+        </a>
+        <a href="/blog/" class="btn-crimp text-white inline-flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+          </svg>
+          READ GUIDES
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+      
+      <div class="mt-16 flex items-center justify-center gap-12 text-white/30">
+        <div class="text-center">
+          <div class="font-mono font-bold text-3xl text-[#00e676]">{totalGyms}</div>
+          <div class="text-sm font-mono">GYMS</div>
+        </div>
+        <div class="w-px h-10 bg-white/10"></div>
+        <div class="text-center">
+          <div class="font-mono font-bold text-3xl text-[#2979ff]">{cities.length}</div>
+          <div class="text-sm font-mono">CITIES</div>
+        </div>
+        <div class="w-px h-10 bg-white/10"></div>
+        <div class="text-center">
+          <div class="font-mono font-bold text-3xl text-[#ff2d7a]">{uniqueStates}</div>
+          <div class="text-sm font-mono">STATES</div>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  /* Custom Animations (KEPT) */
-  @keyframes blob {
-    0% { transform: translate(0px, 0px) scale(1); }
-    33% { transform: translate(30px, -50px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-    100% { transform: translate(0px, 0px) scale(1); }
-  }
-  .animate-blob {
-    animation: blob 7s infinite;
-  }
-  .animation-delay-2000 {
-    animation-delay: 2s;
-  }
-  .animation-delay-4000 {
-    animation-delay: 4s;
+  /* Static styles (animations removed for performance) */
+  .text-glow {
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
   }
 
-  /* Fade In Up Animation (KEPT) */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 40px, 0);
-    }
-    to {
-      opacity: 1;
-      transform: translate3d(0, 0, 0);
-    }
+  .chalk-texture {
+    background-image: url('/chalk-texture.jpg');
+    background-size: cover;
+    mix-blend-mode: overlay;
   }
-  .animate-fade-in-up {
-    animation: fadeInUp 0.8s ease-out forwards;
-    opacity: 0;
-  }
-  .animation-delay-150 { animation-delay: 0.15s; }
-  .animation-delay-300 { animation-delay: 0.3s; }
-  .animation-delay-450 { animation-delay: 0.45s; }
-  .animation-delay-600 { animation-delay: 0.6s; }
 </style>

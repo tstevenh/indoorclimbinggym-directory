@@ -22,15 +22,15 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lati
 <div class="gym-map-container">
   <div
     id="gym-map"
-    class="h-64 rounded-lg overflow-hidden border-2 border-gray-200 relative"
+    class="h-64 rounded-lg overflow-hidden border border-white/10 relative"
     data-lat={latitude}
     data-lng={longitude}
     data-name={gymName}
     data-directions={directionsUrl}
   >
     <!-- Loading state -->
-    <div class="absolute inset-0 bg-gray-100 flex items-center justify-center">
-      <div class="text-gray-400 text-sm">Loading map...</div>
+    <div class="absolute inset-0 bg-[#1f1f1f] flex items-center justify-center">
+      <div class="text-white/40 text-sm">Loading map...</div>
     </div>
   </div>
 </div>
@@ -70,7 +70,7 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lati
 
     // Validate coordinates
     if (lat === 0 && lng === 0) {
-      mapElement.innerHTML = '<div class="h-full flex items-center justify-center bg-gray-100 text-gray-500 text-sm">Map location unavailable</div>';
+      mapElement.innerHTML = '<div class="h-full flex items-center justify-center bg-[#1f1f1f] text-white/50 text-sm">Map location unavailable</div>';
       return;
     }
 
@@ -89,12 +89,12 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lati
       maxZoom: 19,
     }).addTo(map);
 
-    // Custom marker HTML with sage green color
+    // Custom marker HTML with green accent color
     const customIcon = L.divIcon({
       className: 'custom-gym-marker',
       html: `
         <div style="
-          background-color: #98a48b;
+          background-color: #00e676;
           width: 32px;
           height: 32px;
           border-radius: 50% 50% 50% 0;
@@ -124,15 +124,15 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lati
     // Add popup with gym name and directions link
     const popupContent = `
       <div style="text-align: center; min-width: 150px;">
-        <strong style="display: block; margin-bottom: 8px; color: #555;">${name}</strong>
+        <strong style="display: block; margin-bottom: 8px; color: #ffffff;">${name}</strong>
         <a
           href="${directionsUrl}"
           target="_blank"
           rel="noopener noreferrer"
           style="
             display: inline-block;
-            background-color: #98a48b;
-            color: white;
+            background-color: #00e676;
+            color: #1a1a1a;
             padding: 6px 12px;
             border-radius: 6px;
             text-decoration: none;
@@ -174,10 +174,21 @@ const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lati
   :global(.leaflet-popup-content-wrapper) {
     border-radius: 8px;
     padding: 4px;
+    background-color: #1f1f1f;
+    color: #ffffff;
   }
 
   :global(.leaflet-popup-content) {
     margin: 8px;
+    color: #ffffff;
+  }
+
+  :global(.leaflet-popup-tip) {
+    background-color: #1f1f1f;
+  }
+
+  :global(.leaflet-container a.leaflet-popup-close-button) {
+    color: #ffffff;
   }
 
   /* Responsive adjustments */

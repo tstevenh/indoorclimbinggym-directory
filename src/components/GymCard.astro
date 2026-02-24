@@ -1,7 +1,7 @@
 ---
 /**
- * GymCard Component
- * Reusable card for displaying gym listings in grids
+ * GymCard Component - HoldCard Style
+ * Replicated from app 2/ design
  */
 import OptimizedImage from './OptimizedImage.astro';
 import { IMAGE_SIZES } from '../utils/imageUtils';
@@ -24,130 +24,165 @@ interface Props {
     verified?: boolean;
     claimed?: boolean;
   };
-  showCity?: boolean; // Show city name (useful on state pages)
+  showCity?: boolean;
+  delay?: number;
 }
 
-const { gym, showCity = true } = Astro.props;
+const { gym, showCity = true, delay = 0 } = Astro.props;
 
-// Parse climbing types
 const climbingTypes = gym.climbing_types?.split('|') || [];
-const climbingTypesDisplay = climbingTypes
-  .map(type => type.replace(/_/g, ' '))
-  .join(', ');
-
-// Parse amenities (show first 3)
 const allAmenities = gym.amenities?.split('|') || [];
 const amenitiesList = allAmenities.slice(0, 3);
-const remainingCount = allAmenities.length - 3;
 
-// Format price
-const priceDisplay = gym.day_pass_price_local
-  ? `$${gym.day_pass_price_local}`
-  : 'View pricing';
+const priceDisplay = gym.day_pass_price_local ? `$${gym.day_pass_price_local}` : 'View';
+
+// Random hold shape based on gym id for variety
+const shapes = ['jug', 'crimp', 'sloper', 'pinch'];
+const shape = shapes[gym.id % 4];
+
+// Grade style based on rating
+const getGradeStyle = (rating: number) => {
+  if (rating >= 4.8) return { color: '#ff1744', tape: 'tape-red' };
+  if (rating >= 4.5) return { color: '#2979ff', tape: 'tape-blue' };
+  if (rating >= 4.0) return { color: '#00e676', tape: 'tape-green' };
+  return { color: '#ff2d7a', tape: 'tape-pink' };
+};
+
+const gradeStyle = getGradeStyle(gym.rating || 0);
+
+const shapeClasses = {
+  jug: 'rounded-[30%_70%_70%_30%/30%_30%_70%_70%]',
+  crimp: 'rounded-[8px_20px_8px_20px]',
+  sloper: 'rounded-[50%]',
+  pinch: 'rounded-[40%_40%_60%_60%/60%_60%_40%_40%]',
+};
 ---
 
-<article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
-  <!-- Image -->
-  <a href={`/gyms/${gym.slug}/`} class="block relative h-48 overflow-hidden">
-    <OptimizedImage
-      src={gym.photo}
-      alt={`${gym.name} climbing gym in ${gym.city}`}
-      width={IMAGE_SIZES.CARD_THUMBNAIL.width}
-      height={IMAGE_SIZES.CARD_THUMBNAIL.height}
-      srcsetSizes={IMAGE_SIZES.CARD_THUMBNAIL.sizes}
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-      quality={IMAGE_SIZES.CARD_THUMBNAIL.quality}
-      loading="lazy"
-      class="hover:scale-105 transition-transform duration-300"
-    />
-    {gym.featured && (
-      <span class="absolute top-3 left-3 bg-sage text-white px-3 py-1 rounded-full text-sm font-medium z-10">
-        Featured
-      </span>
-    )}
-    {gym.beginner_friendly && (
-      <span class="absolute top-3 right-3 bg-sage text-white px-3 py-1 rounded-full text-sm font-medium z-10">
-        Beginner Friendly
-      </span>
-    )}
-  </a>
-
-  <!-- Content -->
-  <div class="p-5">
-    <!-- Title & Location -->
-    <a href={`/gyms/${gym.slug}/`} class="block">
-      <h3 class="text-xl font-bold text-granite hover:text-sage transition-colors mb-1">
+<a
+  href={`/gyms/${gym.slug}/`}
+  class="group block relative"
+  style={`animation-delay: ${delay}s`}
+>
+  <!-- Glow effect behind hold -->
+  <div 
+    class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"
+    style={{ background: `radial-gradient(circle, ${gradeStyle.color}30 0%, transparent 70%)` }}
+  ></div>
+  
+  <!-- Main hold card -->
+  <div 
+    class={`relative overflow-hidden bg-gradient-to-br from-[#2d2d2d] to-[#1a1a1a] border border-white/5 transition-all duration-300 group-hover:border-white/20 group-hover:shadow-2xl ${shapeClasses[shape]}`}
+    style={{
+      boxShadow: '0 16px 48px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.05)',
+    }}
+  >
+    <!-- Grade tape strip at top -->
+    <div 
+      class={`h-1.5 w-full ${gradeStyle.tape}`}
+      style={{ clipPath: 'polygon(0 0, 100% 0, 95% 100%, 5% 100%)' }}
+    ></div>
+    
+    <!-- Image -->
+    <div class="relative aspect-[4/3] overflow-hidden">
+      <OptimizedImage
+        src={gym.photo}
+        alt={`${gym.name} climbing gym`}
+        width={IMAGE_SIZES.CARD_THUMBNAIL.width}
+        height={IMAGE_SIZES.CARD_THUMBNAIL.height}
+        srcsetSizes={IMAGE_SIZES.CARD_THUMBNAIL.sizes}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        quality={IMAGE_SIZES.CARD_THUMBNAIL.quality}
+        loading="lazy"
+        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent"></div>
+      
+      <!-- Price badge -->
+      <div class="absolute top-3 right-3">
+        <div 
+          class={`px-3 py-1 font-mono font-bold text-sm ${gradeStyle.tape}`}
+          style={{ clipPath: 'polygon(10% 0, 100% 0, 90% 100%, 0% 100%)' }}
+        >
+          {priceDisplay}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="p-4">
+      <!-- Title -->
+      <h3 class="font-display font-bold text-lg text-white mb-1 line-clamp-1 group-hover:text-[#00e676] transition-colors">
         {gym.name}
       </h3>
-    </a>
-    {showCity && (
-      <p class="text-sm text-gray-600 mb-3">
-        {gym.city}, {gym.region}
-      </p>
-    )}
-
-    <!-- Rating -->
-    <div class="flex items-center gap-2 mb-3">
-      <div class="flex items-center">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <svg
-            class={`w-4 h-4 ${i < Math.floor(gym.rating_overall || gym.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-          </svg>
-        ))}
+      
+      <!-- Location -->
+      <div class="flex items-center gap-1.5 text-white/50 text-sm mb-3">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <span class="line-clamp-1">{gym.city}, {gym.region}</span>
       </div>
-      <span class="text-sm font-medium text-gray-700">{(gym.rating_overall || gym.rating || 0).toFixed(1)}</span>
-    </div>
-
-    <!-- Climbing Types -->
-    {climbingTypesDisplay && (
-      <div class="mb-3">
-        <p class="text-xs font-semibold text-granite uppercase tracking-wide mb-1">
-          Climbing Types
-        </p>
-        <p class="text-sm text-gray-600 capitalize">{climbingTypesDisplay}</p>
+      
+      <!-- Rating -->
+      <div class="flex items-center gap-2 mb-3">
+        <div class="flex items-center gap-0.5">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <svg
+              class={`w-3.5 h-3.5 ${i < Math.floor(gym.rating || 0) ? 'text-[#ffea00] fill-[#ffea00]' : 'text-white/20'}`}
+              viewBox="0 0 20 20"
+            >
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          ))}
+        </div>
+        <span class="text-sm font-mono text-white/70">{(gym.rating || 0).toFixed(1)}</span>
       </div>
-    )}
-
-    <!-- Amenities Tags -->
-    {amenitiesList.length > 0 && (
-      <div class="flex flex-wrap gap-2 mb-4">
-        {amenitiesList.map(amenity => (
-          <span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded capitalize">
+      
+      <!-- Climbing types as colored dots -->
+      <div class="flex items-center gap-2 mb-3">
+        <span class="text-xs text-white/40 font-mono">TYPES:</span>
+        <div class="flex gap-1.5">
+          {climbingTypes.slice(0, 3).map((type) => (
+            <span
+              class={`w-3 h-3 rounded-full ${
+                type === 'bouldering' ? 'bg-[#ff2d7a]' :
+                type === 'top_rope' ? 'bg-[#2979ff]' :
+                type === 'lead' ? 'bg-[#ff1744]' :
+                'bg-[#00e676]'
+              }`}
+              title={type}
+            ></span>
+          ))}
+        </div>
+      </div>
+      
+      <!-- Amenities -->
+      <div class="flex flex-wrap gap-1.5">
+        {amenitiesList.slice(0, 2).map((amenity) => (
+          <span class="px-2 py-0.5 bg-white/5 rounded text-xs text-white/50 capitalize">
             {amenity.replace(/_/g, ' ')}
           </span>
         ))}
-        {remainingCount > 0 && (
-          <span class="text-xs bg-sage/10 text-sage px-2 py-1 rounded font-medium">
-            +{remainingCount} more
-          </span>
+        {amenitiesList.length > 2 && (
+          <span class="px-2 py-0.5 text-xs text-white/40">+{amenitiesList.length - 2}</span>
         )}
       </div>
-    )}
-
-    <!-- Footer: Price & CTA -->
-    <div class="flex items-center justify-between pt-4 border-t border-gray-200">
-      <div>
-        <p class="text-xs text-gray-500 uppercase tracking-wide">Day Pass</p>
-        <p class="text-lg font-bold text-sage">{priceDisplay}</p>
-      </div>
-      <a
-        href={`/gyms/${gym.slug}/`}
-        class="bg-sage text-white px-4 py-2 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
-      >
-        View Gym
-      </a>
+    </div>
+    
+    <!-- Hover indicator -->
+    <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+      <svg class="w-5 h-5 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+      </svg>
     </div>
   </div>
-</article>
+</a>
 
 <style>
-  .line-clamp-2 {
+  .line-clamp-1 {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }

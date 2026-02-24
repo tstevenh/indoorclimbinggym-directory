@@ -1,6 +1,6 @@
 ---
 /**
- * HelpfulGuides Component
+ * HelpfulGuides Component - Dark Theme
  * Links to relevant blog posts based on context
  */
 
@@ -39,20 +39,20 @@ const visibleGuides = guides.filter(g => g.showIf).slice(0, 3);
 ---
 
 {visibleGuides.length > 0 && (
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h3 class="font-bold text-granite mb-4">Helpful Guides</h3>
+  <div class="bg-[#1f1f1f] rounded-2xl border border-white/10 p-6" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+    <h3 class="font-display font-bold text-white mb-4">Helpful Guides</h3>
     <div class="space-y-3">
       {visibleGuides.map((guide) => (
         <a
           href={guide.url}
-          class="block p-3 bg-gray-50 rounded-lg hover:bg-sage/10 transition-colors group"
+          class="block p-3 bg-[#2d2d2d] rounded-xl border border-white/5 hover:border-[#00e676]/30 transition-all group"
         >
           <div class="flex items-center justify-between">
-            <span class="text-sm font-medium text-granite group-hover:text-sage">
+            <span class="text-sm font-medium text-white group-hover:text-[#00e676] transition-colors">
               {guide.title}
             </span>
             <svg
-              class="w-4 h-4 text-gray-400 group-hover:text-sage"
+              class="w-4 h-4 text-white/20 group-hover:text-[#00e676] transition-colors"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -70,7 +70,7 @@ const visibleGuides = guides.filter(g => g.showIf).slice(0, 3);
     </div>
     <a
       href="/blog/"
-      class="block mt-4 text-sage text-sm font-medium hover:underline"
+      class="block mt-4 text-[#00e676] text-sm font-medium hover:text-[#00c853] transition-colors font-mono"
     >
       View all guides →
     </a>

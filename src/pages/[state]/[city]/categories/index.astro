@@ -1,0 +1,210 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import { fetchGyms } from '../../../../config/api';
+import { getStateSlug } from '../../../../utils/states';
+import {
+  getCategoryDefinitions,
+  gymMatchesCategory,
+  MIN_GYMS_FOR_INDEXABLE_CITY_HUB,
+  sortGymsForListings,
+} from '../../../../utils/cityCategory';
+import { generateFAQSchema } from '../../../../utils/schema';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const gyms = await fetchGyms();
+  const categories = getCategoryDefinitions(gyms);
+  const cityStatePairs = [...new Set(gyms.map((gym) => `${gym.region}|${gym.city}`))];
+
+  const paths = [];
+
+  for (const pair of cityStatePairs) {
+    const [region, city] = pair.split('|');
+    const cityGyms = gyms.filter((gym) => gym.region === region && gym.city === city);
+    const stateSlug = getStateSlug(region);
+    const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+
+    const categoryStats = categories
+      .map((category) => {
+        const matchingGyms = sortGymsForListings(cityGyms.filter((gym) => gymMatchesCategory(gym, category)));
+        return {
+          ...category,
+          count: matchingGyms.length,
+        };
+      })
+      .filter((category) => category.count > 0)
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+
+    const avgRating = cityGyms.length
+      ? Number((cityGyms.reduce((sum, gym) => sum + (gym.rating || 0), 0) / cityGyms.length).toFixed(1))
+      : 0;
+
+    paths.push({
+      params: { state: stateSlug, city: citySlug },
+      props: {
+        region,
+        city,
+        cityGymsCount: cityGyms.length,
+        avgRating,
+        categoryStats,
+      },
+    });
+  }
+
+  return paths;
+}
+
+const { state, city: citySlug } = Astro.params;
+const { region, city, cityGymsCount, avgRating, categoryStats } = Astro.props;
+
+const canonicalUrl = `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/`;
+const title = `Climbing Gym Categories in ${city}, ${region}`;
+const description = `Browse ${categoryStats.length} climbing gym categories in ${city}, ${region}. Compare ${cityGymsCount} gyms by bouldering, sauna, kids zone, beginner-friendly, and more.`;
+const shouldIndex = cityGymsCount >= MIN_GYMS_FOR_INDEXABLE_CITY_HUB && categoryStats.length >= 2;
+
+const breadcrumbs = [
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
+  { label: region, url: `https://www.indoorclimbinggym.com/${state}/` },
+  { label: city, url: `https://www.indoorclimbinggym.com/${state}/${citySlug}/` },
+  { label: 'Categories', url: canonicalUrl },
+];
+
+const faqs = [
+  {
+    question: `How many climbing gym categories are available in ${city}?`,
+    answer: `We currently track ${categoryStats.length} category pages for ${city}, including amenity, discipline, and beginner-focused filters.`,
+  },
+  {
+    question: `How do category pages rank gyms in ${city}?`,
+    answer: 'Gym cards are sorted by featured status, rating, and name so visitors can compare strong options quickly.',
+  },
+  {
+    question: `Do these category pages include every gym in ${city}?`,
+    answer: `Category pages only include gyms that match the selected filter. Across all categories, ${city} currently has ${cityGymsCount} published gyms in our directory.`,
+  },
+];
+
+const faqSchema = generateFAQSchema(faqs);
+const itemListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  '@id': canonicalUrl + '#itemlist',
+  name: `Climbing Gym Categories in ${city}, ${region}`,
+  url: canonicalUrl,
+  numberOfItems: categoryStats.length,
+  itemListElement: categoryStats.map((category, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: category.name,
+    url: `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/${category.slug}/`,
+  })),
+};
+const collectionPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: title,
+  description,
+  url: canonicalUrl,
+  inLanguage: 'en-US',
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'IndoorClimbingGym.com',
+    url: 'https://www.indoorclimbinggym.com/',
+  },
+  about: [
+    { '@type': 'Place', name: `${city}, ${region}` },
+    { '@type': 'Thing', name: 'Climbing Gym Categories' },
+  ],
+  mainEntity: { '@id': canonicalUrl + '#itemlist' },
+};
+
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [collectionPageSchema, itemListSchema, faqSchema],
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonicalUrl}
+  schema={combinedSchema}
+  breadcrumbs={breadcrumbs}
+  noindex={!shouldIndex}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <nav class="text-sm mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center gap-2 flex-wrap">
+        {breadcrumbs.map((crumb, index) => (
+          <li class="flex items-center gap-2">
+            {index > 0 && <span class="text-white/20">/</span>}
+            {index === breadcrumbs.length - 1 ? (
+              <span class="text-white/60 font-medium">{crumb.label}</span>
+            ) : (
+              <a href={crumb.url} class="text-white/40 hover:text-[#00e676] transition-colors">{crumb.label}</a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <header class="mb-10">
+      <div class="mb-2">
+        <span class="text-[#2979ff] text-sm font-mono tracking-widest">{region} • {city.toUpperCase()}</span>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">
+        CLIMBING GYM CATEGORIES
+        <br />
+        <span class="text-white/40">IN {city.toUpperCase()}</span>
+      </h1>
+      <p class="text-xl text-white/50 max-w-3xl">
+        Explore city-specific category pages to find the right gym for your style, amenities, and budget.
+      </p>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6 bg-[#1f1f1f] rounded-2xl p-6 border border-white/10">
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#00e676]">{categoryStats.length}</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">CATEGORIES</div>
+        </div>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#2979ff]">{cityGymsCount}</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">TOTAL GYMS</div>
+        </div>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#ffea00]">{avgRating}★</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">AVG RATING</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="mb-12">
+      <h2 class="text-3xl font-display font-bold text-white mb-6">Available Categories in {city}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categoryStats.map((category) => (
+          <a
+            href={`/${state}/${citySlug}/categories/${category.slug}/`}
+            class="group relative p-6 bg-gradient-to-br from-[#2d2d2d] to-[#1f1f1f] rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-300 overflow-hidden"
+          >
+            <div class="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: category.color }}></div>
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 50% 0%, ${category.color}10 0%, transparent 60%)` }}></div>
+
+            <div class="flex items-center justify-between mb-3 relative z-10">
+              <h3 class="text-xl font-display font-bold text-white group-hover:text-white transition-colors">{category.name}</h3>
+              <span class="px-3 py-1 text-xs font-mono font-bold rounded-full border uppercase" style={{ background: `${category.color}15`, color: category.color, borderColor: `${category.color}30` }}>
+                {category.count} {category.count === 1 ? 'Gym' : 'Gyms'}
+              </span>
+            </div>
+            <p class="text-white/50 mb-4 relative z-10 text-sm leading-relaxed">{category.description}</p>
+            <div class="inline-flex items-center gap-1 text-sm font-mono relative z-10" style={{ color: category.color }}>
+              View this category
+              <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>

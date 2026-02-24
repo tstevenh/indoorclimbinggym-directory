@@ -1,6 +1,6 @@
 ---
 /**
- * Dynamic Category Pages with Path-Based Pagination
+ * Dynamic Category Pages with Path-Based Pagination - Dark Theme
  * Auto-generates category pages from amenities and climbing types
  * Skips categories that have static pages (sauna, kids_zone, bouldering)
  * Uses path-based pagination: /categories/[category] for page 1, /categories/[category]/2 for page 2, etc.
@@ -20,6 +20,24 @@ import { fetchGyms } from '../../../config/api';
 export const prerender = true;
 
 export async function getStaticPaths() {
+  /**
+   * Helper: Create a clean slug from a string
+   * - Replaces underscores with dashes
+   * - Removes multiple consecutive dashes
+   * - Removes leading/trailing dashes
+   * - Returns null if empty after cleaning
+   */
+  const slugify = (text: string): string | null => {
+    if (!text || !text.trim()) return null;
+    
+    return text
+      .trim()
+      .toLowerCase()
+      .replace(/_/g, '-')           // Replace underscores with dashes
+      .replace(/-+/g, '-')          // Replace multiple dashes with single dash
+      .replace(/^-|-$/g, '');       // Remove leading/trailing dashes
+  };
+
   // Pagination settings
   const GYMS_PER_PAGE = 12;
   // Fetch gyms from API
@@ -30,8 +48,14 @@ export async function getStaticPaths() {
   const allClimbingTypes = new Set<string>();
 
   gymsData.forEach(gym => {
-    gym.amenities?.split('|').forEach(a => allAmenities.add(a.trim()));
-    gym.climbing_types?.split('|').forEach(ct => allClimbingTypes.add(ct.trim()));
+    gym.amenities?.split('|').forEach(a => {
+      const trimmed = a.trim();
+      if (trimmed) allAmenities.add(trimmed);
+    });
+    gym.climbing_types?.split('|').forEach(ct => {
+      const trimmed = ct.trim();
+      if (trimmed) allClimbingTypes.add(trimmed);
+    });
   });
 
   // Categories to skip (have static pages)
@@ -53,7 +77,9 @@ export async function getStaticPaths() {
         return a.name.localeCompare(b.name);
       });
 
-      const categorySlug = `climbing-gyms-with-${amenity.replace(/_/g, '-')}`;
+      const amenitySlug = slugify(amenity);
+      if (!amenitySlug) continue;
+      const categorySlug = `climbing-gyms-with-${amenitySlug}`;
       const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
 
       // Generate pages for this category
@@ -88,7 +114,9 @@ export async function getStaticPaths() {
         return a.name.localeCompare(b.name);
       });
 
-      const categorySlug = `best-${climbingType.replace(/_/g, '-')}-climbing-gyms`;
+      const typeSlug = slugify(climbingType);
+      if (!typeSlug) continue;
+      const categorySlug = `best-${typeSlug}-climbing-gyms`;
       const totalPages = Math.ceil(sortedGyms.length / GYMS_PER_PAGE);
 
       // Generate pages for this category
@@ -272,6 +300,17 @@ const priceRange = {
   max: Math.max(...gyms.map(g => g.day_pass_price_local)),
 };
 
+// Category accent color
+const getCategoryColor = () => {
+  if (isAmenity) return '#2979ff';
+  if (value === 'bouldering') return '#ff2d7a';
+  if (value === 'beginners') return '#00e676';
+  if (value === 'affordable') return '#ffea00';
+  return '#00e676';
+};
+
+const accentColor = getCategoryColor();
+
 // Generate FAQs based on type
 const faqs = isAmenity ? [
   {
@@ -372,190 +411,211 @@ Beyond physical infrastructure, the best ${formattedValue.toLowerCase()} climbin
   prevUrl={prevUrl}
   nextUrl={nextUrl}
 >
-  <!-- Breadcrumb Navigation -->
-  <nav class="text-sm mb-6" aria-label="Breadcrumb">
-    <ol class="flex items-center gap-2">
-      {breadcrumbs.map((crumb, index) => (
-        <li class="flex items-center gap-2">
-          {index > 0 && <span class="text-gray-400">/</span>}
-          {index === breadcrumbs.length - 1 ? (
-            <span class="text-sage font-medium">{crumb.label}</span>
-          ) : (
-            <a href={crumb.url} class="text-granite hover:text-sage">
-              {crumb.label}
-            </a>
-          )}
-        </li>
-      ))}
-    </ol>
-  </nav>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb Navigation -->
+    <nav class="text-sm mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center gap-2">
+        {breadcrumbs.map((crumb, index) => (
+          <li class="flex items-center gap-2">
+            {index > 0 && <span class="text-white/20">/</span>}
+            {index === breadcrumbs.length - 1 ? (
+              <span class="text-white/60 font-medium">{crumb.label}</span>
+            ) : (
+              <a href={crumb.url} class="text-white/40 hover:text-[#00e676] transition-colors">
+                {crumb.label}
+              </a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
 
-  <!-- Hero Section -->
-  <header class="mb-12">
-    <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">
-      {pageTitle}
-    </h1>
-    <p class="text-xl text-gray-700 mb-6 leading-relaxed">
-      {introText}
-    </p>
-
-    <!-- Quick Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white p-6 rounded-lg shadow-md">
-      <div>
-        <p class="text-3xl font-bold text-sage">{gyms.length}</p>
-        <p class="text-sm text-gray-600">Total Gyms</p>
+    <!-- Hero Section -->
+    <header class="mb-12">
+      <div class="mb-2">
+        <span class="text-sm font-mono tracking-widest" style={{ color: accentColor }}>
+          {isAmenity ? 'AMENITY' : 'CLIMBING TYPE'} • PAGE {currentPage} OF {totalPages}
+        </span>
       </div>
-      <div>
-        <p class="text-3xl font-bold text-sage">{avgRating}★</p>
-        <p class="text-sm text-gray-600">Average Rating</p>
-      </div>
-      <div>
-        <p class="text-3xl font-bold text-sage">${avgPrice}</p>
-        <p class="text-sm text-gray-600">Avg Day Pass</p>
-      </div>
-      <div>
-        <p class="text-3xl font-bold text-sage">
-          ${priceRange.min}-${priceRange.max}
-        </p>
-        <p class="text-sm text-gray-600">Price Range</p>
-      </div>
-    </div>
-  </header>
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
+        {pageTitle.toUpperCase()}
+      </h1>
+      <p class="text-xl text-white/50 mb-6 leading-relaxed max-w-3xl">
+        {introText}
+      </p>
 
-  <!-- Gym Grid -->
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold text-granite mb-6">{pageTitle}</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {paginatedGyms.map(gym => (
-        <GymCard gym={gym} showCity={true} />
-      ))}
-    </div>
-
-    <!-- Pagination -->
-    <Pagination
-      currentPage={currentPage}
-      totalPages={totalPages}
-      baseUrl={`/categories/${categorySlug}/`}
-    />
-  </section>
-
-  <!-- About Section -->
-  <section class="mb-16 bg-white p-8 rounded-lg shadow-md">
-    <h2 class="text-3xl font-bold text-granite mb-6">{aboutTitle}</h2>
-
-    <div class="prose prose-lg max-w-none">
-      {aboutContent.split('\n\n').map(paragraph => (
-        <p class="text-gray-700 mb-4 leading-relaxed">
-          {paragraph}
-        </p>
-      ))}
-    </div>
-  </section>
-
-  <!-- Comparison Table -->
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold text-granite mb-6">Compare {isAmenity ? 'Gyms with' : ''} {formattedValue} {isAmenity ? '' : 'Climbing Gyms'}</h2>
-    <div class="overflow-x-auto bg-white rounded-lg shadow-md">
-      <table class="w-full text-left">
-        <thead class="bg-sage text-white">
-          <tr>
-            <th class="px-6 py-3 font-semibold">Gym Name</th>
-            <th class="px-6 py-3 font-semibold">Location</th>
-            <th class="px-6 py-3 font-semibold">Rating</th>
-            <th class="px-6 py-3 font-semibold">Day Pass</th>
-            <th class="px-6 py-3 font-semibold">{isAmenity ? 'Other Amenities' : 'Climbing Types'}</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-          {gyms.map((gym, index) => (
-            <tr class={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-              <td class="px-6 py-4">
-                <a href={`/gyms/${gym.slug}/`} class="text-sage hover:underline font-medium">
-                  {gym.name}
-                </a>
-              </td>
-              <td class="px-6 py-4 text-gray-700">
-                {gym.city}, {gym.region}
-              </td>
-              <td class="px-6 py-4 font-medium">{gym.rating}★</td>
-              <td class="px-6 py-4 text-gray-700">${gym.day_pass_price_local}</td>
-              <td class="px-6 py-4 text-gray-700 text-sm">
-                {isAmenity
-                  ? gym.amenities?.split('|').filter(a => a !== value).slice(0, 3).map(a => formatText(a)).join(', ')
-                  : gym.climbing_types?.split('|').map(ct => formatText(ct)).join(', ')
-                }
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- FAQ Section -->
-  <section class="mb-16 bg-white p-8 rounded-lg shadow-md">
-    <h2 class="text-3xl font-bold text-granite mb-6">Frequently Asked Questions</h2>
-    <div class="space-y-6">
-      {faqs.map(faq => (
-        <div>
-          <h3 class="text-xl font-bold text-granite mb-2">{faq.question}</h3>
-          <p class="text-gray-700 leading-relaxed">{faq.answer}</p>
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#1f1f1f] rounded-2xl p-6 border border-white/10" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl" style={{ color: accentColor }}>{gyms.length}</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">TOTAL GYMS</div>
         </div>
-      ))}
-    </div>
-  </section>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#ffea00]">{avgRating}★</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">AVERAGE RATING</div>
+        </div>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#00e676]">${avgPrice}</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">AVG DAY PASS</div>
+        </div>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#2979ff]">
+            ${priceRange.min}-${priceRange.max}
+          </div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">PRICE RANGE</div>
+        </div>
+      </div>
+    </header>
 
-  <!-- Related Categories -->
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold text-granite mb-6">Explore More Categories</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <a
-        href="/categories/best-bouldering-climbing-gyms/"
-        class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
-      >
-        <h3 class="text-lg font-bold text-sage mb-2">Best Bouldering Gyms</h3>
-        <p class="text-sm text-gray-600">Top facilities for bouldering</p>
-      </a>
-      <a
-        href="/categories/climbing-gyms-with-sauna/"
-        class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
-      >
-        <h3 class="text-lg font-bold text-sage mb-2">Gyms with Sauna</h3>
-        <p class="text-sm text-gray-600">Recovery-focused facilities</p>
-      </a>
-      <a
-        href="/categories/best-climbing-gyms-for-beginners/"
-        class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
-      >
-        <h3 class="text-lg font-bold text-sage mb-2">Beginner Friendly Gyms</h3>
-        <p class="text-sm text-gray-600">Perfect for newcomers</p>
-      </a>
-      <a
-        href="/categories/climbing-gyms-with-kids-zone/"
-        class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow"
-      >
-        <h3 class="text-lg font-bold text-sage mb-2">Gyms with Kids Zone</h3>
-        <p class="text-sm text-gray-600">Family-friendly facilities</p>
-      </a>
-    </div>
-  </section>
+    <!-- Gym Grid -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-display font-bold text-white mb-6">{pageTitle} - Page {currentPage}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {paginatedGyms.map((gym, index) => (
+          <GymCard gym={gym} showCity={true} delay={index * 0.05} />
+        ))}
+      </div>
 
-  <!-- CTA Section -->
-  <section class="bg-sage text-white p-8 rounded-lg shadow-md text-center">
-    <h2 class="text-3xl font-bold mb-4">
-      {isAmenity ? `Find Your Perfect Gym with ${formattedValue}` : `Start Your ${formattedValue} Climbing Journey`}
-    </h2>
-    <p class="text-lg mb-6">
-      {isAmenity
-        ? `Discover climbing gyms with ${formattedValue.toLowerCase()} amenities near you.`
-        : `Find the best ${formattedValue.toLowerCase()} climbing facilities in your area.`
-      }
-    </p>
-    <a
-      href="/search/"
-      class="inline-block bg-white text-sage px-8 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors"
-    >
-      Search All Gyms
-    </a>
-  </section>
+      <!-- Pagination -->
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl={`/categories/${categorySlug}/`}
+      />
+    </section>
+
+    <!-- About Section -->
+    <section class="mb-16 bg-[#1f1f1f] rounded-2xl border border-white/10 p-8" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+      <h2 class="text-3xl font-display font-bold text-white mb-6">{aboutTitle}</h2>
+
+      <div class="prose prose-lg max-w-none">
+        {aboutContent.split('\n\n').map(paragraph => (
+          <p class="text-white/60 mb-4 leading-relaxed">
+            {paragraph}
+          </p>
+        ))}
+      </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-display font-bold text-white mb-6">Compare {isAmenity ? 'Gyms with' : ''} {formattedValue} {isAmenity ? '' : 'Climbing Gyms'}</h2>
+      <div class="overflow-x-auto bg-[#1f1f1f] rounded-2xl border border-white/10" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+        <table class="w-full text-left">
+          <thead>
+            <tr class="border-b border-white/10">
+              <th class="px-6 py-4 font-display font-semibold text-white">Gym Name</th>
+              <th class="px-6 py-4 font-display font-semibold text-white">Location</th>
+              <th class="px-6 py-4 font-display font-semibold text-white">Rating</th>
+              <th class="px-6 py-4 font-display font-semibold text-white">Day Pass</th>
+              <th class="px-6 py-4 font-display font-semibold text-white">{isAmenity ? 'Other Amenities' : 'Climbing Types'}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            {paginatedGyms.map((gym, index) => (
+              <tr class={index % 2 === 0 ? 'bg-white/5' : ''}>
+                <td class="px-6 py-4">
+                  <a href={`/gyms/${gym.slug}/`} class="text-[#00e676] hover:text-[#00c853] font-medium transition-colors">
+                    {gym.name}
+                  </a>
+                </td>
+                <td class="px-6 py-4 text-white/60">
+                  {gym.city}, {gym.region}
+                </td>
+                <td class="px-6 py-4 font-mono font-bold text-[#ffea00]">{gym.rating}★</td>
+                <td class="px-6 py-4 text-white/60 font-mono">${gym.day_pass_price_local}</td>
+                <td class="px-6 py-4 text-white/60 text-sm">
+                  {isAmenity
+                    ? gym.amenities?.split('|').filter(a => a !== value).slice(0, 3).map(a => formatText(a)).join(', ')
+                    : gym.climbing_types?.split('|').map(ct => formatText(ct)).join(', ')
+                  }
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-display font-bold text-white mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {faqs.map(faq => (
+          <details class="group bg-[#1f1f1f] rounded-2xl border border-white/10 overflow-hidden hover:border-white/20 transition-colors" style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}>
+            <summary class="flex justify-between items-center font-display font-semibold text-white cursor-pointer p-6 list-none text-lg">
+              <span>{faq.question}</span>
+              <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+              </span>
+            </summary>
+            <div class="text-white/60 px-6 pb-6 leading-relaxed">
+              {faq.answer}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    <!-- Related Categories -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-display font-bold text-white mb-6">Explore More Categories</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a
+          href="/categories/best-bouldering-climbing-gyms/"
+          class="bg-[#1f1f1f] p-6 rounded-2xl border border-white/5 hover:border-[#ff2d7a]/30 transition-all group"
+          style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
+        >
+          <h3 class="text-lg font-display font-bold text-[#ff2d7a] mb-2">Best Bouldering Gyms</h3>
+          <p class="text-sm text-white/40">Top facilities for bouldering</p>
+        </a>
+        <a
+          href="/categories/climbing-gyms-with-sauna/"
+          class="bg-[#1f1f1f] p-6 rounded-2xl border border-white/5 hover:border-[#2979ff]/30 transition-all group"
+          style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
+        >
+          <h3 class="text-lg font-display font-bold text-[#2979ff] mb-2">Gyms with Sauna</h3>
+          <p class="text-sm text-white/40">Recovery-focused facilities</p>
+        </a>
+        <a
+          href="/categories/best-climbing-gyms-for-beginners/"
+          class="bg-[#1f1f1f] p-6 rounded-2xl border border-white/5 hover:border-[#00e676]/30 transition-all group"
+          style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
+        >
+          <h3 class="text-lg font-display font-bold text-[#00e676] mb-2">Beginner Friendly Gyms</h3>
+          <p class="text-sm text-white/40">Perfect for newcomers</p>
+        </a>
+        <a
+          href="/categories/climbing-gyms-with-kids-zone/"
+          class="bg-[#1f1f1f] p-6 rounded-2xl border border-white/5 hover:border-[#ffea00]/30 transition-all group"
+          style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
+        >
+          <h3 class="text-lg font-display font-bold text-[#ffea00] mb-2">Gyms with Kids Zone</h3>
+          <p class="text-sm text-white/40">Family-friendly facilities</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="bg-gradient-to-r from-[#00e676]/20 to-[#2979ff]/20 rounded-2xl p-8 border border-[#00e676]/20 text-center">
+      <h2 class="text-3xl font-display font-bold text-white mb-4">
+        {isAmenity ? `Find Your Perfect Gym with ${formattedValue}` : `Start Your ${formattedValue} Climbing Journey`}
+      </h2>
+      <p class="text-lg mb-6 text-white/60">
+        {isAmenity
+          ? `Discover climbing gyms with ${formattedValue.toLowerCase()} amenities near you.`
+          : `Find the best ${formattedValue.toLowerCase()} climbing facilities in your area.`
+        }
+      </p>
+      <a
+        href="/search/"
+        class="btn-jug text-black inline-flex items-center gap-2"
+      >
+        Search All Gyms
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </a>
+    </section>
+  </div>
 </BaseLayout>

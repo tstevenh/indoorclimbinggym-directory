@@ -1,0 +1,432 @@
+---
+import BaseLayout from '../../../../../layouts/BaseLayout.astro';
+import GymCard from '../../../../../components/GymCard.astro';
+import Pagination from '../../../../../components/Pagination.astro';
+import AffiliateBlock from '../../../../../components/AffiliateBlock.astro';
+import { fetchGyms } from '../../../../../config/api';
+import { getStateSlug } from '../../../../../utils/states';
+import {
+  getCategoryDefinitions,
+  gymMatchesCategory,
+  MIN_GYMS_FOR_INDEXABLE_COMBO,
+  MIN_GYMS_FOR_PAGE_GENERATION,
+  sortGymsForListings,
+} from '../../../../../utils/cityCategory';
+import { generateItemListSchema, generateFAQSchema } from '../../../../../utils/schema';
+
+export const prerender = true;
+
+const GYMS_PER_PAGE = 12;
+
+function getCategoryLabel(category) {
+  if (category.slug === 'best-climbing-gyms-for-beginners') return 'Best Climbing Gyms for Beginners';
+  if (category.slug === 'best-bouldering-climbing-gyms') return 'Best Bouldering Climbing Gyms';
+  if (category.slug === 'affordable-climbing-gyms') return 'Affordable Climbing Gyms';
+  if (category.slug.startsWith('climbing-gyms-with-')) return `Climbing Gyms with ${category.name.replace(/^Gyms with /, '')}`;
+  if (category.slug.startsWith('best-') && category.slug.endsWith('-climbing-gyms')) return category.name.replace(/ Gyms$/, ' Climbing Gyms');
+  return category.name;
+}
+
+export async function getStaticPaths() {
+  const gymsPerPage = 12;
+  const gyms = await fetchGyms();
+  const categories = getCategoryDefinitions(gyms);
+  const cityStatePairs = [...new Set(gyms.map((gym) => `${gym.region}|${gym.city}`))];
+
+  const paths = [];
+
+  for (const pair of cityStatePairs) {
+    const [region, city] = pair.split('|');
+    const cityGyms = gyms.filter((gym) => gym.region === region && gym.city === city);
+    const stateSlug = getStateSlug(region);
+    const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+
+    const cityCategoryStats = categories
+      .map((category) => {
+        const matchingGyms = sortGymsForListings(cityGyms.filter((gym) => gymMatchesCategory(gym, category)));
+        return {
+          slug: category.slug,
+          name: category.name,
+          color: category.color,
+          count: matchingGyms.length,
+        };
+      })
+      .filter((category) => category.count > 0)
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+
+    const siblings = cityCategoryStats.map((item) => ({
+      slug: item.slug,
+      name: item.name,
+      count: item.count,
+      color: item.color,
+    }));
+
+    for (const category of categories) {
+      const matchedGyms = sortGymsForListings(cityGyms.filter((gym) => gymMatchesCategory(gym, category)));
+      if (matchedGyms.length < MIN_GYMS_FOR_PAGE_GENERATION) continue;
+
+      const totalPages = Math.ceil(matchedGyms.length / gymsPerPage);
+
+      paths.push({
+        params: { state: stateSlug, city: citySlug, category: category.slug },
+        props: {
+          region,
+          city,
+          category,
+          gyms: matchedGyms,
+          currentPage: 1,
+          totalPages,
+          siblings,
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { state, city: citySlug, category: categorySlug } = Astro.params;
+const { region, city, category, gyms, currentPage, totalPages, siblings } = Astro.props;
+
+const paginatedGyms = gyms.slice(0, GYMS_PER_PAGE);
+const avgRating = Number((gyms.reduce((sum, gym) => sum + (gym.rating || 0), 0) / gyms.length).toFixed(1));
+const validPrices = gyms.map((gym) => Number(gym.day_pass_price_local) || 0).filter((price) => price > 0);
+const minPrice = validPrices.length ? Math.min(...validPrices) : 0;
+const maxPrice = validPrices.length ? Math.max(...validPrices) : 0;
+
+const categoryLabel = getCategoryLabel(category);
+const title = `${categoryLabel} in ${city}, ${region}`;
+const description = `Compare ${gyms.length} ${categoryLabel.toLowerCase()} options in ${city}, ${region}. Ratings, pricing, amenities, and direct gym pages in one place.`;
+
+const canonicalUrl = `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/${categorySlug}/`;
+const nextUrl = totalPages > 1 ? `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/${categorySlug}/2/` : undefined;
+const shouldIndex = gyms.length >= MIN_GYMS_FOR_INDEXABLE_COMBO;
+
+const breadcrumbs = [
+  { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
+  { label: region, url: `https://www.indoorclimbinggym.com/${state}/` },
+  { label: city, url: `https://www.indoorclimbinggym.com/${state}/${citySlug}/` },
+  { label: 'Categories', url: `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/` },
+  { label: categoryLabel, url: canonicalUrl },
+];
+
+const itemListSchema = generateItemListSchema(
+  paginatedGyms,
+  `${categoryLabel} in ${city}, ${region}`,
+  canonicalUrl
+);
+const faqs = [
+  {
+    question: `How many options are listed for ${categoryLabel.toLowerCase()} in ${city}?`,
+    answer: `This page currently includes ${gyms.length} gyms matching this category in ${city}, ${region}.`,
+  },
+  {
+    question: `How are gyms sorted on this page?`,
+    answer: 'Listings are sorted by featured status first, then rating, then gym name so strong options appear first.',
+  },
+  {
+    question: `What does this category mean for climbers in ${city}?`,
+    answer: `This category helps climbers in ${city} quickly find facilities that match a specific need without manually opening every gym profile.`,
+  },
+  {
+    question: `Can I compare pricing for these gyms?`,
+    answer: minPrice > 0
+      ? `Yes. Current day pass prices on this page range from $${minPrice} to $${maxPrice}, and each gym card links to full details.`
+      : 'Yes. Each gym card links to full details, and pricing appears when available.',
+  },
+];
+const faqSchema = generateFAQSchema(faqs);
+const collectionPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: title,
+  description,
+  url: canonicalUrl,
+  inLanguage: 'en-US',
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'IndoorClimbingGym.com',
+    url: 'https://www.indoorclimbinggym.com/',
+  },
+  about: [
+    { '@type': 'Place', name: `${city}, ${region}` },
+    { '@type': 'Thing', name: categoryLabel },
+  ],
+  mainEntity: {
+    '@id': canonicalUrl + '#itemlist',
+  },
+};
+itemListSchema['@id'] = canonicalUrl + '#itemlist';
+const combinedSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [collectionPageSchema, itemListSchema, faqSchema],
+};
+
+const siblingLinks = siblings
+  .filter((item) => item.slug !== categorySlug)
+  .slice(0, 8);
+
+const featuredCount = gyms.filter((gym) => gym.featured).length;
+const saunaCount = gyms.filter((gym) => gym.amenities?.includes('sauna')).length;
+const kidsCount = gyms.filter((gym) => gym.amenities?.includes('kids_zone')).length;
+const boulderingCount = gyms.filter((gym) => gym.climbing_types?.includes('bouldering')).length;
+const studentDiscountCount = gyms.filter((gym) => gym.student_discount).length;
+const topGymsForTable = gyms.slice(0, 10);
+
+const categoryIntro = category.type === 'amenity'
+  ? `${categoryLabel} pages help you prioritize facilities that include this specific amenity while still comparing route quality, crowd preferences, and pricing in ${city}.`
+  : `This page is built for climbers searching for ${categoryLabel.toLowerCase()} in ${city}, with data-backed comparisons across price, rating, and gym profile details.`;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonicalUrl}
+  schema={combinedSchema}
+  breadcrumbs={breadcrumbs}
+  nextUrl={nextUrl}
+  noindex={!shouldIndex}
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <nav class="text-sm mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center gap-2 flex-wrap">
+        {breadcrumbs.map((crumb, index) => (
+          <li class="flex items-center gap-2">
+            {index > 0 && <span class="text-white/20">/</span>}
+            {index === breadcrumbs.length - 1 ? (
+              <span class="text-white/60 font-medium">{crumb.label}</span>
+            ) : (
+              <a href={crumb.url} class="text-white/40 hover:text-[#00e676] transition-colors">{crumb.label}</a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <header class="mb-8">
+      <div class="mb-2">
+        <span class="text-[#2979ff] text-sm font-mono tracking-widest">{region} • {city.toUpperCase()}</span>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">
+        {categoryLabel.toUpperCase()}
+        <br />
+        <span class="text-white/40">IN {city.toUpperCase()}</span>
+      </h1>
+      <p class="text-xl text-white/50 max-w-3xl">
+        Compare ratings, pricing, and amenities across {gyms.length} matching gyms in {city}.
+      </p>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#1f1f1f] rounded-2xl p-6 border border-white/10 mt-6">
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#00e676]">{gyms.length}</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">MATCHING GYMS</div>
+        </div>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#2979ff]">{avgRating}★</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">AVG RATING</div>
+        </div>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#ff2d7a]">{minPrice > 0 ? `$${minPrice}-${maxPrice}` : 'N/A'}</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">DAY PASS</div>
+        </div>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#ffea00]">{gyms.filter((gym) => gym.beginner_friendly).length}</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">BEGINNER FRIENDLY</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="mb-12">
+      <h2 class="text-3xl font-display font-bold text-white mb-2">Top Matches in {city}</h2>
+      <p class="text-white/50 mb-6">
+        All listings below match this city + category query and are sorted for quick comparison.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {paginatedGyms.map((gym, index) => (
+          <GymCard gym={gym} showCity={false} delay={index * 0.05} />
+        ))}
+      </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl={`/${state}/${citySlug}/categories/${categorySlug}/`}
+      />
+    </section>
+
+    <section class="mb-12 bg-[#1f1f1f] rounded-2xl border border-white/10 p-8">
+      <h2 class="text-3xl font-display font-bold text-white mb-4">
+        Local Insights: {categoryLabel} in {city}
+      </h2>
+      <p class="text-white/60 mb-6 leading-relaxed">
+        {categoryIntro}
+      </p>
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="bg-[#2d2d2d] rounded-xl p-4 border border-white/10">
+          <div class="text-2xl font-mono font-bold text-[#00e676]">{featuredCount}</div>
+          <div class="text-xs text-white/50 uppercase tracking-wider mt-1">Featured</div>
+        </div>
+        <div class="bg-[#2d2d2d] rounded-xl p-4 border border-white/10">
+          <div class="text-2xl font-mono font-bold text-[#2979ff]">{saunaCount}</div>
+          <div class="text-xs text-white/50 uppercase tracking-wider mt-1">With Sauna</div>
+        </div>
+        <div class="bg-[#2d2d2d] rounded-xl p-4 border border-white/10">
+          <div class="text-2xl font-mono font-bold text-[#ff2d7a]">{boulderingCount}</div>
+          <div class="text-xs text-white/50 uppercase tracking-wider mt-1">Bouldering</div>
+        </div>
+        <div class="bg-[#2d2d2d] rounded-xl p-4 border border-white/10">
+          <div class="text-2xl font-mono font-bold text-[#ffea00]">{kidsCount}</div>
+          <div class="text-xs text-white/50 uppercase tracking-wider mt-1">Kids Zone</div>
+        </div>
+        <div class="bg-[#2d2d2d] rounded-xl p-4 border border-white/10">
+          <div class="text-2xl font-mono font-bold text-[#ff9100]">{studentDiscountCount}</div>
+          <div class="text-xs text-white/50 uppercase tracking-wider mt-1">Student Discount</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-12 bg-gradient-to-br from-[#00e676]/5 to-[#2979ff]/5 rounded-2xl border border-white/10 p-8">
+      <h2 class="text-3xl font-display font-bold text-white mb-6">
+        How to Choose the Right Gym in {city}
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-[#1f1f1f] rounded-xl border border-white/10 p-5">
+          <h3 class="text-xl font-display font-semibold text-white mb-2">1) Match Your Climbing Goal</h3>
+          <p class="text-white/60">
+            Use this category to narrow options first, then compare each gym profile for route style, training setup, and coaching availability.
+          </p>
+        </div>
+        <div class="bg-[#1f1f1f] rounded-xl border border-white/10 p-5">
+          <h3 class="text-xl font-display font-semibold text-white mb-2">2) Compare Pricing Structure</h3>
+          <p class="text-white/60">
+            Day pass prices here range {minPrice > 0 ? `from $${minPrice} to $${maxPrice}` : 'across available listings'}. Check membership and discount details on each gym page.
+          </p>
+        </div>
+        <div class="bg-[#1f1f1f] rounded-xl border border-white/10 p-5">
+          <h3 class="text-xl font-display font-semibold text-white mb-2">3) Prioritize Convenience</h3>
+          <p class="text-white/60">
+            Look at amenities, beginner support, and location fit. Small differences in convenience can heavily impact consistency.
+          </p>
+        </div>
+        <div class="bg-[#1f1f1f] rounded-xl border border-white/10 p-5">
+          <h3 class="text-xl font-display font-semibold text-white mb-2">4) Use Related Categories</h3>
+          <p class="text-white/60">
+            Before deciding, cross-check sibling categories below to validate the gym against your secondary priorities.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {topGymsForTable.length > 0 && (
+      <section class="mb-12 bg-[#1f1f1f] rounded-2xl border border-white/10 p-8">
+        <h2 class="text-3xl font-display font-bold text-white mb-2">
+          Compare Top {categoryLabel} Options in {city}
+        </h2>
+        <p class="text-white/50 mb-6">
+          Quick side-by-side view of leading gyms in this category.
+        </p>
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[760px]">
+            <thead>
+              <tr class="border-b border-white/10">
+                <th class="text-left py-3 px-4 text-white font-display font-semibold">Gym</th>
+                <th class="text-left py-3 px-4 text-white font-display font-semibold">Rating</th>
+                <th class="text-left py-3 px-4 text-white font-display font-semibold">Day Pass</th>
+                <th class="text-left py-3 px-4 text-white font-display font-semibold">Highlights</th>
+                <th class="text-left py-3 px-4 text-white font-display font-semibold">Profile</th>
+              </tr>
+            </thead>
+            <tbody>
+              {topGymsForTable.map((gym) => (
+                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                  <td class="py-3 px-4 text-white">{gym.name}</td>
+                  <td class="py-3 px-4 text-white/70 font-mono">{gym.rating ? `${Number(gym.rating).toFixed(1)}★` : 'N/A'}</td>
+                  <td class="py-3 px-4 text-white/70 font-mono">{Number(gym.day_pass_price_local) > 0 ? `$${gym.day_pass_price_local}` : 'N/A'}</td>
+                  <td class="py-3 px-4 text-white/60 text-sm">
+                    {gym.amenities
+                      ? gym.amenities.split('|').slice(0, 3).map((item) => item.replace(/_/g, ' ')).join(', ')
+                      : (gym.climbing_types
+                        ? gym.climbing_types.split('|').slice(0, 3).join(', ')
+                        : 'See gym page')}
+                  </td>
+                  <td class="py-3 px-4">
+                    <a href={`/gyms/${gym.slug}/`} class="text-[#00e676] hover:text-[#00c853] font-medium">
+                      View gym
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )}
+
+    <AffiliateBlock
+      title={`Gear Picks for ${city} Climbers`}
+      subtitle="Popular gear for indoor sessions and recovery."
+      variant="horizontal"
+      count={3}
+    />
+
+    <section class="mb-12 bg-[#1f1f1f] rounded-2xl border border-white/10 p-8">
+      <h2 class="text-3xl font-display font-bold text-white mb-6">Explore More in {city}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a href={`/${state}/${citySlug}/`} class="p-4 rounded-xl border border-white/10 bg-[#2d2d2d] hover:border-[#00e676]/40 transition-colors">
+          <div class="text-white font-display font-semibold mb-1">All Gyms in {city}</div>
+          <div class="text-sm text-white/50">Return to full city listing</div>
+        </a>
+        <a href={`/${state}/${citySlug}/categories/`} class="p-4 rounded-xl border border-white/10 bg-[#2d2d2d] hover:border-[#2979ff]/40 transition-colors">
+          <div class="text-white font-display font-semibold mb-1">All City Categories</div>
+          <div class="text-sm text-white/50">Browse every filter in one place</div>
+        </a>
+        <a href={`/search/?city=${encodeURIComponent(city)}`} class="p-4 rounded-xl border border-white/10 bg-[#2d2d2d] hover:border-[#ff2d7a]/40 transition-colors">
+          <div class="text-white font-display font-semibold mb-1">Advanced Search</div>
+          <div class="text-sm text-white/50">Filter by amenities and pricing</div>
+        </a>
+        <a href={`/guides/beginners-guide-to-climbing-gyms/`} class="p-4 rounded-xl border border-white/10 bg-[#2d2d2d] hover:border-[#ffea00]/40 transition-colors">
+          <div class="text-white font-display font-semibold mb-1">Climbing Guide</div>
+          <div class="text-sm text-white/50">Learn before your next session</div>
+        </a>
+      </div>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-3xl font-display font-bold text-white mb-6">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {faqs.map((faq) => (
+          <details class="group bg-[#1f1f1f] rounded-2xl border border-white/10 overflow-hidden hover:border-white/20 transition-colors">
+            <summary class="flex justify-between items-center font-display font-semibold text-white cursor-pointer p-6 list-none text-lg">
+              <span>{faq.question}</span>
+              <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24">
+                  <path d="M6 9l6 6 6-6"></path>
+                </svg>
+              </span>
+            </summary>
+            <div class="text-white/60 px-6 pb-6 leading-relaxed">
+              {faq.answer}
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+
+    {siblingLinks.length > 0 && (
+      <section class="mb-12 mt-12 bg-[#1f1f1f] rounded-2xl border border-white/10 p-8">
+        <h2 class="text-3xl font-display font-bold text-white mb-6">More Categories in {city}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {siblingLinks.map((item) => (
+            <a
+              href={`/${state}/${citySlug}/categories/${item.slug}/`}
+              class="p-4 rounded-xl border border-white/10 bg-[#2d2d2d] hover:border-[#00e676]/40 transition-colors"
+            >
+              <div class="text-white font-display font-semibold mb-1">{item.name}</div>
+              <div class="text-sm text-white/50 font-mono">{item.count} {item.count === 1 ? 'gym' : 'gyms'}</div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>

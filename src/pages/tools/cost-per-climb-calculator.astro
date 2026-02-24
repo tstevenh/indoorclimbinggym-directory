@@ -172,46 +172,46 @@ const schemas = [toolSchema, faqSchema, howToSchema];
   ogType="website"
 >
   <!-- Full-Width Hero Section -->
-  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 bg-gradient-to-br from-sage/20 via-ivory to-sage/5 py-20 md:py-32 overflow-hidden">
+  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 bg-gradient-to-br from-[#2979ff]/10 via-[#1a1a1a] to-[#00e676]/5 py-20 md:py-32 overflow-hidden">
     <!-- Decorative background elements -->
-    <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#98a48b_1px,transparent_1px)] [background-size:20px_20px]"></div>
+    <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#2979ff_1px,transparent_1px)] [background-size:20px_20px]"></div>
     
     <div class="container mx-auto px-4 relative z-10 text-center">
       <!-- Badge -->
       <div class="inline-block mb-6">
-        <span class="inline-flex items-center px-4 py-2 bg-sage/10 text-sage font-bold rounded-full text-sm tracking-wide uppercase">
+        <span class="inline-flex items-center px-4 py-2 bg-[#00e676]/20 text-[#00e676] border border-[#00e676]/30 font-bold rounded-full text-sm tracking-wide uppercase">
           Free Utility
         </span>
       </div>
 
       <!-- Title -->
-      <h1 class="text-5xl md:text-6xl font-bold text-granite mb-6 leading-tight">
-        Cost Per Climb <span class="text-sage relative inline-block">
+      <h1 class="font-display text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+        Cost Per Climb <span class="text-[#00e676] relative inline-block">
           Calculator
-          <svg class="absolute w-full h-3 -bottom-1 left-0 text-sage/30" viewBox="0 0 100 10" preserveAspectRatio="none">
+          <svg class="absolute w-full h-3 -bottom-1 left-0 text-[#00e676]/30" viewBox="0 0 100 10" preserveAspectRatio="none">
             <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="8" fill="none" />
           </svg>
         </span>
       </h1>
 
       <!-- Subtitle -->
-      <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+      <p class="text-xl text-white/70 mb-8 max-w-2xl mx-auto leading-relaxed">
         Should you buy a day pass or get a membership? Find out which option saves you money based on how often you climb.
       </p>
 
       <!-- Quick Stats -->
       <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto mt-10 opacity-80">
         <div class="text-center">
-          <div class="text-2xl font-bold text-sage">100%</div>
-          <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Free</div>
+          <div class="text-2xl font-bold text-[#00e676]">100%</div>
+          <div class="text-xs text-white/60 uppercase tracking-wider font-semibold">Free</div>
         </div>
         <div class="text-center">
-          <div class="text-2xl font-bold text-sage">&lt; 1min</div>
-          <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">To Calculate</div>
+          <div class="text-2xl font-bold text-[#00e676]">&lt; 1min</div>
+          <div class="text-xs text-white/60 uppercase tracking-wider font-semibold">To Calculate</div>
         </div>
         <div class="text-center">
-          <div class="text-2xl font-bold text-sage">4 Metrics</div>
-          <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Analyzed</div>
+          <div class="text-2xl font-bold text-[#00e676]">4 Metrics</div>
+          <div class="text-xs text-white/60 uppercase tracking-wider font-semibold">Analyzed</div>
         </div>
       </div>
     </div>
@@ -219,7 +219,7 @@ const schemas = [toolSchema, faqSchema, howToSchema];
 
   <!-- Calculator Card (Overlap Effect) -->
   <section class="container mx-auto px-4 -mt-20 relative z-20 mb-20">
-    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
+    <div class="max-w-4xl mx-auto bg-[#1f1f1f] rounded-2xl shadow-xl p-8 md:p-12 border border-white/10">
       <!-- Form -->
       <CostCalculatorForm />
 
@@ -231,109 +231,109 @@ const schemas = [toolSchema, faqSchema, howToSchema];
   <!-- Educational Content -->
   <section class="max-w-4xl mx-auto px-4 mb-16 prose prose-lg">
     <!-- How It Works -->
-    <h2 class="text-3xl font-bold text-granite mb-6">How It Works</h2>
-    <p class="text-gray-700 leading-relaxed mb-6">
+    <h2 class="font-display text-3xl font-bold text-white mb-6">How It Works</h2>
+    <p class="text-white/70 leading-relaxed mb-6">
       Our cost per climb calculator uses simple math to compare the true cost of day passes versus monthly memberships. By dividing your membership price by the number of visits per month, we calculate your actual cost per climb. This reveals the break-even point—the number of visits where a membership becomes more economical than paying for individual day passes.
     </p>
-    <p class="text-gray-700 leading-relaxed mb-6">
+    <p class="text-white/70 leading-relaxed mb-6">
       The calculator also projects annual spending for both options, helping you visualize long-term savings. Whether you're a casual climber who visits once a week or a dedicated enthusiast climbing daily, this tool provides personalized financial insights to guide your decision.
     </p>
-    <p class="text-gray-700 leading-relaxed mb-12">
+    <p class="text-white/70 leading-relaxed mb-12">
       Whether you're wondering "is a gym membership worth it", "how much do climbing gyms cost monthly", or "what's cheaper: day pass or membership", this climbing gym membership calculator provides clear answers tailored to your climbing habits. Many climbers are surprised to learn their break-even point—often just 3-4 visits per month makes a membership worthwhile.
     </p>
 
     <!-- Internal Links Box -->
-    <div class="bg-sage/10 border-l-4 border-sage p-6 my-8 rounded-r-lg">
-      <p class="text-gray-700 mb-3">
-        <strong class="text-sage">New to climbing?</strong> Check out our <a href="/blog/beginners-guide-to-climbing-gyms/" class="text-sage font-semibold hover:underline">complete beginner's guide</a> to learn what to expect at your first gym visit.
+    <div class="bg-[#2979ff]/10 border-l-4 border-[#2979ff] p-6 my-8 rounded-r-lg">
+      <p class="text-white/70 mb-3">
+        <strong class="text-[#2979ff]">New to climbing?</strong> Check out our <a href="/blog/beginners-guide-to-climbing-gyms/" class="text-[#2979ff] font-semibold hover:underline">complete beginner's guide</a> to learn what to expect at your first gym visit.
       </p>
-      <p class="text-gray-700">
-        <strong class="text-sage">Looking for a gym?</strong> Search our <a href="/search/" class="text-sage font-semibold hover:underline">directory of climbing gyms</a> to find the perfect gym near you.
+      <p class="text-white/70">
+        <strong class="text-[#2979ff]">Looking for a gym?</strong> Search our <a href="/search/" class="text-[#2979ff] font-semibold hover:underline">directory of climbing gyms</a> to find the perfect gym near you.
       </p>
     </div>
 
     <!-- When to Get a Membership -->
-    <h2 class="text-3xl font-bold text-granite mb-6">When to Get a Membership</h2>
-    <p class="text-gray-700 leading-relaxed mb-6">
+    <h2 class="font-display text-3xl font-bold text-white mb-6">When to Get a Membership</h2>
+    <p class="text-white/70 leading-relaxed mb-6">
       The decision between day passes and memberships depends on your climbing frequency and financial priorities. Generally, if you climb more than 3-4 times per month (based on typical gym pricing), a membership offers better value. However, this varies by gym—some have expensive memberships that require 8+ visits to break even.
     </p>
 
     <!-- Comparison Table -->
     <div class="overflow-x-auto mb-12">
-      <table class="w-full border-collapse border-2 border-gray-200 rounded-lg">
-        <thead class="bg-sage/10">
+      <table class="w-full border-collapse border-2 border-white/10 rounded-lg">
+        <thead class="bg-[#2979ff]/10">
           <tr>
-            <th class="border border-gray-300 px-4 py-3 text-left font-semibold text-granite">Monthly Visits</th>
-            <th class="border border-gray-300 px-4 py-3 text-left font-semibold text-granite">Best Option</th>
-            <th class="border border-gray-300 px-4 py-3 text-left font-semibold text-granite">Reason</th>
+            <th class="border border-white/10 px-4 py-3 text-left font-semibold text-white">Monthly Visits</th>
+            <th class="border border-white/10 px-4 py-3 text-left font-semibold text-white">Best Option</th>
+            <th class="border border-white/10 px-4 py-3 text-left font-semibold text-white">Reason</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="hover:bg-gray-50">
-            <td class="border border-gray-300 px-4 py-3">1-2 visits</td>
-            <td class="border border-gray-300 px-4 py-3 font-medium text-blue-700">Day Passes</td>
-            <td class="border border-gray-300 px-4 py-3 text-gray-700">Pay only when you go, maximum flexibility</td>
+          <tr class="hover:bg-white/5">
+            <td class="border border-white/10 px-4 py-3 text-white/70">1-2 visits</td>
+            <td class="border border-white/10 px-4 py-3 font-medium text-[#2979ff]">Day Passes</td>
+            <td class="border border-white/10 px-4 py-3 text-white/70">Pay only when you go, maximum flexibility</td>
           </tr>
-          <tr class="hover:bg-gray-50">
-            <td class="border border-gray-300 px-4 py-3">3-4 visits</td>
-            <td class="border border-gray-300 px-4 py-3 font-medium text-gray-700">Break-Even Zone</td>
-            <td class="border border-gray-300 px-4 py-3 text-gray-700">Costs are similar, personal preference matters</td>
+          <tr class="hover:bg-white/5">
+            <td class="border border-white/10 px-4 py-3 text-white/70">3-4 visits</td>
+            <td class="border border-white/10 px-4 py-3 font-medium text-white/70">Break-Even Zone</td>
+            <td class="border border-white/10 px-4 py-3 text-white/70">Costs are similar, personal preference matters</td>
           </tr>
-          <tr class="hover:bg-gray-50">
-            <td class="border border-gray-300 px-4 py-3">5-8 visits</td>
-            <td class="border border-gray-300 px-4 py-3 font-medium text-sage">Membership</td>
-            <td class="border border-gray-300 px-4 py-3 text-gray-700">Clear savings, unlimited access benefits</td>
+          <tr class="hover:bg-white/5">
+            <td class="border border-white/10 px-4 py-3 text-white/70">5-8 visits</td>
+            <td class="border border-white/10 px-4 py-3 font-medium text-[#00e676]">Membership</td>
+            <td class="border border-white/10 px-4 py-3 text-white/70">Clear savings, unlimited access benefits</td>
           </tr>
-          <tr class="hover:bg-gray-50">
-            <td class="border border-gray-300 px-4 py-3">9+ visits</td>
-            <td class="border border-gray-300 px-4 py-3 font-medium text-sage">Membership</td>
-            <td class="border border-gray-300 px-4 py-3 text-gray-700">Maximum savings, best cost per climb</td>
+          <tr class="hover:bg-white/5">
+            <td class="border border-white/10 px-4 py-3 text-white/70">9+ visits</td>
+            <td class="border border-white/10 px-4 py-3 font-medium text-[#00e676]">Membership</td>
+            <td class="border border-white/10 px-4 py-3 text-white/70">Maximum savings, best cost per climb</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <!-- Hidden Costs to Consider -->
-    <h2 class="text-3xl font-bold text-granite mb-6">Hidden Costs to Consider</h2>
-    <p class="text-gray-700 leading-relaxed mb-6">
+    <h2 class="font-display text-3xl font-bold text-white mb-6">Hidden Costs to Consider</h2>
+    <p class="text-white/70 leading-relaxed mb-6">
       When comparing day passes and memberships, don't forget these additional expenses that can significantly impact your true cost per climb:
     </p>
 
     <ul class="space-y-4 mb-12">
       <li class="flex items-start">
-        <svg class="w-6 h-6 text-sage mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <svg class="w-6 h-6 text-[#00e676] mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
         </svg>
         <div>
-          <strong class="text-granite">Gear Rental Fees:</strong>
-          <p class="text-gray-700">Climbing shoes and harnesses typically cost $5-10 per visit. If you don't own gear, add this to your day pass cost. Many gyms include free rentals with memberships, adding significant value.</p>
+          <strong class="text-white">Gear Rental Fees:</strong>
+          <p class="text-white/70">Climbing shoes and harnesses typically cost $5-10 per visit. If you don't own gear, add this to your day pass cost. Many gyms include free rentals with memberships, adding significant value.</p>
         </div>
       </li>
       <li class="flex items-start">
-        <svg class="w-6 h-6 text-sage mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <svg class="w-6 h-6 text-[#00e676] mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
         </svg>
         <div>
-          <strong class="text-granite">Initiation Fees:</strong>
-          <p class="text-gray-700">Some gyms charge $50-150 one-time signup fees for new members. Factor this into your first-year cost when comparing options. Ask if the fee can be waived during promotional periods.</p>
+          <strong class="text-white">Initiation Fees:</strong>
+          <p class="text-white/70">Some gyms charge $50-150 one-time signup fees for new members. Factor this into your first-year cost when comparing options. Ask if the fee can be waived during promotional periods.</p>
         </div>
       </li>
       <li class="flex items-start">
-        <svg class="w-6 h-6 text-sage mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <svg class="w-6 h-6 text-[#00e676] mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
         </svg>
         <div>
-          <strong class="text-granite">Parking & Transportation:</strong>
-          <p class="text-gray-700">If you pay for parking ($3-10 per visit) or public transit, multiply this by your monthly visits. Downtown gyms often have higher parking costs that favor nearby climbers with memberships.</p>
+          <strong class="text-white">Parking & Transportation:</strong>
+          <p class="text-white/70">If you pay for parking ($3-10 per visit) or public transit, multiply this by your monthly visits. Downtown gyms often have higher parking costs that favor nearby climbers with memberships.</p>
         </div>
       </li>
       <li class="flex items-start">
-        <svg class="w-6 h-6 text-sage mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+        <svg class="w-6 h-6 text-[#00e676] mr-3 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
         </svg>
         <div>
-          <strong class="text-granite">Guest Passes & Classes:</strong>
-          <p class="text-gray-700">Memberships often include perks like 1-2 free guest passes per month, discounted yoga classes, or free belay lessons. These benefits add value beyond unlimited climbing access.</p>
+          <strong class="text-white">Guest Passes & Classes:</strong>
+          <p class="text-white/70">Memberships often include perks like 1-2 free guest passes per month, discounted yoga classes, or free belay lessons. These benefits add value beyond unlimited climbing access.</p>
         </div>
       </li>
     </ul>
@@ -351,37 +351,37 @@ const schemas = [toolSchema, faqSchema, howToSchema];
     />
 
     <!-- Internal Links Box 2 -->
-    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 my-8 rounded-r-lg">
-      <p class="text-gray-700 font-semibold mb-2">📖 Related Reading:</p>
+    <div class="bg-[#2979ff]/10 border-l-4 border-[#2979ff] p-6 my-8 rounded-r-lg">
+      <p class="text-white/70 font-semibold mb-2">📖 Related Reading:</p>
       <ul class="space-y-2">
         <li>
-          <a href="/blog/is-climbing-gym-membership-worth-it/" class="text-blue-700 hover:underline">Is a Climbing Gym Membership Worth It?</a> - Deep dive into membership value
+          <a href="/blog/is-climbing-gym-membership-worth-it/" class="text-[#2979ff] hover:underline">Is a Climbing Gym Membership Worth It?</a> - Deep dive into membership value
         </li>
         <li>
-          <a href="/blog/how-much-does-it-cost-to-climb-at-a-gym/" class="text-blue-700 hover:underline">How Much Does It Cost to Climb at a Gym?</a> - Complete pricing breakdown
+          <a href="/blog/how-much-does-it-cost-to-climb-at-a-gym/" class="text-[#2979ff] hover:underline">How Much Does It Cost to Climb at a Gym?</a> - Complete pricing breakdown
         </li>
         <li>
-          <a href="/tools/bouldering-grade-conversion/" class="text-blue-700 hover:underline">Bouldering Grade Conversion Tool</a> - Convert V-scale to Font grades
+          <a href="/tools/bouldering-grade-conversion/" class="text-[#2979ff] hover:underline">Bouldering Grade Conversion Tool</a> - Convert V-scale to Font grades
         </li>
       </ul>
     </div>
 
     <!-- Pros & Cons Comparison -->
-    <h2 class="text-3xl font-bold text-granite mb-6">Day Pass vs Membership: Pros & Cons</h2>
+    <h2 class="font-display text-3xl font-bold text-white mb-6">Day Pass vs Membership: Pros & Cons</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
       <!-- Day Pass Pros/Cons -->
-      <div class="border-2 border-gray-200 rounded-xl p-6">
-        <h3 class="text-xl font-bold text-granite mb-4 flex items-center">
-          <svg class="w-6 h-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+      <div class="bg-[#1f1f1f] border border-white/10 rounded-xl p-6">
+        <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+          <svg class="w-6 h-6 text-[#2979ff] mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
           </svg>
           Day Passes
         </h3>
         <div class="space-y-4">
           <div>
-            <h4 class="font-semibold text-green-700 mb-2">✓ Pros</h4>
-            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+            <h4 class="font-semibold text-green-400 mb-2">✓ Pros</h4>
+            <ul class="text-sm text-white/70 space-y-1 ml-4">
               <li>• No commitment or contract</li>
               <li>• Pay only when you climb</li>
               <li>• Try different gyms easily</li>
@@ -389,8 +389,8 @@ const schemas = [toolSchema, faqSchema, howToSchema];
             </ul>
           </div>
           <div>
-            <h4 class="font-semibold text-red-700 mb-2">✗ Cons</h4>
-            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+            <h4 class="font-semibold text-red-400 mb-2">✗ Cons</h4>
+            <ul class="text-sm text-white/70 space-y-1 ml-4">
               <li>• Higher cost per visit</li>
               <li>• No member perks or discounts</li>
               <li>• Adds up quickly if frequent</li>
@@ -401,17 +401,17 @@ const schemas = [toolSchema, faqSchema, howToSchema];
       </div>
 
       <!-- Membership Pros/Cons -->
-      <div class="border-2 border-sage rounded-xl p-6 bg-sage/5">
-        <h3 class="text-xl font-bold text-granite mb-4 flex items-center">
-          <svg class="w-6 h-6 text-sage mr-2" fill="currentColor" viewBox="0 0 20 20">
+      <div class="bg-[#1f1f1f] border border-white/10 rounded-xl p-6">
+        <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+          <svg class="w-6 h-6 text-[#00e676] mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
           </svg>
           Membership
         </h3>
         <div class="space-y-4">
           <div>
-            <h4 class="font-semibold text-green-700 mb-2">✓ Pros</h4>
-            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+            <h4 class="font-semibold text-green-400 mb-2">✓ Pros</h4>
+            <ul class="text-sm text-white/70 space-y-1 ml-4">
               <li>• Unlimited climbing access</li>
               <li>• Lower cost per visit</li>
               <li>• Free gear rental (usually)</li>
@@ -420,8 +420,8 @@ const schemas = [toolSchema, faqSchema, howToSchema];
             </ul>
           </div>
           <div>
-            <h4 class="font-semibold text-red-700 mb-2">✗ Cons</h4>
-            <ul class="text-sm text-gray-700 space-y-1 ml-4">
+            <h4 class="font-semibold text-red-400 mb-2">✗ Cons</h4>
+            <ul class="text-sm text-white/70 space-y-1 ml-4">
               <li>• Monthly commitment</li>
               <li>• Pay even if you don't go</li>
               <li>• Initiation fees possible</li>
@@ -434,69 +434,69 @@ const schemas = [toolSchema, faqSchema, howToSchema];
   </section>
 
   <!-- FAQ Section -->
-  <section class="bg-ivory/50 py-16 px-4">
+  <section class="bg-[#1f1f1f]/50 py-16 px-4">
     <div class="max-w-4xl mx-auto">
-      <h2 class="text-3xl font-bold text-granite mb-8 text-center">
+      <h2 class="font-display text-3xl font-bold text-white mb-8 text-center">
         Frequently Asked Questions
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- FAQ 1 -->
-        <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100 hover:border-sage transition-colors">
-          <h3 class="font-bold text-granite mb-3 text-lg">
+        <div class="bg-[#1f1f1f] rounded-xl p-6 shadow-md border border-white/10 hover:border-[#2979ff] transition-colors">
+          <h3 class="font-bold text-white mb-3 text-lg">
             How accurate is this calculator?
           </h3>
-          <p class="text-gray-700 text-sm leading-relaxed">
+          <p class="text-white/70 text-sm leading-relaxed">
             The calculator provides mathematically accurate comparisons based on the prices you enter. However, actual costs may vary due to factors like initiation fees, gear rental, guest passes, or promotional discounts. Use this as a baseline comparison tool.
           </p>
         </div>
 
         <!-- FAQ 2 -->
-        <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100 hover:border-sage transition-colors">
-          <h3 class="font-bold text-granite mb-3 text-lg">
+        <div class="bg-[#1f1f1f] rounded-xl p-6 shadow-md border border-white/10 hover:border-[#2979ff] transition-colors">
+          <h3 class="font-bold text-white mb-3 text-lg">
             Should I factor in gear rental?
           </h3>
-          <p class="text-gray-700 text-sm leading-relaxed">
+          <p class="text-white/70 text-sm leading-relaxed">
             Yes, if you don't own climbing shoes or a harness. Add the rental cost to your day pass price for an accurate comparison. Many gyms include rentals in membership packages, which can increase the value of a membership.
           </p>
         </div>
 
         <!-- FAQ 3 -->
-        <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100 hover:border-sage transition-colors">
-          <h3 class="font-bold text-granite mb-3 text-lg">
+        <div class="bg-[#1f1f1f] rounded-xl p-6 shadow-md border border-white/10 hover:border-[#2979ff] transition-colors">
+          <h3 class="font-bold text-white mb-3 text-lg">
             What if I don't climb consistently?
           </h3>
-          <p class="text-gray-700 text-sm leading-relaxed">
+          <p class="text-white/70 text-sm leading-relaxed">
             If your climbing schedule varies, calculate based on your average monthly visits over 3-6 months. Some gyms offer membership freezing options for travel or breaks. Day passes provide more flexibility for inconsistent climbers.
           </p>
         </div>
 
         <!-- FAQ 4 -->
-        <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100 hover:border-sage transition-colors">
-          <h3 class="font-bold text-granite mb-3 text-lg">
+        <div class="bg-[#1f1f1f] rounded-xl p-6 shadow-md border border-white/10 hover:border-[#2979ff] transition-colors">
+          <h3 class="font-bold text-white mb-3 text-lg">
             Do memberships have contracts?
           </h3>
-          <p class="text-gray-700 text-sm leading-relaxed">
+          <p class="text-white/70 text-sm leading-relaxed">
             It varies by gym. Some require 3-12 month commitments, while others offer month-to-month memberships. Check your gym's policy before committing. Month-to-month memberships typically cost slightly more but offer flexibility.
           </p>
         </div>
 
         <!-- FAQ 5 -->
-        <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100 hover:border-sage transition-colors">
-          <h3 class="font-bold text-granite mb-3 text-lg">
+        <div class="bg-[#1f1f1f] rounded-xl p-6 shadow-md border border-white/10 hover:border-[#2979ff] transition-colors">
+          <h3 class="font-bold text-white mb-3 text-lg">
             Can I freeze my membership?
           </h3>
-          <p class="text-gray-700 text-sm leading-relaxed">
+          <p class="text-white/70 text-sm leading-relaxed">
             Many gyms allow membership freezing for 1-3 months per year, usually for a small monthly fee ($10-20). This can make memberships more cost-effective for travelers. Check your gym's freeze policy before signing up.
           </p>
         </div>
 
         <!-- FAQ 6 -->
-        <div class="bg-white rounded-xl p-6 shadow-md border-2 border-gray-100 hover:border-sage transition-colors">
-          <h3 class="font-bold text-granite mb-3 text-lg">
+        <div class="bg-[#1f1f1f] rounded-xl p-6 shadow-md border border-white/10 hover:border-[#2979ff] transition-colors">
+          <h3 class="font-bold text-white mb-3 text-lg">
             Are there student discounts?
           </h3>
-          <p class="text-gray-700 text-sm leading-relaxed">
+          <p class="text-white/70 text-sm leading-relaxed">
             Most climbing gyms offer student discounts ranging from 10-25% off memberships with valid student ID. Day pass discounts are less common. Ask your gym about student rates and what documentation is required.
           </p>
         </div>
@@ -507,17 +507,17 @@ const schemas = [toolSchema, faqSchema, howToSchema];
   <!-- Educational Content -->
 
   <!-- Final CTA -->
-  <section class="bg-granite text-white py-16 px-4 rounded-2xl mx-4 mb-16">
+  <section class="bg-[#1f1f1f] text-white py-16 px-4 rounded-2xl mx-4 mb-16">
     <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-3xl md:text-4xl font-bold mb-4">
+      <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">
         Ready to Find Your Perfect Climbing Gym?
       </h2>
-      <p class="text-xl text-gray-300 mb-8">
+      <p class="text-xl text-white/70 mb-8">
         Browse climbing gyms near you and compare their pricing
       </p>
       <a
         href="/search/"
-        class="inline-flex items-center justify-center px-8 py-4 bg-sage text-white font-bold text-lg rounded-xl hover:bg-sage/90 transition-all shadow-lg hover:shadow-xl"
+        class="inline-flex items-center justify-center px-8 py-4 bg-[#2979ff] text-white font-bold text-lg rounded-xl hover:bg-[#2979ff]/90 transition-all shadow-lg hover:shadow-xl"
       >
         Search Climbing Gyms
         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -623,7 +623,7 @@ const schemas = [toolSchema, faqSchema, howToSchema];
     const recommendationBanner = document.getElementById('recommendation-banner') as HTMLElement;
     if (results.membershipIsCheaper) {
       recommendationBanner.innerHTML = `
-        <div class="bg-sage text-white rounded-xl p-6 text-center shadow-lg">
+        <div class="bg-[#00e676] text-white rounded-xl p-6 text-center shadow-lg">
           <h4 class="text-2xl font-bold mb-2">💡 Recommendation: Get a Membership</h4>
           <p class="text-lg">
             Based on ${visitsPerMonth} visits/month, you'll save <strong>$${results.monthlySavings}/month</strong>
@@ -633,7 +633,7 @@ const schemas = [toolSchema, faqSchema, howToSchema];
       `;
     } else {
       recommendationBanner.innerHTML = `
-        <div class="bg-blue-500 text-white rounded-xl p-6 text-center shadow-lg">
+        <div class="bg-[#2979ff] text-white rounded-xl p-6 text-center shadow-lg">
           <h4 class="text-2xl font-bold mb-2">💡 Recommendation: Stick with Day Passes</h4>
           <p class="text-lg">
             At ${visitsPerMonth} visits/month, day passes are more economical.

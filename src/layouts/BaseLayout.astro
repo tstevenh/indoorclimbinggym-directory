@@ -2,6 +2,7 @@
 /**
  * BaseLayout
  * Foundation layout for all pages with comprehensive SEO meta tags and schema markup
+ * Updated with dark climbing gym theme
  */
 import '../styles/global.css';
 import { fetchGyms } from '../config/api';
@@ -19,11 +20,10 @@ interface Props {
   keywords?: string[];
   noindex?: boolean;
   nofollow?: boolean;
-  schema?: any; // JSON-LD schema object(s)
+  schema?: any;
   breadcrumbs?: Array<{ label: string; url: string }>;
-  prevUrl?: string; // URL to previous page (for pagination)
-  nextUrl?: string; // URL to next page (for pagination)
-  // Article-specific meta tags (for blog posts)
+  prevUrl?: string;
+  nextUrl?: string;
   articlePublishedTime?: string;
   articleModifiedTime?: string;
   articleAuthor?: string;
@@ -51,33 +51,29 @@ const {
   articleTags,
 } = Astro.props;
 
-// Fetch gyms to calculate top 5 states dynamically
-// NOTE: In some environments (local dev without Supabase access), this can fail.
-// The site should still render core pages/tools without blocking.
+// Fetch gyms for navigation
 let gymsData = [];
 try {
   gymsData = await fetchGyms();
 } catch (e) {
-  console.warn('BaseLayout: failed to fetch gyms (continuing without dynamic nav data).');
+  console.warn('BaseLayout: failed to fetch gyms');
   gymsData = [];
 }
 
-// Count gyms by state (normalize to full name)
+// Calculate top 20 states
 const stateCounts: Record<string, number> = {};
 gymsData.forEach(gym => {
   const region = gym.region?.trim();
   if (region) {
-    // Use the region as-is (it's already the full state name)
     stateCounts[region] = (stateCounts[region] || 0) + 1;
   }
 });
 
-// Sort by count DESC and take top 5
-const top5States = Object.entries(stateCounts)
+const top22States = Object.entries(stateCounts)
   .sort(([,a], [,b]) => b - a)
-  .slice(0, 5);
+  .slice(0, 22);
 
-// Count gyms by city
+// Calculate top 20 cities
 const cityCounts: Record<string, { count: number; city: string; region: string; slug: string }> = {};
 gymsData.forEach(gym => {
   const city = gym.city?.trim();
@@ -96,48 +92,33 @@ gymsData.forEach(gym => {
   }
 });
 
-// Sort cities by count DESC and take top 6
-const top6Cities = Object.values(cityCounts)
+const top22Cities = Object.values(cityCounts)
   .sort((a, b) => b.count - a.count)
-  .slice(0, 6);
+  .slice(0, 22);
 
-// Build canonical URL with trailing slash enforcement
+// Build canonical URL
 const siteUrl = 'https://www.indoorclimbinggym.com';
 
 let canonicalURL: string;
 
 if (canonical && typeof canonical === 'string') {
-  // Explicitly provided canonical - ENFORCE trailing slash
-  // This prevents canonical → 308 redirect issues
   canonicalURL = canonical.endsWith('/') ? canonical : canonical + '/';
 } else {
-  // Self-canonical: ensure trailing slash for consistency
   let path = Astro.url.pathname;
-
-  // Add trailing slash if not present (unless it's a file with extension)
   if (!path.endsWith('/') && !path.includes('.')) {
     path = path + '/';
   }
-
-  // Build canonical URL without query parameters
   canonicalURL = `${siteUrl}${path}`;
 }
 
-// Ensure title is under 60 characters
 const finalTitle = title.length > 60 ? title.substring(0, 57) + '...' : title;
+const finalDescription = description.length > 160 ? description.substring(0, 157) + '...' : description;
 
-// Ensure description is under 160 characters
-const finalDescription =
-  description.length > 160 ? description.substring(0, 157) + '...' : description;
-
-// Construct robots meta
 const robotsDirectives = [];
 if (noindex) robotsDirectives.push('noindex');
 if (nofollow) robotsDirectives.push('nofollow');
-const robots =
-  robotsDirectives.length > 0 ? robotsDirectives.join(', ') : 'index, follow';
+const robots = robotsDirectives.length > 0 ? robotsDirectives.join(', ') : 'index, follow';
 
-// Generate breadcrumb schema if provided
 let breadcrumbSchema = null;
 if (breadcrumbs && breadcrumbs.length > 0) {
   breadcrumbSchema = {
@@ -151,6 +132,14 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     })),
   };
 }
+
+const navLinks = [
+  { name: 'Search', href: '/search/', color: '#00e676' },
+  { name: 'States', href: '/states/', color: '#2979ff' },
+  { name: 'Categories', href: '/categories/', color: '#ff2d7a' },
+  { name: 'Leaderboard', href: '/leaderboard/', color: '#ffea00' },
+  { name: 'Blog', href: '/blog/', color: '#ff9100' },
+];
 ---
 
 <!doctype html>
@@ -204,9 +193,10 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/logo.svg" />
 
-    <!-- Preconnect to external domains for performance -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
     <link rel="preconnect" href="https://www.googletagmanager.com" />
     <link rel="dns-prefetch" href="https://www.google-analytics.com" />
@@ -232,345 +222,324 @@ if (breadcrumbs && breadcrumbs.length > 0) {
     <!-- Vercel Web Analytics -->
     <Analytics />
 
-    <!-- Google Analytics (Consent-controlled) -->
+    <!-- Google Analytics -->
     <script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=G-KQJE0F08ER"></script>
     <script type="text/partytown">
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-
-      // 1. Set Consent Defaults (Must be first)
       gtag('consent', 'default', {
         'analytics_storage': 'granted',
         'ad_storage': 'granted',
         'ad_user_data': 'granted',
         'ad_personalization': 'granted'
       });
-
-      // 2. Initialize Timestamp (Critical for data collection)
       gtag('js', new Date());
-
-      // 3. Configure the Property
       gtag('config', 'G-KQJE0F08ER');
     </script>
     <slot name="head" />
   </head>
-  <body class="min-h-screen bg-ivory text-granite antialiased overflow-x-hidden">
-    <!-- Skip to main content link for accessibility -->
-    <a
-      href="#main-content"
-      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-sage focus:text-white focus:px-4 focus:py-2 focus:rounded"
-    >
+  <body class="min-h-screen bg-[#1a1a1a] text-[#f5f5f0] antialiased overflow-x-hidden">
+    <!-- Skip to main content -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-[#00e676] focus:text-[#1a1a1a] focus:px-4 focus:py-2 focus:rounded-lg focus:font-bold">
       Skip to main content
     </a>
 
-  <!-- Header will go here -->
-    <header id="main-header" class="bg-white shadow-sm sticky top-0 z-50">
-      <div class="container mx-auto px-4 py-4">
-        <nav class="flex items-center justify-between">
-          <a href="/" class="text-2xl font-bold text-sage">
-            IndoorClimbingGym
+    <!-- Header -->
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-transparent">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav class="flex items-center justify-between h-20">
+          <!-- Logo -->
+          <a href="/" class="flex items-center gap-3 group">
+            <img 
+              src="/logo.svg" 
+              alt="Indoor Climbing Gym" 
+              class="w-10 h-10"
+              style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));"
+            />
+            <div class="hidden sm:block">
+              <span class="font-display font-bold text-white text-base leading-tight block">
+                Indoor
+              </span>
+              <span class="font-display font-bold text-[#00e676] text-base leading-tight block -mt-0.5">
+                Climbing Gym
+              </span>
+            </div>
           </a>
 
           <!-- Desktop Navigation -->
-          <div class="hidden md:flex items-center gap-6">
-            <a href="/search/" class="text-granite hover:text-sage transition-colors">Search</a>
-
-            <!-- Categories Dropdown -->
-            <div class="relative group">
-              <button class="flex items-center gap-1 text-granite hover:text-sage transition-colors cursor-pointer">
-                Categories
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                <div class="py-2">
-                  <a href="/categories/best-bouldering-climbing-gyms/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                    Best Bouldering Gyms
-                  </a>
-                  <a href="/categories/best-climbing-gyms-for-beginners/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                    For Beginners
-                  </a>
-                  <a href="/categories/affordable-climbing-gyms/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                    Affordable Gyms
-                  </a>
-                  <a href="/categories/climbing-gyms-with-sauna/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                    With Sauna
-                  </a>
-                  <a href="/categories/climbing-gyms-with-kids-zone/" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                    With Kids Zone
-                  </a>
-                  <div class="border-t border-gray-200 my-1"></div>
-                  <a href="/categories/" class="block px-4 py-2 text-sm text-gray-500 hover:bg-sage/10 hover:text-sage transition-colors">
-                    View All Categories →
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <!-- States Dropdown -->
-            <div class="relative group">
-              <button class="flex items-center gap-1 text-granite hover:text-sage transition-colors cursor-pointer">
-                States
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <div class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                <div class="py-2">
-                  {top5States.map(([stateName]) => {
-                    const stateSlug = getStateSlug(stateName);
-                    return (
-                      <a
-                        href={`/${stateSlug}/`}
-                        class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors"
-                      >
-                        {stateName}
-                      </a>
-                    );
-                  })}
-                  <div class="border-t border-gray-200 my-1"></div>
-                  <a href="/states/" class="block px-4 py-2 text-sm text-gray-500 hover:bg-sage/10 hover:text-sage transition-colors">
-                    View All States →
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <a href="/leaderboard/" class="text-granite hover:text-sage transition-colors">Leaderboard</a>
-            <a href="/blog/" class="text-granite hover:text-sage transition-colors">Blog</a>
-            <a href="/about/" class="text-granite hover:text-sage transition-colors">About</a>
-
-            <!-- Auth Nav: Populated by client-side script -->
-            <div id="desktop-auth-nav" class="flex items-center gap-4">
-              <!-- Loading placeholder -->
-              <div class="text-gray-400 text-sm">•••</div>
-            </div>
+          <div class="hidden lg:flex items-center gap-2">
+            {navLinks.map((link, i) => (
+              <a
+                key={link.name}
+                href={link.href}
+                class="relative px-4 py-2 font-display font-semibold text-sm text-white/80 hover:text-white transition-all duration-200 hover:-translate-y-0.5"
+                style={{
+                  background: 'linear-gradient(145deg, #2d2d2d, #1f1f1f)',
+                  borderRadius: i % 2 === 0 ? '30% 70% 70% 30% / 30% 30% 70% 70%' : '8px 20px 8px 20px',
+                  boxShadow: '0 4px 0 #1a1a1a, 0 6px 12px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.05)',
+                }}
+              >
+                {link.name}
+              </a>
+            ))}
+            <a
+              href={import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.indoorclimbinggym.com'}
+              class="relative ml-2 px-4 py-2 font-display font-semibold text-sm text-black bg-[#00e676] hover:bg-[#00c853] transition-all duration-200 hover:-translate-y-0.5"
+              style={{
+                borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%',
+                boxShadow: '0 4px 0 #009624, 0 6px 12px rgba(0,0,0,0.4)',
+              }}
+            >
+              Sign In
+            </a>
           </div>
 
-          <!-- Mobile Hamburger Button -->
+          <!-- Mobile menu button -->
           <button
             id="mobile-menu-button"
             type="button"
-            class="md:hidden p-2 text-granite hover:text-sage transition-colors"
+            class="lg:hidden relative w-12 h-12 flex items-center justify-center"
+            style={{
+              background: 'linear-gradient(145deg, #2d2d2d, #1f1f1f)',
+              borderRadius: '50%',
+              boxShadow: '0 4px 0 #1a1a1a, 0 6px 16px rgba(0,0,0,0.4)',
+            }}
             aria-label="Open menu"
           >
-            <svg
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              ></path>
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
           </button>
         </nav>
       </div>
     </header>
 
-    <!-- Main content area -->
-    <main id="main-content" class="container mx-auto px-4 py-8">
-      <slot />
-    </main>
-
-    <!-- Footer will go here -->
-    <footer class="bg-granite text-ivory mt-16">
-      <div class="container mx-auto px-4 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          <!-- Column 1: Brand + Social -->
-          <div>
-            <h3 class="font-bold text-lg mb-4">IndoorClimbingGym</h3>
-            <p class="text-sm mb-4">Find Your Next Climb.</p>
-
-            <!-- Social Media -->
-            <div class="flex gap-4">
-              <a href="https://reddit.com/r/indoorclimbinggym" target="_blank" rel="noopener noreferrer" class="text-ivory hover:text-sage transition-colors" aria-label="Join our Reddit community">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
-                </svg>
-              </a>
-              <a href="https://digg.com/indoorclimbing" target="_blank" rel="noopener noreferrer" class="text-ivory hover:text-sage transition-colors" aria-label="Follow us on Digg">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M17.76 8.16v8.16h3.84v.96h-3.84v1.92H24V8.16h-6.24zm-7.2 0v8.16h3.84v.96h-3.84v1.92h6.24V8.16h-6.24zM3.84 4.8v3.36H0v8.16h6.24V4.8h-2.4zM9.6 8.16H7.2v8.16h2.4V8.16zm12 6.24h-1.44v-4.32h1.44v4.32zm-17.76 0H2.4v-4.32h1.44v4.32zm10.56 0h-1.44v-4.32h1.44v4.32zM9.6 4.8H7.2v2.4h2.4V4.8z"/>
-                </svg>
-              </a>
-            </div>
-          </div>
-
-          <!-- Column 2: Explore -->
-          <div>
-            <h4 class="font-semibold mb-3">Explore</h4>
-            <ul class="space-y-2 text-sm">
-              <li><a href="/search/" class="hover:text-sage">Search Gyms</a></li>
-              <li><a href="/leaderboard/" class="hover:text-sage">Leaderboard</a></li>
-              <li><a href="/gear/" class="hover:text-sage">Recommended Gear</a></li>
-              <li><a href="/tools/" class="hover:text-sage">Free Tools</a></li>
-              <li><a href="/blog/" class="hover:text-sage">Blog</a></li>
-              <li><a href="/studies/" class="hover:text-sage">Studies</a></li>
-            </ul>
-          </div>
-
-          <!-- Column 3: Top Categories -->
-          <div>
-            <h4 class="font-semibold mb-3">Top Categories</h4>
-            <ul class="space-y-2 text-sm">
-              <li><a href="/categories/best-bouldering-climbing-gyms/" class="hover:text-sage">Bouldering Gyms</a></li>
-              <li><a href="/categories/best-climbing-gyms-for-beginners/" class="hover:text-sage">For Beginners</a></li>
-              <li><a href="/categories/affordable-climbing-gyms/" class="hover:text-sage">Affordable Gyms</a></li>
-              <li><a href="/categories/climbing-gyms-with-sauna/" class="hover:text-sage">With Sauna</a></li>
-              <li><a href="/categories/climbing-gyms-with-kids-zone/" class="hover:text-sage">With Kids Zone</a></li>
-              <li><a href="/categories/" class="hover:text-sage">All Categories</a></li>
-            </ul>
-          </div>
-
-          <!-- Column 4: Popular Cities (Dynamic - Top 6 by gym count) -->
-          <div>
-            <h4 class="font-semibold mb-3">Popular Cities</h4>
-            <ul class="space-y-2 text-sm">
-              {top6Cities.map(({ city, region, slug }) => {
-                const stateCode = getStateCode(region);
-                const stateSlug = getStateSlug(region);
-                return (
-                  <li>
-                    <a href={`/${stateSlug}/${slug}/`} class="hover:text-sage">
-                      {city}, {stateCode}
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          <!-- Column 5: Company (Renamed from "About") -->
-          <div>
-            <h4 class="font-semibold mb-3">Company</h4>
-            <ul class="space-y-2 text-sm">
-              <li><a href="/about/" class="hover:text-sage">About Us</a></li>
-              <li><a href="/contact/" class="hover:text-sage">Contact</a></li>
-              <li><a href="/badge/" class="hover:text-sage">Get Verified Badge</a></li>
-              <li><a href="/privacy/" class="hover:text-sage">Privacy</a></li>
-              <li><a href="/terms/" class="hover:text-sage">Terms</a></li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Copyright & Affiliate Disclosure -->
-        <div class="border-t border-gray-600 mt-8 pt-8 text-center text-sm space-y-2">
-          <div class="flex flex-wrap items-center justify-center gap-3">
-            <a href="https://startupfa.me/s/indoorclimbinggym?utm_source=www.indoorclimbinggym.com" target="_blank">
-              <img src="https://startupfa.me/badges/featured-badge-small.webp" alt="IndoorClimbingGym - Featured on Startup Fame" width="150" height="24" />
-            </a>
-            <a href="https://trylaunch.ai/launch/indoor-climbing-gym" target="_blank" rel="dofollow" style="display: inline-block; padding: 4px 8px; background: #FFFFFF; border: 1px solid #E5E5E5; border-radius: 8px; text-decoration: none; transition: all 0.2s;">
-              <img src="https://trylaunch.ai/badges/badge-color.svg" alt="Launch" height="22" style="display: block; height: 22px; width: auto;" />
-            </a>
-            <a href="https://shipybara.com/projects/indoor-climbing-gym" target="_blank" rel="noopener">
-              <img src="https://shipybara.com/images/badges/shipybara-badge-light.svg" alt="Featured on Shipybara" width="100" height="36" />
-            </a>
-            <a href="https://foundrlist.com/product/indoorclimbinggym" target="_blank" rel="noopener noreferrer">
-              <img src="https://foundrlist.com/api/badge/indoorclimbinggym" alt="Live on FoundrList" width="120" height="48" />
-            </a>
-          </div>
-          <p>© {new Date().getFullYear()} IndoorClimbingGym. All rights reserved.</p>
-          <p class="text-xs text-gray-400">
-            <strong class="text-gray-300">Affiliate Disclosure:</strong> IndoorClimbingGym.com is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.com.
-          </p>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Mobile Menu Overlay -->
-    <div
-      id="mobile-menu"
-      class="fixed inset-0 bg-black/50 z-50 hidden"
-      aria-hidden="true"
-    >
-      <div class="fixed right-0 top-0 h-full w-4/5 max-w-sm bg-white shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
-        <!-- Header Section (Fixed at top) -->
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <span class="text-lg font-bold text-sage">IndoorClimbingGym</span>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 lg:hidden hidden">
+      <div id="mobile-menu-panel" class="absolute right-0 top-0 bottom-0 w-80 bg-[#1a1a1a] border-l border-white/10 p-6 transform translate-x-full transition-transform duration-300">
+        <div class="flex items-center justify-between mb-8">
+          <span class="font-display font-bold text-white">MENU</span>
           <button
             id="mobile-menu-close"
-            type="button"
-            class="p-2 text-granite hover:text-sage transition-colors"
-            aria-label="Close menu"
+            class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5"
           >
-            <svg
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
           </button>
         </div>
 
-        <!-- Scrollable Content Area -->
-        <div class="flex-1 overflow-y-auto">
-          <!-- Mobile Auth Nav: Populated by client-side script -->
-          <div id="mobile-auth-nav">
-            <!-- Loading placeholder -->
-            <div class="p-6 text-center text-gray-400 text-sm">Loading...</div>
+        <div class="space-y-3">
+          {navLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              class="block px-5 py-4 bg-[#2d2d2d] rounded-xl text-white font-display font-semibold"
+              style={{ borderLeft: `4px solid ${link.color}` }}
+            >
+              {link.name}
+            </a>
+          ))}
+          <a
+            href={import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.indoorclimbinggym.com'}
+            class="block px-5 py-4 bg-[#00e676] rounded-xl text-black font-display font-bold text-center"
+          >
+            Sign In
+          </a>
+        </div>
+
+        <!-- Stats in mobile menu -->
+        <div class="mt-8 pt-8 border-t border-white/10">
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div class="font-mono font-bold text-2xl text-[#00e676]">{gymsData.length || 779}</div>
+              <div class="text-xs text-white/40 font-mono">GYMS</div>
+            </div>
+            <div>
+              <div class="font-mono font-bold text-2xl text-[#2979ff]">{(gymsData.length && [...new Set(gymsData.map(g => g.city))].length) || 553}</div>
+              <div class="text-xs text-white/40 font-mono">CITIES</div>
+            </div>
+            <div>
+              <div class="font-mono font-bold text-2xl text-[#ff2d7a]">{(gymsData.length && [...new Set(gymsData.map(g => g.region))].length) || 51}</div>
+              <div class="text-xs text-white/40 font-mono">STATES</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Main content -->
+    <main id="main-content" class="pt-20">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative bg-[#0f0f0f] border-t border-white/5">
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+          <!-- Brand -->
+          <div class="lg:col-span-2">
+            <a href="/" class="inline-flex items-center gap-3 mb-6">
+              <img 
+                src="/logo.svg" 
+                alt="Indoor Climbing Gym" 
+                class="w-12 h-12"
+                style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));"
+              />
+              <div>
+                <span class="font-display font-bold text-white text-base leading-tight block">Indoor</span>
+                <span class="font-display font-bold text-[#00e676] text-base leading-tight block -mt-0.5">Climbing Gym</span>
+              </div>
+            </a>
+            <p class="text-white/40 mb-6 max-w-sm">
+              The complete directory of indoor climbing gyms across America. Find your next climb.
+            </p>
+            <a href="mailto:tim@indoorclimbinggym.com" class="inline-flex items-center gap-2 text-white/40 hover:text-[#00e676] transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <span class="text-sm font-mono">tim@indoorclimbinggym.com</span>
+            </a>
+          </div>
+          
+          <!-- Explore -->
+          <div>
+            <h3 class="font-display font-bold text-white mb-4 text-sm tracking-wider">EXPLORE</h3>
+            <ul class="space-y-3">
+              <li><a href="/search/" class="text-white/40 hover:text-[#00e676] transition-colors text-sm">Search</a></li>
+              <li><a href="/states/" class="text-white/40 hover:text-[#00e676] transition-colors text-sm">States</a></li>
+              <li><a href="/categories/" class="text-white/40 hover:text-[#00e676] transition-colors text-sm">Categories</a></li>
+              <li><a href="/leaderboard/" class="text-white/40 hover:text-[#00e676] transition-colors text-sm">Leaderboard</a></li>
+            </ul>
+          </div>
+          
+          <!-- Resources -->
+          <div>
+            <h3 class="font-display font-bold text-white mb-4 text-sm tracking-wider">RESOURCES</h3>
+            <ul class="space-y-3">
+              <li><a href="/blog/" class="text-white/40 hover:text-[#2979ff] transition-colors text-sm">Blog</a></li>
+              <li><a href="/tools/" class="text-white/40 hover:text-[#2979ff] transition-colors text-sm">Tools</a></li>
+              <li><a href="/studies/" class="text-white/40 hover:text-[#2979ff] transition-colors text-sm">Studies</a></li>
+              <li><a href="/gear/" class="text-white/40 hover:text-[#2979ff] transition-colors text-sm">Gear</a></li>
+            </ul>
+          </div>
+          
+          <!-- Company -->
+          <div>
+            <h3 class="font-display font-bold text-white mb-4 text-sm tracking-wider">COMPANY</h3>
+            <ul class="space-y-3">
+              <li><a href="/about/" class="text-white/40 hover:text-[#ff2d7a] transition-colors text-sm">About</a></li>
+              <li><a href="/contact/" class="text-white/40 hover:text-[#ff2d7a] transition-colors text-sm">Contact</a></li>
+              <li><a href="/privacy/" class="text-white/40 hover:text-[#ff2d7a] transition-colors text-sm">Privacy</a></li>
+              <li><a href="/terms/" class="text-white/40 hover:text-[#ff2d7a] transition-colors text-sm">Terms</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        {/* Popular States */}
+        <div class="border-t border-white/5 mt-12 pt-8">
+          <h4 class="text-white/50 text-[10px] font-mono uppercase tracking-wider mb-4">Popular States</h4>
+          <div class="flex flex-wrap gap-x-4 gap-y-1.5">
+            {top22States.map(([state, count]) => {
+              const stateSlug = state.toLowerCase().replace(/\s+/g, '-');
+              return (
+                <a 
+                  href={`/${stateSlug}/`}
+                  class="text-white/40 hover:text-[#00e676] transition-colors text-xs"
+                >
+                  Indoor Climbing Gym in {state}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Popular Cities */}
+        <div class="border-t border-white/5 mt-8 pt-8">
+          <h4 class="text-white/50 text-[10px] font-mono uppercase tracking-wider mb-4">Popular Cities</h4>
+          <div class="flex flex-wrap gap-x-4 gap-y-1.5">
+            {top22Cities.map((city) => {
+              const stateSlug = city.region.toLowerCase().replace(/\s+/g, '-');
+              const citySlug = city.city.toLowerCase().replace(/\s+/g, '-');
+              return (
+                <a 
+                  href={`/${stateSlug}/${citySlug}/`}
+                  class="text-white/40 hover:text-[#2979ff] transition-colors text-xs"
+                >
+                  Indoor Climbing Gym in {city.city}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Bottom bar with badges */}
+        <div class="border-t border-white/5 mt-8 pt-8 flex flex-col lg:flex-row items-center justify-between gap-6">
+          <p class="text-white/30 text-sm font-mono">
+            © {new Date().getFullYear()} INDOORCLIMBINGGYM. ALL RIGHTS RESERVED.
+          </p>
+          
+          {/* Badges */}
+          <div class="flex flex-wrap items-center justify-center gap-3">
+            <a href="https://startupfa.me/s/indoorclimbinggym?utm_source=www.indoorclimbinggym.com" target="_blank" class="h-6 flex items-center justify-center">
+              <img src="https://startupfa.me/badges/featured-badge-small.webp" alt="IndoorClimbingGym - Featured on Startup Fame" width="150" height="24" class="max-h-4 w-auto object-contain" />
+            </a>
+            <a href="https://trylaunch.ai/launch/indoor-climbing-gym" target="_blank" rel="dofollow" class="h-6 flex items-center justify-center px-1.5 bg-white rounded border border-gray-200 hover:border-gray-300 transition-all">
+              <img src="https://trylaunch.ai/badges/badge-color.svg" alt="Launch" height="22" class="max-h-3.5 w-auto object-contain" />
+            </a>
+            <a href="https://shipybara.com/projects/indoor-climbing-gym" target="_blank" rel="noopener" class="h-6 flex items-center justify-center">
+              <img src="https://shipybara.com/images/badges/shipybara-badge-light.svg" alt="Featured on Shipybara" width="100" height="36" class="max-h-4 w-auto object-contain" />
+            </a>
+            <a href="https://foundrlist.com/product/indoorclimbinggym" target="_blank" rel="noopener noreferrer" class="h-6 flex items-center justify-center">
+              <img src="https://foundrlist.com/api/badge/indoorclimbinggym" alt="Live on FoundrList" width="120" height="48" class="max-h-4 w-auto object-contain" />
+            </a>
+          </div>
+        </div>
+
+        {/* Affiliate Disclosure */}
+        <div class="border-t border-white/5 mt-8 pt-8">
+          <p class="text-white/30 text-xs text-center max-w-4xl mx-auto">
+            <span class="font-semibold">Affiliate Disclosure:</span> IndoorClimbingGym.com is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.com.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Cookie Consent -->
+    <CookieConsent />
+
+    <!-- Mobile menu script -->
     <script>
-      // Mobile menu toggle functionality
       const menuButton = document.getElementById('mobile-menu-button');
       const mobileMenu = document.getElementById('mobile-menu');
+      const mobileMenuPanel = document.getElementById('mobile-menu-panel');
       const closeButton = document.getElementById('mobile-menu-close');
-      const menuPanel = mobileMenu?.querySelector('div');
 
       function openMenu() {
-        if (mobileMenu && menuPanel) {
+        if (mobileMenu && mobileMenuPanel) {
           mobileMenu.classList.remove('hidden');
-          // Force reflow to ensure transition works
-          void menuPanel.offsetWidth;
-          menuPanel.classList.remove('translate-x-full');
-          menuPanel.classList.add('translate-x-0');
-          document.body.style.overflow = 'hidden'; // Prevent body scroll
+          setTimeout(() => {
+            mobileMenuPanel.classList.remove('translate-x-full');
+          }, 10);
+          document.body.style.overflow = 'hidden';
         }
       }
 
       function closeMenu() {
-        if (mobileMenu && menuPanel) {
-          menuPanel.classList.add('translate-x-full');
-          menuPanel.classList.remove('translate-x-0');
+        if (mobileMenu && mobileMenuPanel) {
+          mobileMenuPanel.classList.add('translate-x-full');
           setTimeout(() => {
             mobileMenu.classList.add('hidden');
-            document.body.style.overflow = ''; // Restore body scroll
-          }, 300); // Wait for animation to complete
+          }, 300);
+          document.body.style.overflow = '';
         }
       }
 
-      // Open menu on button click
       menuButton?.addEventListener('click', openMenu);
-
-      // Close menu on close button click
       closeButton?.addEventListener('click', closeMenu);
-
-      // Close menu on backdrop click
       mobileMenu?.addEventListener('click', (e) => {
-        if (e.target === mobileMenu) {
-          closeMenu();
-        }
+        if (e.target === mobileMenu) closeMenu();
       });
-
-      // Close menu on ESC key press (accessibility)
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && mobileMenu && !mobileMenu.classList.contains('hidden')) {
           closeMenu();
@@ -578,264 +547,18 @@ if (breadcrumbs && breadcrumbs.length > 0) {
       });
     </script>
 
-    <!-- Client-Side Auth Navigation Script -->
-    <script define:vars={{ dashboardUrl: import.meta.env.PUBLIC_DASHBOARD_URL, supabaseUrl: import.meta.env.PUBLIC_SUPABASE_URL }}>
-      (function() {
-        const desktopNav = document.getElementById('desktop-auth-nav');
-        const mobileNav = document.getElementById('mobile-auth-nav');
-
-        if (!desktopNav || !mobileNav) return;
-
-        // Helper: Get cookie by name
-        function getCookie(name) {
-          const value = `; ${document.cookie}`;
-          const parts = value.split(`; ${name}=`);
-          if (parts.length === 2) return parts.pop().split(';').shift();
-          return null;
-        }
-
-        // Check for Supabase auth cookie
-        const cookieName = `sb-${supabaseUrl.split('//')[1].split('.')[0]}-auth-token`;
-        const authCookie = getCookie(cookieName);
-
-        if (authCookie) {
-          // User is logged in - show account dropdown (desktop)
-          desktopNav.innerHTML = `
-            <div class="relative group">
-              <button class="flex items-center gap-2 text-granite hover:text-sage transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <span>My Account</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <div class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                <div class="py-2">
-                  <a href="${dashboardUrl}/dashboard" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                    Dashboard
-                  </a>
-                  <a href="${dashboardUrl}/dashboard/favorites" class="block px-4 py-2 text-sm text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                    My Favorites
-                  </a>
-                  <div class="border-t border-gray-200 my-2"></div>
-                  <form method="POST" action="${dashboardUrl}/api/auth/signout">
-                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
-                      Sign Out
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          `;
-
-          // User is logged in - show mobile nav
-          mobileNav.innerHTML = `
-            <!-- User Status Badge -->
-            <div class="p-6">
-              <div class="flex items-center gap-3 px-4 py-3 bg-sage/10 rounded-lg">
-                <div class="w-10 h-10 bg-sage rounded-full flex items-center justify-center">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-                <div>
-                  <p class="text-sm font-semibold text-granite">Logged In</p>
-                  <p class="text-xs text-gray-500">Account Active</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Account Links Section -->
-            <div class="px-6 pb-4">
-              <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Account</p>
-              <nav class="space-y-1">
-                <a href="${dashboardUrl}/dashboard" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                  <span class="font-medium">Dashboard</span>
-                </a>
-                <a href="${dashboardUrl}/dashboard/favorites" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                  <span class="font-medium">My Favorites</span>
-                </a>
-              </nav>
-            </div>
-
-            <div class="border-t border-gray-200 my-2"></div>
-
-            <!-- Navigation Links Section -->
-            <div class="px-6 pb-4">
-              <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Explore</p>
-              <nav class="space-y-1">
-                <a href="/search/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-sage bg-sage/10 font-medium transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <span>Search Gyms</span>
-                </a>
-                <a href="/leaderboard/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span class="font-medium">Leaderboard</span>
-                </a>
-                <a href="/states/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span class="font-medium">Browse States</span>
-                </a>
-                <a href="/categories/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                  </svg>
-                  <span class="font-medium">Categories</span>
-                </a>
-                <a href="/blog/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                  <span class="font-medium">Blog</span>
-                </a>
-                <a href="/about/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span class="font-medium">About</span>
-                </a>
-              </nav>
-            </div>
-
-            <div class="border-t border-gray-200 mt-2"></div>
-
-            <!-- Sign Out Section -->
-            <div class="p-6">
-              <form method="POST" action="${dashboardUrl}/api/auth/signout">
-                <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 rounded-lg font-medium hover:bg-red-100 transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  <span>Sign Out</span>
-                </button>
-              </form>
-            </div>
-          `;
+    <!-- Header scroll effect -->
+    <script>
+      const header = document.getElementById('main-header');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          header?.classList.add('bg-[#1a1a1a]/95', 'backdrop-blur-md', 'border-b', 'border-white/5');
+          header?.classList.remove('bg-transparent');
         } else {
-          // User is logged out - show login/signup (desktop)
-          desktopNav.innerHTML = `
-            <a href="${dashboardUrl}/login" class="text-granite hover:text-sage transition-colors">Login</a>
-            <a href="${dashboardUrl}/signup" class="bg-sage text-white px-6 py-2 rounded hover:bg-sage/90 transition-colors">
-              Sign Up
-            </a>
-          `;
-
-          // User is logged out - show mobile nav
-          mobileNav.innerHTML = `
-            <!-- Sign Up CTA -->
-            <div class="p-6">
-              <a href="${dashboardUrl}/signup" class="block px-6 py-3 bg-sage text-white text-center rounded-lg font-semibold hover:bg-sage/90 transition-colors shadow-md">
-                Sign Up Free
-              </a>
-              <p class="text-xs text-gray-500 text-center mt-2">Join thousands of climbers</p>
-            </div>
-
-            <div class="border-t border-gray-200"></div>
-
-            <!-- Navigation Links Section -->
-            <div class="px-6 py-4">
-              <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Explore</p>
-              <nav class="space-y-1">
-                <a href="/search/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-sage bg-sage/10 font-medium transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <span>Search Gyms</span>
-                </a>
-                <a href="/leaderboard/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span class="font-medium">Leaderboard</span>
-                </a>
-                <a href="/states/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span class="font-medium">Browse States</span>
-                </a>
-                <a href="/categories/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                  </svg>
-                  <span class="font-medium">Categories</span>
-                </a>
-                <a href="/blog/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                  <span class="font-medium">Blog</span>
-                </a>
-                <a href="/about/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-granite hover:bg-sage/10 hover:text-sage transition-colors">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span class="font-medium">About</span>
-                </a>
-              </nav>
-            </div>
-
-            <div class="border-t border-gray-200"></div>
-
-            <!-- Login Section -->
-            <div class="p-6">
-              <a href="${dashboardUrl}/login" class="block text-center px-6 py-3 text-granite font-medium hover:bg-sage/10 hover:text-sage rounded-lg transition-colors">
-                Already have an account? <span class="text-sage font-semibold">Log In</span>
-              </a>
-            </div>
-          `;
+          header?.classList.remove('bg-[#1a1a1a]/95', 'backdrop-blur-md', 'border-b', 'border-white/5');
+          header?.classList.add('bg-transparent');
         }
-      })();
+      });
     </script>
-
-    <!-- Cookie Consent Banner -->
-    <CookieConsent />
   </body>
 </html>
-
-<style is:global>
-  /* Custom color classes for TailwindCSS */
-  .text-sage {
-    color: #98a48b;
-  }
-  .bg-sage {
-    background-color: #98a48b;
-  }
-  .text-granite {
-    color: #555;
-  }
-  .bg-granite {
-    background-color: #555;
-  }
-  .text-ivory {
-    color: #f8f8f5;
-  }
-  .bg-ivory {
-    background-color: #f8f8f5;
-  }
-  .hover\:text-sage:hover {
-    color: #98a48b;
-  }
-  .hover\:bg-sage\/90:hover {
-    background-color: rgba(152, 164, 139, 0.9);
-  }
-  .hover\:bg-sage\/10:hover {
-    background-color: rgba(152, 164, 139, 0.1);
-  }
-</style>

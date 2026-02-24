@@ -19,7 +19,7 @@ const dashboardUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.
   <a
     id="log-visit-link"
     href={`${dashboardUrl}/dashboard/log-visit?gym_id=${gym.id}&gym_name=${encodeURIComponent(gym.name)}&city=${encodeURIComponent(gym.city)}&return=${encodeURIComponent(Astro.url.href)}`}
-    class="block w-full bg-sage text-white text-center py-3 px-6 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+    class="block w-full bg-[#00e676] text-black text-center py-3 px-6 rounded-lg font-medium hover:opacity-90 transition-colors"
     title="Log this climbing session"
   >
     <span class="inline-flex items-center justify-center gap-2">
@@ -63,7 +63,7 @@ const dashboardUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.
         container.innerHTML = `
           <a
             href="${dashboardUrl}/login?redirectTo=${encodeURIComponent(window.location.href)}"
-            class="block w-full bg-white border-2 border-sage text-sage text-center py-3 px-6 rounded-lg font-medium hover:bg-sage/10 transition-colors"
+            class="block w-full bg-[#1f1f1f] border border-[#00e676] text-[#00e676] text-center py-3 px-6 rounded-lg font-medium hover:opacity-90 transition-colors"
           >
             Login to Log Visit
           </a>

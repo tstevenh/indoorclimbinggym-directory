@@ -1,6 +1,6 @@
 ---
 /**
- * States Index Page (Power Page)
+ * States Index Page (Power Page) - Dark Theme
  * Directory of all states with climbing gyms
  * Shows states in grid format with gym counts
  */
@@ -78,6 +78,9 @@ const breadcrumbs = [
   { label: 'Home', url: '/' },
   { label: 'States', url: pageUrl },
 ];
+
+// State colors for visual variety
+const stateColors = ['#ff2d7a', '#00e676', '#2979ff', '#ffea00', '#ff9100', '#e040fb'];
 ---
 
 <BaseLayout
@@ -86,150 +89,170 @@ const breadcrumbs = [
   schema={itemListSchema}
   breadcrumbs={breadcrumbs}
 >
-  <!-- Breadcrumb -->
-  <nav class="text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
-    <ol class="flex items-center gap-2">
-      <li><a href="/" class="hover:text-sage">Home</a></li>
-      <li class="flex items-center gap-2">
-        <span class="text-gray-400">/</span>
-        <span class="text-granite font-medium">States</span>
-      </li>
-    </ol>
-  </nav>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="text-sm text-white/40 mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center gap-2">
+        <li><a href="/" class="hover:text-[#00e676] transition-colors">Home</a></li>
+        <li class="flex items-center gap-2">
+          <span class="text-white/20">/</span>
+          <span class="text-white/60 font-medium">States</span>
+        </li>
+      </ol>
+    </nav>
 
-  <!-- Reverted Hero Section -->
-  <header class="mb-12 text-center">
-    <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">
-      Climbing Gyms by State
-    </h1>
-    <p class="text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto">
-      Find indoor rock climbing and bouldering gyms across the United States.
-      Browse {totalGyms} facilities in {totalStates} states to find your perfect climbing destination.
-    </p>
-  </header>
-
-  <!-- Reverted Quick Stats -->
-  <div class="grid grid-cols-2 md:grid-cols-3 gap-4 bg-sage/10 rounded-lg p-6 mb-12 max-w-4xl mx-auto">
-    <div class="text-center">
-      <div class="text-3xl font-bold text-sage">{totalStates}</div>
-      <div class="text-sm text-gray-600">States</div>
-    </div>
-    <div class="text-center">
-      <div class="text-3xl font-bold text-sage">{totalGyms}</div>
-      <div class="text-sm text-gray-600">Total Gyms</div>
-    </div>
-    <div class="text-center col-span-2 md:col-span-1">
-      <div class="text-3xl font-bold text-sage">{Math.round(totalGyms / totalStates)}</div>
-      <div class="text-sm text-gray-600">Avg per State</div>
-    </div>
-  </div>
-
-  <!-- States Grid Section (KEEPING IMPROVED CARDS) -->
-  <section class="mb-12">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-      <div>
-        <h2 class="text-3xl font-bold text-granite mb-2">
-          Browse by State
-        </h2>
-        <p class="text-gray-700 max-w-2xl">
-          Select a state below to explore all climbing gyms, compare prices and amenities,
-          and find the perfect facility for your climbing needs.
-        </p>
+    <!-- Hero Section -->
+    <header class="mb-12">
+      <div class="mb-2">
+        <span class="text-[#2979ff] text-sm font-mono tracking-widest">EXPLORE BY REGION</span>
       </div>
-      
-      <!-- Sort Control -->
-      <div class="w-full md:w-auto">
-        <label for="sort-states" class="sr-only">Sort by</label>
-        <div class="relative">
-          <select 
-            id="sort-states" 
-            class="appearance-none bg-white border border-gray-300 text-granite py-2 pl-4 pr-10 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent cursor-pointer w-full md:w-48"
-          >
-            <option value="count">Most Gyms</option>
-            <option value="alpha">Alphabetical (A-Z)</option>
-          </select>
-          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
+        CLIMBING GYMS
+        <br />
+        <span class="text-white/40">BY STATE</span>
+      </h1>
+      <p class="text-xl text-white/50 leading-relaxed max-w-3xl">
+        Find indoor rock climbing and bouldering gyms across the United States.
+        Browse {totalGyms} facilities in {totalStates} states to find your perfect climbing destination.
+      </p>
+    </header>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 bg-[#1f1f1f] rounded-2xl p-6 mb-12 border border-white/10" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+      <div class="text-center">
+        <div class="font-mono font-bold text-4xl text-[#00e676]">{totalStates}</div>
+        <div class="text-sm text-white/40 font-mono tracking-wider mt-1">STATES</div>
+      </div>
+      <div class="text-center">
+        <div class="font-mono font-bold text-4xl text-[#2979ff]">{totalGyms}</div>
+        <div class="text-sm text-white/40 font-mono tracking-wider mt-1">TOTAL GYMS</div>
+      </div>
+      <div class="text-center col-span-2 md:col-span-1">
+        <div class="font-mono font-bold text-4xl text-[#ff2d7a]">{Math.round(totalGyms / totalStates)}</div>
+        <div class="text-sm text-white/40 font-mono tracking-wider mt-1">AVG PER STATE</div>
+      </div>
+    </div>
+
+    <!-- States Grid Section -->
+    <section class="mb-12">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <div>
+          <h2 class="text-3xl font-display font-bold text-white mb-2">
+            BROWSE BY STATE
+          </h2>
+          <p class="text-white/50 max-w-2xl">
+            Select a state below to explore all climbing gyms, compare prices and amenities,
+            and find the perfect facility for your climbing needs.
+          </p>
+        </div>
+        
+        <!-- Sort Control -->
+        <div class="w-full md:w-auto">
+          <label for="sort-states" class="sr-only">Sort by</label>
+          <div class="relative">
+            <select 
+              id="sort-states" 
+              class="appearance-none bg-[#2d2d2d] border border-white/10 text-white py-2.5 pl-4 pr-10 rounded-xl focus:outline-none focus:border-[#00e676] focus:ring-1 focus:ring-[#00e676]/50 cursor-pointer w-full md:w-48 font-mono text-sm"
+              style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.75rem center', backgroundSize: '1rem' }}
+            >
+              <option value="count" class="bg-[#2d2d2d]">Most Gyms</option>
+              <option value="alpha" class="bg-[#2d2d2d]">Alphabetical (A-Z)</option>
+            </select>
           </div>
         </div>
       </div>
-    </div>
 
-    <div id="states-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {statesArray.map(state => (
-        <a
-          href={`/${state.slug}/`}
-          class="group block p-6 bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-sage/20 relative overflow-hidden"
-          data-name={state.name}
-          data-count={state.count}
-        >
-          <div class="absolute top-0 right-0 w-24 h-24 bg-sage/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+      <div id="states-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {statesArray.map((state, index) => {
+          const color = stateColors[index % stateColors.length];
           
-          <div class="flex items-center justify-between mb-4 relative z-10">
-            <h3 class="text-xl font-bold text-granite group-hover:text-sage transition-colors">
-              {state.name}
-            </h3>
-            <span class="px-3 py-1 text-xs font-bold bg-sage/10 text-sage rounded-full border border-sage/20 uppercase">
-              {state.code}
-            </span>
-          </div>
-          <div class="flex items-center gap-2 text-gray-500 relative z-10">
-            <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-            <span>{state.count} {state.count === 1 ? 'Gym' : 'Gyms'}</span>
-          </div>
-        </a>
-      ))}
-    </div>
-  </section>
+          return (
+            <a
+              href={`/${state.slug}/`}
+              class="group relative p-6 bg-gradient-to-br from-[#2d2d2d] to-[#1f1f1f] rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-300 overflow-hidden"
+              style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}
+              data-name={state.name}
+              data-count={state.count}
+            >
+              {/* Top accent line */}
+              <div class="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: color }}></div>
+              
+              {/* Hover glow */}
+              <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 50% 0%, ${color}10 0%, transparent 60%)` }}></div>
+              
+              <div class="flex items-center justify-between mb-4 relative z-10">
+                <h3 class="text-xl font-display font-bold text-white group-hover:text-white transition-colors">
+                  {state.name}
+                </h3>
+                <span class="px-3 py-1 text-xs font-mono font-bold rounded-full border uppercase" style={{ background: `${color}15`, color: color, borderColor: `${color}30` }}>
+                  {state.code}
+                </span>
+              </div>
+              <div class="flex items-center gap-2 text-white/40 relative z-10">
+                <svg class="w-5 h-5" style={{ color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                <span class="font-mono">{state.count} {state.count === 1 ? 'Gym' : 'Gyms'}</span>
+              </div>
+              
+              {/* Arrow indicator */}
+              <svg class="absolute bottom-6 right-6 w-5 h-5 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0" style={{ color }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </a>
+          );
+        })}
+      </div>
+    </section>
 
-  <!-- Original Content Sections -->
-  <section class="mb-12 bg-white rounded-lg shadow-md p-8">
-    <h2 class="text-3xl font-bold text-granite mb-6">
-      Why Choose Indoor Climbing?
-    </h2>
-    <div class="prose max-w-none text-gray-700 space-y-4">
-      <p>
-        Indoor climbing gyms offer a safe, controlled environment to learn and practice climbing skills
-        year-round, regardless of weather conditions. Whether you're a complete beginner or an experienced
-        climber training for outdoor objectives, indoor gyms provide the perfect setting to improve your
-        technique, build strength, and connect with a supportive climbing community.
-      </p>
-      <p>
-        Modern climbing facilities feature diverse terrain including bouldering walls, top rope routes,
-        and lead climbing areas. Many gyms also offer training facilities with campus boards, systems walls,
-        and fitness equipment to help you develop specific climbing skills. With professional route setters
-        regularly updating problems and routes, you'll always find fresh challenges to keep you engaged
-        and progressing.
-      </p>
-      <p>
-        Beyond the climbing walls, most gyms foster welcoming communities where climbers of all levels
-        can share beta, encourage each other, and build lasting friendships. Many facilities also offer
-        classes, youth programs, and competitive opportunities, making climbing accessible and engaging
-        for everyone from families to serious athletes.
-      </p>
-    </div>
-  </section>
+    <!-- Content Section -->
+    <section class="mb-12 bg-[#1f1f1f] rounded-2xl border border-white/10 p-8" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+      <h2 class="text-3xl font-display font-bold text-white mb-6">
+        Why Choose Indoor Climbing?
+      </h2>
+      <div class="prose max-w-none text-white/60 space-y-4">
+        <p>
+          Indoor climbing gyms offer a safe, controlled environment to learn and practice climbing skills
+          year-round, regardless of weather conditions. Whether you're a complete beginner or an experienced
+          climber training for outdoor objectives, indoor gyms provide the perfect setting to improve your
+          technique, build strength, and connect with a supportive climbing community.
+        </p>
+        <p>
+          Modern climbing facilities feature diverse terrain including bouldering walls, top rope routes,
+          and lead climbing areas. Many gyms also offer training facilities with campus boards, systems walls,
+          and fitness equipment to help you develop specific climbing skills. With professional route setters
+          regularly updating problems and routes, you'll always find fresh challenges to keep you engaged
+          and progressing.
+        </p>
+        <p>
+          Beyond the climbing walls, most gyms foster welcoming communities where climbers of all levels
+          can share beta, encourage each other, and build lasting friendships. Many facilities also offer
+          classes, youth programs, and competitive opportunities, making climbing accessible and engaging
+          for everyone from families to serious athletes.
+        </p>
+      </div>
+    </section>
 
-  <!-- Original CTA Section -->
-  <section class="text-center bg-gradient-to-r from-sage to-sage/80 rounded-lg p-12 text-white">
-    <h2 class="text-3xl font-bold mb-4">
-      Ready to Start Climbing?
-    </h2>
-    <p class="text-lg mb-8 text-white/90">
-      Browse {totalGyms} climbing gyms across {totalStates} states to find your perfect match
-    </p>
-    <a
-      href="#"
-      onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;"
-      class="inline-block bg-white text-sage px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition-colors"
-    >
-      Browse States
-    </a>
-  </section>
+    <!-- CTA Section -->
+    <section class="text-center bg-gradient-to-r from-[#00e676]/20 to-[#2979ff]/20 rounded-2xl p-12 border border-[#00e676]/20">
+      <h2 class="text-3xl font-display font-bold text-white mb-4">
+        Ready to Start Climbing?
+      </h2>
+      <p class="text-lg mb-8 text-white/60">
+        Browse {totalGyms} climbing gyms across {totalStates} states to find your perfect match
+      </p>
+      <a
+        href="#"
+        onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;"
+        class="btn-jug text-black inline-flex items-center gap-2"
+      >
+        Browse States
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        </svg>
+      </a>
+    </section>
+  </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
