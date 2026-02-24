@@ -8,12 +8,14 @@ interface Props {
   placeholder?: string;
   initialValue?: string;
   large?: boolean;
+  mobileSubmitOffsetClass?: string;
 }
 
 const {
   placeholder = 'Search by city, zip, or gym name...',
   initialValue = '',
   large = false,
+  mobileSubmitOffsetClass = '',
 } = Astro.props;
 
 const inputClasses = large
@@ -42,7 +44,7 @@ const inputClasses = large
     />
     <button 
       type="submit" 
-      class="btn-jug flex items-center gap-1 sm:gap-2 m-1 sm:m-2"
+      class={`btn-jug flex items-center gap-1 sm:gap-2 my-1 ml-1 mr-1 sm:m-2 ${mobileSubmitOffsetClass}`}
       aria-label="Submit search"
     >
       <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

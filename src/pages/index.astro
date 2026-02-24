@@ -78,6 +78,11 @@ const description = `Search ${totalGyms}+ climbing gyms in ${uniqueStates} state
 <BaseLayout title={title} description={description} schema={combinedSchema}>
   <Fragment slot="head">
     <meta name="impact-site-verification" value="bab4af13-beab-4e5b-b1a9-66b2af7b9921" />
+    <!-- Temporary: AvantLink affiliate application verification -->
+    <script
+      type="text/javascript"
+      src="https://classic.avantlink.com/affiliate_app_confirm.php?mode=js&authResponse=f249b43cbe02a66dbb3c1e204bac025fc0b5e392"
+    ></script>
   </Fragment>
 
   <!-- Hero Section - Fit one screen -->
@@ -140,7 +145,11 @@ const description = `Search ${totalGyms}+ climbing gyms in ${uniqueStates} state
 
         <!-- Search bar -->
         <div class="mb-6 max-w-2xl">
-          <SearchBar large={true} placeholder="Enter city, state, or gym name..." />
+          <SearchBar
+            large={true}
+            placeholder="Enter city, state, or gym name..."
+            mobileSubmitOffsetClass="-translate-x-5 sm:translate-x-0"
+          />
         </div>
 
         <!-- Stats -->

@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = 'Affiliate Disclosure | IndoorClimbingGym.com';
+const description = 'How affiliate links work on IndoorClimbingGym.com and how commissions support the site.';
+const canonical = 'https://www.indoorclimbinggym.com/affiliate-disclosure/';
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <h1 class="text-4xl font-display font-bold text-white mb-6">Affiliate Disclosure</h1>
+
+    <div class="space-y-6 text-white/70 leading-relaxed">
+      <p>
+        Climbing Indoors is supported by its community. Some links on this site are affiliate links, which means we may earn a commission if you make a purchase through those links.
+      </p>
+
+      <p>
+        This does not increase your price. Commissions help us maintain the directory, improve tools, and keep climbing resources updated.
+      </p>
+
+      <p>
+        We only recommend products and services we believe are relevant to indoor climbers. Any sponsored or affiliate placements are intended to be clearly labeled.
+      </p>
+
+      <p>
+        If you have questions about this disclosure, contact us at
+        <a href="mailto:tim@indoorclimbinggym.com" class="text-[#2979ff] hover:underline ml-1">tim@indoorclimbinggym.com</a>.
+      </p>
+    </div>
+
+    <div class="mt-10">
+      <a
+        href="/contact/"
+        class="inline-flex items-center gap-2 bg-[#00e676] text-black px-6 py-3 rounded-xl font-display font-bold hover:bg-[#00c853] transition-colors"
+      >
+        Sponsor Your Product
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</BaseLayout>
