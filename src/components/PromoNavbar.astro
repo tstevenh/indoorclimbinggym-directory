@@ -4,7 +4,7 @@
  * Sticky promotional banner at the top of the page
  * Features:
  * - Sticky positioning above main navigation
- * - Sage green background matching brand
+ * - Dark blue (#2979ff) background matching brand
  * - Dismissible with localStorage persistence (7 days)
  * - Compelling copy for leaderboard signup
  * - Responsive design
@@ -17,7 +17,7 @@ const RESET_DAYS = 7; // Promo reappears after 7 days
 
 <div
   id="promo-navbar"
-  class="fixed top-0 left-0 right-0 z-[60] bg-sage text-white"
+  class="fixed top-0 left-0 right-0 z-[60] bg-[#2979ff] text-white"
 >
   <div class="container mx-auto px-4">
     <div class="flex items-center justify-between py-3 min-h-[56px]">
@@ -51,7 +51,7 @@ const RESET_DAYS = 7; // Promo reappears after 7 days
         <!-- CTA Button -->
         <a
           href="/leaderboard/"
-          class="bg-white text-sage px-4 py-2 rounded font-semibold text-sm hover:bg-ivory transition-colors shadow-sm"
+          class="bg-white text-[#2979ff] px-4 py-2 rounded font-semibold text-sm hover:bg-white/90 transition-colors shadow-sm"
         >
           Join Leaderboard
         </a>

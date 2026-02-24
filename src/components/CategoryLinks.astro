@@ -1,6 +1,6 @@
 ---
 /**
- * Category Links Component
+ * Category Links Component - Dark Theme
  * Canonical category URLs do NOT include /1/.
  */
 const categories = [
@@ -8,44 +8,61 @@ const categories = [
     title: 'For Beginners',
     description: 'Beginner-friendly gyms with intro classes and supportive communities',
     url: '/categories/best-climbing-gyms-for-beginners/',
+    color: '#00e676',
   },
   {
     title: 'With Sauna',
     description: 'Gyms featuring sauna facilities for post-climb recovery',
     url: '/categories/climbing-gyms-with-sauna/',
+    color: '#2979ff',
   },
   {
     title: 'With Kids Zone',
     description: 'Family-friendly gyms with dedicated kids climbing areas',
     url: '/categories/climbing-gyms-with-kids-zone/',
+    color: '#ffea00',
   },
   {
     title: 'Bouldering Gyms',
     description: 'Best gyms specializing in bouldering walls and problems',
     url: '/categories/best-bouldering-climbing-gyms/',
+    color: '#ff2d7a',
   },
   {
     title: 'Affordable Gyms',
     description: 'Budget-friendly climbing gyms with great value',
     url: '/categories/affordable-climbing-gyms/',
+    color: '#ff9100',
   },
 ];
 ---
 
 <section class="mb-16">
   <div class="flex justify-between items-center mb-8">
-    <h2 class="text-3xl font-bold text-granite">Browse by Category</h2>
-    <a href="/categories/" class="text-sage hover:underline font-medium">View All →</a>
+    <h2 class="text-3xl font-display font-bold text-white">Browse by Category</h2>
+    <a href="/categories/" class="text-[#00e676] hover:text-[#00c853] transition-colors font-medium font-mono">View All →</a>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {categories.map((category) => (
       <a
         href={category.url}
-        class="block bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-100"
+        class="group block bg-gradient-to-br from-[#2d2d2d] to-[#1f1f1f] rounded-2xl border border-white/5 hover:border-white/20 transition-all p-6 relative overflow-hidden"
+        style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}
       >
-        <h3 class="text-xl font-bold text-granite mb-2">{category.title}</h3>
-        <p class="text-gray-600">{category.description}</p>
+        {/* Top accent line */}
+        <div class="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: category.color }}></div>
+        
+        {/* Hover glow */}
+        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 50% 0%, ${category.color}10 0%, transparent 60%)` }}></div>
+        
+        <h3 class="text-xl font-display font-bold text-white mb-2 relative z-10 group-hover:text-white transition-colors">{category.title}</h3>
+        <p class="text-white/50 relative z-10">{category.description}</p>
+        
+        {/* Arrow indicator */}
+        <svg class="absolute bottom-6 right-6 w-5 h-5 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+        </svg>
       </a>
     ))}
   </div>

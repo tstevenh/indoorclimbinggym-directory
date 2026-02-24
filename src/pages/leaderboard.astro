@@ -31,23 +31,23 @@ const breadcrumbs = [
 
 <BaseLayout {...seo} breadcrumbs={breadcrumbs}>
   <!-- Full-Width Hero Section -->
-  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 bg-gradient-to-br from-sage/20 via-ivory to-sage/5 py-20 md:py-28 overflow-hidden">
+  <section class="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-8 bg-gradient-to-br from-[#2979ff]/10 via-[#1a1a1a] to-[#ff9100]/5 py-20 md:py-28 overflow-hidden">
     <!-- Decorative background elements -->
-    <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#98a48b_1px,transparent_1px)] [background-size:20px_20px]"></div>
+    <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(#2979ff_1px,transparent_1px)] [background-size:20px_20px]"></div>
 
     <div class="container mx-auto px-4 relative z-10 text-center">
-      <span class="inline-block py-1 px-3 rounded-full bg-sage/10 text-sage font-bold text-sm tracking-wide uppercase mb-6">
+      <span class="inline-block py-1 px-3 rounded-full bg-[#2979ff]/20 text-[#2979ff] border border-[#2979ff]/30 font-bold text-sm tracking-wide uppercase mb-6">
         Monthly Competition
       </span>
-      <h1 class="text-5xl md:text-6xl font-bold text-granite mb-6 leading-tight">
-        Climbing <span class="text-sage relative inline-block">
+      <h1 class="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+        Climbing <span class="text-[#2979ff] relative inline-block">
           Leaderboards
-          <svg class="absolute w-full h-3 -bottom-1 left-0 text-sage/30" viewBox="0 0 100 10" preserveAspectRatio="none">
+          <svg class="absolute w-full h-3 -bottom-1 left-0 text-[#2979ff]/30" viewBox="0 0 100 10" preserveAspectRatio="none">
             <path d="M0 5 Q 50 10 100 5" stroke="currentColor" stroke-width="8" fill="none" />
           </svg>
         </span>
       </h1>
-      <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+      <p class="text-xl text-white/70 max-w-2xl mx-auto leading-relaxed">
         Track your progress, compete with climbers nationwide, and help your city climb to the top!
       </p>
     </div>
@@ -56,33 +56,33 @@ const breadcrumbs = [
   <!-- Stats Overview -->
   <section class="container mx-auto px-4 -mt-16 relative z-20 mb-12">
     <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-      <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 text-center">
-        <div class="w-12 h-12 bg-sage/10 rounded-xl flex items-center justify-center text-sage mx-auto mb-4">
+      <div class="bg-[#1f1f1f] rounded-2xl shadow-xl border border-white/10 p-6 text-center">
+        <div class="w-12 h-12 bg-[#2979ff]/10 rounded-xl flex items-center justify-center text-[#2979ff] mx-auto mb-4">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         </div>
-        <div class="text-4xl font-bold text-sage mb-2" id="cities-count">-</div>
-        <div class="text-sm font-medium text-gray-600 uppercase tracking-wide">Cities Competing</div>
+        <div class="text-4xl font-bold text-white mb-2" id="cities-count">-</div>
+        <div class="text-sm font-medium text-white/60 uppercase tracking-wide">Cities Competing</div>
       </div>
-      <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 text-center">
-        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 mx-auto mb-4">
+      <div class="bg-[#1f1f1f] rounded-2xl shadow-xl border border-white/10 p-6 text-center">
+        <div class="w-12 h-12 bg-[#ff9100]/10 rounded-xl flex items-center justify-center text-[#ff9100] mx-auto mb-4">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
         </div>
-        <div class="text-4xl font-bold text-orange-600 mb-2" id="sessions-count">-</div>
-        <div class="text-sm font-medium text-gray-600 uppercase tracking-wide">Sessions This Month</div>
+        <div class="text-4xl font-bold text-white mb-2" id="sessions-count">-</div>
+        <div class="text-sm font-medium text-white/60 uppercase tracking-wide">Sessions This Month</div>
       </div>
-      <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 text-center">
-        <div class="w-12 h-12 bg-sage/10 rounded-xl flex items-center justify-center text-sage mx-auto mb-4">
+      <div class="bg-[#1f1f1f] rounded-2xl shadow-xl border border-white/10 p-6 text-center">
+        <div class="w-12 h-12 bg-[#00e676]/10 rounded-xl flex items-center justify-center text-[#00e676] mx-auto mb-4">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
         </div>
-        <div class="text-4xl font-bold text-sage mb-2" id="climbers-count">-</div>
-        <div class="text-sm font-medium text-gray-600 uppercase tracking-wide">Active Climbers</div>
+        <div class="text-4xl font-bold text-white mb-2" id="climbers-count">-</div>
+        <div class="text-sm font-medium text-white/60 uppercase tracking-wide">Active Climbers</div>
       </div>
     </div>
   </section>
@@ -90,10 +90,10 @@ const breadcrumbs = [
   <!-- Tab Navigation -->
   <section class="container mx-auto px-4 mb-8">
     <div class="flex justify-center">
-      <div class="inline-flex bg-gray-100 rounded-xl p-1.5">
+      <div class="inline-flex bg-[#1f1f1f] rounded-xl p-1.5">
         <button
           id="tab-city"
-          class="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-white text-sage shadow-sm"
+          class="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 bg-[#2979ff] text-white shadow-sm"
           onclick="switchTab('city')"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,7 +104,7 @@ const breadcrumbs = [
         </button>
         <button
           id="tab-explorer"
-          class="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 text-gray-600 hover:text-sage"
+          class="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 text-white/60 hover:text-white"
           onclick="switchTab('explorer')"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,78 +119,78 @@ const breadcrumbs = [
   <!-- Main Content Area -->
   <section class="container mx-auto px-4 max-w-6xl">
     <!-- How It Works Card -->
-    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 mb-8 relative overflow-hidden">
+    <div class="bg-[#1f1f1f] rounded-2xl shadow-xl border border-white/10 p-8 mb-8 relative overflow-hidden">
       <div class="absolute top-0 right-0 p-8 opacity-5">
-        <svg class="w-32 h-32 text-sage" fill="currentColor" viewBox="0 0 24 24">
+        <svg class="w-32 h-32 text-[#2979ff]" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
         </svg>
       </div>
 
       <div class="flex items-center gap-3 mb-6 relative z-10">
-        <div class="w-10 h-10 bg-sage/10 rounded-xl flex items-center justify-center text-sage">
+        <div class="w-10 h-10 bg-[#2979ff]/10 rounded-xl flex items-center justify-center text-[#2979ff]">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h2 class="text-2xl font-bold text-granite">How It Works</h2>
+        <h2 class="text-2xl font-bold text-white">How It Works</h2>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-8 text-gray-700 relative z-10">
-        <div class="bg-gray-50 rounded-xl p-6">
+      <div class="grid md:grid-cols-2 gap-8 text-white/70 relative z-10">
+        <div class="bg-[#2d2d2d] rounded-xl p-6">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-8 h-8 bg-sage/20 rounded-lg flex items-center justify-center text-sage">
+            <div class="w-8 h-8 bg-[#2979ff]/20 rounded-lg flex items-center justify-center text-[#2979ff]">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <p class="font-bold text-sage">City vs City Competition</p>
+            <p class="font-bold text-[#2979ff]">City vs City Competition</p>
           </div>
           <ul class="space-y-2 text-sm">
             <li class="flex items-start gap-2">
-              <svg class="w-4 h-4 text-sage mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-[#2979ff] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
               Log climbing sessions (max 2/day) at any gym
             </li>
             <li class="flex items-start gap-2">
-              <svg class="w-4 h-4 text-sage mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-[#2979ff] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
               Each session counts toward your city's score
             </li>
             <li class="flex items-start gap-2">
-              <svg class="w-4 h-4 text-sage mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-[#2979ff] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
               Rankings reset monthly - fresh competition!
             </li>
           </ul>
         </div>
-        <div class="bg-gray-50 rounded-xl p-6">
+        <div class="bg-[#2d2d2d] rounded-xl p-6">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-8 h-8 bg-sage/20 rounded-lg flex items-center justify-center text-sage">
+            <div class="w-8 h-8 bg-[#2979ff]/20 rounded-lg flex items-center justify-center text-[#2979ff]">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p class="font-bold text-sage">Explorer Leaderboard</p>
+            <p class="font-bold text-[#2979ff]">Explorer Leaderboard</p>
           </div>
           <ul class="space-y-2 text-sm">
             <li class="flex items-start gap-2">
-              <svg class="w-4 h-4 text-sage mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-[#2979ff] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
               Track unique gyms you've visited (lifetime)
             </li>
             <li class="flex items-start gap-2">
-              <svg class="w-4 h-4 text-sage mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-[#2979ff] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
               Private profiles show as "Anonymous Climber"
             </li>
             <li class="flex items-start gap-2">
-              <svg class="w-4 h-4 text-sage mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-[#2979ff] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
               Public profiles display your @username
@@ -213,33 +213,33 @@ const breadcrumbs = [
     </div>
 
     <!-- City Leaderboard -->
-    <div id="city-leaderboard" class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 mb-8">
+    <div id="city-leaderboard" class="bg-[#1f1f1f] rounded-2xl shadow-xl border border-white/10 p-8 mb-8">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-sage/10 rounded-xl flex items-center justify-center text-sage">
+          <div class="w-10 h-10 bg-[#2979ff]/10 rounded-xl flex items-center justify-center text-[#2979ff]">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
           </div>
-          <h2 class="text-2xl font-bold text-granite">City vs City Rankings</h2>
+          <h2 class="text-2xl font-bold text-white">City vs City Rankings</h2>
         </div>
-        <div class="text-sm text-gray-500 bg-gray-100 px-4 py-2 rounded-full">
+        <div class="text-sm text-white/60 bg-[#2d2d2d] px-4 py-2 rounded-full">
           {new Date(currentYear, currentMonth - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
         </div>
       </div>
 
       <!-- Loading state -->
-      <div id="city-loading" class="text-center py-12 text-gray-500">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-sage mb-4"></div>
+      <div id="city-loading" class="text-center py-12 text-white/60">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2979ff] mb-4"></div>
         <p>Loading city rankings...</p>
       </div>
 
       <!-- Leaderboard content -->
       <div id="city-content" class="hidden">
         <!-- Empty state -->
-        <div id="city-empty" class="hidden text-center py-12 text-gray-500">
-          <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div id="city-empty" class="hidden text-center py-12 text-white/60">
+          <div class="w-16 h-16 bg-[#2d2d2d] rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
             </svg>
           </div>
@@ -253,31 +253,31 @@ const breadcrumbs = [
     </div>
 
     <!-- Explorer Leaderboard -->
-    <div id="explorer-leaderboard" class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 mb-8 hidden">
+    <div id="explorer-leaderboard" class="bg-[#1f1f1f] rounded-2xl shadow-xl border border-white/10 p-8 mb-8 hidden">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-sage/10 rounded-xl flex items-center justify-center text-sage">
+          <div class="w-10 h-10 bg-[#2979ff]/10 rounded-xl flex items-center justify-center text-[#2979ff]">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h2 class="text-2xl font-bold text-granite">Explorer Rankings</h2>
+          <h2 class="text-2xl font-bold text-white">Explorer Rankings</h2>
         </div>
-        <div class="text-sm text-gray-500 bg-gray-100 px-4 py-2 rounded-full">Unique Gyms (Lifetime)</div>
+        <div class="text-sm text-white/60 bg-[#2d2d2d] px-4 py-2 rounded-full">Unique Gyms (Lifetime)</div>
       </div>
 
       <!-- Loading state -->
-      <div id="explorer-loading" class="text-center py-12 text-gray-500">
-        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-sage mb-4"></div>
+      <div id="explorer-loading" class="text-center py-12 text-white/60">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2979ff] mb-4"></div>
         <p>Loading explorer rankings...</p>
       </div>
 
       <!-- Leaderboard content -->
       <div id="explorer-content" class="hidden">
         <!-- Empty state -->
-        <div id="explorer-empty" class="hidden text-center py-12 text-gray-500">
-          <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div id="explorer-empty" class="hidden text-center py-12 text-white/60">
+          <div class="w-16 h-16 bg-[#2d2d2d] rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
@@ -294,7 +294,7 @@ const breadcrumbs = [
   <!-- CTA Section -->
   <section class="py-20">
     <div class="container mx-auto px-4 max-w-5xl">
-      <div class="bg-sage rounded-3xl p-10 md:p-16 text-center text-white shadow-2xl relative overflow-hidden">
+      <div class="bg-[#2979ff] rounded-3xl p-10 md:p-16 text-center text-white shadow-2xl relative overflow-hidden">
         <!-- Decorative blobs -->
         <div class="absolute top-0 left-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         <div class="absolute bottom-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
@@ -307,13 +307,13 @@ const breadcrumbs = [
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/search/"
-              class="px-8 py-4 bg-white text-sage font-bold rounded-xl hover:bg-ivory transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
+              class="px-8 py-4 bg-white text-[#2979ff] font-bold rounded-xl hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
             >
               Find Gyms Near You
             </a>
             <a
               href={`${import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.indoorclimbinggym.com'}/signup`}
-              class="px-8 py-4 bg-sage-dark/30 text-white border border-white/30 font-bold rounded-xl hover:bg-sage-dark/50 transition-all backdrop-blur-sm"
+              class="px-8 py-4 bg-[#1a1a1a]/30 text-white border border-white/30 font-bold rounded-xl hover:bg-[#1a1a1a]/50 transition-all backdrop-blur-sm"
             >
               Sign Up Free
             </a>
@@ -360,17 +360,17 @@ const breadcrumbs = [
     const explorerLeaderboard = document.getElementById('explorer-leaderboard');
 
     if (tab === 'city') {
-      cityTab.classList.add('bg-white', 'text-sage', 'shadow-sm');
-      cityTab.classList.remove('text-gray-600');
-      explorerTab.classList.remove('bg-white', 'text-sage', 'shadow-sm');
-      explorerTab.classList.add('text-gray-600');
+      cityTab.classList.add('bg-[#2979ff]', 'text-white', 'shadow-sm');
+      cityTab.classList.remove('text-white/60');
+      explorerTab.classList.remove('bg-[#2979ff]', 'text-white', 'shadow-sm');
+      explorerTab.classList.add('text-white/60');
       cityLeaderboard.classList.remove('hidden');
       explorerLeaderboard.classList.add('hidden');
     } else {
-      explorerTab.classList.add('bg-white', 'text-sage', 'shadow-sm');
-      explorerTab.classList.remove('text-gray-600');
-      cityTab.classList.remove('bg-white', 'text-sage', 'shadow-sm');
-      cityTab.classList.add('text-gray-600');
+      explorerTab.classList.add('bg-[#2979ff]', 'text-white', 'shadow-sm');
+      explorerTab.classList.remove('text-white/60');
+      cityTab.classList.remove('bg-[#2979ff]', 'text-white', 'shadow-sm');
+      cityTab.classList.add('text-white/60');
       explorerLeaderboard.classList.remove('hidden');
       cityLeaderboard.classList.add('hidden');
     }
@@ -417,30 +417,30 @@ const breadcrumbs = [
           <div class="overflow-x-auto">
             <table class="w-full">
               <thead>
-                <tr class="border-b-2 border-gray-100">
-                  <th class="text-left py-4 px-4 font-semibold text-gray-500 text-sm uppercase tracking-wider">Rank</th>
-                  <th class="text-left py-4 px-4 font-semibold text-gray-500 text-sm uppercase tracking-wider">City</th>
-                  <th class="text-left py-4 px-4 font-semibold text-gray-500 text-sm uppercase tracking-wider">Score</th>
-                  <th class="text-left py-4 px-4 font-semibold text-gray-500 text-sm uppercase tracking-wider">Climbers</th>
+                <tr class="border-b-2 border-white/10">
+                  <th class="text-left py-4 px-4 font-semibold text-white/60 text-sm uppercase tracking-wider">Rank</th>
+                  <th class="text-left py-4 px-4 font-semibold text-white/60 text-sm uppercase tracking-wider">City</th>
+                  <th class="text-left py-4 px-4 font-semibold text-white/60 text-sm uppercase tracking-wider">Score</th>
+                  <th class="text-left py-4 px-4 font-semibold text-white/60 text-sm uppercase tracking-wider">Climbers</th>
                 </tr>
               </thead>
               <tbody>
                 ${cities.map((city, index) => `
-                  <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors ${index === 0 ? 'bg-yellow-50/50' : index === 1 ? 'bg-gray-50/30' : index === 2 ? 'bg-amber-50/30' : ''}">
+                  <tr class="border-b border-white/5 hover:bg-white/5 transition-colors ${index === 0 ? 'bg-yellow-500/10' : index === 1 ? 'bg-gray-500/10' : index === 2 ? 'bg-amber-500/10' : ''}">
                     <td class="py-5 px-4">
                       <div class="flex items-center">
-                        ${index === 0 ? goldMedalSvg : index === 1 ? silverMedalSvg : index === 2 ? bronzeMedalSvg : `<span class="text-gray-500 font-bold text-lg w-8 text-center">#${city.rank}</span>`}
+                        ${index === 0 ? goldMedalSvg : index === 1 ? silverMedalSvg : index === 2 ? bronzeMedalSvg : `<span class="text-white/60 font-bold text-lg w-8 text-center">#${city.rank}</span>`}
                       </div>
                     </td>
                     <td class="py-5 px-4">
-                      <div class="font-bold text-granite text-lg">${city.city}</div>
+                      <div class="font-bold text-white text-lg">${city.city}</div>
                     </td>
                     <td class="py-5 px-4">
-                      <div class="text-2xl font-bold text-sage">${city.score}</div>
+                      <div class="text-2xl font-bold text-[#2979ff]">${city.score}</div>
                     </td>
-                    <td class="py-5 px-4 text-gray-600">
+                    <td class="py-5 px-4 text-white/70">
                       <div class="flex items-center gap-2">
-                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                         <span class="font-medium">${city.unique_contributors || 0}</span>
@@ -451,7 +451,7 @@ const breadcrumbs = [
               </tbody>
             </table>
           </div>
-          <p class="text-xs text-gray-500 mt-6 text-center">
+          <p class="text-xs text-white/60 mt-6 text-center">
             Rankings updated hourly.
           </p>
         `;
@@ -461,13 +461,13 @@ const breadcrumbs = [
       if (loading) {
         loading.innerHTML = `
           <div class="text-center py-12">
-            <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p class="text-red-500 font-medium">Failed to load rankings</p>
-            <p class="text-sm text-gray-500 mt-1">Please try again later</p>
+            <p class="text-red-400 font-medium">Failed to load rankings</p>
+            <p class="text-sm text-white/60 mt-1">Please try again later</p>
           </div>
         `;
       }
@@ -502,32 +502,32 @@ const breadcrumbs = [
           <div class="overflow-x-auto">
             <table class="w-full">
               <thead>
-                <tr class="border-b-2 border-gray-100">
-                  <th class="text-left py-4 px-4 font-semibold text-gray-500 text-sm uppercase tracking-wider">Rank</th>
-                  <th class="text-left py-4 px-4 font-semibold text-gray-500 text-sm uppercase tracking-wider">Climber</th>
-                  <th class="text-left py-4 px-4 font-semibold text-gray-500 text-sm uppercase tracking-wider">Gyms Visited</th>
+                <tr class="border-b-2 border-white/10">
+                  <th class="text-left py-4 px-4 font-semibold text-white/60 text-sm uppercase tracking-wider">Rank</th>
+                  <th class="text-left py-4 px-4 font-semibold text-white/60 text-sm uppercase tracking-wider">Climber</th>
+                  <th class="text-left py-4 px-4 font-semibold text-white/60 text-sm uppercase tracking-wider">Gyms Visited</th>
                 </tr>
               </thead>
               <tbody>
                 ${explorers.slice(0, 20).map((explorer, index) => `
-                  <tr class="border-b border-gray-50 hover:bg-gray-50/50 transition-colors ${index === 0 ? 'bg-yellow-50/50' : index === 1 ? 'bg-gray-50/30' : index === 2 ? 'bg-amber-50/30' : ''}">
+                  <tr class="border-b border-white/5 hover:bg-white/5 transition-colors ${index === 0 ? 'bg-yellow-500/10' : index === 1 ? 'bg-gray-500/10' : index === 2 ? 'bg-amber-500/10' : ''}">
                     <td class="py-5 px-4">
                       <div class="flex items-center">
-                        ${index === 0 ? goldMedalSvg : index === 1 ? silverMedalSvg : index === 2 ? bronzeMedalSvg : `<span class="text-gray-500 font-bold text-lg w-8 text-center">#${index + 1}</span>`}
+                        ${index === 0 ? goldMedalSvg : index === 1 ? silverMedalSvg : index === 2 ? bronzeMedalSvg : `<span class="text-white/60 font-bold text-lg w-8 text-center">#${index + 1}</span>`}
                       </div>
                     </td>
                     <td class="py-5 px-4">
-                      <div class="font-bold text-granite text-lg">
+                      <div class="font-bold text-white text-lg">
                         ${explorer.username || 'Anonymous Climber'}
                       </div>
                     </td>
                     <td class="py-5 px-4">
                       <div class="flex items-center gap-3">
-                        <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-6 h-6 text-[#2979ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        <span class="text-2xl font-bold text-sage">${explorer.explorer_count}</span>
+                        <span class="text-2xl font-bold text-[#2979ff]">${explorer.explorer_count}</span>
                       </div>
                     </td>
                   </tr>
@@ -535,7 +535,7 @@ const breadcrumbs = [
               </tbody>
             </table>
           </div>
-          <p class="text-xs text-gray-500 mt-6 text-center bg-gray-50 p-4 rounded-xl">
+          <p class="text-xs text-white/60 mt-6 text-center bg-[#2d2d2d] p-4 rounded-xl">
             Top 20 explorers shown. Private profiles appear as "Anonymous Climber".
           </p>
         `;
@@ -545,13 +545,13 @@ const breadcrumbs = [
       if (loading) {
         loading.innerHTML = `
           <div class="text-center py-12">
-            <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <svg class="w-8 h-8 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p class="text-red-500 font-medium">Failed to load rankings</p>
-            <p class="text-sm text-gray-500 mt-1">Please try again later</p>
+            <p class="text-red-400 font-medium">Failed to load rankings</p>
+            <p class="text-sm text-white/60 mt-1">Please try again later</p>
           </div>
         `;
       }

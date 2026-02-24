@@ -1,6 +1,6 @@
 ---
 /**
- * Categories Index Page
+ * Categories Index Page - Dark Theme
  * Central hub for all climbing gym category pages
  */
 
@@ -27,6 +27,24 @@ function formatText(text: string): string {
     .join(' ');
 }
 
+/**
+ * Helper: Create a clean slug from a string
+ * - Replaces underscores with dashes
+ * - Removes multiple consecutive dashes
+ * - Removes leading/trailing dashes
+ * - Returns null if empty after cleaning
+ */
+function slugify(text: string): string | null {
+  if (!text || !text.trim()) return null;
+  
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/_/g, '-')           // Replace underscores with dashes
+    .replace(/-+/g, '-')          // Replace multiple dashes with single dash
+    .replace(/^-|-$/g, '');       // Remove leading/trailing dashes
+}
+
 // STATIC CATEGORIES
 const staticCategories = [
   {
@@ -35,6 +53,7 @@ const staticCategories = [
     description: 'Welcoming gyms perfect for first-time climbers with intro classes',
     count: gymsData.filter(g => g.beginner_friendly === true).length,
     category: 'experience',
+    color: '#00e676',
   },
   {
     name: 'Best Bouldering Gyms',
@@ -42,6 +61,7 @@ const staticCategories = [
     description: 'Top-rated facilities focused on bouldering excellence',
     count: gymsData.filter(g => g.climbing_types?.includes('bouldering')).length,
     category: 'specialty',
+    color: '#ff2d7a',
   },
   {
     name: 'Gyms with Sauna',
@@ -49,6 +69,7 @@ const staticCategories = [
     description: 'Recovery-focused gyms with sauna amenities',
     count: gymsData.filter(g => g.amenities?.includes('sauna')).length,
     category: 'amenity',
+    color: '#2979ff',
   },
   {
     name: 'Gyms with Kids Zone',
@@ -56,6 +77,7 @@ const staticCategories = [
     description: 'Family-friendly gyms with dedicated kids areas',
     count: gymsData.filter(g => g.amenities?.includes('kids_zone')).length,
     category: 'amenity',
+    color: '#ffea00',
   },
   {
     name: 'Affordable Gyms',
@@ -63,6 +85,7 @@ const staticCategories = [
     description: 'Budget-friendly climbing gyms with great value',
     count: gymsData.filter(g => g.day_pass_price_local <= 20).length,
     category: 'value',
+    color: '#ff9100',
   },
 ];
 
@@ -71,8 +94,14 @@ const allAmenities = new Set<string>();
 const allClimbingTypes = new Set<string>();
 
 gymsData.forEach(gym => {
-  gym.amenities?.split('|').forEach(a => allAmenities.add(a.trim()));
-  gym.climbing_types?.split('|').forEach(ct => allClimbingTypes.add(ct.trim()));
+  gym.amenities?.split('|').forEach(a => {
+    const trimmed = a.trim();
+    if (trimmed) allAmenities.add(trimmed);
+  });
+  gym.climbing_types?.split('|').forEach(ct => {
+    const trimmed = ct.trim();
+    if (trimmed) allClimbingTypes.add(trimmed);
+  });
 });
 
 const skipAmenities = ['sauna', 'kids_zone'];
@@ -84,12 +113,15 @@ for (const amenity of allAmenities) {
   if (skipAmenities.includes(amenity)) continue;
   const matchingGyms = gymsData.filter(g => g.amenities?.includes(amenity));
   if (matchingGyms.length >= 3) {
+    const amenitySlug = slugify(amenity);
+    if (!amenitySlug) continue;
     dynamicCategories.push({
       name: `Gyms with ${formatText(amenity)}`,
-      slug: `climbing-gyms-with-${amenity.replace(/_/g, '-')}`,
+      slug: `climbing-gyms-with-${amenitySlug}`,
       description: `Climbing gyms offering ${formatText(amenity).toLowerCase()} amenities`,
       count: matchingGyms.length,
       category: 'amenity',
+      color: '#2979ff',
     });
   }
 }
@@ -98,12 +130,15 @@ for (const climbingType of allClimbingTypes) {
   if (skipClimbingTypes.includes(climbingType)) continue;
   const matchingGyms = gymsData.filter(g => g.climbing_types?.includes(climbingType));
   if (matchingGyms.length >= 3) {
+    const typeSlug = slugify(climbingType);
+    if (!typeSlug) continue;
     dynamicCategories.push({
       name: `Best ${formatText(climbingType)} Climbing Gyms`,
-      slug: `best-${climbingType.replace(/_/g, '-')}-climbing-gyms`,
+      slug: `best-${typeSlug}-climbing-gyms`,
       description: `Top facilities specializing in ${formatText(climbingType).toLowerCase()} climbing`,
       count: matchingGyms.length,
       category: 'climbing-type',
+      color: '#00e676',
     });
   }
 }
@@ -132,183 +167,205 @@ const breadcrumbs = [
   canonical={pageUrl}
   breadcrumbs={breadcrumbs}
 >
-  <!-- Breadcrumb Navigation -->
-  <nav class="text-sm mb-6" aria-label="Breadcrumb">
-    <ol class="flex items-center gap-2">
-      {breadcrumbs.map((crumb, index) => (
-        <li class="flex items-center gap-2">
-          {index > 0 && <span class="text-gray-400">/</span>}
-          {index === breadcrumbs.length - 1 ? (
-            <span class="text-sage font-medium">{crumb.label}</span>
-          ) : (
-            <a href={crumb.url} class="text-granite hover:text-sage">
-              {crumb.label}
-            </a>
-          )}
-        </li>
-      ))}
-    </ol>
-  </nav>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb Navigation -->
+    <nav class="text-sm mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center gap-2">
+        {breadcrumbs.map((crumb, index) => (
+          <li class="flex items-center gap-2">
+            {index > 0 && <span class="text-white/20">/</span>}
+            {index === breadcrumbs.length - 1 ? (
+              <span class="text-white/60 font-medium">{crumb.label}</span>
+            ) : (
+              <a href={crumb.url} class="text-white/40 hover:text-[#00e676] transition-colors">
+                {crumb.label}
+              </a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
 
-  <!-- Reverted Hero Section -->
-  <header class="mb-12">
-    <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">
-      Browse Climbing Gyms by Category
-    </h1>
-    <p class="text-xl text-gray-700 mb-6 leading-relaxed max-w-4xl">
-      Find your ideal climbing gym by exploring our comprehensive categories. Whether you're a beginner looking for welcoming instruction, a boulderer seeking challenging problems, or someone who values specific amenities like saunas or cafes, our category system helps you discover gyms perfectly matched to your preferences. Each category showcases gyms filtered by climbing types, experience levels, amenities, and special features, making it easy to find exactly what you're looking for in your next climbing destination.
-    </p>
-
-    <!-- Reverted Quick Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-white p-6 rounded-lg shadow-md mb-12">
-      <div>
-        <p class="text-3xl font-bold text-sage">{totalCategories}</p>
-        <p class="text-sm text-gray-600">Categories</p>
+    <!-- Hero Section -->
+    <header class="mb-12">
+      <div class="mb-2">
+        <span class="text-[#ff2d7a] text-sm font-mono tracking-widest">FIND YOUR STYLE</span>
       </div>
-      <div>
-        <p class="text-3xl font-bold text-sage">{totalGyms}</p>
-        <p class="text-sm text-gray-600">Total Gyms</p>
-      </div>
-      <div>
-        <p class="text-3xl font-bold text-sage">{avgRating}★</p>
-        <p class="text-sm text-gray-600">Average Rating</p>
-      </div>
-      <div>
-        <p class="text-3xl font-bold text-sage">14</p>
-        <p class="text-sm text-gray-600">Unique Filters</p>
-      </div>
-    </div>
-  </header>
-
-  <!-- Special Features Section (KEEPING IMPROVED CARDS) -->
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold text-granite mb-6">Special Features</h2>
-    <p class="text-gray-700 mb-6 leading-relaxed">
-      Discover climbing gyms with unique characteristics and specialized offerings that cater to specific climbing preferences and skill levels.
-    </p>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {categories.filter(cat => ['experience', 'value', 'specialty'].includes(cat.category)).map(category => (
-        <a
-          href={`/categories/${category.slug}/1`}
-          class="group block p-6 bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-sage/20 relative overflow-hidden"
-        >
-          <div class="absolute top-0 right-0 w-24 h-24 bg-sage/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-          
-          <div class="flex items-center justify-between mb-4 relative z-10">
-            <h3 class="text-xl font-bold text-granite group-hover:text-sage transition-colors">
-              {category.name}
-            </h3>
-            <span class="px-3 py-1 text-xs font-bold bg-sage/10 text-sage rounded-full border border-sage/20 uppercase">
-              {category.count} {category.count === 1 ? 'Gym' : 'Gyms'}
-            </span>
-          </div>
-          <p class="text-gray-500 mb-4 relative z-10 leading-relaxed text-sm">{category.description}</p>
-          <div class="flex items-center text-sage font-semibold relative z-10 group-hover:gap-2 transition-all text-sm">
-            <span>Explore Gym</span>
-            <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </div>
-        </a>
-      ))}
-    </div>
-  </section>
-
-  <!-- By Climbing Type Section (KEEPING IMPROVED CARDS) -->
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold text-granite mb-6">By Climbing Type</h2>
-    <p class="text-gray-700 mb-6 leading-relaxed">
-      Find gyms specializing in your preferred climbing discipline, whether you're into top rope, lead climbing, or speed climbing.
-    </p>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {categories.filter(cat => cat.category === 'climbing-type').map(category => (
-        <a
-          href={`/categories/${category.slug}/1`}
-          class="group block p-6 bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-sage/20 relative overflow-hidden"
-        >
-          <div class="absolute top-0 right-0 w-24 h-24 bg-sage/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-          
-          <div class="flex items-center justify-between mb-4 relative z-10">
-            <h3 class="text-xl font-bold text-granite group-hover:text-sage transition-colors">
-              {category.name}
-            </h3>
-            <span class="px-3 py-1 text-xs font-bold bg-sage/10 text-sage rounded-full border border-sage/20 uppercase">
-              {category.count} {category.count === 1 ? 'Gym' : 'Gyms'}
-            </span>
-          </div>
-          <p class="text-gray-500 mb-4 relative z-10 leading-relaxed text-sm">{category.description}</p>
-          <div class="flex items-center text-sage font-semibold relative z-10 group-hover:gap-2 transition-all text-sm">
-            <span>Explore Gym</span>
-            <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-          </div>
-        </a>
-      ))}
-    </div>
-  </section>
-
-  <!-- By Amenities Section (KEEPING IMPROVED CARDS) -->
-  <section class="mb-16">
-    <h2 class="text-3xl font-bold text-granite mb-6">By Amenities</h2>
-    <p class="text-gray-700 mb-6 leading-relaxed">
-      Browse gyms based on the amenities that matter most to you, from recovery facilities like saunas to convenience features like cafes and parking.
-    </p>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {categories.filter(cat => cat.category === 'amenity').map(category => (
-        <a
-          href={`/categories/${category.slug}/1`}
-          class="group block p-6 bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-sage/20 relative overflow-hidden"
-        >
-          <div class="absolute top-0 right-0 w-24 h-24 bg-sage/5 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-          
-          <div class="flex items-center justify-between mb-4 relative z-10">
-            <h3 class="text-lg font-bold text-granite group-hover:text-sage transition-colors leading-tight">
-              {category.name}
-            </h3>
-          </div>
-          <div class="flex items-center justify-between mt-auto relative z-10">
-            <span class="text-sage font-bold text-sm">{category.count} {category.count === 1 ? 'Gym' : 'Gyms'}</span>
-            <div class="w-8 h-8 rounded-full bg-sage/10 flex items-center justify-center group-hover:bg-sage group-hover:text-white transition-all">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                </svg>
-            </div>
-          </div>
-        </a>
-      ))}
-    </div>
-  </section>
-
-  <!-- About Categories Section -->
-  <section class="mb-16 bg-white p-8 rounded-lg shadow-md">
-    <h2 class="text-3xl font-bold text-granite mb-6">How to Choose the Right Category</h2>
-    <div class="prose prose-lg max-w-none">
-      <p class="text-gray-700 mb-6 leading-relaxed">
-        Our category system organizes climbing gyms by the features and characteristics that matter most to climbers. Whether you're prioritizing specific amenities, climbing disciplines, or experience levels, these curated collections help you quickly identify gyms that match your exact needs. Each category page provides detailed comparisons, ratings, and comprehensive information to support your decision-making process.
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
+        BROWSE CLIMBING
+        <br />
+        <span class="text-white/40">GYMS BY CATEGORY</span>
+      </h1>
+      <p class="text-xl text-white/50 mb-6 leading-relaxed max-w-4xl">
+        Find your ideal climbing gym by exploring our comprehensive categories. Whether you're a beginner looking for welcoming instruction, a boulderer seeking challenging problems, or someone who values specific amenities like saunas or cafes, our category system helps you discover gyms perfectly matched to your preferences.
       </p>
-    </div>
-  </section>
 
-  <!-- Reverted CTA Section -->
-  <section class="bg-sage text-white p-8 rounded-lg shadow-md text-center">
-    <h2 class="text-3xl font-bold mb-4">Ready to Find Your Perfect Gym?</h2>
-    <p class="text-lg mb-6">
-      Browse by category or search all {totalGyms} climbing gyms in our comprehensive directory.
-    </p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a
-        href="/search/"
-        class="inline-block bg-white text-sage px-8 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-colors"
-      >
-        Search All Gyms
-      </a>
-      <a
-        href="/blog/"
-        class="inline-block bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-bold hover:bg-white hover:text-sage transition-colors"
-      >
-        Read Our Guides
-      </a>
-    </div>
-  </section>
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#1f1f1f] rounded-2xl p-6 border border-white/10" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#00e676]">{totalCategories}</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">CATEGORIES</div>
+        </div>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#2979ff]">{totalGyms}</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">TOTAL GYMS</div>
+        </div>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#ffea00]">{avgRating}★</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">AVG RATING</div>
+        </div>
+        <div class="text-center">
+          <div class="font-mono font-bold text-4xl text-[#ff2d7a]">14</div>
+          <div class="text-sm text-white/40 font-mono tracking-wider mt-1">UNIQUE FILTERS</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Special Features Section -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-display font-bold text-white mb-6">Special Features</h2>
+      <p class="text-white/50 mb-6 leading-relaxed">
+        Discover climbing gyms with unique characteristics and specialized offerings that cater to specific climbing preferences and skill levels.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categories.filter(cat => ['experience', 'value', 'specialty'].includes(cat.category)).map(category => (
+          <a
+            href={`/categories/${category.slug}/`}
+            class="group relative p-6 bg-gradient-to-br from-[#2d2d2d] to-[#1f1f1f] rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-300 overflow-hidden"
+            style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}
+          >
+            {/* Top accent line */}
+            <div class="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: category.color }}></div>
+            
+            {/* Hover glow */}
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 50% 0%, ${category.color}10 0%, transparent 60%)` }}></div>
+            
+            <div class="flex items-center justify-between mb-4 relative z-10">
+              <h3 class="text-xl font-display font-bold text-white group-hover:text-white transition-colors">
+                {category.name}
+              </h3>
+              <span class="px-3 py-1 text-xs font-mono font-bold rounded-full border uppercase" style={{ background: `${category.color}15`, color: category.color, borderColor: `${category.color}30` }}>
+                {category.count} {category.count === 1 ? 'Gym' : 'Gyms'}
+              </span>
+            </div>
+            <p class="text-white/50 mb-4 relative z-10 leading-relaxed text-sm">{category.description}</p>
+            <div class="flex items-center font-semibold relative z-10 group-hover:gap-2 transition-all text-sm" style={{ color: category.color }}>
+              <span class="font-mono">Explore Gym</span>
+              <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- By Climbing Type Section -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-display font-bold text-white mb-6">By Climbing Type</h2>
+      <p class="text-white/50 mb-6 leading-relaxed">
+        Find gyms specializing in your preferred climbing discipline, whether you're into top rope, lead climbing, or speed climbing.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categories.filter(cat => cat.category === 'climbing-type').map(category => (
+          <a
+            href={`/categories/${category.slug}/`}
+            class="group relative p-6 bg-gradient-to-br from-[#2d2d2d] to-[#1f1f1f] rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-300 overflow-hidden"
+            style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}
+          >
+            {/* Top accent line */}
+            <div class="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: category.color }}></div>
+            
+            {/* Hover glow */}
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 50% 0%, ${category.color}10 0%, transparent 60%)` }}></div>
+            
+            <div class="flex items-center justify-between mb-4 relative z-10">
+              <h3 class="text-xl font-display font-bold text-white group-hover:text-white transition-colors">
+                {category.name}
+              </h3>
+              <span class="px-3 py-1 text-xs font-mono font-bold rounded-full border uppercase" style={{ background: `${category.color}15`, color: category.color, borderColor: `${category.color}30` }}>
+                {category.count} {category.count === 1 ? 'Gym' : 'Gyms'}
+              </span>
+            </div>
+            <p class="text-white/50 mb-4 relative z-10 leading-relaxed text-sm">{category.description}</p>
+            <div class="flex items-center font-semibold relative z-10 group-hover:gap-2 transition-all text-sm" style={{ color: category.color }}>
+              <span class="font-mono">Explore Gym</span>
+              <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- By Amenities Section -->
+    <section class="mb-16">
+      <h2 class="text-3xl font-display font-bold text-white mb-6">By Amenities</h2>
+      <p class="text-white/50 mb-6 leading-relaxed">
+        Browse gyms based on the amenities that matter most to you, from recovery facilities like saunas to convenience features like cafes and parking.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {categories.filter(cat => cat.category === 'amenity').map(category => (
+          <a
+            href={`/categories/${category.slug}/`}
+            class="group relative p-6 bg-gradient-to-br from-[#2d2d2d] to-[#1f1f1f] rounded-2xl border border-white/5 hover:border-white/20 transition-all duration-300 overflow-hidden"
+            style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}
+          >
+            {/* Top accent line */}
+            <div class="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: category.color }}></div>
+            
+            {/* Hover glow */}
+            <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 50% 0%, ${category.color}10 0%, transparent 60%)` }}></div>
+            
+            <div class="mb-4 relative z-10">
+              <h3 class="text-lg font-display font-bold text-white group-hover:text-white transition-colors leading-tight">
+                {category.name}
+              </h3>
+            </div>
+            <div class="flex items-center justify-between mt-auto relative z-10">
+              <span class="font-mono font-bold text-sm" style={{ color: category.color }}>{category.count} {category.count === 1 ? 'Gym' : 'Gyms'}</span>
+              <div class="w-8 h-8 rounded-full bg-[#00e676]/10 flex items-center justify-center group-hover:bg-[#00e676] group-hover:text-black transition-all">
+                  <svg class="w-4 h-4 text-[#00e676] group-hover:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- About Categories Section -->
+    <section class="mb-16 bg-[#1f1f1f] rounded-2xl border border-white/10 p-8" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+      <h2 class="text-3xl font-display font-bold text-white mb-6">How to Choose the Right Category</h2>
+      <div class="prose prose-lg max-w-none">
+        <p class="text-white/60 leading-relaxed">
+          Our category system organizes climbing gyms by the features and characteristics that matter most to climbers. Whether you're prioritizing specific amenities, climbing disciplines, or experience levels, these curated collections help you quickly identify gyms that match your exact needs. Each category page provides detailed comparisons, ratings, and comprehensive information to support your decision-making process.
+        </p>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="bg-gradient-to-r from-[#00e676]/20 to-[#2979ff]/20 rounded-2xl p-8 border border-[#00e676]/20 text-center">
+      <h2 class="text-3xl font-display font-bold text-white mb-4">Ready to Find Your Perfect Gym?</h2>
+      <p class="text-lg mb-6 text-white/60">
+        Browse by category or search all {totalGyms} climbing gyms in our comprehensive directory.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="/search/"
+          class="btn-jug text-black inline-flex items-center justify-center gap-2"
+        >
+          Search All Gyms
+        </a>
+        <a
+          href="/blog/"
+          class="inline-flex items-center justify-center gap-2 bg-transparent border-2 border-white/20 text-white px-8 py-3 rounded-xl font-bold hover:bg-white/10 hover:border-white/40 transition-colors"
+        >
+          Read Our Guides
+        </a>
+      </div>
+    </section>
+  </div>
 </BaseLayout>

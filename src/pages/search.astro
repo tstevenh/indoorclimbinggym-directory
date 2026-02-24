@@ -1,6 +1,6 @@
 ---
 /**
- * Search Page
+ * Search Page - Dark Theme
  * Comprehensive search and filtering page for climbing gyms
  * Supports URL parameter-based filtering for shareable links
  */
@@ -179,163 +179,171 @@ const breadcrumbs = [
   noindex={noindex}
   breadcrumbs={breadcrumbs}
 >
-  <!-- Breadcrumb Navigation -->
-  <nav aria-label="Breadcrumb" class="mb-6">
-    <ol class="flex items-center space-x-2 text-sm text-gray-600">
-      <li>
-        <a href="/" class="hover:text-sage transition-colors">Home</a>
-      </li>
-      <li>
-        <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fill-rule="evenodd"
-            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-            clip-rule="evenodd"></path>
-        </svg>
-      </li>
-      <li>
-        <span class="text-granite font-medium">Search</span>
-      </li>
-    </ol>
-  </nav>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="Breadcrumb" class="mb-6">
+      <ol class="flex items-center space-x-2 text-sm text-white/40">
+        <li>
+          <a href="/" class="hover:text-[#00e676] transition-colors">Home</a>
+        </li>
+        <li>
+          <svg class="w-4 h-4 text-white/20" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clip-rule="evenodd"></path>
+          </svg>
+        </li>
+        <li>
+          <span class="text-white/60 font-medium">Search</span>
+        </li>
+      </ol>
+    </nav>
 
-  <!-- Page Header -->
-  <header class="mb-8">
-    <h1 class="text-4xl font-bold text-granite mb-3">
-      {hasFilters ? 'Search Results' : 'Search Climbing Gyms'}
-    </h1>
-    <p class="text-lg text-gray-600 mb-6">
-      {hasFilters
-        ? `Found ${resultsCount} ${resultsCount === 1 ? 'gym' : 'gyms'} matching your criteria`
-        : `Browse all ${totalCount} climbing gyms or use filters to refine your search`}
-    </p>
-
-    <!-- Search Bar -->
-    <div class="max-w-8xl">
-      <SearchBar placeholder="Search by city, gym name, or zip code..." initialValue={query || ''} />
-    </div>
-  </header>
-
-  {cityParam && cityDisplay && (
-    <div class="bg-white border border-sage/20 rounded-xl p-5 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-      <div>
-        <div class="text-sm font-semibold text-granite mb-1">Climbers in {cityDisplay} are ranked here</div>
-        <p class="text-sm text-gray-600">See how your city stacks up this month on the leaderboard.</p>
+    <!-- Page Header -->
+    <header class="mb-8">
+      <div class="mb-2">
+        <span class="text-[#2979ff] text-sm font-mono tracking-widest">THE DIRECTORY</span>
       </div>
-      <a
-        href="/leaderboard/"
-        class="inline-flex items-center gap-2 bg-sage text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-sage/90 transition-colors"
-      >
-        View Leaderboard →
-      </a>
-    </div>
-  )}
+      <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-3">
+        {hasFilters ? 'Search Results' : 'Search Climbing Gyms'}
+      </h1>
+      <p class="text-lg text-white/50 mb-6 max-w-2xl">
+        {hasFilters
+          ? `Found ${resultsCount} ${resultsCount === 1 ? 'gym' : 'gyms'} matching your criteria`
+          : `Browse all ${totalCount} climbing gyms or use filters to refine your search`}
+      </p>
 
-  <!-- API Error Alert -->
-  {apiError && (
-    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-      <div class="flex items-center">
-        <svg class="w-5 h-5 text-red-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-        </svg>
+      <!-- Search Bar -->
+      <div class="max-w-2xl">
+        <SearchBar placeholder="Search by city, gym name, or zip code..." initialValue={query || ''} />
+      </div>
+    </header>
+
+    {cityParam && cityDisplay && (
+      <div class="bg-gradient-to-r from-[#00e676]/10 to-[#2979ff]/10 border border-[#00e676]/20 rounded-2xl p-5 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4" style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}>
         <div>
-          <h3 class="font-semibold text-red-800">Unable to load gym data</h3>
-          <p class="text-sm text-red-700">Please make sure the API server is running and try again.</p>
+          <div class="text-sm font-display font-semibold text-white mb-1">Climbers in {cityDisplay} are ranked here</div>
+          <p class="text-sm text-white/50">See how your city stacks up this month on the leaderboard.</p>
+        </div>
+        <a
+          href="/leaderboard/"
+          class="btn-jug text-black text-sm inline-flex items-center gap-2"
+        >
+          View Leaderboard
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+    )}
+
+    <!-- API Error Alert -->
+    {apiError && (
+      <div class="bg-[#ff1744]/10 border border-[#ff1744]/30 rounded-xl p-4 mb-6">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-[#ff1744] mr-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+          <div>
+            <h3 class="font-semibold text-[#ff1744]">Unable to load gym data</h3>
+            <p class="text-sm text-white/60">Please make sure the API server is running and try again.</p>
+          </div>
         </div>
       </div>
-    </div>
-  )}
+    )}
 
-  <!-- Active Filters Display -->
-  {
-    activeFilters.length > 0 && (
-      <section class="mb-6 bg-white rounded-lg shadow-sm p-4">
-        <div class="flex items-center justify-between flex-wrap gap-3">
-          <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-sm font-semibold text-granite">Active Filters:</span>
-            {activeFilters.map((filter) => (
-              <button
-                data-param={filter.param}
-                data-value={filter.value}
-                class="filter-tag inline-flex items-center gap-2 bg-sage text-white px-3 py-1 rounded-full text-sm hover:bg-opacity-90 transition-colors"
-              >
-                <span>{filter.label}</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            ))}
-          </div>
-          <a
-            href="/search/"
-            class="text-sm text-sage hover:text-opacity-80 font-medium transition-colors"
-          >
-            Clear All Filters
-          </a>
-        </div>
-      </section>
-    )
-  }
-
-  <!-- Main Content: Sidebar + Results Grid -->
-  <div class="flex flex-col lg:flex-row gap-8">
-    <!-- Left Sidebar: Filters -->
-    <aside class="w-full lg:w-1/4 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:scrollbar-thin lg:scrollbar-thumb-sage lg:scrollbar-track-gray-100">
-      <FilterSidebar />
-    </aside>
-
-    <!-- Right: Results Grid -->
-    <main class="w-full lg:w-3/4">
-      {
-        filteredGyms.length > 0 ? (
-          <>
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {paginatedGyms.map((gym) => (
-                <GymCard gym={gym} showCity={true} />
+    <!-- Active Filters Display -->
+    {
+      activeFilters.length > 0 && (
+        <section class="mb-6 bg-[#1f1f1f] rounded-xl border border-white/10 p-4" style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}>
+          <div class="flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-sm font-display font-semibold text-white/70">Active Filters:</span>
+              {activeFilters.map((filter) => (
+                <button
+                  data-param={filter.param}
+                  data-value={filter.value}
+                  class="filter-tag inline-flex items-center gap-2 bg-[#00e676] text-black px-3 py-1 rounded-full text-sm font-mono font-bold hover:bg-[#00c853] transition-colors"
+                >
+                  <span>{filter.label}</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
               ))}
             </div>
-
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              baseUrl={baseUrl}
-            />
-          </>
-        ) : (
-          <div class="bg-white rounded-lg shadow-md p-12 text-center">
-            <svg
-              class="w-16 h-16 text-gray-400 mx-auto mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <h2 class="text-2xl font-bold text-granite mb-2">No gyms found</h2>
-            <p class="text-gray-600 mb-6">
-              We couldn't find any climbing gyms matching your criteria. Try adjusting your
-              filters.
-            </p>
             <a
               href="/search/"
-              class="inline-block bg-sage text-white px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+              class="text-sm text-[#00e676] hover:text-[#00c853] font-medium transition-colors font-mono"
             >
               Clear All Filters
             </a>
           </div>
-        )
-      }
-    </main>
+        </section>
+      )
+    }
+
+    <!-- Main Content: Sidebar + Results Grid -->
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Left Sidebar: Filters -->
+      <aside class="w-full lg:w-1/4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:scrollbar-thin">
+        <FilterSidebar />
+      </aside>
+
+      <!-- Right: Results Grid -->
+      <main class="w-full lg:w-3/4">
+        {
+          filteredGyms.length > 0 ? (
+            <>
+              <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {paginatedGyms.map((gym, index) => (
+                  <GymCard gym={gym} showCity={true} delay={index * 0.05} />
+                ))}
+              </div>
+
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                baseUrl={baseUrl}
+              />
+            </>
+          ) : (
+            <div class="bg-[#1f1f1f] rounded-2xl border border-white/10 p-12 text-center" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+              <svg
+                class="w-16 h-16 text-white/20 mx-auto mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <h2 class="text-2xl font-display font-bold text-white mb-2">No gyms found</h2>
+              <p class="text-white/50 mb-6">
+                We couldn't find any climbing gyms matching your criteria. Try adjusting your
+                filters.
+              </p>
+              <a
+                href="/search/"
+                class="btn-jug text-black inline-flex items-center gap-2"
+              >
+                Clear All Filters
+              </a>
+            </div>
+          )
+        }
+      </main>
+    </div>
   </div>
 </BaseLayout>
 
@@ -371,26 +379,25 @@ const breadcrumbs = [
 
   /* Custom scrollbar styling for filter sidebar */
   aside::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
 
   aside::-webkit-scrollbar-track {
-    background: #f3f4f6;
-    border-radius: 4px;
+    background: transparent;
   }
 
   aside::-webkit-scrollbar-thumb {
-    background: #98a48b;
-    border-radius: 4px;
+    background: #3d3d3d;
+    border-radius: 3px;
   }
 
   aside::-webkit-scrollbar-thumb:hover {
-    background: #87937a;
+    background: #4d4d4d;
   }
 
   /* Firefox scrollbar styling */
   aside {
     scrollbar-width: thin;
-    scrollbar-color: #98a48b #f3f4f6;
+    scrollbar-color: #3d3d3d transparent;
   }
 </style>

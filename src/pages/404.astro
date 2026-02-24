@@ -21,16 +21,16 @@ const pageDescription =
   <div class="max-w-4xl mx-auto text-center py-12">
     <!-- Error Status -->
     <div class="mb-8">
-      <h1 class="text-8xl font-bold text-sage mb-4">404</h1>
-      <h2 class="text-3xl font-bold text-granite mb-4">Page Not Found</h2>
-      <p class="text-lg text-gray-600 mb-8">
+      <h1 class="text-8xl font-bold text-[#2979ff] mb-4 font-display">404</h1>
+      <h2 class="text-3xl font-bold text-white mb-4 font-display">Page Not Found</h2>
+      <p class="text-lg text-white/70 mb-8">
         Sorry, we couldn't find the page you're looking for. It may have been moved or deleted.
       </p>
     </div>
 
     <!-- Search Bar -->
     <div class="mb-12 max-w-2xl mx-auto">
-      <h3 class="text-xl font-semibold text-granite mb-4">
+      <h3 class="text-xl font-semibold text-white mb-4">
         Looking for a climbing gym?
       </h3>
       <SearchBar large={true} placeholder="Search by city, state, or gym name..." />
@@ -39,13 +39,13 @@ const pageDescription =
     <!-- Popular Links -->
     <div class="grid md:grid-cols-2 gap-8 mb-12">
       <!-- Browse Section -->
-      <div class="bg-white rounded-lg shadow-md p-6 text-left">
-        <h3 class="text-xl font-semibold text-granite mb-4">Browse Gyms</h3>
+      <div class="bg-[#1f1f1f] rounded-lg shadow-md p-6 text-left border border-white/10">
+        <h3 class="text-xl font-semibold text-white mb-4">Browse Gyms</h3>
         <ul class="space-y-3">
           <li>
             <a
               href="/"
-              class="text-sage hover:underline font-medium flex items-center"
+              class="text-[#2979ff] hover:underline font-medium flex items-center"
             >
               <svg
                 class="w-5 h-5 mr-2"
@@ -66,7 +66,7 @@ const pageDescription =
           <li>
             <a
               href="/search/"
-              class="text-sage hover:underline font-medium flex items-center"
+              class="text-[#2979ff] hover:underline font-medium flex items-center"
             >
               <svg
                 class="w-5 h-5 mr-2"
@@ -87,7 +87,7 @@ const pageDescription =
           <li>
             <a
               href="/states/"
-              class="text-sage hover:underline font-medium flex items-center"
+              class="text-[#2979ff] hover:underline font-medium flex items-center"
             >
               <svg
                 class="w-5 h-5 mr-2"
@@ -108,7 +108,7 @@ const pageDescription =
           <li>
             <a
               href="/categories/best-bouldering-climbing-gyms/"
-              class="text-sage hover:underline font-medium flex items-center"
+              class="text-[#2979ff] hover:underline font-medium flex items-center"
             >
               <svg
                 class="w-5 h-5 mr-2"
@@ -130,15 +130,15 @@ const pageDescription =
       </div>
 
       <!-- Popular Cities & Resources -->
-      <div class="bg-white rounded-lg shadow-md p-6 text-left">
-        <h3 class="text-xl font-semibold text-granite mb-4">
+      <div class="bg-[#1f1f1f] rounded-lg shadow-md p-6 text-left border border-white/10">
+        <h3 class="text-xl font-semibold text-white mb-4">
           Popular Locations
         </h3>
         <ul class="space-y-3 mb-6">
           <li>
             <a
               href="/wa/seattle/"
-              class="text-sage hover:underline font-medium flex items-center"
+              class="text-[#2979ff] hover:underline font-medium flex items-center"
             >
               <svg
                 class="w-5 h-5 mr-2"
@@ -165,7 +165,7 @@ const pageDescription =
           <li>
             <a
               href="/tx/austin/"
-              class="text-sage hover:underline font-medium flex items-center"
+              class="text-[#2979ff] hover:underline font-medium flex items-center"
             >
               <svg
                 class="w-5 h-5 mr-2"
@@ -192,7 +192,7 @@ const pageDescription =
           <li>
             <a
               href="/co/denver/"
-              class="text-sage hover:underline font-medium flex items-center"
+              class="text-[#2979ff] hover:underline font-medium flex items-center"
             >
               <svg
                 class="w-5 h-5 mr-2"
@@ -218,12 +218,12 @@ const pageDescription =
           </li>
         </ul>
 
-        <h4 class="text-lg font-semibold text-granite mb-3 mt-6">Resources</h4>
+        <h4 class="text-lg font-semibold text-white mb-3 mt-6">Resources</h4>
         <ul class="space-y-3">
           <li>
             <a
               href="/blog/"
-              class="text-sage hover:underline font-medium flex items-center"
+              class="text-[#2979ff] hover:underline font-medium flex items-center"
             >
               <svg
                 class="w-5 h-5 mr-2"
@@ -244,7 +244,7 @@ const pageDescription =
           <li>
             <a
               href="/about/"
-              class="text-sage hover:underline font-medium flex items-center"
+              class="text-[#2979ff] hover:underline font-medium flex items-center"
             >
               <svg
                 class="w-5 h-5 mr-2"
@@ -267,14 +267,14 @@ const pageDescription =
     </div>
 
     <!-- Additional Help -->
-    <div class="bg-sage bg-opacity-10 rounded-lg p-6 text-center">
-      <h3 class="text-lg font-semibold text-granite mb-2">Still need help?</h3>
-      <p class="text-gray-600 mb-4">
+    <div class="bg-[#2979ff]/10 rounded-lg p-6 text-center">
+      <h3 class="text-lg font-semibold text-white mb-2">Still need help?</h3>
+      <p class="text-white/70 mb-4">
         If you believe this is an error or need assistance, please contact us.
       </p>
       <a
         href="/contact/"
-        class="inline-block px-6 py-3 bg-white text-sage font-medium rounded-lg hover:bg-gray-50 transition-colors"
+        class="inline-block px-6 py-3 bg-[#2979ff] text-white font-medium rounded-lg hover:bg-[#2979ff]/80 transition-colors"
       >
         Contact Support
       </a>

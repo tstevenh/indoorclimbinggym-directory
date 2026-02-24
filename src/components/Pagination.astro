@@ -1,13 +1,13 @@
 ---
 /**
- * Pagination Component
+ * Pagination Component - Dark Theme
  * Reusable pagination UI with page numbers and Previous/Next buttons
  */
 
 export interface Props {
   currentPage: number;
   totalPages: number;
-  baseUrl: string; // URL without page param (e.g., "/categories/best-bouldering/" or "/search?q=seattle")
+  baseUrl: string; // URL without page param (e.g., "/categories/slug/" or "/search?q=seattle")
 }
 
 const { currentPage, totalPages, baseUrl } = Astro.props;
@@ -95,24 +95,24 @@ const nextPage = currentPage < totalPages ? currentPage + 1 : null;
   {prevPage ? (
     <a
       href={getPageUrl(prevPage)}
-      class="flex items-center gap-1 px-4 py-2 border-2 border-sage text-sage rounded-lg font-medium hover:bg-sage hover:!text-white transition-colors"
+      class="flex items-center gap-1 px-4 py-2 border-2 border-[#00e676] text-[#00e676] rounded-xl font-medium hover:bg-[#00e676] hover:text-black transition-colors"
       aria-label="Previous page"
     >
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
-      <span class="hidden sm:inline">Previous</span>
+      <span class="hidden sm:inline font-mono text-sm">PREV</span>
     </a>
   ) : (
     <span
-      class="flex items-center gap-1 px-4 py-2 border-2 border-gray-300 text-gray-400 rounded-lg font-medium cursor-not-allowed"
+      class="flex items-center gap-1 px-4 py-2 border-2 border-white/20 text-white/30 rounded-xl font-medium cursor-not-allowed"
       aria-label="Previous page (disabled)"
       aria-disabled="true"
     >
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
-      <span class="hidden sm:inline">Previous</span>
+      <span class="hidden sm:inline font-mono text-sm">PREV</span>
     </span>
   )}
 
@@ -120,7 +120,7 @@ const nextPage = currentPage < totalPages ? currentPage + 1 : null;
   <div class="flex items-center gap-1">
     {pageNumbers.map((pageNum) => {
       if (pageNum === '...') {
-        return <span class="px-3 py-2 text-granite">...</span>;
+        return <span class="px-3 py-2 text-white/30 font-mono">...</span>;
       }
 
       const isActive = pageNum === currentPage;
@@ -128,10 +128,10 @@ const nextPage = currentPage < totalPages ? currentPage + 1 : null;
       return (
         <a
           href={getPageUrl(pageNum as number)}
-          class={`px-4 py-2 rounded-lg font-medium transition-colors ${
+          class={`px-4 py-2 rounded-xl font-medium transition-colors font-mono text-sm ${
             isActive
-              ? 'bg-sage text-white'
-              : 'bg-white border border-gray-300 text-granite hover:border-sage hover:bg-sage/10'
+              ? 'bg-[#00e676] text-black'
+              : 'bg-[#2d2d2d] border border-white/10 text-white/70 hover:border-[#00e676] hover:text-[#00e676]'
           }`}
           aria-label={`Page ${pageNum}`}
           aria-current={isActive ? 'page' : undefined}
@@ -146,21 +146,21 @@ const nextPage = currentPage < totalPages ? currentPage + 1 : null;
   {nextPage ? (
     <a
       href={getPageUrl(nextPage)}
-      class="flex items-center gap-1 px-4 py-2 border-2 border-sage text-sage rounded-lg font-medium hover:bg-sage hover:!text-white transition-colors"
+      class="flex items-center gap-1 px-4 py-2 border-2 border-[#00e676] text-[#00e676] rounded-xl font-medium hover:bg-[#00e676] hover:text-black transition-colors"
       aria-label="Next page"
     >
-      <span class="hidden sm:inline">Next</span>
+      <span class="hidden sm:inline font-mono text-sm">NEXT</span>
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
     </a>
   ) : (
     <span
-      class="flex items-center gap-1 px-4 py-2 border-2 border-gray-300 text-gray-400 rounded-lg font-medium cursor-not-allowed"
+      class="flex items-center gap-1 px-4 py-2 border-2 border-white/20 text-white/30 rounded-xl font-medium cursor-not-allowed"
       aria-label="Next page (disabled)"
       aria-disabled="true"
     >
-      <span class="hidden sm:inline">Next</span>
+      <span class="hidden sm:inline font-mono text-sm">NEXT</span>
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>

@@ -6,16 +6,16 @@
  */
 ---
 
-<div id="cookie-consent-banner" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-sage shadow-2xl z-50">
+<div id="cookie-consent-banner" class="hidden fixed bottom-0 left-0 right-0 bg-[#1f1f1f] border-t border-white/10 shadow-2xl z-50">
   <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
       <!-- Left: Message -->
       <div class="lg:col-span-2">
-        <h3 class="text-lg font-semibold text-granite mb-2">Cookie Preferences</h3>
-        <p class="text-sm text-granite/80 mb-4">
+        <h3 class="text-lg font-semibold text-white font-display mb-2">Cookie Preferences</h3>
+        <p class="text-sm text-white/70 mb-4">
           We use cookies to enhance your experience, analyze site traffic, and deliver personalized content. Some cookies are essential for the site to function, while others help us understand how you interact with our platform.
         </p>
-        <a href="/privacy/#cookies-tracking" class="text-sm text-sage hover:underline font-medium">
+        <a href="/privacy/#cookies-tracking" class="text-sm text-[#2979ff] hover:underline font-medium">
           Learn more about our cookie policy →
         </a>
       </div>
@@ -24,13 +24,13 @@
       <div class="flex flex-col gap-3">
         <button
           id="cookie-accept-all"
-          class="bg-sage text-white px-6 py-3 rounded-lg font-medium hover:bg-sage/90 transition-colors w-full"
+          class="bg-[#2979ff] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#2979ff]/90 transition-colors w-full"
         >
           Accept All Cookies
         </button>
         <button
           id="cookie-manage-preferences"
-          class="border-2 border-sage text-sage px-6 py-2 rounded-lg font-medium hover:bg-sage/5 transition-colors w-full"
+          class="border border-[#2979ff] text-[#2979ff] px-6 py-2 rounded-lg font-medium hover:bg-[#2979ff]/10 transition-colors w-full"
         >
           Manage Preferences
         </button>
@@ -41,13 +41,13 @@
 
 <!-- Cookie Preferences Modal -->
 <div id="cookie-preferences-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-  <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+  <div class="bg-[#1f1f1f] rounded-lg shadow-2xl max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
     <!-- Modal Header -->
-    <div class="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-      <h2 class="text-2xl font-bold text-granite">Cookie Preferences</h2>
+    <div class="sticky top-0 z-10 bg-[#1f1f1f] border-b border-white/10 px-6 py-4 flex justify-between items-center">
+      <h2 class="text-2xl font-bold text-white font-display">Cookie Preferences</h2>
       <button
         id="cookie-modal-close"
-        class="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+        class="text-white/60 hover:text-white text-2xl leading-none"
         aria-label="Close cookie preferences"
       >
         ✕
@@ -57,11 +57,11 @@
     <!-- Modal Content -->
     <div class="px-6 py-6 space-y-6">
       <!-- Essential Cookies -->
-      <div class="border border-gray-200 rounded-lg p-4">
+      <div class="border border-white/10 rounded-lg p-4">
         <div class="flex items-start justify-between mb-2 gap-3">
           <div>
-            <h3 class="font-semibold text-granite mb-1">Essential Cookies</h3>
-            <p class="text-sm text-gray-600">
+            <h3 class="font-semibold text-white font-display mb-1">Essential Cookies</h3>
+            <p class="text-sm text-white/60">
               Required for the website to function. These cannot be disabled.
             </p>
           </div>
@@ -75,13 +75,13 @@
             />
             <label
               for="cookie-essential"
-              class="inline-flex items-center w-10 h-6 bg-sage rounded-full cursor-not-allowed px-1"
+              class="inline-flex items-center w-10 h-6 bg-[#00e676] rounded-full cursor-not-allowed px-1"
             >
               <span class="w-4 h-4 bg-white rounded-full ml-auto"></span>
             </label>
           </div>
         </div>
-        <ul class="text-sm text-gray-600 space-y-1 ml-0">
+        <ul class="text-sm text-white/60 space-y-1 ml-0">
           <li>• Supabase authentication (user sessions)</li>
           <li>• Form submission data</li>
           <li>• Security tokens</li>
@@ -89,11 +89,11 @@
       </div>
 
       <!-- Analytics Cookies -->
-      <div class="border border-gray-200 rounded-lg p-4">
+      <div class="border border-white/10 rounded-lg p-4">
         <div class="flex items-start justify-between mb-2 gap-3">
           <div>
-            <h3 class="font-semibold text-granite mb-1">Analytics Cookies</h3>
-            <p class="text-sm text-gray-600">
+            <h3 class="font-semibold text-white font-display mb-1">Analytics Cookies</h3>
+            <p class="text-sm text-white/60">
               Help us understand how you use our website and improve your experience.
             </p>
           </div>
@@ -106,13 +106,13 @@
             />
             <label
               for="cookie-analytics"
-              class="inline-flex items-center w-10 h-6 bg-sage rounded-full cursor-pointer hover:bg-sage/90 transition-colors px-1"
+              class="inline-flex items-center w-10 h-6 bg-[#00e676] rounded-full cursor-pointer hover:bg-[#00e676]/90 transition-colors px-1"
             >
               <span class="w-4 h-4 bg-white rounded-full transition-transform ml-auto"></span>
             </label>
           </div>
         </div>
-        <ul class="text-sm text-gray-600 space-y-1 ml-0">
+        <ul class="text-sm text-white/60 space-y-1 ml-0">
           <li>• Google Analytics (_ga, _gid, _gat)</li>
           <li>• Vercel Analytics (performance monitoring)</li>
           <li>• Page views and user behavior</li>
@@ -120,11 +120,11 @@
       </div>
 
       <!-- Preferences Cookies -->
-      <div class="border border-gray-200 rounded-lg p-4">
+      <div class="border border-white/10 rounded-lg p-4">
         <div class="flex items-start justify-between mb-2 gap-3">
           <div>
-            <h3 class="font-semibold text-granite mb-1">Preference Cookies</h3>
-            <p class="text-sm text-gray-600">
+            <h3 class="font-semibold text-white font-display mb-1">Preference Cookies</h3>
+            <p class="text-sm text-white/60">
               Remember your preferences and settings for a better experience.
             </p>
           </div>
@@ -137,13 +137,13 @@
             />
             <label
               for="cookie-preferences"
-              class="inline-flex items-center w-10 h-6 bg-sage rounded-full cursor-pointer hover:bg-sage/90 transition-colors px-1"
+              class="inline-flex items-center w-10 h-6 bg-[#00e676] rounded-full cursor-pointer hover:bg-[#00e676]/90 transition-colors px-1"
             >
               <span class="w-4 h-4 bg-white rounded-full transition-transform ml-auto"></span>
             </label>
           </div>
         </div>
-        <ul class="text-sm text-gray-600 space-y-1 ml-0">
+        <ul class="text-sm text-white/60 space-y-1 ml-0">
           <li>• Modal display preferences (Welcome modal)</li>
           <li>• Theme preferences</li>
           <li>• Navigation state</li>
@@ -152,16 +152,16 @@
     </div>
 
     <!-- Modal Footer -->
-    <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex gap-3 justify-end">
+    <div class="sticky bottom-0 bg-[#2d2d2d] border-t border-white/10 px-6 py-4 flex gap-3 justify-end">
       <button
         id="cookie-preferences-reject"
-        class="px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+        class="px-6 py-2 border border-white/20 text-white/80 rounded-lg font-medium hover:bg-white/5 transition-colors"
       >
         Reject Non-Essential
       </button>
       <button
         id="cookie-preferences-save"
-        class="px-6 py-2 bg-sage text-white rounded-lg font-medium hover:bg-sage/90 transition-colors"
+        class="px-6 py-2 bg-[#2979ff] text-white rounded-lg font-medium hover:bg-[#2979ff]/90 transition-colors"
       >
         Save Preferences
       </button>
@@ -345,12 +345,12 @@
   #cookie-essential:checked ~ label,
   #cookie-analytics:checked ~ label,
   #cookie-preferences:checked ~ label {
-    background-color: #98a48b;
+    background-color: #00e676;
   }
 
   /* OFF state: remove ml-auto to push circle to the left */
   #cookie-analytics:not(:checked) ~ label {
-    background-color: #d1d5db;
+    background-color: rgba(255, 255, 255, 0.2);
   }
 
   #cookie-analytics:not(:checked) ~ label span {
@@ -358,7 +358,7 @@
   }
 
   #cookie-preferences:not(:checked) ~ label {
-    background-color: #d1d5db;
+    background-color: rgba(255, 255, 255, 0.2);
   }
 
   #cookie-preferences:not(:checked) ~ label span {

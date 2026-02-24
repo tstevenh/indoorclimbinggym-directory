@@ -21,14 +21,14 @@ const filteredHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
 ---
 
 {filteredHeadings.length > 0 && (
-  <nav class="bg-gray-50 rounded-lg p-6 mb-8">
-    <h2 class="text-lg font-bold text-granite mb-4">Table of Contents</h2>
+  <nav class="bg-[#1f1f1f] rounded-xl p-6 mb-8 border border-white/10">
+    <h2 class="text-lg font-bold text-white mb-4 font-display">Table of Contents</h2>
     <ul class="space-y-2">
       {filteredHeadings.map((heading) => (
         <li class={heading.depth === 3 ? 'ml-4' : ''}>
           <a
             href={`#${heading.slug}`}
-            class="text-sm text-gray-600 hover:text-sage transition-colors"
+            class="text-sm text-white/60 hover:text-[#2979ff] transition-colors"
           >
             {heading.text}
           </a>
