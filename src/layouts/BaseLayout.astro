@@ -113,6 +113,9 @@ if (canonical && typeof canonical === 'string') {
 
 const finalTitle = title.length > 60 ? title.substring(0, 57) + '...' : title;
 const finalDescription = description.length > 160 ? description.substring(0, 157) + '...' : description;
+const absoluteOgImage = ogImage.startsWith('http')
+  ? ogImage
+  : `${siteUrl}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
 
 const robotsDirectives = [];
 if (noindex) robotsDirectives.push('noindex');
@@ -173,7 +176,8 @@ const dashboardUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={finalTitle} />
     <meta property="og:description" content={finalDescription} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:image" content={absoluteOgImage} />
+    <meta property="og:image:secure_url" content={absoluteOgImage} />
     <meta property="og:site_name" content="IndoorClimbingGym" />
 
     <!-- Article-specific Open Graph tags -->
@@ -184,11 +188,11 @@ const dashboardUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.
     {ogType === 'article' && articleTags && articleTags.map(tag => <meta property="article:tag" content={tag} />)}
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={canonicalURL} />
-    <meta property="twitter:title" content={finalTitle} />
-    <meta property="twitter:description" content={finalDescription} />
-    <meta property="twitter:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={finalTitle} />
+    <meta name="twitter:description" content={finalDescription} />
+    <meta name="twitter:image" content={absoluteOgImage} />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
