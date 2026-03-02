@@ -40,6 +40,9 @@ export async function getStaticPaths() {
       ? Number((cityGyms.reduce((sum, gym) => sum + (gym.rating || 0), 0) / cityGyms.length).toFixed(1))
       : 0;
 
+    const shouldIndex = cityGyms.length >= MIN_GYMS_FOR_INDEXABLE_CITY_HUB && categoryStats.length >= 2;
+    if (!shouldIndex) continue;
+
     paths.push({
       params: { state: stateSlug, city: citySlug },
       props: {
@@ -61,7 +64,7 @@ const { region, city, cityGymsCount, avgRating, categoryStats } = Astro.props;
 const canonicalUrl = `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/`;
 const title = `Climbing Gym Categories in ${city}, ${region}`;
 const description = `Browse ${categoryStats.length} climbing gym categories in ${city}, ${region}. Compare ${cityGymsCount} gyms by bouldering, sauna, kids zone, beginner-friendly, and more.`;
-const shouldIndex = cityGymsCount >= MIN_GYMS_FOR_INDEXABLE_CITY_HUB && categoryStats.length >= 2;
+// city/category hubs generated only when indexable in getStaticPaths
 
 const breadcrumbs = [
   { label: 'Home', url: 'https://www.indoorclimbinggym.com/' },
@@ -131,7 +134,6 @@ const combinedSchema = {
   canonical={canonicalUrl}
   schema={combinedSchema}
   breadcrumbs={breadcrumbs}
-  noindex={!shouldIndex}
 >
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <nav class="text-sm mb-6" aria-label="Breadcrumb">
