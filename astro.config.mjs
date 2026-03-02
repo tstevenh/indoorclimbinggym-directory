@@ -30,7 +30,9 @@ export default defineConfig({
       filter: (page) => {
         try {
           const path = new URL(page, 'https://www.indoorclimbinggym.com').pathname;
-          return !path.endsWith('/1/');
+          if (path.endsWith('/1/')) return false;
+          if (path === '/privacy/' || path === '/terms/' || path === '/404/') return false;
+          return true;
         } catch {
           return true;
         }
@@ -51,6 +53,10 @@ export default defineConfig({
     // Deduplicated article redirects
     '/blog/climbing-shoe-fit-guide/': '/blog/climbing-shoes-fit/',
     '/blog/how-to-get-into-rock-climbing/': '/blog/how-to-start-rock-climbing/',
+
+    // Consolidate removed Climbro drafts to active BOFU page
+    '/blog/climbro-review-editorial-analysis/': '/blog/climbro-rent-vs-buy-which-is-better/',
+    '/blog/climbro-alternatives-smart-vs-traditional-hangboard/': '/blog/climbro-rent-vs-buy-which-is-better/',
 
     // Note: /guides → /blog migration handled by actual page files:
     // - src/pages/guides/index.astro redirects /guides/ to /blog/
