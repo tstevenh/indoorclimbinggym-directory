@@ -189,7 +189,7 @@ Beginners and first-timers find bouldering approachable. [Beginner-friendly clim
 
 Fitness-focused people like the workout. Climbing uses muscles differently than running or lifting. It builds functional strength and keeps things interesting.
 
-Experienced climbers use bouldering for training. Working hard boulder problems builds power that transfers to longer routes. Many strong rope climbers boulder regularly.
+Experienced climbers use bouldering for training. Working hard boulder problems builds power that transfers to longer routes. Many strong rope climbers boulder regularly. If you want a structured at-home finger-strength layer between gym sessions, see our [Climbro rent vs buy decision guide](/blog/climbro-rent-vs-buy-which-is-better/).
 
 Age and strength matter less than technique. I've watched 60-year-olds climb circles around muscular beginners. Efficient movement beats brute force. You don't need to be strong to start. You'll get stronger by climbing.
 

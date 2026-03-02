@@ -65,6 +65,8 @@ const keywords = [
   'climbing advice',
   'climbing resources'
 ];
+
+const showClimbroSoftModule = ['guides', 'tips', 'gear'].includes(category || '');
 ---
 
 <BaseLayout
@@ -110,6 +112,17 @@ const keywords = [
     <div class="text-center py-16 bg-[#1f1f1f] rounded-xl border border-white/10">
       <p class="text-xl text-white/60">No {categoryLabel.toLowerCase()} articles yet. Check back soon!</p>
     </div>
+  )}
+
+  {showClimbroSoftModule && (
+    <section class="mb-12 rounded-xl border border-white/10 bg-[#1f1f1f] p-6">
+      <h2 class="text-xl font-display font-bold text-white mb-2">Structured Finger Training Option</h2>
+      <p class="text-white/70">
+        If finger strength is becoming your bottleneck, read our practical
+        <a href="/blog/climbro-rent-vs-buy-which-is-better/" class="text-[#00e676] hover:text-[#00c853] ml-1">Climbro rent vs buy guide</a>
+        before committing to a setup.
+      </p>
+    </section>
   )}
 
   <!-- SEO-rich content section -->
