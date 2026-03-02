@@ -17,7 +17,14 @@ const links = [
   { label: 'Start with Rental', href: 'https://climbro.com/rent/?wpam_id=23', intent: 'rent' },
   { label: 'Buy from Shop', href: 'https://climbro.com/shop/?wpam_id=23', intent: 'shop' },
   { label: 'See 30-Day Trial', href: 'https://climbro.com/30-day-trial/?wpam_id=23', intent: 'trial' },
-];
+].map((link) => {
+  const url = new URL(link.href);
+  url.searchParams.set('subid', `${source}_${link.intent}`);
+  return {
+    ...link,
+    href: url.toString(),
+  };
+});
 ---
 
 <section class={`my-8 rounded-2xl border border-white/10 bg-[#1f1f1f] overflow-hidden ${compact ? 'max-w-3xl' : ''}`}>
@@ -54,3 +61,27 @@ const links = [
     </div>
   </div>
 </section>
+
+<script>
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const link = target.closest('[data-affiliate-link="climbro"]');
+    if (!(link instanceof HTMLAnchorElement)) return;
+
+    const affiliateProgram = 'climbro';
+    const affiliateIntent = link.getAttribute('data-affiliate-intent') || 'unknown';
+    const affiliateSource = link.getAttribute('data-affiliate-source') || 'unknown';
+
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      window.gtag('event', 'affiliate_click', {
+        affiliate_program: affiliateProgram,
+        affiliate_intent: affiliateIntent,
+        affiliate_source: affiliateSource,
+        page_path: window.location.pathname,
+        outbound_url: link.href,
+      });
+    }
+  });
+</script>
