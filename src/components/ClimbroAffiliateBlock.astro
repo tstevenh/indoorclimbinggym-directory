@@ -1,0 +1,40 @@
+---
+interface Props {
+  title?: string;
+  subtitle?: string;
+  source?: string;
+}
+
+const {
+  title = 'Find Your Best Climbro Path',
+  subtitle = 'Choose based on commitment level: rent first, buy direct, or start with trial terms.',
+  source = 'climbro_block'
+} = Astro.props;
+
+const links = [
+  { label: 'Start with Rental', href: 'https://climbro.com/rent/?wpam_id=23', intent: 'rent' },
+  { label: 'Buy from Shop', href: 'https://climbro.com/shop/?wpam_id=23', intent: 'shop' },
+  { label: 'See 30-Day Trial', href: 'https://climbro.com/30-day-trial/?wpam_id=23', intent: 'trial' },
+];
+---
+
+<section class="bg-neutral-900 border border-neutral-700 rounded-xl p-5 my-8">
+  <h3 class="text-xl font-semibold text-white mb-1">{title}</h3>
+  <p class="text-sm text-neutral-300 mb-4">{subtitle}</p>
+  <div class="grid gap-3 md:grid-cols-3">
+    {links.map((l) => (
+      <a
+        href={l.href}
+        target="_blank"
+        rel="noopener noreferrer sponsored"
+        data-affiliate-link="climbro"
+        data-affiliate-source={source}
+        data-affiliate-intent={l.intent}
+        class="no-underline text-center bg-[#00e676] text-black font-semibold rounded-lg px-4 py-3 hover:bg-[#00c853] transition"
+      >
+        {l.label}
+      </a>
+    ))}
+  </div>
+  <p class="text-xs text-neutral-500 mt-3">Disclosure: affiliate links may earn us a commission at no extra cost to you.</p>
+</section>
