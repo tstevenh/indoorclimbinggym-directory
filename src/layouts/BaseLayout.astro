@@ -111,7 +111,7 @@ if (canonical && typeof canonical === 'string') {
   canonicalURL = `${siteUrl}${path}`;
 }
 
-const finalTitle = title.length > 60 ? title.substring(0, 57) + '...' : title;
+const finalTitle = title;
 const finalDescription = description.length > 160 ? description.substring(0, 157) + '...' : description;
 const absoluteOgImage = ogImage.startsWith('http')
   ? ogImage

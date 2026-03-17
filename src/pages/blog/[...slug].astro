@@ -192,7 +192,7 @@ const relatedPosts = allPosts.filter(
 
 // SEO setup
 const pageUrl = `https://www.indoorclimbinggym.com/blog/${entry.slug}/`;
-const title = generateBlogPostTitle(entry.data.title);
+const title = generateBlogPostTitle(entry.data.title, entry.data.seoTitle);
 const keywords = generateBlogKeywords(entry.data.tags, entry.data.category);
 
 // Use canonical URL from frontmatter if provided, otherwise use page URL

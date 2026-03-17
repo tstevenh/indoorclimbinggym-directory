@@ -14,6 +14,8 @@ export interface SEOProps {
   nofollow?: boolean;
 }
 
+const RECOMMENDED_TITLE_MAX = 70;
+
 // State abbreviation helper for shorter titles
 function getStateAbbreviation(state: string): string | null {
   const stateMap: Record<string, string> = {
@@ -45,9 +47,6 @@ export function generateSEO(props: SEOProps) {
     nofollow = false,
   } = props;
 
-  // Ensure title is under 60 characters
-  const finalTitle = title.length > 60 ? title.substring(0, 57) + '...' : title;
-
   // Ensure description is under 160 characters
   const finalDescription = description.length > 160
     ? description.substring(0, 157) + '...'
@@ -62,18 +61,18 @@ export function generateSEO(props: SEOProps) {
     : 'index, follow';
 
   return {
-    title: finalTitle,
+    title,
     description: finalDescription,
     canonical,
     keywords: keywords.join(', '),
     robots,
-    ogTitle: finalTitle,
+    ogTitle: title,
     ogDescription: finalDescription,
     ogImage,
     ogType,
     ogUrl: canonical,
     twitterCard: 'summary_large_image',
-    twitterTitle: finalTitle,
+    twitterTitle: title,
     twitterDescription: finalDescription,
     twitterImage: ogImage,
   };
@@ -273,18 +272,15 @@ export function truncateAtWord(text: string, maxLength: number): string {
  * @returns Title with brand suffix if it fits
  */
 export function addBrandSuffix(title: string, brand: string = 'IndoorClimbingGym'): string {
-  const maxLength = 60;
   const separator = ' | ';
   const suffix = `${separator}${brand}`;
   const withBrand = `${title}${suffix}`;
 
-  if (withBrand.length <= maxLength) {
+  if (withBrand.length <= RECOMMENDED_TITLE_MAX) {
     return withBrand;
   }
 
-  // Truncate title to fit brand
-  const maxTitleLength = maxLength - suffix.length;
-  return truncateAtWord(title, maxTitleLength) + suffix;
+  return title;
 }
 
 /**
@@ -305,25 +301,20 @@ export function slugify(text: string): string {
  * @param addBrand Whether to add brand suffix (default: true)
  * @returns Optimized title with brand suffix
  */
-export function generateBlogPostTitle(postTitle: string, addBrand: boolean = true): string {
-  const maxLength = 60;
-  const brandSuffix = ' | IndoorClimbingGym';
+export function generateBlogPostTitle(
+  postTitle: string,
+  seoTitle?: string,
+  addBrand: boolean = true
+): string {
+  if (seoTitle?.trim()) {
+    return seoTitle.trim();
+  }
 
   if (!addBrand) {
-    return postTitle.length > maxLength
-      ? truncateAtWord(postTitle, maxLength)
-      : postTitle;
+    return postTitle;
   }
 
-  const withBrand = `${postTitle}${brandSuffix}`;
-
-  if (withBrand.length <= maxLength) {
-    return withBrand;
-  }
-
-  // Truncate at word boundary to fit brand
-  const maxTitleLength = maxLength - brandSuffix.length;
-  return truncateAtWord(postTitle, maxTitleLength) + brandSuffix;
+  return addBrandSuffix(postTitle, 'IndoorClimbingGym');
 }
 
 /**

@@ -378,7 +378,8 @@ if (!gym) {
 **Schema:** Defined in `/src/content/config.ts`
 
 **Fields:**
-- title (string, <60 chars)
+- title (string, used for visible post title/H1)
+- seoTitle (string, optional, <=70 chars recommended for title tag)
 - description (string, 150-160 chars)
 - publishedDate (Date)
 - updatedDate (Date, optional)
@@ -390,6 +391,14 @@ if (!gym) {
 - heroImageAlt (string, accessibility)
 - wordCount (number, optional)
 - readingTime (number, optional minutes)
+
+### Content Validation Note
+
+- Blog post frontmatter is build-blocking if it violates the schema in `/src/content/config.ts`
+- `description` remains capped at 160 characters
+- `title` is no longer hard-capped for SEO; use optional `seoTitle` when the visible H1 can be longer than the preferred browser/search title
+- Title tags should prioritize the full query/topic and only append the brand when it fits without truncating the main phrase
+- Recent SEO update on 2026-03-17: the 4 Climbro blog posts were retitled to match search intent more directly and reduce low-CTR phrasing like "official pages" in title tags
 
 **Blog Posts:**
 1. Cost guide (2,150 words)
@@ -446,5 +455,5 @@ if (!gym) {
 
 ---
 
-**Last Updated:** 2025-11-11 (SSR/SSG resolution complete)
+**Last Updated:** 2026-03-17 (blog title-tag strategy updated; Climbro blog metadata optimized)
 **Status:** Production-ready with hybrid rendering approach
