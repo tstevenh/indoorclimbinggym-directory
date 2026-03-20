@@ -13,6 +13,7 @@ readingTime: 7
 ---
 
 import ClimbroAffiliateBlock from '../../components/ClimbroAffiliateBlock.astro';
+import ClimbroTrackedLink from '../../components/ClimbroTrackedLink.astro';
 
 > **Disclosure:** This page was fact-checked against Climbro's official website in March 2026 and includes affiliate links.
 
@@ -20,8 +21,8 @@ import ClimbroAffiliateBlock from '../../components/ClimbroAffiliateBlock.astro'
 
 If you want the short version, Climbro currently presents three official paths on its site:
 
-- `Rent`: the rent page says "no commitment," "cancel or buy out at any time," and "free returns."
-- `Buy New`: the Climbro shop states first-time purchases of a new Climbro hangboard include a 30-day home trial.
+- <ClimbroTrackedLink href="https://climbro.com/rent/" label="Rent" intent="rent" source="climbro-rent-vs-buy" position="body_inline" />: the rent page says "no commitment," "cancel or buy out at any time," and "free returns."
+- `Buy New`: the Climbro <ClimbroTrackedLink href="https://climbro.com/shop/" label="shop" intent="shop" source="climbro-rent-vs-buy" position="body_inline" /> states first-time purchases of a new Climbro hangboard include a 30-day home trial.
 - `Buy Refurbished`: the Climbro shop says refurbished boards come from the 30-day trial program, are inspected and repaired, and are not eligible for the 30-day trial or returns after delivery.
 
 This article keeps to those official claims only.
@@ -37,7 +38,7 @@ The current Climbro rent page describes the rental offer this way:
 
 That is the clearest low-commitment path currently described on the official site.
 
-- <a href="https://climbro.com/rent/?wpam_id=23" target="_blank" rel="noopener noreferrer sponsored">Check Climbro Rental</a>
+- <ClimbroTrackedLink href="https://climbro.com/rent/" label="Check Climbro Rental" intent="rent" source="climbro-rent-vs-buy" position="rent_section" />
 
 ## Buy New: What Climbro's Official Shop Says
 
@@ -48,8 +49,8 @@ On Climbro's shop and FAQ sections, the new-purchase path includes:
 
 Climbro's FAQ says the 30-day home trial starts when the board arrives. If the product is not a match, Climbro says customers can contact them within 30 days to schedule pickup and receive a refund.
 
-- <a href="https://climbro.com/shop/?wpam_id=23" target="_blank" rel="noopener noreferrer sponsored">Check Climbro Shop</a>
-- <a href="https://climbro.com/30-day-trial/?wpam_id=23" target="_blank" rel="noopener noreferrer sponsored">Read the 30-Day Home Trial</a>
+- <ClimbroTrackedLink href="https://climbro.com/shop/" label="Check Climbro Shop" intent="shop" source="climbro-rent-vs-buy" position="buy_new_section" />
+- <ClimbroTrackedLink href="https://climbro.com/30-day-trial/" label="Read the 30-Day Home Trial" intent="trial" source="climbro-rent-vs-buy" position="buy_new_section" />
 
 <ClimbroAffiliateBlock
   source="rent-vs-buy_mid"
@@ -115,6 +116,6 @@ If you want ownership and Climbro's official trial policy, the new-purchase path
 
 If you want the official details directly:
 
-- <a href="https://climbro.com/rent/?wpam_id=23" target="_blank" rel="noopener noreferrer sponsored">View Rental</a>
-- <a href="https://climbro.com/shop/?wpam_id=23" target="_blank" rel="noopener noreferrer sponsored">View Shop</a>
-- <a href="https://climbro.com/30-day-trial/?wpam_id=23" target="_blank" rel="noopener noreferrer sponsored">View 30-Day Home Trial</a>
+- <ClimbroTrackedLink href="https://climbro.com/rent/" label="View Rental" intent="rent" source="climbro-rent-vs-buy" position="end" />
+- <ClimbroTrackedLink href="https://climbro.com/shop/" label="View Shop" intent="shop" source="climbro-rent-vs-buy" position="end" />
+- <ClimbroTrackedLink href="https://climbro.com/30-day-trial/" label="View 30-Day Home Trial" intent="trial" source="climbro-rent-vs-buy" position="end" />

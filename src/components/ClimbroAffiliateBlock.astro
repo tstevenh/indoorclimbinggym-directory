@@ -1,4 +1,6 @@
 ---
+import ClimbroTrackedLink from './ClimbroTrackedLink.astro';
+
 interface Props {
   title?: string;
   subtitle?: string;
@@ -12,19 +14,6 @@ const {
   source = 'climbro_block',
   compact = false,
 } = Astro.props;
-
-const links = [
-  { label: 'Start with Rental', href: 'https://climbro.com/rent/?wpam_id=23', intent: 'rent' },
-  { label: 'Buy from Shop', href: 'https://climbro.com/shop/?wpam_id=23', intent: 'shop' },
-  { label: 'See 30-Day Trial', href: 'https://climbro.com/30-day-trial/?wpam_id=23', intent: 'trial' },
-].map((link) => {
-  const url = new URL(link.href);
-  url.searchParams.set('subid', `${source}_${link.intent}`);
-  return {
-    ...link,
-    href: url.toString(),
-  };
-});
 ---
 
 <section class={`my-8 rounded-2xl border border-white/10 bg-[#1f1f1f] overflow-hidden ${compact ? 'max-w-3xl' : ''}`}>
@@ -42,46 +31,33 @@ const links = [
       <p class="text-sm md:text-base text-white/70 mb-4">{subtitle}</p>
 
       <div class="flex flex-wrap gap-2 mb-3">
-        {links.map((l) => (
-          <a
-            href={l.href}
-            target="_blank"
-            rel="noopener noreferrer sponsored"
-            data-affiliate-link="climbro"
-            data-affiliate-source={source}
-            data-affiliate-intent={l.intent}
-            class="!no-underline rounded-lg border border-[#00e676]/40 !text-[#9cffc3] hover:bg-[#00e676]/20 px-3 py-2 text-sm font-semibold transition"
-          >
-            {l.label}
-          </a>
-        ))}
+        <ClimbroTrackedLink
+          href="https://climbro.com/rent/"
+          label="Start with Rental"
+          intent="rent"
+          source={source}
+          position="mid_block"
+          class="!no-underline rounded-lg border border-[#00e676]/40 !text-[#9cffc3] hover:bg-[#00e676]/20 px-3 py-2 text-sm font-semibold transition"
+        />
+        <ClimbroTrackedLink
+          href="https://climbro.com/shop/"
+          label="Buy from Shop"
+          intent="shop"
+          source={source}
+          position="mid_block"
+          class="!no-underline rounded-lg border border-[#00e676]/40 !text-[#9cffc3] hover:bg-[#00e676]/20 px-3 py-2 text-sm font-semibold transition"
+        />
+        <ClimbroTrackedLink
+          href="https://climbro.com/30-day-trial/"
+          label="See 30-Day Trial"
+          intent="trial"
+          source={source}
+          position="mid_block"
+          class="!no-underline rounded-lg border border-[#00e676]/40 !text-[#9cffc3] hover:bg-[#00e676]/20 px-3 py-2 text-sm font-semibold transition"
+        />
       </div>
 
       <p class="text-xs text-white/45">Disclosure: affiliate links may earn us a commission at no extra cost to you.</p>
     </div>
   </div>
 </section>
-
-<script>
-  document.addEventListener('click', (event) => {
-    const target = event.target;
-    if (!(target instanceof Element)) return;
-
-    const link = target.closest('[data-affiliate-link="climbro"]');
-    if (!(link instanceof HTMLAnchorElement)) return;
-
-    const affiliateProgram = 'climbro';
-    const affiliateIntent = link.getAttribute('data-affiliate-intent') || 'unknown';
-    const affiliateSource = link.getAttribute('data-affiliate-source') || 'unknown';
-
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', 'affiliate_click', {
-        affiliate_program: affiliateProgram,
-        affiliate_intent: affiliateIntent,
-        affiliate_source: affiliateSource,
-        page_path: window.location.pathname,
-        outbound_url: link.href,
-      });
-    }
-  });
-</script>
