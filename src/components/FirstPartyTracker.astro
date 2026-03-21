@@ -1,0 +1,150 @@
+---
+interface Props {
+  dashboardUrl?: string;
+}
+
+const {
+  dashboardUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.indoorclimbinggym.com',
+} = Astro.props;
+---
+
+<script define:vars={{ dashboardUrl }} is:inline>
+  (() => {
+    if (typeof window === 'undefined') return;
+    if (window.__icgFirstPartyTrackerInitialized) return;
+    window.__icgFirstPartyTrackerInitialized = true;
+
+    const storageKey = 'icg_session_id';
+    const pageStartTime = Date.now();
+    let maxScrollPercent = 0;
+    let pageEngagementSent = false;
+
+    const getSessionId = () => {
+      try {
+        const existing = window.localStorage.getItem(storageKey);
+        if (existing) return existing;
+
+        const generated = window.crypto?.randomUUID?.() || `icg_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+        window.localStorage.setItem(storageKey, generated);
+        return generated;
+      } catch {
+        return `icg_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+      }
+    };
+
+    const deriveArticleSlug = (path) => {
+      const match = path.match(/^\/blog\/([^/]+)\/?$/);
+      return match ? match[1] : null;
+    };
+
+    const getScrollPercent = () => {
+      const doc = document.documentElement;
+      const scrollTop = window.scrollY || doc.scrollTop || 0;
+      const scrollableHeight = Math.max(doc.scrollHeight - window.innerHeight, 0);
+
+      if (scrollableHeight <= 0) return 0;
+      return Math.min(100, Math.max(0, Math.round((scrollTop / scrollableHeight) * 100)));
+    };
+
+    const updateMaxScroll = () => {
+      maxScrollPercent = Math.max(maxScrollPercent, getScrollPercent());
+    };
+
+    const postEvent = (payload) => {
+      try {
+        fetch(`${dashboardUrl}/api/analytics/collect`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          keepalive: true,
+          mode: 'cors',
+          credentials: 'omit',
+          body: JSON.stringify({
+            site_hostname: window.location.hostname,
+            page_path: window.location.pathname,
+            page_url: window.location.href,
+            article_slug: deriveArticleSlug(window.location.pathname),
+            referrer: document.referrer || null,
+            session_id: getSessionId(),
+            ...payload,
+          }),
+        }).catch(() => {});
+      } catch {}
+    };
+
+    const sendPageEngagement = (reason) => {
+      if (pageEngagementSent) return;
+
+      pageEngagementSent = true;
+      updateMaxScroll();
+
+      postEvent({
+        event_name: 'page_engagement',
+        metadata: {
+          title: document.title,
+          engaged_ms: Date.now() - pageStartTime,
+          max_scroll_percent: maxScrollPercent,
+          exit_reason: reason,
+        },
+      });
+    };
+
+    updateMaxScroll();
+    postEvent({
+      event_name: 'page_view',
+      metadata: {
+        title: document.title,
+      },
+    });
+
+    window.addEventListener('scroll', updateMaxScroll, { passive: true });
+    window.addEventListener('pagehide', () => sendPageEngagement('pagehide'));
+    window.addEventListener('beforeunload', () => sendPageEngagement('beforeunload'));
+
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const link = target.closest('a');
+      if (!(link instanceof HTMLAnchorElement)) return;
+
+      let linkUrl;
+      try {
+        linkUrl = new URL(link.href, window.location.href);
+      } catch {
+        return;
+      }
+
+      const sameOrigin = linkUrl.origin === window.location.origin;
+      const isHashOnly = linkUrl.pathname === window.location.pathname && linkUrl.hash;
+      const isAffiliateLink = link.hasAttribute('data-affiliate-link');
+
+      if (isAffiliateLink) {
+        sendPageEngagement('affiliate_click');
+        const redirectUrl = new URL(link.href);
+        redirectUrl.searchParams.set('sid', getSessionId());
+        redirectUrl.searchParams.set('site_hostname', window.location.hostname);
+        redirectUrl.searchParams.set('page_path', window.location.pathname);
+        redirectUrl.searchParams.set('page_url', window.location.href);
+        redirectUrl.searchParams.set('article_slug', deriveArticleSlug(window.location.pathname) || '');
+        link.href = redirectUrl.toString();
+        return;
+      }
+
+      if (!sameOrigin || isHashOnly) return;
+
+      sendPageEngagement('internal_navigation');
+
+      postEvent({
+        event_name: 'internal_link_click',
+        link_type: 'internal',
+        link_url: linkUrl.toString(),
+        link_text: (link.textContent || '').trim().slice(0, 255),
+        metadata: {
+          destination_path: linkUrl.pathname,
+        },
+      });
+    });
+  })();
+</script>

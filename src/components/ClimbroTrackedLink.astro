@@ -32,6 +32,7 @@ const sourceSlug = sanitize(source);
 const positionSlug = sanitize(position);
 const intentSlug = sanitize(intent);
 const variantSlug = sanitize(variant);
+const dashboardBaseUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.indoorclimbinggym.com';
 
 const url = new URL(href);
 url.searchParams.set('wpam_id', '23');
@@ -41,6 +42,18 @@ url.searchParams.set('utm_medium', 'affiliate');
 url.searchParams.set('utm_campaign', `climbro_${sourceSlug}_${positionSlug}_${intentSlug}_${variantSlug}`);
 
 const destination = sanitize(url.pathname.replace(/^\/|\/$/g, '') || 'home');
+const redirectUrl = new URL('/api/affiliate/redirect', dashboardBaseUrl);
+redirectUrl.searchParams.set('program', 'climbro');
+redirectUrl.searchParams.set('source', sourceSlug);
+redirectUrl.searchParams.set('intent', intentSlug);
+redirectUrl.searchParams.set('position', positionSlug);
+redirectUrl.searchParams.set('page_type', pageType);
+redirectUrl.searchParams.set('variant', variantSlug);
+redirectUrl.searchParams.set('subid', `${sourceSlug}_${positionSlug}_${intentSlug}`);
+redirectUrl.searchParams.set('destination', destination);
+redirectUrl.searchParams.set('label', label);
+redirectUrl.searchParams.set('to', url.toString());
+
 const inlineCodeClass =
   positionSlug === 'body_inline'
     ? 'inline-block rounded bg-white/10 px-1.5 py-0.5 font-mono text-[0.95em] text-[#e3d46f] no-underline !no-underline hover:bg-white/15 transition-colors'
@@ -50,7 +63,7 @@ const finalClass = [inlineCodeClass, className].filter(Boolean).join(' ');
 ---
 
 <a
-  href={url.toString()}
+  href={redirectUrl.toString()}
   target="_blank"
   rel="noopener noreferrer sponsored"
   data-affiliate-link="climbro"
