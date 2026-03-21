@@ -228,18 +228,26 @@ const dashboardUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.
     <Analytics />
 
     <!-- Google Analytics -->
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
+    </script>
     <script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=G-KQJE0F08ER"></script>
     <script type="text/partytown">
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('consent', 'default', {
+      const gaDebugEnabled =
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        new URLSearchParams(window.location.search).get('ga_debug') === '1';
+      window.gtag('consent', 'default', {
         'analytics_storage': 'granted',
         'ad_storage': 'granted',
         'ad_user_data': 'granted',
         'ad_personalization': 'granted'
       });
-      gtag('js', new Date());
-      gtag('config', 'G-KQJE0F08ER');
+      window.gtag('js', new Date());
+      window.gtag('config', 'G-KQJE0F08ER', {
+        debug_mode: gaDebugEnabled,
+      });
     </script>
     <slot name="head" />
   </head>

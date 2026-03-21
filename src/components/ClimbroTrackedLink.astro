@@ -88,6 +88,10 @@ const finalClass = [inlineCodeClass, className].filter(Boolean).join(' ');
       const affiliateVariant = link.getAttribute('data-affiliate-variant') || 'default';
       const affiliateSubid = link.getAttribute('data-affiliate-subid') || 'unknown';
       const affiliateDestination = link.getAttribute('data-affiliate-destination') || 'unknown';
+      const gaDebugEnabled =
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        new URLSearchParams(window.location.search).get('ga_debug') === '1';
 
       window.gtag('event', 'affiliate_click', {
         affiliate_program: affiliateProgram,
@@ -101,6 +105,7 @@ const finalClass = [inlineCodeClass, className].filter(Boolean).join(' ');
         link_text: (link.textContent || '').trim().slice(0, 100),
         page_path: window.location.pathname,
         outbound_url: link.href,
+        debug_mode: gaDebugEnabled,
       });
     });
   }
