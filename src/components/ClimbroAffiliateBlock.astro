@@ -1,19 +1,125 @@
 ---
 import ClimbroTrackedLink from './ClimbroTrackedLink.astro';
 
+type Variant =
+  | 'default'
+  | 'worth_it'
+  | 'rent_vs_buy'
+  | 'mini_vs_pro'
+  | 'hangboard_compare'
+  | 'support_structured'
+  | 'support_value';
+
+type Section = 'hero' | 'mid' | 'end';
+
+interface CtaLink {
+  href: string;
+  label: string;
+  kind: 'affiliate' | 'internal';
+  intent?: string;
+  priority: 'primary' | 'secondary' | 'tertiary';
+}
+
 interface Props {
+  variant?: Variant;
   title?: string;
   subtitle?: string;
   source?: string;
   compact?: boolean;
+  section?: Section;
 }
 
 const {
-  title = 'Structured finger training, without guesswork',
-  subtitle = 'Pick the path that fits your commitment level and training style.',
+  variant = 'default',
+  title,
+  subtitle,
   source = 'climbro_block',
   compact = false,
+  section = 'mid',
 } = Astro.props;
+
+const CTA_VARIANTS: Record<Variant, { title: string; subtitle: string; links: CtaLink[] }> = {
+  default: {
+    title: 'Structured finger training, without guesswork',
+    subtitle: 'Pick the path that fits your commitment level and training style.',
+    links: [
+      { href: 'https://climbro.com/rent/', label: 'Start with Rental', kind: 'affiliate', intent: 'rent', priority: 'primary' },
+      { href: 'https://climbro.com/30-day-trial/', label: 'See the 30-Day Trial', kind: 'affiliate', intent: 'trial', priority: 'secondary' },
+      { href: 'https://climbro.com/shop/', label: 'Buy from Shop', kind: 'affiliate', intent: 'shop', priority: 'tertiary' },
+    ],
+  },
+  worth_it: {
+    title: 'Most climbers should start with the lowest-risk option',
+    subtitle: 'If the system sounds useful but you are not ready to commit blind, start with Rental first.',
+    links: [
+      { href: 'https://climbro.com/rent/', label: 'Start with Rental', kind: 'affiliate', intent: 'rent', priority: 'primary' },
+      { href: 'https://climbro.com/30-day-trial/', label: 'See the 30-Day Home Trial', kind: 'affiliate', intent: 'trial', priority: 'secondary' },
+      { href: '/blog/climbro-rent-vs-buy-which-is-better/', label: 'Compare Rent vs Buy', kind: 'internal', priority: 'tertiary' },
+    ],
+  },
+  rent_vs_buy: {
+    title: 'Most first-time buyers should start with the lowest-risk path',
+    subtitle: 'Start with Rental first. Move to the 30-Day Home Trial or Shop only if you are already leaning toward ownership.',
+    links: [
+      { href: 'https://climbro.com/rent/', label: 'Start with Rental', kind: 'affiliate', intent: 'rent', priority: 'primary' },
+      { href: 'https://climbro.com/30-day-trial/', label: 'See the 30-Day Home Trial', kind: 'affiliate', intent: 'trial', priority: 'secondary' },
+      { href: 'https://climbro.com/shop/', label: 'Go to Shop', kind: 'affiliate', intent: 'shop', priority: 'tertiary' },
+    ],
+  },
+  mini_vs_pro: {
+    title: 'Mini is the clearer first choice. Rental is the safer fallback.',
+    subtitle: 'If you want the most concrete public product path, start with Mini. If you are still unsure, use Rental instead of forcing a blind version decision.',
+    links: [
+      { href: 'https://climbro.com/climbro-mini/', label: 'See Climbro Mini', kind: 'affiliate', intent: 'mini', priority: 'primary' },
+      { href: 'https://climbro.com/rent/', label: 'Start with Rental', kind: 'affiliate', intent: 'rent', priority: 'secondary' },
+      { href: 'https://climbro.com/climbro-pro/', label: 'See Climbro Pro', kind: 'affiliate', intent: 'pro', priority: 'tertiary' },
+    ],
+  },
+  hangboard_compare: {
+    title: 'If structure is the appeal, start with the lowest-risk Climbro path',
+    subtitle: 'Climbro\'s biggest advantage is the guided workflow built around the board. If that is what interests you, start with Rental before forcing a bigger commitment.',
+    links: [
+      { href: 'https://climbro.com/rent/', label: 'Start with Rental', kind: 'affiliate', intent: 'rent', priority: 'primary' },
+      { href: 'https://climbro.com/30-day-trial/', label: 'See the 30-Day Home Trial', kind: 'affiliate', intent: 'trial', priority: 'secondary' },
+      { href: 'https://climbro.com/climbro-mini/', label: 'See Climbro Mini', kind: 'affiliate', intent: 'mini', priority: 'tertiary' },
+    ],
+  },
+  support_structured: {
+    title: 'Want the guided side of Climbro, not just the hardware?',
+    subtitle: 'Start with the pages that explain the training system first, then move into the buying decision only if the workflow fits.',
+    links: [
+      { href: '/blog/8-week-finger-strength-plan-indoor-climbers/', label: 'See Climbro Training Plan', kind: 'internal', priority: 'primary' },
+      { href: '/blog/is-climbro-worth-it-for-indoor-climbers/', label: 'See If Climbro Is Worth It', kind: 'internal', priority: 'secondary' },
+      { href: '/blog/climbro-rent-vs-buy-which-is-better/', label: 'Compare Rent vs Buy', kind: 'internal', priority: 'tertiary' },
+    ],
+  },
+  support_value: {
+    title: 'Want the buyer version, not just the feature explanation?',
+    subtitle: 'Move from information into the next decision step: value, risk, and the safest way to start.',
+    links: [
+      { href: '/blog/is-climbro-worth-it-for-indoor-climbers/', label: 'See If Climbro Is Worth It', kind: 'internal', priority: 'primary' },
+      { href: '/blog/climbro-rent-vs-buy-which-is-better/', label: 'Compare Rent vs Buy', kind: 'internal', priority: 'secondary' },
+      { href: 'https://climbro.com/rent/', label: 'Start with Rental', kind: 'affiliate', intent: 'rent', priority: 'tertiary' },
+    ],
+  },
+};
+
+const config = CTA_VARIANTS[variant];
+const resolvedTitle = title || config.title;
+const resolvedSubtitle = subtitle || config.subtitle;
+const resolvedLinks = config.links;
+
+const ctaClass = (priority: CtaLink['priority']) => {
+  if (priority === 'primary') {
+    return '!no-underline rounded-lg bg-[#00e676] px-4 py-2 text-sm font-semibold !text-[#0f1a12] transition hover:bg-[#38ef82]';
+  }
+
+  if (priority === 'secondary') {
+    return '!no-underline rounded-lg border border-[#00e676]/45 px-4 py-2 text-sm font-semibold !text-[#9cffc3] transition hover:bg-[#00e676]/14';
+  }
+
+  return '!no-underline rounded-lg border border-white/10 px-4 py-2 text-sm font-medium !text-white/75 transition hover:border-white/20 hover:text-white';
+};
 ---
 
 <section class={`my-8 rounded-2xl border border-white/10 bg-[#1f1f1f] overflow-hidden ${compact ? 'max-w-3xl' : ''}`}>
@@ -27,34 +133,27 @@ const {
       />
     </div>
     <div class="md:col-span-8 p-5 md:p-6">
-      <h3 class="text-lg md:text-xl font-display font-bold text-white mb-2">{title}</h3>
-      <p class="text-sm md:text-base text-white/70 mb-4">{subtitle}</p>
+      <h3 class="text-lg md:text-xl font-display font-bold text-white mb-2">{resolvedTitle}</h3>
+      <p class="text-sm md:text-base text-white/70 mb-4">{resolvedSubtitle}</p>
 
       <div class="flex flex-wrap gap-2 mb-3">
-        <ClimbroTrackedLink
-          href="https://climbro.com/rent/"
-          label="Start with Rental"
-          intent="rent"
-          source={source}
-          position="mid_block"
-          class="!no-underline rounded-lg border border-[#00e676]/40 !text-[#9cffc3] hover:bg-[#00e676]/20 px-3 py-2 text-sm font-semibold transition"
-        />
-        <ClimbroTrackedLink
-          href="https://climbro.com/shop/"
-          label="Buy from Shop"
-          intent="shop"
-          source={source}
-          position="mid_block"
-          class="!no-underline rounded-lg border border-[#00e676]/40 !text-[#9cffc3] hover:bg-[#00e676]/20 px-3 py-2 text-sm font-semibold transition"
-        />
-        <ClimbroTrackedLink
-          href="https://climbro.com/30-day-trial/"
-          label="See 30-Day Trial"
-          intent="trial"
-          source={source}
-          position="mid_block"
-          class="!no-underline rounded-lg border border-[#00e676]/40 !text-[#9cffc3] hover:bg-[#00e676]/20 px-3 py-2 text-sm font-semibold transition"
-        />
+        {resolvedLinks.map((link) =>
+          link.kind === 'affiliate' ? (
+            <ClimbroTrackedLink
+              href={link.href}
+              label={link.label}
+              intent={link.intent!}
+              source={source}
+              position={`${section}_${link.priority}`}
+              variant={link.priority}
+              class={ctaClass(link.priority)}
+            />
+          ) : (
+            <a href={link.href} class={ctaClass(link.priority)}>
+              {link.label}
+            </a>
+          )
+        )}
       </div>
 
       <p class="text-xs text-white/45">Disclosure: affiliate links may earn us a commission at no extra cost to you.</p>
