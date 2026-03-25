@@ -49,21 +49,21 @@ const CTA_VARIANTS: Record<Variant, { title: string; subtitle: string; links: Ct
     ],
   },
   worth_it: {
-    title: 'Most climbers should start with the lowest-risk option',
-    subtitle: 'If the system sounds useful but you are not ready to commit blind, start with Rental first.',
+    title: 'Start with the safest fit check, then move into the buying decision',
+    subtitle: 'If Climbro sounds useful but you are not ready to commit yet, start with Rental. If you are still comparing ownership paths, use the buying guide next.',
     links: [
       { href: 'https://climbro.com/rent/', label: 'Start with Rental', kind: 'affiliate', intent: 'rent', priority: 'primary' },
-      { href: 'https://climbro.com/30-day-trial/', label: 'See the 30-Day Home Trial', kind: 'affiliate', intent: 'trial', priority: 'secondary' },
-      { href: '/blog/climbro-rent-vs-buy-which-is-better/', label: 'Compare Rent vs Buy', kind: 'internal', priority: 'tertiary' },
+      { href: '/blog/climbro-rent-vs-buy-which-is-better/', label: 'Compare Rent vs Buy', kind: 'internal', priority: 'secondary' },
+      { href: 'https://climbro.com/climbro-mini/', label: 'See Climbro Mini', kind: 'affiliate', intent: 'mini', priority: 'tertiary' },
     ],
   },
   rent_vs_buy: {
     title: 'Most first-time buyers should start with the lowest-risk path',
-    subtitle: 'Start with Rental first. Move to the 30-Day Home Trial or Shop only if you are already leaning toward ownership.',
+    subtitle: 'Start with Rental first. If you already want ownership, move to Shop and use the 30-Day Home Trial as extra policy context.',
     links: [
       { href: 'https://climbro.com/rent/', label: 'Start with Rental', kind: 'affiliate', intent: 'rent', priority: 'primary' },
-      { href: 'https://climbro.com/30-day-trial/', label: 'See the 30-Day Home Trial', kind: 'affiliate', intent: 'trial', priority: 'secondary' },
-      { href: 'https://climbro.com/shop/', label: 'Go to Shop', kind: 'affiliate', intent: 'shop', priority: 'tertiary' },
+      { href: 'https://climbro.com/shop/', label: 'Go to Shop', kind: 'affiliate', intent: 'shop', priority: 'secondary' },
+      { href: 'https://climbro.com/30-day-trial/', label: 'Read Trial Details', kind: 'affiliate', intent: 'trial', priority: 'tertiary' },
     ],
   },
   mini_vs_pro: {
@@ -76,11 +76,11 @@ const CTA_VARIANTS: Record<Variant, { title: string; subtitle: string; links: Ct
     ],
   },
   hangboard_compare: {
-    title: 'If structure is the appeal, start with the lowest-risk Climbro path',
-    subtitle: 'Climbro\'s biggest advantage is the guided workflow built around the board. If that is what interests you, start with Rental before forcing a bigger commitment.',
+    title: 'If structure is the appeal, understand the system before you over-commit',
+    subtitle: 'Climbro\'s advantage is the guided workflow around the board. If that is what interests you, learn the training flow first or start with Rental.',
     links: [
       { href: 'https://climbro.com/rent/', label: 'Start with Rental', kind: 'affiliate', intent: 'rent', priority: 'primary' },
-      { href: 'https://climbro.com/30-day-trial/', label: 'See the 30-Day Home Trial', kind: 'affiliate', intent: 'trial', priority: 'secondary' },
+      { href: '/blog/8-week-finger-strength-plan-indoor-climbers/', label: 'See How Climbro Training Works', kind: 'internal', priority: 'secondary' },
       { href: 'https://climbro.com/climbro-mini/', label: 'See Climbro Mini', kind: 'affiliate', intent: 'mini', priority: 'tertiary' },
     ],
   },
