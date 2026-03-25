@@ -235,18 +235,23 @@ const dashboardUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.
     </script>
     <script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=G-KQJE0F08ER"></script>
     <script type="text/partytown">
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){window.dataLayer.push(arguments);}
+      window.gtag = window.gtag || gtag;
+
       const gaDebugEnabled =
         window.location.hostname === 'localhost' ||
         window.location.hostname === '127.0.0.1' ||
         new URLSearchParams(window.location.search).get('ga_debug') === '1';
-      window.gtag('consent', 'default', {
+
+      gtag('consent', 'default', {
         'analytics_storage': 'granted',
         'ad_storage': 'granted',
         'ad_user_data': 'granted',
         'ad_personalization': 'granted'
       });
-      window.gtag('js', new Date());
-      window.gtag('config', 'G-KQJE0F08ER', {
+      gtag('js', new Date());
+      gtag('config', 'G-KQJE0F08ER', {
         debug_mode: gaDebugEnabled,
       });
     </script>
