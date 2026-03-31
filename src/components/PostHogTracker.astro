@@ -1,0 +1,89 @@
+<script>
+  import posthog from 'posthog-js';
+
+  interface CookieConsent {
+    analytics?: boolean;
+  }
+
+  const posthogKey = import.meta.env.PUBLIC_POSTHOG_KEY;
+  const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST;
+  const posthogUiHost = import.meta.env.PUBLIC_POSTHOG_UI_HOST;
+  const COOKIE_CONSENT_KEY = 'indoorclimbinggym_cookie_consent';
+  const COOKIE_CONSENT_EXPIRY_KEY = COOKIE_CONSENT_KEY + '_expiry';
+
+  function getStoredAnalyticsConsent(): boolean {
+    const storedExpiry = window.localStorage.getItem(COOKIE_CONSENT_EXPIRY_KEY);
+    if (storedExpiry) {
+      const expiryTimestamp = Date.parse(storedExpiry);
+
+      if (Number.isNaN(expiryTimestamp) || expiryTimestamp <= Date.now()) {
+        window.localStorage.removeItem(COOKIE_CONSENT_KEY);
+        window.localStorage.removeItem(COOKIE_CONSENT_EXPIRY_KEY);
+        return true;
+      }
+    }
+
+    const storedConsent = window.localStorage.getItem(COOKIE_CONSENT_KEY);
+
+    if (!storedConsent) {
+      return true;
+    }
+
+    try {
+      const parsedConsent = JSON.parse(storedConsent) as CookieConsent;
+      return parsedConsent.analytics !== false;
+    } catch {
+      return true;
+    }
+  }
+
+  function syncPostHogConsent(client: typeof posthog, analyticsEnabled: boolean): void {
+    client.set_config({
+      autocapture: analyticsEnabled,
+      capture_dead_clicks: analyticsEnabled,
+      capture_pageview: analyticsEnabled,
+      capture_pageleave: analyticsEnabled,
+      disable_session_recording: !analyticsEnabled,
+      enable_heatmaps: analyticsEnabled,
+    });
+
+    if (analyticsEnabled) {
+      client.opt_in_capturing({ captureEventName: false });
+      return;
+    }
+
+    client.stopSessionRecording();
+    client.opt_out_capturing();
+  }
+
+  if (typeof window !== 'undefined' && posthogKey && posthogHost) {
+    const trackerWindow = window as Window & {
+      __icgPostHogInitialized?: boolean;
+      __icgSetPostHogConsent?: (analyticsEnabled: boolean) => void;
+      posthog?: typeof posthog;
+    };
+    const analyticsEnabled = getStoredAnalyticsConsent();
+
+    trackerWindow.posthog = posthog;
+    trackerWindow.__icgSetPostHogConsent = (nextAnalyticsEnabled: boolean) => {
+      syncPostHogConsent(posthog, nextAnalyticsEnabled);
+    };
+
+    if (!trackerWindow.__icgPostHogInitialized) {
+      trackerWindow.__icgPostHogInitialized = true;
+
+      posthog.init(posthogKey, {
+        api_host: posthogHost,
+        ...(posthogUiHost ? { ui_host: posthogUiHost } : {}),
+        autocapture: analyticsEnabled,
+        capture_dead_clicks: analyticsEnabled,
+        capture_pageview: analyticsEnabled,
+        capture_pageleave: analyticsEnabled,
+        disable_session_recording: !analyticsEnabled,
+        enable_heatmaps: analyticsEnabled,
+      });
+
+      syncPostHogConsent(posthog, analyticsEnabled);
+    }
+  }
+</script>

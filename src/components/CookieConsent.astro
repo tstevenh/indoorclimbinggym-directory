@@ -13,7 +13,7 @@
       <div class="lg:col-span-2">
         <h3 class="text-lg font-semibold text-white font-display mb-2">Cookie Preferences</h3>
         <p class="text-sm text-white/70 mb-4">
-          We use cookies to enhance your experience, analyze site traffic, and deliver personalized content. Some cookies are essential for the site to function, while others help us understand how you interact with our platform.
+          We use cookies to keep the site working, understand traffic and on-site behavior, and improve the experience. Some cookies are essential for the site to function, while analytics tools help us measure usage patterns and optimize the site.
         </p>
         <a href="/privacy/#cookies-tracking" class="text-sm text-[#2979ff] hover:underline font-medium">
           Learn more about our cookie policy →
@@ -114,8 +114,9 @@
         </div>
         <ul class="text-sm text-white/60 space-y-1 ml-0">
           <li>• Google Analytics (_ga, _gid, _gat)</li>
+          <li>• PostHog product analytics and session replay</li>
           <li>• Vercel Analytics (performance monitoring)</li>
-          <li>• Page views and user behavior</li>
+          <li>• Page views, clicks, and user behavior</li>
         </ul>
       </div>
 
@@ -176,13 +177,31 @@
     preferences: boolean;
   }
 
+  interface ConsentWindow extends Window {
+    __icgSetPostHogConsent?: (analyticsEnabled: boolean) => void;
+    gtag?: (...args: unknown[]) => void;
+  }
+
   const COOKIE_CONSENT_KEY = 'indoorclimbinggym_cookie_consent';
   const COOKIE_CONSENT_EXPIRE_DAYS = 365;
+  const COOKIE_CONSENT_EXPIRY_KEY = COOKIE_CONSENT_KEY + '_expiry';
 
   // Get consent from localStorage
   function getConsent(): CookieConsent | null {
     const stored = localStorage.getItem(COOKIE_CONSENT_KEY);
     if (!stored) return null;
+
+    const storedExpiry = localStorage.getItem(COOKIE_CONSENT_EXPIRY_KEY);
+    if (storedExpiry) {
+      const expiryTimestamp = Date.parse(storedExpiry);
+
+      if (Number.isNaN(expiryTimestamp) || expiryTimestamp <= Date.now()) {
+        localStorage.removeItem(COOKIE_CONSENT_KEY);
+        localStorage.removeItem(COOKIE_CONSENT_EXPIRY_KEY);
+        return null;
+      }
+    }
+
     try {
       return JSON.parse(stored);
     } catch {
@@ -196,7 +215,23 @@
     expiryDate.setDate(expiryDate.getDate() + COOKIE_CONSENT_EXPIRE_DAYS);
 
     localStorage.setItem(COOKIE_CONSENT_KEY, JSON.stringify(consent));
-    localStorage.setItem(COOKIE_CONSENT_KEY + '_expiry', expiryDate.toISOString());
+    localStorage.setItem(COOKIE_CONSENT_EXPIRY_KEY, expiryDate.toISOString());
+  }
+
+  // Apply analytics consent settings to all enabled analytics tools
+  function applyAnalyticsConsent(consent: CookieConsent): void {
+    const consentWindow = window as ConsentWindow;
+
+    if (typeof consentWindow.gtag === 'function') {
+      consentWindow.gtag('consent', 'update', {
+        'analytics_storage': consent.analytics ? 'granted' : 'denied',
+        'ad_storage': consent.analytics ? 'granted' : 'denied',
+        'ad_user_data': consent.analytics ? 'granted' : 'denied',
+        'ad_personalization': consent.analytics ? 'granted' : 'denied'
+      });
+    }
+
+    consentWindow.__icgSetPostHogConsent?.(consent.analytics);
   }
 
   // Apply stored consent settings (overrides default)
@@ -204,14 +239,7 @@
     const consent = getConsent();
     if (!consent) return; // No stored preference? Keep default (Granted)
 
-    if (typeof window.gtag === 'function') {
-      window.gtag('consent', 'update', {
-        'analytics_storage': consent.analytics ? 'granted' : 'denied',
-        'ad_storage': consent.analytics ? 'granted' : 'denied',
-        'ad_user_data': consent.analytics ? 'granted' : 'denied',
-        'ad_personalization': consent.analytics ? 'granted' : 'denied'
-      });
-    }
+    applyAnalyticsConsent(consent);
   }
 
   // Show banner if no consent yet
@@ -236,7 +264,7 @@
     };
     saveConsent(consent);
     closeBanner();
-    applyStoredConsent();
+    applyAnalyticsConsent(consent);
   });
 
   // Handle Manage Preferences
@@ -254,12 +282,12 @@
     const consent: CookieConsent = {
       essential: true,
       analytics: false,
-      preferences: true
+      preferences: false
     };
     saveConsent(consent);
     closeModal();
     closeBanner();
-    applyStoredConsent(); // Applies 'denied' update
+    applyAnalyticsConsent(consent);
   });
 
   // Handle Modal Save Preferences
@@ -276,7 +304,7 @@
     saveConsent(consent);
     closeModal();
     closeBanner();
-    applyStoredConsent();
+    applyAnalyticsConsent(consent);
   });
 
   // Handle Modal Backdrop Close

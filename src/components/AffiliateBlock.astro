@@ -21,6 +21,17 @@ const {
   products = getRandomProducts(count, category)
 } = Astro.props;
 
+const sanitize = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 64);
+
+const blockTitleSlug = sanitize(title);
+const categorySlug = sanitize(category || 'general');
+const variantSlug = sanitize(variant);
+
 // Layout classes based on variant and count
 let containerClasses = "grid grid-cols-1 md:grid-cols-3 gap-6";
 
@@ -67,8 +78,19 @@ const imageContainerClasses = variant === 'vertical'
         target="_blank" 
         rel="noopener noreferrer sponsored"
         data-affiliate-link="true"
+        data-affiliate-program="amazon"
+        data-affiliate-source="affiliate_block"
+        data-affiliate-intent={categorySlug}
+        data-affiliate-position={`${variantSlug}_card`}
+        data-affiliate-variant={variantSlug}
+        data-affiliate-destination="amazon"
         data-affiliate-product={product.id}
+        data-affiliate-product-name={product.name}
+        data-affiliate-link-text={product.name}
         data-affiliate-title={title}
+        data-affiliate-block-id={blockTitleSlug}
+        data-affiliate-category={categorySlug}
+        data-affiliate-outbound-url={product.link}
         class={`group ${cardClasses} bg-[#2d2d2d] border border-white/5 rounded-xl overflow-hidden hover:border-[#00e676]/30 transition-all duration-300 no-underline !no-underline`}
       >
         <div class={`relative bg-[#1f1f1f] p-4 flex items-center justify-center overflow-hidden ${imageContainerClasses}`}>
@@ -121,21 +143,47 @@ const imageContainerClasses = variant === 'vertical'
 )}
 
 <script>
-  document.addEventListener('click', (event) => {
-    const target = event.target;
-    if (!(target instanceof Element)) return;
-    const link = target.closest('[data-affiliate-link="true"]');
-    if (!link) return;
+  if (typeof window !== 'undefined') {
+    const trackingWindow = window as Window & {
+      __genericAffiliateTrackingInitialized?: boolean;
+      posthog?: {
+        capture?: (eventName: string, properties?: Record<string, unknown>) => void;
+      };
+    };
 
-    const productId = link.getAttribute('data-affiliate-product') || 'unknown';
-    const blockTitle = link.getAttribute('data-affiliate-title') || 'affiliate_block';
+    if (!trackingWindow.__genericAffiliateTrackingInitialized) {
+      trackingWindow.__genericAffiliateTrackingInitialized = true;
 
-    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-      window.gtag('event', 'affiliate_click', {
-        event_category: 'affiliate',
-        event_label: productId,
-        affiliate_block: blockTitle,
+      document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+
+        const link = target.closest('[data-affiliate-link="true"]');
+        if (!(link instanceof HTMLAnchorElement)) return;
+
+        const posthogClient = trackingWindow.posthog;
+        if (!posthogClient || typeof posthogClient.capture !== 'function') return;
+
+        posthogClient.capture('affiliate_click', {
+          affiliate_program: link.getAttribute('data-affiliate-program') || 'amazon',
+          affiliate_source: link.getAttribute('data-affiliate-source') || 'affiliate_block',
+          affiliate_intent: link.getAttribute('data-affiliate-intent') || 'general',
+          affiliate_position: link.getAttribute('data-affiliate-position') || 'unknown',
+          affiliate_variant: link.getAttribute('data-affiliate-variant') || 'default',
+          affiliate_destination: link.getAttribute('data-affiliate-destination') || 'amazon',
+          affiliate_block_title: link.getAttribute('data-affiliate-title') || 'affiliate_block',
+          affiliate_block_id: link.getAttribute('data-affiliate-block-id') || 'affiliate_block',
+          affiliate_product_id: link.getAttribute('data-affiliate-product') || 'unknown',
+          affiliate_product_name: link.getAttribute('data-affiliate-product-name') || 'unknown',
+          affiliate_category: link.getAttribute('data-affiliate-category') || 'general',
+          link_text:
+            link.getAttribute('data-affiliate-link-text') ||
+            link.getAttribute('data-affiliate-product-name') ||
+            'unknown',
+          page_path: window.location.pathname,
+          outbound_url: link.getAttribute('data-affiliate-outbound-url') || link.href,
+        });
       });
     }
-  });
+  }
 </script>

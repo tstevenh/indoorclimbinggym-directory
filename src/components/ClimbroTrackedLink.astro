@@ -32,7 +32,6 @@ const sourceSlug = sanitize(source);
 const positionSlug = sanitize(position);
 const intentSlug = sanitize(intent);
 const variantSlug = sanitize(variant);
-const dashboardBaseUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.indoorclimbinggym.com';
 
 const url = new URL(href);
 url.searchParams.set('wpam_id', '23');
@@ -42,17 +41,8 @@ url.searchParams.set('utm_medium', 'affiliate');
 url.searchParams.set('utm_campaign', `climbro_${sourceSlug}_${positionSlug}_${intentSlug}_${variantSlug}`);
 
 const destination = sanitize(url.pathname.replace(/^\/|\/$/g, '') || 'home');
-const redirectUrl = new URL('/api/affiliate/redirect', dashboardBaseUrl);
-redirectUrl.searchParams.set('program', 'climbro');
-redirectUrl.searchParams.set('source', sourceSlug);
-redirectUrl.searchParams.set('intent', intentSlug);
-redirectUrl.searchParams.set('position', positionSlug);
-redirectUrl.searchParams.set('page_type', pageType);
-redirectUrl.searchParams.set('variant', variantSlug);
-redirectUrl.searchParams.set('subid', `${sourceSlug}_${positionSlug}_${intentSlug}`);
-redirectUrl.searchParams.set('destination', destination);
-redirectUrl.searchParams.set('label', label);
-redirectUrl.searchParams.set('to', url.toString());
+const articleSlugMatch = Astro.url.pathname.match(/^\/blog\/([^/]+)\/?$/);
+const articleSlug = articleSlugMatch ? articleSlugMatch[1] : '';
 
 const inlineCodeClass =
   positionSlug === 'body_inline'
@@ -63,7 +53,7 @@ const finalClass = [inlineCodeClass, className].filter(Boolean).join(' ');
 ---
 
 <a
-  href={redirectUrl.toString()}
+  href={url.toString()}
   target="_blank"
   rel="noopener noreferrer sponsored"
   data-affiliate-link="climbro"
@@ -75,51 +65,61 @@ const finalClass = [inlineCodeClass, className].filter(Boolean).join(' ');
   data-affiliate-variant={variantSlug}
   data-affiliate-subid={`${sourceSlug}_${positionSlug}_${intentSlug}`}
   data-affiliate-destination={destination}
+  data-affiliate-outbound-url={url.toString()}
+  data-affiliate-article-slug={articleSlug}
   class={finalClass}
 >
   {label}
 </a>
 
 <script>
-  if (typeof window !== 'undefined' && !window.__climbroAffiliateTrackingInitialized) {
-    window.__climbroAffiliateTrackingInitialized = true;
+  if (typeof window !== 'undefined') {
+    const trackingWindow = window as Window & {
+      __climbroAffiliateTrackingInitialized?: boolean;
+      posthog?: {
+        capture?: (eventName: string, properties?: Record<string, unknown>) => void;
+      };
+    };
 
-    document.addEventListener('click', (event) => {
-      const target = event.target;
-      if (!(target instanceof Element)) return;
+    if (!trackingWindow.__climbroAffiliateTrackingInitialized) {
+      trackingWindow.__climbroAffiliateTrackingInitialized = true;
 
-      const link = target.closest('[data-affiliate-link="climbro"]');
-      if (!(link instanceof HTMLAnchorElement)) return;
+      document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
 
-      if (typeof window.gtag !== 'function') return;
+        const link = target.closest('[data-affiliate-link="climbro"]');
+        if (!(link instanceof HTMLAnchorElement)) return;
 
-      const affiliateProgram = link.getAttribute('data-affiliate-program') || 'climbro';
-      const affiliateSource = link.getAttribute('data-affiliate-source') || 'unknown';
-      const affiliateIntent = link.getAttribute('data-affiliate-intent') || 'unknown';
-      const affiliatePosition = link.getAttribute('data-affiliate-position') || 'unknown';
-      const affiliatePageType = link.getAttribute('data-affiliate-page-type') || 'unknown';
-      const affiliateVariant = link.getAttribute('data-affiliate-variant') || 'default';
-      const affiliateSubid = link.getAttribute('data-affiliate-subid') || 'unknown';
-      const affiliateDestination = link.getAttribute('data-affiliate-destination') || 'unknown';
-      const gaDebugEnabled =
-        window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1' ||
-        new URLSearchParams(window.location.search).get('ga_debug') === '1';
+        const posthogClient = trackingWindow.posthog;
+        if (!posthogClient || typeof posthogClient.capture !== 'function') return;
 
-      window.gtag('event', 'affiliate_click', {
-        affiliate_program: affiliateProgram,
-        affiliate_source: affiliateSource,
-        affiliate_intent: affiliateIntent,
-        affiliate_position: affiliatePosition,
-        affiliate_page_type: affiliatePageType,
-        affiliate_variant: affiliateVariant,
-        affiliate_subid: affiliateSubid,
-        affiliate_destination: affiliateDestination,
-        link_text: (link.textContent || '').trim().slice(0, 100),
-        page_path: window.location.pathname,
-        outbound_url: link.href,
-        debug_mode: gaDebugEnabled,
+        const affiliateProgram = link.getAttribute('data-affiliate-program') || 'climbro';
+        const affiliateSource = link.getAttribute('data-affiliate-source') || 'unknown';
+        const affiliateIntent = link.getAttribute('data-affiliate-intent') || 'unknown';
+        const affiliatePosition = link.getAttribute('data-affiliate-position') || 'unknown';
+        const affiliatePageType = link.getAttribute('data-affiliate-page-type') || 'unknown';
+        const affiliateVariant = link.getAttribute('data-affiliate-variant') || 'default';
+        const affiliateSubid = link.getAttribute('data-affiliate-subid') || 'unknown';
+        const affiliateDestination = link.getAttribute('data-affiliate-destination') || 'unknown';
+        const outboundUrl = link.getAttribute('data-affiliate-outbound-url') || link.href;
+        const articleSlug = link.getAttribute('data-affiliate-article-slug') || null;
+
+        posthogClient.capture('affiliate_click', {
+          affiliate_program: affiliateProgram,
+          affiliate_source: affiliateSource,
+          affiliate_intent: affiliateIntent,
+          affiliate_position: affiliatePosition,
+          affiliate_page_type: affiliatePageType,
+          affiliate_variant: affiliateVariant,
+          affiliate_subid: affiliateSubid,
+          affiliate_destination: affiliateDestination,
+          link_text: (link.textContent || '').trim().slice(0, 100),
+          page_path: window.location.pathname,
+          outbound_url: outboundUrl,
+          article_slug: articleSlug,
+        });
       });
-    });
+    }
   }
 </script>
