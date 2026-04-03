@@ -7,6 +7,11 @@ export interface Product {
   link: string;
   badge?: string;
   category: 'shoes' | 'gear' | 'training' | 'apparel' | 'books';
+  affiliateProgram?: 'amazon' | 'climbro';
+  affiliateIntent?: string;
+  affiliateSource?: string;
+  affiliatePosition?: string;
+  affiliateVariant?: string;
 }
 
 export const AFFILIATE_PRODUCTS: Product[] = [
@@ -138,6 +143,36 @@ export const AFFILIATE_PRODUCTS: Product[] = [
   },
 
   // Training
+  {
+    id: 'climbro-mini',
+    name: 'Climbro Mini',
+    description: "Compact Climbro smart hangboard setup for home climbers who want app-guided testing and training.",
+    price: 'From $229',
+    imageUrl: '/images/blog/climbro/Climbro_Mini/climbro-mini-1.jpg',
+    link: 'https://climbro.com/climbro-mini/',
+    badge: 'Smart Pick',
+    category: 'training',
+    affiliateProgram: 'climbro',
+    affiliateIntent: 'mini',
+    affiliateSource: 'gear-page',
+    affiliatePosition: 'training-grid',
+    affiliateVariant: 'product-card'
+  },
+  {
+    id: 'climbro-pro',
+    name: 'Climbro Pro',
+    description: "Climbro's larger smart hangboard system for climbers who want a broader app-guided training setup.",
+    price: 'From $649',
+    imageUrl: '/images/blog/climbro/Climbro_Pro/climbro-hero.jpg',
+    link: 'https://climbro.com/climbro-pro/',
+    badge: 'Advanced System',
+    category: 'training',
+    affiliateProgram: 'climbro',
+    affiliateIntent: 'pro',
+    affiliateSource: 'gear-page',
+    affiliatePosition: 'training-grid',
+    affiliateVariant: 'product-card'
+  },
   {
     id: 'power-guidance-hangboard',
     name: "Power Guidance Wooden Hangboard",

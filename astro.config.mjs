@@ -8,6 +8,7 @@ import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 import partytown from '@astrojs/partytown';
 import mdx from '@astrojs/mdx';
+import remarkAutolinkClimbroMentions from './src/utils/remarkAutolinkClimbroMentions.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -38,7 +39,9 @@ export default defineConfig({
         }
       }
     }),
-    mdx(),
+    mdx({
+      remarkPlugins: [remarkAutolinkClimbroMentions],
+    }),
     partytown({
       config: {
         forward: ['dataLayer.push'],

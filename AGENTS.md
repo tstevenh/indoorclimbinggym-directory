@@ -24,6 +24,49 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
+## 🔐 AvantLink Homepage Verification Tag Refresh (COMPLETED)
+
+**Completed:** 2026-04-03
+**Status:** ✅ Temporary homepage verification tag updated
+
+### Overview
+
+Replaced the older temporary AvantLink affiliate application verification script on the homepage with the latest `authResponse` token provided for the active application review.
+
+### Files Modified
+
+1. `src/pages/index.astro`
+
+### Implementation Notes
+
+- The script is injected only on the homepage through the `head` slot in `BaseLayout`.
+- Current verification script source:
+  - `http://classic.avantlink.com/affiliate_app_confirm.php?mode=js&authResponse=a84e373bc4486d93f40ebeb237fcc51dc66a184a`
+- This tag is intended to be temporary and can be removed after AvantLink confirms successful placement.
+
+## 🔗 Climbro Mention Autolink Pass (COMPLETED)
+
+**Completed:** 2026-04-03
+**Status:** ✅ Plain-text Climbro brand mentions in key affiliate articles now render as outbound tracked links
+
+### Overview
+
+Added a targeted MDX remark transform that converts plain article-body mentions of `Climbro`, `Climbro Mini`, and `Climbro Pro` into outbound affiliate links for the current Climbro article cluster and adjacent support articles.
+
+### Files Modified
+
+1. `astro.config.mjs`
+2. `src/utils/remarkAutolinkClimbroMentions.mjs`
+
+### Implementation Notes
+
+- Scope is intentionally limited to the specific blog article slugs in the current Climbro/support set.
+- Existing internal article links are left alone.
+- Existing explicit `ClimbroTrackedLink` components remain valid and are not replaced.
+- Inline-code mentions such as ``Climbro Mini`` now become clickable while keeping the code-style visual treatment.
+- Plain-text generic `Climbro` mentions route to `https://climbro.com/`.
+- Plain-text `Climbro Mini` and `Climbro Pro` mentions route to their product pages and include the existing affiliate parameters and tracking attributes.
+
 ---
 
 ## 🔐 Cross-Subdomain Authentication & SSR/SSG Resolution (COMPLETED)

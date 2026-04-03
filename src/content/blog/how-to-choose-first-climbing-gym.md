@@ -19,6 +19,8 @@ When I started climbing back in 2018, I just went wherever my buddy took me. Luc
 
 It may surprise you to learn how important your first workout is. It influences how quickly you pick things up, how safe you feel, and if you truly persist with it. This checklist will assist you in locating a gym that positions you for long-term success if you're unsure what to look for.
 
+If you want the editorial version of that question first, read [What Makes a Climbing Gym Beginner-Friendly Besides the Grades?](/blog/what-makes-a-climbing-gym-beginner-friendly/).
+
 ## What Type of Climbing Does the Gym Offer?
 
 Most indoor gyms offer two main styles of climbing: bouldering and roped climbing (top rope or lead). Bouldering is done on shorter walls without the use of ropes by using strong crash pads below. Roped climbing requires higher walls, harnesses, and a belayer to manage the rope.

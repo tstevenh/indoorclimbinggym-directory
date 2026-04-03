@@ -20,6 +20,7 @@ const {
   variant = 'default',
   class: className = '',
 } = Astro.props;
+const hasDefaultSlot = Astro.slots.has('default');
 
 const sanitize = (value: string) =>
   value
@@ -69,7 +70,7 @@ const finalClass = [inlineCodeClass, className].filter(Boolean).join(' ');
   data-affiliate-article-slug={articleSlug}
   class={finalClass}
 >
-  {label}
+  {hasDefaultSlot ? <slot /> : label}
 </a>
 
 <script>
