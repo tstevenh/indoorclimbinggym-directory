@@ -3,6 +3,7 @@ import BaseLayout from '../../../../../layouts/BaseLayout.astro';
 import GymCard from '../../../../../components/GymCard.astro';
 import Pagination from '../../../../../components/Pagination.astro';
 import AffiliateBlock from '../../../../../components/AffiliateBlock.astro';
+import InternalTrainingCTA from '../../../../../components/InternalTrainingCTA.astro';
 import { fetchGyms } from '../../../../../config/api';
 import { getStateSlug } from '../../../../../utils/states';
 import {
@@ -236,6 +237,13 @@ const categoryIntro = category.type === 'amenity'
       </div>
     </header>
 
+    <div class="mb-8 lg:hidden">
+      <InternalTrainingCTA variant="category" placement="mobile_inline" />
+    </div>
+
+    <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-8">
+      <div class="min-w-0">
+
     <section class="mb-12">
       <h2 class="text-3xl font-display font-bold text-white mb-2">Top Matches in {city}</h2>
       <p class="text-white/50 mb-6">
@@ -428,5 +436,13 @@ const categoryIntro = category.type === 'amenity'
         </div>
       </section>
     )}
+      </div>
+
+      <aside class="hidden lg:block self-start">
+        <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
+          <InternalTrainingCTA variant="category" placement="desktop_sidebar" />
+        </div>
+      </aside>
+    </div>
   </div>
 </BaseLayout>

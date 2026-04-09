@@ -6,6 +6,7 @@
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import GymCard from '../../components/GymCard.astro';
+import InternalTrainingCTA from '../../components/InternalTrainingCTA.astro';
 import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
 import { generateStateTitle, generateStateDescription } from '../../utils/seo';
 import { fetchGyms } from '../../config/api';
@@ -181,6 +182,13 @@ const cityColors = ['#ff2d7a', '#00e676', '#2979ff', '#ffea00', '#ff9100', '#e04
         </a>
       </div>
     </header>
+
+    <div class="mb-8 lg:hidden">
+      <InternalTrainingCTA variant="state" placement="mobile_inline" />
+    </div>
+
+    <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-8">
+      <div class="min-w-0">
 
     <!-- City Directory -->
     <section class="mb-12">
@@ -398,5 +406,13 @@ const cityColors = ['#ff2d7a', '#00e676', '#2979ff', '#ffea00', '#ff9100', '#e04
         </svg>
       </a>
     </section>
+      </div>
+
+      <aside class="hidden lg:block self-start">
+        <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
+          <InternalTrainingCTA variant="state" placement="desktop_sidebar" />
+        </div>
+      </aside>
+    </div>
   </div>
 </BaseLayout>

@@ -14,6 +14,7 @@ import TableOfContents from '../../components/blog/TableOfContents.astro';
 import StickyBlogCTA from '../../components/blog/StickyBlogCTA.astro';
 import SubredditCTA from '../../components/SubredditCTA.astro';
 import AffiliateBlock from '../../components/AffiliateBlock.astro';
+import InternalTrainingCTA from '../../components/InternalTrainingCTA.astro';
 import { generateArticleSchema, generateBreadcrumbSchema, generateFAQSchema, generateHowToSchema, generateVideoSchema } from '../../utils/schema';
 import { generateBlogPostTitle, generateBlogKeywords } from '../../utils/seo';
 
@@ -287,8 +288,9 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-white/10 text-w
   articleSection={entry.data.category}
   articleTags={entry.data.tags}
 >
-  <!-- Article Header -->
-  <article class="max-w-4xl mx-auto pb-32 md:pb-24 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto pb-32 md:pb-24 px-4 sm:px-6 lg:px-8">
+      <!-- Article Header -->
+      <article class="min-w-0 max-w-4xl mx-auto lg:mx-0">
     <!-- Breadcrumb Navigation -->
     <nav class="text-sm text-white/60 mb-6" aria-label="Breadcrumb">
       <ol class="flex flex-wrap items-center gap-2">
@@ -347,54 +349,69 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-white/10 text-w
         class="w-full h-full object-cover"
       />
     </div>
+      </article>
 
-    <!-- Table of Contents -->
-    <TableOfContents headings={headings} />
+        <div class="mb-8 max-w-4xl mx-auto lg:hidden">
+          <InternalTrainingCTA variant="blog" placement="mobile_inline" />
+        </div>
 
-    <!-- Article Content -->
-    <div class="prose prose-lg max-w-none mb-8 prose-dark overflow-x-hidden">
-      <Content />
-    </div>
+        <div class="lg:grid lg:grid-cols-[minmax(0,56rem)_320px] xl:grid-cols-[minmax(0,60rem)_320px] lg:justify-center lg:gap-16 xl:gap-24 lg:items-start">
+          <article class="min-w-0 max-w-4xl mx-auto lg:mx-0 lg:max-w-none">
+            <!-- Table of Contents -->
+            <TableOfContents headings={headings} />
 
-    <!-- Affiliate Block -->
-    <AffiliateBlock 
-      title={entry.data.category === 'gear' ? 'Top-rated gear picks for this guide' : entry.data.category === 'bouldering' ? 'Bouldering essentials worth buying first' : 'Climber favorites to level up your next session'}
-      subtitle={entry.data.category === 'gear' ? 'Compare beginner, value, and performance options before you buy.' : 'Picked for reliability and value so you can buy once and climb more.'}
-      category={entry.data.category === 'gear' ? 'gear' : entry.data.category === 'bouldering' ? 'shoes' : undefined}
-      ctaLabel="Check price on Amazon"
-      count={3}
-    />
+            <!-- Article Content -->
+            <div class="prose prose-lg max-w-none mb-8 prose-dark overflow-x-hidden">
+              <Content />
+            </div>
 
-    <!-- Tags -->
-    {entry.data.tags.length > 0 && (
-      <div class="flex flex-wrap gap-2 mb-8">
-        {entry.data.tags.map((tag) => (
-          <span class="text-sm bg-[#1f1f1f] text-white/70 px-3 py-1 rounded-full border border-white/10">#{tag}</span>
-        ))}
-      </div>
-    )}
+            <!-- Affiliate Block -->
+            <AffiliateBlock 
+              title={entry.data.category === 'gear' ? 'Top-rated gear picks for this guide' : entry.data.category === 'bouldering' ? 'Bouldering essentials worth buying first' : 'Climber favorites to level up your next session'}
+              subtitle={entry.data.category === 'gear' ? 'Compare beginner, value, and performance options before you buy.' : 'Picked for reliability and value so you can buy once and climb more.'}
+              category={entry.data.category === 'gear' ? 'gear' : entry.data.category === 'bouldering' ? 'shoes' : undefined}
+              ctaLabel="Check price on Amazon"
+              count={3}
+            />
 
-    <!-- Social Share -->
-    <SocialShare title={entry.data.title} url={pageUrl} />
+            <!-- Tags -->
+            {entry.data.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mb-8">
+                {entry.data.tags.map((tag) => (
+                  <span class="text-sm bg-[#1f1f1f] text-white/70 px-3 py-1 rounded-full border border-white/10">#{tag}</span>
+                ))}
+              </div>
+            )}
 
-    <!-- Author Bio -->
-    <AuthorBio
-      author={entry.data.author}
-      avatar={entry.data.authorAvatar}
-      bio={entry.data.authorBio}
-    />
+            <!-- Social Share -->
+            <SocialShare title={entry.data.title} url={pageUrl} />
 
-    <!-- Subreddit CTA -->
-    <div class="my-12">
-      <SubredditCTA variant="blog" />
-    </div>
+            <!-- Author Bio -->
+            <AuthorBio
+              author={entry.data.author}
+              avatar={entry.data.authorAvatar}
+              bio={entry.data.authorBio}
+            />
 
-    <!-- Related Posts -->
-    <RelatedPosts posts={relatedPosts} currentSlug={entry.slug} />
+            <!-- Subreddit CTA -->
+            <div class="my-12">
+              <SubredditCTA variant="blog" />
+            </div>
 
-    <!-- Sticky CTA to push blog readers into directory/search -->
-    <StickyBlogCTA />
-  </article>
+            <!-- Related Posts -->
+            <RelatedPosts posts={relatedPosts} currentSlug={entry.slug} />
+
+            <!-- Sticky CTA to push blog readers into directory/search -->
+            <StickyBlogCTA />
+          </article>
+
+          <aside class="hidden lg:block self-start">
+            <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
+              <InternalTrainingCTA variant="blog" placement="desktop_sidebar" />
+            </div>
+          </aside>
+        </div>
+  </div>
 </BaseLayout>
 
 <style is:global>

@@ -6,6 +6,7 @@
  */
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import GymCard from '../../../components/GymCard.astro';
+import InternalTrainingCTA from '../../../components/InternalTrainingCTA.astro';
 import Pagination from '../../../components/Pagination.astro';
 import OtherCitiesInState from '../../../components/OtherCitiesInState.astro';
 import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
@@ -293,6 +294,13 @@ const breadcrumbs = [
         </a>
       </div>
     </header>
+
+    <div class="mb-8 lg:hidden">
+      <InternalTrainingCTA variant="city" placement="mobile_inline" />
+    </div>
+
+    <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-8">
+      <div class="min-w-0">
 
     {cityCategoryLinks.length > 0 && (
       <section class="mb-12">
@@ -602,5 +610,13 @@ const breadcrumbs = [
         </svg>
       </a>
     </section>
+      </div>
+
+      <aside class="hidden lg:block self-start">
+        <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
+          <InternalTrainingCTA variant="city" placement="desktop_sidebar" />
+        </div>
+      </aside>
+    </div>
   </div>
 </BaseLayout>

@@ -1,0 +1,175 @@
+---
+type Variant = 'blog' | 'state' | 'city' | 'category' | 'gym';
+type Placement = 'desktop_sidebar' | 'mobile_inline' | 'inline_main' | 'sidebar';
+
+interface Props {
+  variant: Variant;
+  placement?: Placement;
+}
+
+const { variant, placement = 'desktop_sidebar' } = Astro.props;
+
+const DESTINATION = '/blog/when-is-a-smart-hangboard-worth-it/';
+const CTA_IMAGES: Record<Variant, string> = {
+  blog: '/images/blog/climbro/Climbro_Pro/climbro-detail-1.jpg',
+  state: '/images/blog/climbro/Climbro_Pro/climbro-detail-2.jpg',
+  city: '/images/blog/climbro/Climbro_Pro/climbro-detail-3.jpg',
+  category: '/images/blog/climbro/Climbro_Pro/climbro-detail-4.jpg',
+  gym: '/images/blog/climbro/Climbro_Pro/climbro-detail-2.jpg',
+};
+
+const CTA_COPY: Record<
+  Variant,
+  {
+    eyebrow: string;
+    title: string;
+    description: string;
+    ctaLabel: string;
+  }
+> = {
+  blog: {
+    eyebrow: 'Home Training Guide',
+    title: 'Before You Buy a Hangboard, Read This',
+    description:
+      'Most climbers do not need the fanciest setup. See when a smart hangboard helps, when a normal board is better, and what to skip.',
+    ctaLabel: 'Read the guide',
+  },
+  state: {
+    eyebrow: 'Train at Home',
+    title: 'Thinking About Training at Home?',
+    description:
+      'A hangboard can help, but not every climber needs one yet. Start with the guide that helps you decide before you buy anything.',
+    ctaLabel: 'Read the guide',
+  },
+  city: {
+    eyebrow: 'Home Training Guide',
+    title: 'Should You Even Buy a Hangboard?',
+    description:
+      'For some climbers, yes. For others, a normal board or no board at all is the better move. Here is how to tell.',
+    ctaLabel: 'Find out',
+  },
+  category: {
+    eyebrow: 'Home Training Guide',
+    title: 'Should You Even Buy a Hangboard?',
+    description:
+      'Some climbers need more structure at home. Others are better off keeping it simple. Start with the guide before you buy gear.',
+    ctaLabel: 'Find out',
+  },
+  gym: {
+    eyebrow: 'Between Gym Sessions',
+    title: 'Train Between Gym Sessions at Home',
+    description:
+      'Home finger training can help, but only if it fits your climbing week. Start with the guide that shows when a hangboard actually makes sense.',
+    ctaLabel: 'See when it is worth it',
+  },
+};
+
+const copy = CTA_COPY[variant];
+const imageSrc = CTA_IMAGES[variant];
+---
+
+<section
+  class="internal-training-cta rounded-2xl border border-white/10 bg-[#1f1f1f] overflow-hidden"
+  data-training-cta-card
+  data-training-cta-variant={variant}
+  data-training-cta-placement={placement}
+  data-training-cta-destination={DESTINATION}
+  data-training-cta-headline={copy.title}
+>
+  <div class="relative">
+    <img
+      src={imageSrc}
+      alt="Indoor climber considering home finger training"
+      class="h-40 w-full object-cover"
+      loading="lazy"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-[#131313] via-[#131313]/25 to-transparent"></div>
+    <div class="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/45 px-3 py-1 text-[11px] font-mono uppercase tracking-[0.18em] text-white/80 backdrop-blur">
+      {copy.eyebrow}
+    </div>
+  </div>
+
+  <div class="p-5">
+    <h3 class="mb-3 text-xl font-display font-bold leading-tight text-white">{copy.title}</h3>
+    <p class="mb-5 text-sm leading-relaxed text-white/68">{copy.description}</p>
+
+    <a
+      href={DESTINATION}
+      class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#00e676] px-4 py-3 text-sm font-semibold text-[#08110a] transition hover:bg-[#38ef82]"
+      data-training-cta-link
+      data-training-cta-variant={variant}
+      data-training-cta-placement={placement}
+      data-training-cta-destination={DESTINATION}
+      data-training-cta-headline={copy.title}
+      data-training-cta-label={copy.ctaLabel}
+    >
+      {copy.ctaLabel}
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-6-6 6 6-6 6" />
+      </svg>
+    </a>
+  </div>
+</section>
+
+<script>
+  if (typeof window !== 'undefined') {
+    const trackingWindow = window as Window & {
+      __internalTrainingCtaTrackingInitialized?: boolean;
+      posthog?: {
+        capture?: (eventName: string, properties?: Record<string, unknown>) => void;
+      };
+    };
+
+    if (!trackingWindow.__internalTrainingCtaTrackingInitialized) {
+      trackingWindow.__internalTrainingCtaTrackingInitialized = true;
+
+      const captureEvent = (eventName: string, element: Element | null) => {
+        if (!(element instanceof HTMLElement)) return;
+
+        const posthogClient = trackingWindow.posthog;
+        if (!posthogClient || typeof posthogClient.capture !== 'function') return;
+
+        const variant = element.getAttribute('data-training-cta-variant') || 'unknown';
+        const placement = element.getAttribute('data-training-cta-placement') || 'unknown';
+        const destination = element.getAttribute('data-training-cta-destination') || 'unknown';
+        const headline = element.getAttribute('data-training-cta-headline') || 'unknown';
+        const label = element.getAttribute('data-training-cta-label') || null;
+
+        posthogClient.capture(eventName, {
+          cta_name: 'internal_training_guide',
+          cta_variant: variant,
+          cta_placement: placement,
+          cta_destination: destination,
+          cta_headline: headline,
+          cta_label: label,
+          page_path: window.location.pathname,
+        });
+      };
+
+      document.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+
+        const link = target.closest('[data-training-cta-link]');
+        captureEvent('internal_training_cta_click', link);
+      });
+
+      const seenCards = new WeakSet<Element>();
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting || seenCards.has(entry.target)) return;
+
+            seenCards.add(entry.target);
+            captureEvent('internal_training_cta_view', entry.target);
+          });
+        },
+        { threshold: 0.35 }
+      );
+
+      document.querySelectorAll('[data-training-cta-card]').forEach((element) => {
+        observer.observe(element);
+      });
+    }
+  }
+</script>
