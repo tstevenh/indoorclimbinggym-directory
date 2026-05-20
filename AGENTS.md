@@ -24,6 +24,81 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
+## 📢 Google AdSense Site-Wide Head Snippet (COMPLETED)
+
+**Completed:** 2026-05-20
+**Status:** ✅ AdSense loader added to every public page
+
+### Overview
+
+Added the Google AdSense script for publisher `ca-pub-5430791047928776` to the shared site layout so AdSense can verify and prepare all public pages for ads.
+
+### Files Modified
+
+1. `src/layouts/BaseLayout.astro`
+
+### Implementation Notes
+
+- The script is loaded in the document `<head>` through `BaseLayout`.
+- Because `BaseLayout` wraps public pages, the AdSense snippet is included site-wide.
+- Script source:
+  - `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5430791047928776`
+
+## 🏙️ City Category Single-Gym Page Generation Fix (COMPLETED)
+
+**Completed:** 2026-05-20
+**Status:** ✅ City category detail pages now generate for single matching gyms
+
+### Overview
+
+Fixed city category hub links that pointed to valid one-gym category combinations but 404ed because the detail route only generated pages for combinations with at least two matching gyms.
+
+### Files Modified
+
+1. `src/pages/[state]/[city]/categories/[category]/index.astro`
+
+### Implementation Notes
+
+- City category detail pages now use `MIN_GYMS_FOR_PAGE_GENERATION` only, which is currently `1`.
+- This aligns detail page generation with city category hubs, which list categories with `count > 0`.
+- Verified the previously missing `/colorado/centennial/categories/best-auto-belay-climbing-gyms/` output now builds.
+
+## 📝 Weekly SEO Article Automation + First Article Set (COMPLETED)
+
+**Completed:** 2026-05-20
+**Status:** ✅ Weekly automation created and first three SEO/AEO article drafts added
+
+### Overview
+
+Created a recurring Codex automation that runs every Monday at 13:00 Asia/Jakarta to use DataForSEO keyword data from `dataforseo.env`, find low-competition/high-volume climbing keyword opportunities, avoid duplicate topics by checking published blog content, and create three SEO/AEO optimized articles with hero images.
+
+### Current Keyword Thresholds
+
+- Low competition: keyword difficulty `<= 30`
+- High search volume: monthly search volume `>= 100`
+- Categories are selected by keyword intent.
+- Do not use or link to `https://climbingbusinessjournal.com/`.
+- Articles should include relevant internal links across blog, search, category, state/city, tools, and other public pages where useful.
+
+### Files Added
+
+1. `src/content/blog/rock-climbing-classes-beginner-guide.mdx`
+2. `src/content/blog/how-many-calories-does-rock-climbing-burn.mdx`
+3. `src/content/blog/benefits-of-rock-climbing.mdx`
+4. `public/images/blog/rock-climbing-classes-beginner-guide.png`
+5. `public/images/blog/how-many-calories-does-rock-climbing-burn.png`
+6. `public/images/blog/benefits-of-rock-climbing.png`
+
+### Implementation Notes
+
+- Selected this week's topics from DataForSEO results after checking the existing `src/content/blog` inventory.
+- Primary keyword metrics used:
+  - `rock climbing classes`: search volume 880, KD 6
+  - `how many calories does rock climbing burn`: search volume 390, KD 1
+  - `benefits of rock climbing`: search volume 390, KD 10
+- Hero images were generated as ultra-realistic indoor climbing scenes and saved as project-local PNG assets.
+- Automation is configured to leave weekly article files uncommitted for review until publishing quality is approved.
+
 ## 🔐 AvantLink Homepage Verification Tag Refresh (COMPLETED)
 
 **Completed:** 2026-04-03
