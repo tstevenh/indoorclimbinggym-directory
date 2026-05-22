@@ -24,6 +24,25 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
+## 📢 Google AdSense ads.txt Seller Record (COMPLETED)
+
+**Completed:** 2026-05-22
+**Status:** ✅ Google AdSense authorized seller record added
+
+### Overview
+
+Added the Google AdSense authorized digital seller record for publisher `pub-5430791047928776` so Google can verify the public site's ad inventory.
+
+### Files Added
+
+1. `public/ads.txt`
+
+### Implementation Notes
+
+- The file is served from the public root as `/ads.txt`.
+- Current seller record:
+  - `google.com, pub-5430791047928776, DIRECT, f08c47fec0942fa0`
+
 ## 📢 Google AdSense Site-Wide Head Snippet (COMPLETED)
 
 **Completed:** 2026-05-20
