@@ -6,3 +6,7 @@ Allow: /
 
 # Sitemap location
 Sitemap: https://www.indoorclimbinggym.com/sitemap-index.xml
+
+# AI/LLM content indexes
+LLM-Content: https://www.indoorclimbinggym.com/llms.txt
+LLM-Full-Content: https://www.indoorclimbinggym.com/llms-full.txt
