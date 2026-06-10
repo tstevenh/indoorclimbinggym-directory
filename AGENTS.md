@@ -24,6 +24,33 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
+## 📝 Weekly SEO Article Automation - 2026-06-08 Run (COMPLETED)
+
+**Completed:** 2026-06-08
+**Status:** ✅ Three weekly blog drafts and hero images added
+
+### Overview
+
+Added the required weekly article mix: one Climbro-focused affiliate article, one general climbing-gym article, and one training bridge article that naturally sends readers into the Climbro cluster.
+
+### Files Added
+
+1. `src/content/blog/climbro-mini-home-training.mdx`
+2. `src/content/blog/climbing-footwork-drills.mdx`
+3. `src/content/blog/climbing-power-endurance-training.mdx`
+4. `public/images/blog/climbro-mini-home-training.png`
+5. `public/images/blog/climbing-footwork-drills.png`
+6. `public/images/blog/climbing-power-endurance-training.png`
+
+### Implementation Notes
+
+- DataForSEO credentials were present, but API access failed from the sandbox because `api.dataforseo.com` could not resolve via DNS. No fresh keyword metrics were claimed.
+- Topic selection avoided duplicates with the existing Climbro review, Mini vs Pro, rent/buy, rental/trial, app-guided training, smart hangboard, warm-up, workout, endurance, and finger-strength articles.
+- Climbro claims were limited to `/Users/tsth/Coding/rockclimbing/data-for-website/Affiliate-climbro/climbro_official_claims.md`.
+- Climbro outbound CTAs use `ClimbroTrackedLink.astro` and `ClimbroAffiliateBlock.astro`; training bridge CTAs route methodology curiosity to internal Climbro explainer pages.
+- Hero images are generated unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, or product branding.
+- Validation: `npm run build` passed.
+
 ## 📝 Weekly SEO Article Automation - 2026-06-01 Run (COMPLETED)
 
 **Completed:** 2026-06-01
