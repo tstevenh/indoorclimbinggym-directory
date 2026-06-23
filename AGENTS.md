@@ -24,6 +24,33 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
+## 📝 Weekly SEO Article Automation - 2026-06-22 Run (COMPLETED)
+
+**Completed:** 2026-06-22
+**Status:** ✅ Three weekly blog drafts and hero images added
+
+### Overview
+
+Added the required weekly article mix: one Climbro-focused affiliate article, one general climbing-gym article, and one training bridge article that naturally sends readers into the Climbro cluster.
+
+### Files Added
+
+1. `src/content/blog/hangboard-training-with-climbro.mdx`
+2. `src/content/blog/top-rope-climbing-guide.mdx`
+3. `src/content/blog/climbing-training-schedule.mdx`
+4. `public/images/blog/hangboard-training-with-climbro.png`
+5. `public/images/blog/top-rope-climbing-guide.png`
+6. `public/images/blog/climbing-training-schedule.png`
+
+### Implementation Notes
+
+- DataForSEO was reachable this run. Selected topics used DataForSEO monthly volume plus DataForSEO Labs keyword difficulty and avoided duplicate coverage with existing beginner, cost, shoes, endurance, grades, hangboard, and Climbro buyer articles.
+- Selected keyword metrics: `hangboard training` search volume 210, KD 0; `top rope climbing` search volume 4,400, KD 0; `climbing training schedule` search volume 320, KD 0.
+- Climbro claims were limited to `/Users/tsth/Coding/rockclimbing/data-for-website/Affiliate-climbro/climbro_official_claims.md`.
+- Climbro outbound CTAs use `ClimbroTrackedLink.astro` and `ClimbroAffiliateBlock.astro`; training bridge CTAs route methodology curiosity to internal Climbro explainer pages.
+- Hero images are generated unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, or product branding.
+- Validation: `npm run build` passed.
+
 ## 📝 Weekly SEO Article Automation - 2026-06-08 Run (COMPLETED)
 
 **Completed:** 2026-06-08
