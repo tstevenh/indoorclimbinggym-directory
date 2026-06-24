@@ -27,7 +27,8 @@
 ## 📝 Weekly SEO Article Automation - 2026-06-22 Run (COMPLETED)
 
 **Completed:** 2026-06-22
-**Status:** ✅ Three weekly blog drafts and hero images added
+**Published:** 2026-06-24
+**Status:** ✅ Three weekly blog drafts and hero images added, pushed to `main`, and verified live
 
 ### Overview
 
@@ -50,6 +51,7 @@ Added the required weekly article mix: one Climbro-focused affiliate article, on
 - Climbro outbound CTAs use `ClimbroTrackedLink.astro` and `ClimbroAffiliateBlock.astro`; training bridge CTAs route methodology curiosity to internal Climbro explainer pages.
 - Hero images are generated unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, or product branding.
 - Validation: `npm run build` passed.
+- Published in commit `87f6209` and verified live on `https://www.indoorclimbinggym.com/blog/hangboard-training-with-climbro/`, `https://www.indoorclimbinggym.com/blog/top-rope-climbing-guide/`, and `https://www.indoorclimbinggym.com/blog/climbing-training-schedule/`.
 
 ## 📝 Weekly SEO Article Automation - 2026-06-08 Run (COMPLETED)
 
