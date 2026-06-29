@@ -53,6 +53,33 @@ Added the required weekly article mix: one Climbro-focused affiliate article, on
 - Validation: `npm run build` passed.
 - Published in commit `87f6209` and verified live on `https://www.indoorclimbinggym.com/blog/hangboard-training-with-climbro/`, `https://www.indoorclimbinggym.com/blog/top-rope-climbing-guide/`, and `https://www.indoorclimbinggym.com/blog/climbing-training-schedule/`.
 
+## 📝 Weekly SEO Article Automation - 2026-06-29 Run (COMPLETED)
+
+**Completed:** 2026-06-29
+**Status:** ✅ Three weekly blog drafts and hero images added
+
+### Overview
+
+Added the required weekly article mix: one Climbro-focused affiliate article, one general climbing-gym article, and one training bridge article that naturally sends readers into the Climbro cluster.
+
+### Files Added
+
+1. `src/content/blog/climbro-finger-strength-training.mdx`
+2. `src/content/blog/belay-test-climbing-gym.mdx`
+3. `src/content/blog/climbing-strength-training.mdx`
+4. `public/images/blog/climbro-finger-strength-training.png`
+5. `public/images/blog/belay-test-climbing-gym.png`
+6. `public/images/blog/climbing-strength-training.png`
+
+### Implementation Notes
+
+- DataForSEO was reachable this run. Selected topics used DataForSEO monthly volume plus DataForSEO Labs keyword difficulty and avoided duplicate coverage with existing beginner, cost, shoes, endurance, hangboard, top-rope, training-schedule, and Climbro buyer articles.
+- Selected keyword metrics: `finger strength training` search volume 110, KD 0; `belay test` search volume 260, KD 0; `climbing strength training` search volume 480, KD 0.
+- Climbro claims were limited to `/Users/tsth/Coding/rockclimbing/data-for-website/Affiliate-climbro/climbro_official_claims.md`.
+- Climbro outbound CTAs use `ClimbroTrackedLink.astro` and `ClimbroAffiliateBlock.astro`; the training bridge article routes methodology curiosity to internal Climbro explainer pages before outbound CTAs.
+- Hero images are unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, or product branding.
+- Validation: `npm run build` passed.
+
 ## 📝 Weekly SEO Article Automation - 2026-06-08 Run (COMPLETED)
 
 **Completed:** 2026-06-08
