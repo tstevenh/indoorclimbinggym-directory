@@ -56,7 +56,8 @@ Added the required weekly article mix: one Climbro-focused affiliate article, on
 ## 📝 Weekly SEO Article Automation - 2026-06-29 Run (COMPLETED)
 
 **Completed:** 2026-06-29
-**Status:** ✅ Three weekly blog drafts and hero images added
+**Published:** 2026-06-29
+**Status:** ✅ Three weekly blog drafts and hero images added, pushed to `main`, and verified live
 
 ### Overview
 
@@ -79,6 +80,7 @@ Added the required weekly article mix: one Climbro-focused affiliate article, on
 - Climbro outbound CTAs use `ClimbroTrackedLink.astro` and `ClimbroAffiliateBlock.astro`; the training bridge article routes methodology curiosity to internal Climbro explainer pages before outbound CTAs.
 - Hero images are unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, or product branding.
 - Validation: `npm run build` passed.
+- Published in commit `d12976b` and verified live on `https://www.indoorclimbinggym.com/blog/climbro-finger-strength-training/`, `https://www.indoorclimbinggym.com/blog/belay-test-climbing-gym/`, and `https://www.indoorclimbinggym.com/blog/climbing-strength-training/`.
 
 ## 📝 Weekly SEO Article Automation - 2026-06-08 Run (COMPLETED)
 
