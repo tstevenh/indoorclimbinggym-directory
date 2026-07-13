@@ -28,7 +28,7 @@
 
 **Completed:** 2026-07-13
 **Published:** 2026-07-13
-**Status:** ✅ Three weekly blog articles and hero images added, validated, and prepared for production deployment
+**Status:** ✅ Three weekly blog articles and hero images added, pushed to `main`, and verified live
 
 ### Overview
 
@@ -52,6 +52,7 @@ Added the required weekly article mix: one Climbro-focused affiliate article, on
 - Non-Climbro safety and training claims link to USA Climbing, UIAA, Petzl technical guidance, and peer-reviewed climbing research.
 - Hero images are generated unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, product branding, or Climbro branding.
 - Validation: frontmatter limits, tracked-link compliance, prohibited-source scan, `git diff --check`, and `npm run build` passed.
+- Published in commit `abe02a9` and verified live on `https://www.indoorclimbinggym.com/blog/climbing-training-tools-climbro/`, `https://www.indoorclimbinggym.com/blog/lead-climbing-guide/`, and `https://www.indoorclimbinggym.com/blog/climbing-core-workout/`.
 
 ## 📝 Weekly SEO Article Automation - 2026-06-22 Run (COMPLETED)
 
