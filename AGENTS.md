@@ -24,6 +24,35 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
+## 📝 Weekly SEO Article Automation - 2026-07-13 Run (COMPLETED)
+
+**Completed:** 2026-07-13
+**Published:** 2026-07-13
+**Status:** ✅ Three weekly blog articles and hero images added, validated, and prepared for production deployment
+
+### Overview
+
+Added the required weekly article mix: one Climbro-focused affiliate article, one general climbing article, and one training bridge article that routes methodology interest into the Climbro cluster.
+
+### Files Added
+
+1. `src/content/blog/climbing-training-tools-climbro.mdx`
+2. `src/content/blog/lead-climbing-guide.mdx`
+3. `src/content/blog/climbing-core-workout.mdx`
+4. `public/images/blog/climbing-training-tools-climbro.png`
+5. `public/images/blog/lead-climbing-guide.png`
+6. `public/images/blog/climbing-core-workout.png`
+
+### Implementation Notes
+
+- DataForSEO was reachable. Selected keywords meet the automation thresholds: `climbing training tools` search volume 590, KD 0; `lead climbing` search volume 2,900, KD 2; `climbing core workout` search volume 210, KD 0.
+- Topic selection avoided duplicate coverage across existing Climbro buyer/product-fit content, top-rope and beginner guides, general strength articles, finger training, hangboard training, and endurance content.
+- Climbro claims were limited to `/Users/tsth/Coding/rockclimbing/data-for-website/Affiliate-climbro/climbro_official_claims.md`.
+- Climbro outbound CTAs use `ClimbroTrackedLink.astro` and `ClimbroAffiliateBlock.astro`; the core-workout bridge routes methodology curiosity to internal Climbro explainers before commercial decisions.
+- Non-Climbro safety and training claims link to USA Climbing, UIAA, Petzl technical guidance, and peer-reviewed climbing research.
+- Hero images are generated unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, product branding, or Climbro branding.
+- Validation: frontmatter limits, tracked-link compliance, prohibited-source scan, `git diff --check`, and `npm run build` passed.
+
 ## 📝 Weekly SEO Article Automation - 2026-06-22 Run (COMPLETED)
 
 **Completed:** 2026-06-22
