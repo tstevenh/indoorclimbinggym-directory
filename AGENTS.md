@@ -24,6 +24,37 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
+## 📝 Weekly SEO Article Automation - 2026-07-20 Run (COMPLETED)
+
+**Completed:** 2026-07-20
+**Published:** Pending push and live verification
+**Status:** ✅ Three weekly blog articles and hero images added and validated
+
+### Overview
+
+Added the required weekly article mix: one Climbro-focused affiliate article for coaches and teams, one general auto-belay guide, and one ARC training bridge article that routes methodology curiosity into the Climbro cluster.
+
+### Files Added
+
+1. `src/content/blog/climbing-coach-tools-climbro.mdx`
+2. `src/content/blog/auto-belay-climbing-guide.mdx`
+3. `src/content/blog/arc-training-climbing.mdx`
+4. `public/images/blog/climbing-coach-tools-climbro.png`
+5. `public/images/blog/auto-belay-climbing-guide.png`
+6. `public/images/blog/arc-training-climbing.png`
+
+### Implementation Notes
+
+- DataForSEO was reachable. Selected keywords meet the automation thresholds: `climbing coach` search volume 480, KD 0; `auto belay` search volume 2,400, KD 0; `ARC training climbing` search volume 110, KD 0.
+- Topic selection avoided duplicate coverage across existing Climbro home/app/rental/buyer-fit/training-tool content, top-rope and lead guides, finger-strength plans, general strength, core, warm-up, and power-endurance articles.
+- Climbro claims were limited to `/Users/tsth/Coding/rockclimbing/data-for-website/Affiliate-climbro/climbro_official_claims.md`.
+- The coach article routes methodology questions to internal Climbro explainers before tracked Mini, Pro, and personal-rental paths; the ARC bridge uses only internal Climbro methodology CTAs.
+- Non-Climbro claims link to USA Climbing coaching education, manufacturer auto-belay safety guidance, and peer-reviewed climbing endurance research.
+- Hero images are generated 1200x675 unbranded indoor climbing scenes. Two outputs received precise cleanup edits to remove tiny equipment/shoe markings; final images contain no visible brand names, logos, trademarks, watermarks, readable signage, product branding, or Climbro branding.
+- Validation: frontmatter limits, allowed-category check, tracked-link compliance, prohibited-source scan, `git diff --check`, visual image review, and `npm run build` passed. The final build used network access for Supabase route generation and included 779 gyms.
+
+---
+
 ## 📝 Weekly SEO Article Automation - 2026-07-13 Run (COMPLETED)
 
 **Completed:** 2026-07-13
