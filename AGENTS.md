@@ -27,8 +27,8 @@
 ## 📝 Weekly SEO Article Automation - 2026-07-20 Run (COMPLETED)
 
 **Completed:** 2026-07-20
-**Published:** Pending push and live verification
-**Status:** ✅ Three weekly blog articles and hero images added and validated
+**Published:** 2026-07-20
+**Status:** ✅ Three weekly blog articles and hero images added, pushed to `main`, and verified live
 
 ### Overview
 
@@ -52,6 +52,7 @@ Added the required weekly article mix: one Climbro-focused affiliate article for
 - Non-Climbro claims link to USA Climbing coaching education, manufacturer auto-belay safety guidance, and peer-reviewed climbing endurance research.
 - Hero images are generated 1200x675 unbranded indoor climbing scenes. Two outputs received precise cleanup edits to remove tiny equipment/shoe markings; final images contain no visible brand names, logos, trademarks, watermarks, readable signage, product branding, or Climbro branding.
 - Validation: frontmatter limits, allowed-category check, tracked-link compliance, prohibited-source scan, `git diff --check`, visual image review, and `npm run build` passed. The final build used network access for Supabase route generation and included 779 gyms.
+- Published in commit `931c693` and verified live on `https://www.indoorclimbinggym.com/blog/climbing-coach-tools-climbro/`, `https://www.indoorclimbinggym.com/blog/auto-belay-climbing-guide/`, and `https://www.indoorclimbinggym.com/blog/arc-training-climbing/`.
 
 ---
 
