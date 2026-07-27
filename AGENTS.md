@@ -24,10 +24,10 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
-## 📝 Weekly SEO Article Automation - 2026-07-27 Run (PUBLISHING)
+## 📝 Weekly SEO Article Automation - 2026-07-27 Run (PUSH BLOCKED)
 
 **Completed:** 2026-07-27
-**Status:** ⏳ Three weekly articles and hero images validated; publishing to `main`
+**Status:** ⚠️ Three weekly articles and hero images validated and committed locally; push blocked by expired/unauthorized GitHub credentials
 
 ### Overview
 
@@ -51,6 +51,8 @@ Added the required weekly article mix: one Climbro-focused portable-hangboard bu
 - Non-Climbro claims link to current World Climbing discipline/competition materials and peer-reviewed PubMed/PMC climbing-training research.
 - Hero images are generated 1200x675 unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, product branding, or Climbro branding.
 - Validation: frontmatter limits, allowed-category check, exactly-three-file check, internal blog-link audit, tracked-link compliance, prohibited-source scan, `git diff --check`, visual image review, and the network-enabled `npm run build` passed. The build generated all three routes and included 779 gyms.
+- Local content/docs commit: `9e4c595` (`Add weekly climbing SEO articles`). Local `main` is one commit ahead of `origin/main`.
+- Push failed with GitHub HTTP 403 because the active `timhar02` credential cannot write to `tstevenh/indoorclimbinggym-directory`; `gh auth status` also reports invalid tokens for all configured GitHub accounts. Production verification is pending until an authorized account is re-authenticated and the commit is pushed.
 
 ## 📝 Weekly SEO Article Automation - 2026-07-20 Run (COMPLETED)
 
