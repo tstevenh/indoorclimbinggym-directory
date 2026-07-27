@@ -24,6 +24,34 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
+## 📝 Weekly SEO Article Automation - 2026-07-27 Run (PUBLISHING)
+
+**Completed:** 2026-07-27
+**Status:** ⏳ Three weekly articles and hero images validated; publishing to `main`
+
+### Overview
+
+Added the required weekly article mix: one Climbro-focused portable-hangboard buyer guide, one general speed-climbing guide, and one campus-board training bridge that routes measurement curiosity into the Climbro cluster.
+
+### Files Added
+
+1. `src/content/blog/portable-hangboard-climbro-mini.mdx`
+2. `src/content/blog/speed-climbing-guide.mdx`
+3. `src/content/blog/campus-board-workout.mdx`
+4. `public/images/blog/portable-hangboard-climbro-mini.png`
+5. `public/images/blog/speed-climbing-guide.png`
+6. `public/images/blog/campus-board-workout.png`
+
+### Implementation Notes
+
+- DataForSEO was reachable. Selected keywords meet the automation thresholds: `portable hangboard` search volume 880, KD 0; `speed climbing` search volume 1,000, KD 0; `campus board workout` search volume 110, KD 0.
+- Topic selection avoided duplicate coverage across existing Climbro home/app/rental/buyer-fit articles, general hangboard guides, lead/top-rope/auto-belay guides, and strength/endurance/core/ARC training articles.
+- The portable-hangboard article is differentiated by travel, no-drill setup, anchoring, and tracking decisions rather than repeating the existing Climbro Mini home-training review.
+- Climbro claims were limited to `/Users/tsth/Coding/rockclimbing/data-for-website/Affiliate-climbro/climbro_official_claims.md`. Inline outbound CTAs use `ClimbroTrackedLink.astro`, while methodology curiosity routes through internal explainers and `ClimbroAffiliateBlock.astro`.
+- Non-Climbro claims link to current World Climbing discipline/competition materials and peer-reviewed PubMed/PMC climbing-training research.
+- Hero images are generated 1200x675 unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, product branding, or Climbro branding.
+- Validation: frontmatter limits, allowed-category check, exactly-three-file check, internal blog-link audit, tracked-link compliance, prohibited-source scan, `git diff --check`, visual image review, and the network-enabled `npm run build` passed. The build generated all three routes and included 779 gyms.
+
 ## 📝 Weekly SEO Article Automation - 2026-07-20 Run (COMPLETED)
 
 **Completed:** 2026-07-20
