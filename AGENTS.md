@@ -27,7 +27,7 @@
 ## 📝 Weekly SEO Article Automation - 2026-08-17 Run
 
 **Completed:** 2026-08-17
-**Status:** Three weekly articles and hero images created; publication verification pending
+**Status:** Articles pushed to `main`; Vercel production verification still pending (initial checks returned 404 during deployment)
 
 ### Overview
 
@@ -49,6 +49,9 @@ Added one Climbro-focused climbing-grip-trainer guide, one general climbing-term
 - Climbro claims were limited to `/Users/tsth/Coding/rockclimbing/data-for-website/Affiliate-climbro/climbro_official_claims.md`. Outbound CTAs use `ClimbroTrackedLink.astro`; methodology curiosity routes to internal explainers before the `ClimbroAffiliateBlock.astro` decision paths.
 - Non-Climbro claims use USA Climbing and peer-reviewed PubMed research. No Climbing Business Journal source or link is present.
 - Hero images are generated 1200x675 unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, product branding, or Climbro branding.
+- Validation: prohibited-source scan, tracked affiliate rendering, `git diff --check`, and the network-enabled `npm run build` passed. The build generated all three routes and included 779 gyms.
+- Content/docs commit: `df1aea9` (`Add weekly climbing SEO articles`). The push to `origin/main` succeeded and also published the previously blocked July 27 commits.
+- Immediate and delayed production checks returned the site's 404 page for all three new paths, indicating the deployment had not reached production before this run ended.
 
 ## 📝 Weekly SEO Article Automation - 2026-07-27 Run (PUSH BLOCKED)
 
