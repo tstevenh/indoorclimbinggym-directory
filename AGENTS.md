@@ -24,6 +24,32 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
+## 📝 Weekly SEO Article Automation - 2026-08-17 Run
+
+**Completed:** 2026-08-17
+**Status:** Three weekly articles and hero images created; publication verification pending
+
+### Overview
+
+Added one Climbro-focused climbing-grip-trainer guide, one general climbing-terms glossary, and one climbing-forearm training bridge that routes measurement curiosity into the internal Climbro cluster.
+
+### Files Added
+
+1. `src/content/blog/climbing-grip-trainer-climbro.mdx`
+2. `src/content/blog/climbing-terms-glossary.mdx`
+3. `src/content/blog/climbing-forearm-workout.mdx`
+4. `public/images/blog/climbing-grip-trainer-climbro.png`
+5. `public/images/blog/climbing-terms-glossary.png`
+6. `public/images/blog/climbing-forearm-workout.png`
+
+### Implementation Notes
+
+- DataForSEO selected keywords meet the automation thresholds: `climbing grip trainer` search volume 480, KD 0; `climbing terms` search volume 1,600, KD 14; `climbing forearm workout` search volume 110, KD 0.
+- Topic selection avoided overlap with existing training-tools, portable-hangboard, general hangboard, technique, strength, endurance, campus-board, and Climbro product-fit articles.
+- Climbro claims were limited to `/Users/tsth/Coding/rockclimbing/data-for-website/Affiliate-climbro/climbro_official_claims.md`. Outbound CTAs use `ClimbroTrackedLink.astro`; methodology curiosity routes to internal explainers before the `ClimbroAffiliateBlock.astro` decision paths.
+- Non-Climbro claims use USA Climbing and peer-reviewed PubMed research. No Climbing Business Journal source or link is present.
+- Hero images are generated 1200x675 unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, product branding, or Climbro branding.
+
 ## 📝 Weekly SEO Article Automation - 2026-07-27 Run (PUSH BLOCKED)
 
 **Completed:** 2026-07-27
