@@ -24,6 +24,34 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
+## 📝 Weekly SEO Article Automation - 2026-08-24 Run
+
+**Completed:** 2026-08-24
+**Status:** Three weekly articles and hero images validated; publication pending commit and push
+
+### Overview
+
+Added one Climbro-focused grip-testing buyer guide, one general climbing-chalk guide, and one pull-up training bridge that separates upper-body pulling from finger measurement before routing methodology curiosity into the internal Climbro cluster.
+
+### Files Added
+
+1. `src/content/blog/grip-strength-test-climbers-climbro.mdx`
+2. `src/content/blog/climbing-chalk-guide.mdx`
+3. `src/content/blog/pull-ups-for-climbing.mdx`
+4. `public/images/blog/grip-strength-test-climbers-climbro.png`
+5. `public/images/blog/climbing-chalk-guide.png`
+6. `public/images/blog/pull-ups-for-climbing.png`
+
+### Implementation Notes
+
+- DataForSEO selected keywords meet the automation thresholds: `grip strength test` search volume 6,600, KD 7; `climbing chalk` search volume 5,400, KD 4; `pull ups for climbing` search volume 720, KD 0.
+- Topic selection avoided overlap with the existing grip-trainer, hangboard, finger-strength, general strength, forearm, training-tools, and sweaty-hands chalk articles. The new angles focus on test selection and repeatability, chalk forms/use/gym rules, and pull-up progression respectively.
+- Climbro claims were limited to `/Users/tsth/Coding/rockclimbing/data-for-website/Affiliate-climbro/climbro_official_claims.md`. The affiliate article routes methodology curiosity to the internal measurement explainer before tracked Mini, Pro, rental, shop, and trial paths; the pull-up bridge uses internal Climbro methodology and decision links only.
+- Non-Climbro claims use peer-reviewed PubMed/PMC climbing-performance research, Royal Society of Chemistry dust measurements, and a 2026 peer-reviewed indoor-air study. No Climbing Business Journal source or link is present.
+- Internal links cover Climbro explainers, training frequency and weekly structure, strength/campus content, chalk and gear guides, the recovery planner, gym search, states, and the bouldering category directory.
+- Hero images are generated 1200x675 unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, product branding, or Climbro branding. A shoe marking was removed from the chalk image, and an anatomically invalid pull-up variant was discarded before final selection.
+- Validation: frontmatter limits and allowed-category checks, exactly-three-article check, internal blog-link audit, tracked affiliate-link audit, prohibited-source scan, image dimension and visual review, `git diff --check`, and the network-enabled `npm run build` passed. The build generated all three routes and included 779 gyms.
+
 ## 📝 Weekly SEO Article Automation - 2026-08-17 Run
 
 **Completed:** 2026-08-17
