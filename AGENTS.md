@@ -27,7 +27,7 @@
 ## 📝 Weekly SEO Article Automation - 2026-08-24 Run
 
 **Completed:** 2026-08-24
-**Status:** Three weekly articles and hero images validated; publication pending commit and push
+**Status:** Articles pushed to `main` and verified live
 
 ### Overview
 
@@ -51,6 +51,8 @@ Added one Climbro-focused grip-testing buyer guide, one general climbing-chalk g
 - Internal links cover Climbro explainers, training frequency and weekly structure, strength/campus content, chalk and gear guides, the recovery planner, gym search, states, and the bouldering category directory.
 - Hero images are generated 1200x675 unbranded indoor climbing scenes with no visible brand names, logos, trademarks, watermarks, readable signage, product branding, or Climbro branding. A shoe marking was removed from the chalk image, and an anatomically invalid pull-up variant was discarded before final selection.
 - Validation: frontmatter limits and allowed-category checks, exactly-three-article check, internal blog-link audit, tracked affiliate-link audit, prohibited-source scan, image dimension and visual review, `git diff --check`, and the network-enabled `npm run build` passed. The build generated all three routes and included 779 gyms.
+- Content/docs commit: `85bd9fa` (`Add weekly climbing SEO articles`). The push to `origin/main` succeeded, and Vercel reported a successful deployment.
+- Production returned HTTP 200 with the expected titles for `/blog/grip-strength-test-climbers-climbro/`, `/blog/climbing-chalk-guide/`, and `/blog/pull-ups-for-climbing/`.
 
 ## 📝 Weekly SEO Article Automation - 2026-08-17 Run
 
