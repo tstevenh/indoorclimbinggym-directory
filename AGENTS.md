@@ -24,6 +24,37 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
+## 📝 Weekly SEO Article Automation - 2026-10-06 Run
+
+**Completed:** 2026-10-06
+**Status:** Three weekly articles and hero images validated; publication to `main` in progress
+
+### Overview
+
+Added one Climbro-focused home training-equipment buyer guide, one general figure-eight tie-in guide, and one dyno technique/training bridge that routes measurement questions into the internal Climbro cluster.
+
+### Files Added
+
+1. `src/content/blog/climbing-training-equipment-climbro.mdx`
+2. `src/content/blog/figure-8-knot-climbing.mdx`
+3. `src/content/blog/climbing-dyno-technique-drills.mdx`
+4. `public/images/blog/climbing-training-equipment-climbro.png`
+5. `public/images/blog/figure-8-knot-climbing-guide.png`
+6. `public/images/blog/climbing-dyno-technique-drills.png`
+
+### Implementation Notes
+
+- Fresh DataForSEO metrics met the automation thresholds: `climbing training equipment` search volume 390, KD 0; `figure 8 knot climbing` search volume 1,600, KD 13; `climbing dyno` search volume 1,300, KD 0.
+- Topic selection inventoried 93 published articles plus public pages and avoided duplicating the existing training-tools, grip-testing, belay-test, rope-discipline, movement, strength, and campus-board articles. The new angles focus on home-equipment buying sequence, direct tie-in inspection, and progressive dynamic-movement practice.
+- Climbro claims were limited to `/Users/tsth/Coding/rockclimbing/data-for-website/Affiliate-climbro/climbro_official_claims.md`. No pricing, warranty, trial details, product specifications, medical claims, performance guarantees, or hands-on testing claims were added.
+- The affiliate article routes methodology curiosity to the internal measurement and training-plan explainers before tracked Mini, Pro, rental, shop, and 30-day-trial paths. Outbound Climbro CTAs use `ClimbroTrackedLink.astro` and `ClimbroAffiliateBlock.astro`.
+- The figure-eight guide uses Petzl and UIAA guidance; the dyno bridge uses peer-reviewed climbing biomechanics and training research. No Climbing Business Journal source or link is present.
+- Internal links cover gym search, top-rope and lead guides, belay testing, technique and footwork, route reading, warm-up, strength/core/pull-up training, campus work, recovery planning, and Climbro methodology/buyer pages.
+- Hero images are generated 1200x675 unbranded indoor climbing scenes. Visual inspection found no visible brand names, logos, trademarks, watermarks, readable signage, branded product marks, or Climbro branding.
+- Validation: frontmatter description and SEO-title limits, allowed categories, internal blog-link existence, tracked affiliate-link audit, prohibited-source scan, image dimensions and visual review, `git diff --check`, and `npm run build` passed. The build generated all three routes and included 779 gyms.
+
+---
+
 ## 📝 Weekly SEO Article Automation - 2026-08-24 Run
 
 **Completed:** 2026-08-24
