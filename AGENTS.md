@@ -27,7 +27,7 @@
 ## 📝 Weekly SEO Article Automation - 2026-10-06 Run
 
 **Completed:** 2026-10-06
-**Status:** Three weekly articles and hero images validated; publication to `main` in progress
+**Status:** Three weekly articles and hero images validated and committed locally; push blocked by invalid/unauthorized GitHub credentials
 
 ### Overview
 
@@ -52,6 +52,7 @@ Added one Climbro-focused home training-equipment buyer guide, one general figur
 - Internal links cover gym search, top-rope and lead guides, belay testing, technique and footwork, route reading, warm-up, strength/core/pull-up training, campus work, recovery planning, and Climbro methodology/buyer pages.
 - Hero images are generated 1200x675 unbranded indoor climbing scenes. Visual inspection found no visible brand names, logos, trademarks, watermarks, readable signage, branded product marks, or Climbro branding.
 - Validation: frontmatter description and SEO-title limits, allowed categories, internal blog-link existence, tracked affiliate-link audit, prohibited-source scan, image dimensions and visual review, `git diff --check`, and `npm run build` passed. The build generated all three routes and included 779 gyms.
+- Local content/docs commit: `87483df` (`Add weekly climbing SEO articles`). Push to `origin/main` failed with GitHub HTTP 403 because the active `siisksksjs` credential cannot write to `tstevenh/indoorclimbinggym-directory`; all configured `gh` accounts report invalid tokens. Production verification is pending re-authentication and push.
 
 ---
 
