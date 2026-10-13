@@ -24,6 +24,41 @@
 **Purpose:** SEO-optimized public directory of climbing gyms
 **Rendering:** Hybrid SSR/SSG (Server-Side + Static Generation)
 
+## 📝 Weekly SEO Article Automation - 2026-10-13 Run
+
+**Completed:** 2026-10-13
+**Status:** Three weekly articles and hero images validated; publication commit and push pending
+
+### Overview
+
+Added one Climbro-focused fingerboard buyer guide, one general belay-device chooser, and one climbing-stretching training bridge that separates mobility limits from finger-strength and endurance questions.
+
+### Files Added
+
+1. `src/content/blog/fingerboard-climbing-climbro.mdx`
+2. `src/content/blog/belay-device-rock-climbing-guide.mdx`
+3. `src/content/blog/climbing-stretching-exercises.mdx`
+4. `public/images/blog/fingerboard-climbing-climbro.png`
+5. `public/images/blog/belay-device-rock-climbing-guide.png`
+6. `public/images/blog/climbing-stretching-exercises.png`
+
+### Implementation Notes
+
+- Fresh DataForSEO metrics met the automation thresholds: `fingerboard climbing` search volume 1,300, KD 0; `belay device rock climbing` search volume 2,400, KD 11; `climbing stretching exercises` search volume 260, KD 0.
+- Topic selection inventoried 93 existing published articles plus public gym, category, search, and training-tool pages. The new angles avoid repeating existing generic hangboard training, belay-test, warm-up, finger-strength, and equipment-stack articles by focusing on fingerboard purchase workflow, belay-device compatibility, and active-versus-post-session mobility timing.
+- Climbro claims were limited to `/Users/tsth/Coding/rockclimbing/data-for-website/Affiliate-climbro/climbro_official_claims.md`. No unsupported pricing, warranty, trial/rental terms, product specifications, medical claims, performance guarantees, or hands-on testing claims were added.
+- The fingerboard article routes methodology questions to the internal measurement and training-plan explainers before tracked Mini, Pro, rental, shop, and 30-day-trial paths. The stretching bridge uses internal Climbro methodology and buyer pages through `ClimbroAffiliateBlock.astro`; outbound Climbro paths use `ClimbroTrackedLink.astro`.
+- External support uses PubMed-indexed climbing training and warm-up research, current UIAA equipment advice and braking-device definitions, and Petzl's manufacturer technique guidance. No Climbing Business Journal source or link is present.
+- Internal links cover climbing workouts, footwork, route reading, warm-up, chalk, top-rope and lead guides, belay testing, harnesses, figure-eight knots, search, relevant directory categories, and the training-load recovery planner.
+- Three built-in generated 1200x675 hero images were visually inspected. A belay-device variant was regenerated to remove small hardware markings. Final assets contain no visible brand names, logos, trademarks, readable signage, watermarks, branded clothing marks, branded product marks, or Climbro branding.
+- Frontmatter limits, category/date checks, actual word counts, exactly-three-article and image checks, internal-link inventory, prohibited-source scan, tracked affiliate parameters and sponsored attributes, rendered titles, FAQ schema, hero references, bridge links, image dimensions, `git diff --check`, and the full Astro build passed. The build generated all three routes and used 779 gyms.
+
+### Publication Status
+
+- Publication commit: pending.
+- Push to `origin/main`: pending.
+- Production URL checks: pending deployment.
+
 ## 📝 Weekly SEO Article Automation - 2026-10-06 Run
 
 **Completed:** 2026-10-06
