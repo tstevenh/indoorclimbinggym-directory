@@ -27,7 +27,7 @@
 ## 📝 Weekly SEO Article Automation - 2026-10-13 Run
 
 **Completed:** 2026-10-13
-**Status:** Three weekly articles and hero images validated; publication commit and push pending
+**Status:** Three weekly articles and hero images validated and committed locally; push blocked by invalid/unauthorized GitHub credentials
 
 ### Overview
 
@@ -55,9 +55,10 @@ Added one Climbro-focused fingerboard buyer guide, one general belay-device choo
 
 ### Publication Status
 
-- Publication commit: pending.
-- Push to `origin/main`: pending.
-- Production URL checks: pending deployment.
+- Publication commit: `a1a7f8a` (`Add weekly climbing SEO articles`).
+- `git push origin main` failed with HTTP 403 because the active `siisksksjs` credential lacks permission for `tstevenh/indoorclimbinggym-directory`.
+- `gh auth status` reports invalid tokens for every configured account, including `tstevenh`; the local branch includes the still-unpublished 2026-10-06 commits as well as this run.
+- Production checks returned HTTP 404 with the site's normal not-found title for all three new routes, as expected because the commit did not reach `origin/main`. Re-authenticate an authorized account, push local `main`, and verify the routes after deployment.
 
 ## 📝 Weekly SEO Article Automation - 2026-10-06 Run
 
