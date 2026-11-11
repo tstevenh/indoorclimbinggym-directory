@@ -211,7 +211,7 @@ function getCategoryTitle(category: CategoryDefinition): string {
   if (category.slug === 'best-bouldering-climbing-gyms') return 'Best Bouldering Climbing Gyms';
   if (category.slug === 'affordable-climbing-gyms') return 'Affordable Climbing Gyms';
   if (category.slug.startsWith('climbing-gyms-with-')) return `Climbing Gyms with ${formatToken(category.value)}`;
-  return category.name.replace(/ Gyms$/, ' Climbing Gyms');
+  return category.name;
 }
 
 export async function getDirectoryLlmPages(): Promise<LlmPage[]> {

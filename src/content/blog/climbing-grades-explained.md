@@ -7,7 +7,7 @@ author: "Indoor Climbing Gym Team"
 category: "guides"
 tags: ["climbing grades", "v scale", "yds", "font", "bouldering grades", "grade conversion", "climbing rating system"]
 featured: true
-heroImage: "images/blog/climbing-grade-hero.webp"
+heroImage: "/images/blog/climbing-grade-hero.webp"
 heroImageAlt: "Climber reading grade information on climbing wall showing different difficulty levels"
 wordCount: 4200
 readingTime: 16

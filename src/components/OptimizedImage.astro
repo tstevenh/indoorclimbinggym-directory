@@ -5,7 +5,7 @@
  * Provides lazy loading, responsive images, and prevents layout shift
  * Automatically falls back to placeholder if image URL is missing/invalid
  */
-import { optimizeUnsplashUrl, generateSrcset, getImageUrl, PLACEHOLDER_IMAGE } from '../utils/imageUtils';
+import { optimizeImageUrl, supportsResponsiveSrcset, generateSrcset, getImageUrl, PLACEHOLDER_IMAGE } from '../utils/imageUtils';
 
 interface Props {
   src: string | null | undefined;
@@ -17,6 +17,7 @@ interface Props {
   sizes?: string; // Responsive sizes attribute
   quality?: number;
   srcsetSizes?: number[]; // Array of widths for srcset generation
+  priority?: boolean; // LCP image: eager + fetchpriority=high
 }
 
 const {
@@ -29,26 +30,25 @@ const {
   sizes,
   quality = 75,
   srcsetSizes,
+  priority = false,
 } = Astro.props;
 
 // Get valid image URL (falls back to placeholder if null/undefined/empty)
 const validSrc = getImageUrl(src);
 const isPlaceholder = validSrc === PLACEHOLDER_IMAGE;
 
-// Determine if this is an external URL (Unsplash)
-const isExternal = validSrc.startsWith('http://') || validSrc.startsWith('https://');
-const isUnsplash = validSrc.includes('unsplash.com');
+// Host-aware optimization: Unsplash + Cloudinary are resized (and get srcset), other hosts pass through unchanged
+const canResize = !isPlaceholder && supportsResponsiveSrcset(validSrc);
+const optimizedSrc = optimizeImageUrl(validSrc, width, height, quality);
 
-// Optimize the primary image URL if it's Unsplash
-const optimizedSrc = isUnsplash
-  ? optimizeUnsplashUrl(validSrc, width, height, quality)
-  : validSrc;
-
-// Generate srcset if sizes are provided and it's Unsplash (not for placeholder)
 const srcset =
-  isUnsplash && srcsetSizes && srcsetSizes.length > 0 && !isPlaceholder
+  canResize && srcsetSizes && srcsetSizes.length > 0
     ? generateSrcset(validSrc, srcsetSizes, height / width, quality)
     : undefined;
+// sizes only makes sense together with srcset
+const sizesAttr = srcset ? sizes : undefined;
+
+const loadingAttr = priority ? 'eager' : loading;
 
 // Calculate aspect ratio for CSS to prevent CLS
 const aspectRatio = (height / width) * 100;
@@ -60,10 +60,11 @@ const aspectRatio = (height / width) * 100;
     alt={alt}
     width={width}
     height={height}
-    loading={loading}
+    loading={loadingAttr}
+    fetchpriority={priority ? 'high' : undefined}
     decoding="async"
     srcset={srcset}
-    sizes={sizes}
+    sizes={sizesAttr}
     class="w-full h-full object-cover"
   />
 </div>

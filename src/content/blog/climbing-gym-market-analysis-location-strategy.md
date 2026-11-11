@@ -718,7 +718,7 @@ Understanding industry benchmarks helps evaluate location potential and project 
 
 **EBITDA:** $180,000 (20% margin)
 
-This model demonstrates a healthy, profitable operation. Actual performance varies dramatically based on location, pricing, and operational efficiency. For insights on pricing strategies, see our guide on [climbing gym costs](/guides/how-much-does-climbing-gym-cost).
+This model demonstrates a healthy, profitable operation. Actual performance varies dramatically based on location, pricing, and operational efficiency. For insights on pricing strategies, see our guide on [climbing gym costs](/blog/how-much-does-climbing-gym-cost/).
 
 ### Customer Acquisition Cost (CAC) Analysis
 

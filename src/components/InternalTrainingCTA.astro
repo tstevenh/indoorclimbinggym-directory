@@ -66,6 +66,14 @@ const CTA_COPY: Record<
 
 const copy = CTA_COPY[variant];
 const imageSrc = CTA_IMAGES[variant];
+// Intrinsic sizes of the (resized) Climbro_Pro images, keyed by file
+const IMAGE_DIMS: Record<string, { width: number; height: number }> = {
+  'climbro-detail-1.jpg': { width: 960, height: 960 },
+  'climbro-detail-2.jpg': { width: 960, height: 960 },
+  'climbro-detail-3.jpg': { width: 960, height: 640 },
+  'climbro-detail-4.jpg': { width: 960, height: 466 },
+};
+const imageDims = IMAGE_DIMS[imageSrc.split('/').pop() ?? ''] ?? { width: 960, height: 640 };
 ---
 
 <section
@@ -80,8 +88,11 @@ const imageSrc = CTA_IMAGES[variant];
     <img
       src={imageSrc}
       alt="Indoor climber considering home finger training"
+      width={imageDims.width}
+      height={imageDims.height}
       class="h-40 w-full object-cover"
       loading="lazy"
+      decoding="async"
     />
     <div class="absolute inset-0 bg-gradient-to-t from-[#131313] via-[#131313]/25 to-transparent"></div>
     <div class="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/45 px-3 py-1 text-[11px] font-mono uppercase tracking-[0.18em] text-white/80 backdrop-blur">

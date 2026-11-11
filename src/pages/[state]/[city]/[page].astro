@@ -9,7 +9,7 @@ import GymCard from '../../../components/GymCard.astro';
 import Pagination from '../../../components/Pagination.astro';
 import OtherCitiesInState from '../../../components/OtherCitiesInState.astro';
 import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
-import { generateCityTitle, generateCityDescription } from '../../../utils/seo';
+import { generateCityTitle, generateCityDescription, buildTitle, stateAbbr } from '../../../utils/seo';
 import { hasValue, priceStats, formatPrice, formatRating } from '../../../utils/display';
 import { fetchGyms } from '../../../config/api';
 import { getStateSlug } from '../../../utils/states';
@@ -128,7 +128,10 @@ const seoPriceMax = priceRangeStats?.max;
 const baseTitle = generateCityTitle(city, region, cityGyms.length);
 // Use short pagination format: " (P2)" instead of " - Page 2" to save characters
 const title = currentPage > 1
-  ? `${city} Climbing Gyms (P${currentPage}) | ${region}`
+  ? buildTitle([
+      `${city} Climbing Gyms - Page ${currentPage} | ${stateAbbr(region)}`,
+      `${city} Climbing Gyms - Page ${currentPage}`,
+    ])
   : baseTitle;
 const description = generateCityDescription(
   city,
@@ -253,7 +256,7 @@ const breadcrumbs = [
   <!-- Header -->
   <header class="mb-8">
     <h1 class="text-4xl md:text-5xl font-bold text-granite mb-4">
-      Best Climbing Gyms in {city}, {region}
+      {cityGyms.length >= 2 ? 'Best Climbing Gyms' : 'Climbing Gym'} in {city}, {region}
     </h1>
     <p class="text-xl text-gray-700 leading-relaxed mb-6">
       Discover {cityGyms.length} indoor climbing and bouldering facilities in {city}.

@@ -3,7 +3,72 @@
  * Creates structured data for all page types per schema.org standards
  */
 
-import { formatRating, stripRatingClaims } from './display';
+import { formatRating, stripRatingClaims, hasValue } from './display';
+import { US_STATES } from './states';
+
+export const SITE_NAME = 'IndoorClimbingGym';
+export const SITE_URL = 'https://www.indoorclimbinggym.com';
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+export const WEBSITE_ID = `${SITE_URL}/#website`;
+
+/**
+ * Verified official social profile URLs for the Organization `sameAs` property.
+ * Intentionally empty: ownership of the footer social accounts is unverified.
+ * Add URLs here only once the owner confirms them; sameAs is emitted only when non-empty.
+ */
+export const ORGANIZATION_SAME_AS: string[] = [];
+
+/** Minimal Organization reference by @id (name kept so validators show a label). */
+const organizationRef = () => ({ '@type': 'Organization', '@id': ORGANIZATION_ID, name: SITE_NAME });
+
+/**
+ * Parse a US full address ("575 Degraw St, Brooklyn, NY 11217") into street + ZIP.
+ * Returns only what it can parse with confidence; anything else is undefined.
+ */
+export function parseUSAddress(address: unknown): { streetAddress?: string; postalCode?: string } {
+  if (typeof address !== 'string') return {};
+  const clean = address.replace(/\s+/g, ' ').trim();
+  if (!clean) return {};
+  const parts = clean.split(',').map((p) => p.trim()).filter(Boolean);
+  if (parts.length < 2) return {};
+
+  // ZIP: a standalone 5-digit (optionally +4) token that follows a state code/name, searched from the end.
+  let postalCode: string | undefined;
+  for (let i = parts.length - 1; i >= 1; i--) {
+    const m = parts[i].match(/(?:^|\s)(\d{5})(?:-(\d{4}))?(?:\s|$)/);
+    if (m && /[A-Za-z]/.test(parts[i].replace(m[0], ''))) {
+      postalCode = m[2] ? `${m[1]}-${m[2]}` : m[1];
+      break;
+    }
+    if (m && /^\d{5}(-\d{4})?$/.test(parts[i]) && i > 1) {
+      postalCode = parts[i];
+      break;
+    }
+  }
+
+  // Street: first segment, only if it looks like a street (starts with a number) -- suites stay in
+  // following segments ("Ste 100") and are appended when they are before the city segment.
+  const first = parts[0];
+  let streetAddress: string | undefined;
+  if (/^\d/.test(first)) {
+    streetAddress = first;
+    const second = parts[1];
+    if (parts.length >= 4 && /^(suite|ste|unit|apt|#|floor|fl|building|bldg|space|spc)\b/i.test(second)) {
+      streetAddress = `${first}, ${second}`;
+    }
+  }
+  return { streetAddress, postalCode };
+}
+
+/** 2-letter USPS code from a full state name ("New York") or code ("NY"); undefined if unknown. */
+export function stateToUSPS(region: unknown): string | undefined {
+  if (typeof region !== 'string') return undefined;
+  const r = region.trim().toLowerCase();
+  if (!r) return undefined;
+  if (US_STATES[r]) return US_STATES[r];
+  const upper = r.toUpperCase();
+  return Object.values(US_STATES).includes(upper) ? upper : undefined;
+}
 
 interface Gym {
   id: number;
@@ -28,6 +93,18 @@ interface Gym {
   [key: string]: any;
 }
 
+function buildAddress(gym: Gym) {
+  const { streetAddress, postalCode } = parseUSAddress(gym.address ?? gym.full_address);
+  const region = stateToUSPS(gym.region);
+  const addr: any = { '@type': 'PostalAddress' };
+  if (streetAddress) addr.streetAddress = streetAddress;
+  if (gym.city) addr.addressLocality = gym.city;
+  if (region) addr.addressRegion = region;
+  if (postalCode) addr.postalCode = postalCode;
+  addr.addressCountry = 'US';
+  return addr;
+}
+
 /**
  * Generate LocalBusiness + SportsActivityLocation schema for gym pages
  * @param gym Gym data object
@@ -41,27 +118,23 @@ export function generateGymSchema(gym: Gym, pageUrl: string) {
   const schema: any = {
     '@context': 'https://schema.org',
     '@type': ['SportsActivityLocation', 'LocalBusiness'],
-    '@id': pageUrl,
+    '@id': `${pageUrl.replace(/#.*$/, '')}#gym`,
     name: gym.name,
     description: stripRatingClaims(gym.about || gym.description_short) || undefined,
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: gym.full_address,
-      addressLocality: gym.city,
-      addressRegion: gym.region,
-      postalCode: gym.postal_code,
-      addressCountry: gym.country,
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: gym.latitude,
-      longitude: gym.longtitude, // Note: uses misspelled field from schema
-    },
+    address: buildAddress(gym),
     // For LocalBusiness, url is typically the official site; we keep gym.website here.
     // The schema @id is the canonical pageUrl.
     url: gym.website,
     sport: 'Rock Climbing',
   };
+
+  if (hasValue(gym.latitude) && hasValue(gym.longtitude)) {
+    schema.geo = {
+      '@type': 'GeoCoordinates',
+      latitude: Number(gym.latitude),
+      longitude: Number(gym.longtitude), // Note: uses misspelled field from schema
+    };
+  }
 
   if (gym.photo) schema.image = gym.photo;
   if (gym.phone) schema.telephone = gym.phone;
@@ -81,11 +154,7 @@ export function generateGymSchema(gym: Gym, pageUrl: string) {
     schema.review = {
       '@type': 'Review',
       name: 'IndoorClimbingGym editorial rating',
-      author: {
-        '@type': 'Organization',
-        name: 'IndoorClimbingGym',
-        url: 'https://www.indoorclimbinggym.com/',
-      },
+      author: organizationRef(),
       reviewRating: {
         '@type': 'Rating',
         ratingValue: Number(editorial),
@@ -259,15 +328,7 @@ export function generateArticleSchema(post: any, pageUrl: string) {
       name: post.author,
       url: 'https://www.indoorclimbinggym.com'
     },
-    publisher: {
-      '@type': 'Organization',
-      name: 'IndoorClimbingGym.com',
-      url: 'https://www.indoorclimbinggym.com',
-      logo: {
-        '@type': 'ImageObject',
-        url: 'https://www.indoorclimbinggym.com/logo.png',
-      },
-    },
+    publisher: organizationRef(),
     datePublished: post.publishedDate,
     dateModified: post.updatedDate || post.publishedDate,
     mainEntityOfPage: {
@@ -299,14 +360,13 @@ export function generateOrganizationSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'IndoorClimbingGym',
+    '@id': ORGANIZATION_ID,
+    name: SITE_NAME,
     url: 'https://www.indoorclimbinggym.com',
     logo: 'https://www.indoorclimbinggym.com/logo.png',
     description:
       'Find the best indoor climbing gyms near you. Search by location, amenities, and climbing type. Reviews, prices, and directions for climbers.',
-    sameAs: [
-      // Add social media URLs when available
-    ],
+    ...(ORGANIZATION_SAME_AS.length > 0 && { sameAs: ORGANIZATION_SAME_AS }),
   };
 }
 
@@ -318,9 +378,11 @@ export function generateWebSiteSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
+    '@id': WEBSITE_ID,
     url: 'https://www.indoorclimbinggym.com',
-    name: 'IndoorClimbingGym',
+    name: SITE_NAME,
     description: 'Find your next climb. Indoor climbing gym directory.',
+    publisher: { '@id': ORGANIZATION_ID },
     potentialAction: {
       '@type': 'SearchAction',
       target: {
@@ -433,12 +495,12 @@ export function generateScholarlyArticleSchema(study: {
     abstract: study.description,
     author: {
       '@type': 'Organization',
-      name: study.author || 'IndoorClimbingGym.com Research Team',
+      name: study.author || 'IndoorClimbingGym Research Team',
       url: 'https://www.indoorclimbinggym.com'
     },
     publisher: {
       '@type': 'Organization',
-      name: 'IndoorClimbingGym.com',
+      name: SITE_NAME,
       url: 'https://www.indoorclimbinggym.com',
       logo: {
         '@type': 'ImageObject',
@@ -489,12 +551,12 @@ export function generateDatasetSchema(dataset: {
     description: dataset.description,
     creator: {
       '@type': 'Organization',
-      name: dataset.creator || 'IndoorClimbingGym.com',
+      name: dataset.creator || SITE_NAME,
       url: 'https://www.indoorclimbinggym.com'
     },
     publisher: {
       '@type': 'Organization',
-      name: 'IndoorClimbingGym.com',
+      name: SITE_NAME,
       url: 'https://www.indoorclimbinggym.com'
     },
     datePublished: dataset.datePublished,

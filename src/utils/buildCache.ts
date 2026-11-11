@@ -31,6 +31,43 @@ let cacheTimestamp: number = 0;
 const CACHE_TTL_DEV = 1000 * 60 * 60; // 1 hour in development
 const CACHE_TTL_PROD = 1000 * 60 * 5; // 5 minutes for SSR runtime
 
+import fs from 'node:fs';
+import path from 'node:path';
+import { getStateSlug } from './states';
+
+export const LASTMOD_MANIFEST = path.join(process.cwd(), 'node_modules', '.cache', 'sitemap-lastmod.json');
+
+/**
+ * Build-time side channel for the sitemap: real <lastmod> values derived from gyms.updated_at.
+ * Read by astro.config.mjs (sitemap serialize). Keys: gym slug, "/state/", "/state/city/", and "all".
+ */
+function writeLastmodManifest(gyms: any[]): void {
+  try {
+    const gymsBySlug: Record<string, string> = {};
+    const states: Record<string, string> = {};
+    const cities: Record<string, string> = {};
+    let all = '';
+    for (const g of gyms) {
+      const t = g.updated_at ? new Date(g.updated_at) : null;
+      if (!t || isNaN(t.getTime())) continue;
+      const iso = t.toISOString();
+      const max = (cur: string | undefined) => (!cur || iso > cur ? iso : cur);
+      if (g.slug) gymsBySlug[g.slug] = iso;
+      if (g.region && g.city) {
+        const st = getStateSlug(g.region);
+        const cityKey = `/${st}/${String(g.city).toLowerCase().replace(/\s+/g, '-')}/`;
+        states[`/${st}/`] = max(states[`/${st}/`]);
+        cities[cityKey] = max(cities[cityKey]);
+      }
+      all = max(all);
+    }
+    fs.mkdirSync(path.dirname(LASTMOD_MANIFEST), { recursive: true });
+    fs.writeFileSync(LASTMOD_MANIFEST, JSON.stringify({ gymsBySlug, states, cities, all }));
+  } catch (e) {
+    console.warn('[BuildCache] could not write lastmod manifest', e);
+  }
+}
+
 /**
  * Get cached gyms data if available
  * @returns Cached gyms array or null if cache is empty/expired
@@ -71,6 +108,7 @@ export function getCachedGyms(): any[] | null {
 export function setCachedGyms(gyms: any[]): void {
   cachedGyms = gyms;
   cacheTimestamp = Date.now();
+  if (!import.meta.env.DEV) writeLastmodManifest(gyms);
 
   const isDev = import.meta.env.DEV;
   const mode = isDev ? 'dev' : 'build';

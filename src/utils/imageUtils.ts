@@ -70,6 +70,46 @@ export function optimizeUnsplashUrl(
 }
 
 /**
+ * Cloudinary helpers
+ * Inserts an on-the-fly transformation (f_auto,q_auto,w_<n>,c_limit) after /upload/.
+ * c_limit never upscales; f_auto serves WebP/AVIF; q_auto picks quality.
+ * URLs that already carry a transformation segment (anything other than v<digits>) are left unchanged.
+ */
+export function isCloudinaryUrl(url: string): boolean {
+  return /^https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\//.test(url);
+}
+
+export function optimizeCloudinaryUrl(url: string, width: number): string {
+  if (!isCloudinaryUrl(url)) return url;
+  const marker = '/image/upload/';
+  const idx = url.indexOf(marker) + marker.length;
+  const rest = url.slice(idx);
+  if (!/^v\d+\//.test(rest)) return url; // already transformed / unknown shape
+  return `${url.slice(0, idx)}f_auto,q_auto,w_${Math.round(width)},c_limit/${rest}`;
+}
+
+/**
+ * Host-aware URL optimizer: Unsplash and Cloudinary get resized, anything else passes through unchanged.
+ */
+export function optimizeImageUrl(
+  url: string | null | undefined,
+  width: number,
+  height: number,
+  quality = 75
+): string {
+  const validUrl = getImageUrl(url);
+  if (validUrl === PLACEHOLDER_IMAGE) return validUrl;
+  if (validUrl.includes('unsplash.com')) return optimizeUnsplashUrl(validUrl, width, height, quality);
+  if (isCloudinaryUrl(validUrl)) return optimizeCloudinaryUrl(validUrl, width);
+  return validUrl;
+}
+
+/** True when we can generate resized variants for this host (srcset is meaningful). */
+export function supportsResponsiveSrcset(url: string): boolean {
+  return url.includes('unsplash.com') || isCloudinaryUrl(url);
+}
+
+/**
  * Generates srcset for responsive images
  * Falls back to placeholder if URL is invalid
  * @param baseUrl - Base Unsplash URL (can be null/undefined)
@@ -93,7 +133,7 @@ export function generateSrcset(
   return sizes
     .map((size) => {
       const height = Math.round(size * aspectRatio);
-      const optimizedUrl = optimizeUnsplashUrl(validUrl, size, height, quality);
+      const optimizedUrl = optimizeImageUrl(validUrl, size, height, quality);
       return `${optimizedUrl} ${size}w`;
     })
     .join(', ');
@@ -107,7 +147,7 @@ export const IMAGE_SIZES = {
   CARD_THUMBNAIL: {
     width: 800,
     height: 600,
-    sizes: [400, 800, 1200], // For srcset
+    sizes: [360, 480, 640, 800, 1200], // For srcset
     quality: 75,
   },
 
@@ -115,7 +155,7 @@ export const IMAGE_SIZES = {
   HERO: {
     width: 1600,
     height: 900,
-    sizes: [800, 1200, 1600, 2400], // For srcset
+    sizes: [640, 960, 1280, 1600], // For srcset
     quality: 80,
   },
 

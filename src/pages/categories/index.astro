@@ -242,11 +242,11 @@ const breadcrumbs = [
             {/* Hover glow */}
             <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 50% 0%, ${category.color}10 0%, transparent 60%)` }}></div>
             
-            <div class="flex items-center justify-between mb-4 relative z-10">
+            <div class="flex items-center justify-between gap-3 mb-4 relative z-10">
               <h3 class="text-xl font-display font-bold text-white group-hover:text-white transition-colors">
                 {category.name}
               </h3>
-              <span class="px-3 py-1 text-xs font-mono font-bold rounded-full border uppercase" style={{ background: `${category.color}15`, color: category.color, borderColor: `${category.color}30` }}>
+              <span class="px-3 py-1 text-xs font-mono font-bold rounded-full border uppercase whitespace-nowrap shrink-0" style={{ background: `${category.color}15`, color: category.color, borderColor: `${category.color}30` }}>
                 {category.count} {category.count === 1 ? 'Gym' : 'Gyms'}
               </span>
             </div>
@@ -281,11 +281,11 @@ const breadcrumbs = [
             {/* Hover glow */}
             <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 50% 0%, ${category.color}10 0%, transparent 60%)` }}></div>
             
-            <div class="flex items-center justify-between mb-4 relative z-10">
+            <div class="flex items-center justify-between gap-3 mb-4 relative z-10">
               <h3 class="text-xl font-display font-bold text-white group-hover:text-white transition-colors">
                 {category.name}
               </h3>
-              <span class="px-3 py-1 text-xs font-mono font-bold rounded-full border uppercase" style={{ background: `${category.color}15`, color: category.color, borderColor: `${category.color}30` }}>
+              <span class="px-3 py-1 text-xs font-mono font-bold rounded-full border uppercase whitespace-nowrap shrink-0" style={{ background: `${category.color}15`, color: category.color, borderColor: `${category.color}30` }}>
                 {category.count} {category.count === 1 ? 'Gym' : 'Gyms'}
               </span>
             </div>

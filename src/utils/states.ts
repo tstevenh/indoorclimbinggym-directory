@@ -59,11 +59,21 @@ export const US_STATES: Record<string, string> = {
   'district of columbia': 'DC'
 };
 
+const LOWERCASE_WORDS = new Set(['of', 'and', 'the']);
+
+/** Title-case a lowercase state name, keeping minor words lowercase ("district of columbia" -> "District of Columbia"). */
+function titleCaseState(fullName: string): string {
+  return fullName
+    .split(' ')
+    .map((word, i) => (i > 0 && LOWERCASE_WORDS.has(word) ? word : word.charAt(0).toUpperCase() + word.slice(1)))
+    .join(' ');
+}
+
 // Reverse mapping: State code to full name
 export const STATE_NAMES: Record<string, string> = Object.entries(US_STATES).reduce(
   (acc, [fullName, code]) => {
-    acc[code] = fullName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-    acc[code.toLowerCase()] = fullName.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    acc[code] = titleCaseState(fullName);
+    acc[code.toLowerCase()] = titleCaseState(fullName);
     return acc;
   },
   {} as Record<string, string>
@@ -137,7 +147,5 @@ export function getStateName(state: string): string {
   }
 
   // Fallback: title case the input
-  return normalized.split(' ').map(word =>
-    word.charAt(0).toUpperCase() + word.slice(1)
-  ).join(' ');
+  return titleCaseState(normalized);
 }

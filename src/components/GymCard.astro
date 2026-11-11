@@ -28,10 +28,11 @@ interface Props {
     claimed?: boolean;
   };
   showCity?: boolean;
+  priority?: boolean; // first above-the-fold card: eager + fetchpriority=high
   delay?: number;
 }
 
-const { gym, showCity = true, delay = 0 } = Astro.props;
+const { gym, showCity = true, delay = 0, priority = false } = Astro.props;
 
 const climbingTypes = gym.climbing_types?.split('|') || [];
 const allAmenities = gym.amenities?.split('|') || [];
@@ -98,6 +99,7 @@ const shapeClasses = {
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         quality={IMAGE_SIZES.CARD_THUMBNAIL.quality}
         loading="lazy"
+        priority={priority}
         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
       />
       <div class="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent"></div>

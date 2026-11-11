@@ -101,7 +101,10 @@ const googleReviews = hasValue(gym.review_count) ? Number(gym.review_count) : 0;
 const googleLabel = googleText ? `Google rating: ${googleText}${googleReviews ? ` (${googleReviews.toLocaleString('en-US')} reviews)` : ''}` : null;
 
 // Generate SEO data with CTR-optimized parameters
-const title = generateGymTitle(gym.name, gym.city, gym.region, editorialRating);
+// Two listings with the same name in the same city would share a title; add the street to tell them apart.
+const sameNameSameCity = allGyms.some((g) => g.id !== gym.id && g.city === gym.city && g.region === gym.region && g.name === gym.name);
+const streetQualifier = sameNameSameCity ? String(gym.address || '').split(',')[0].trim() : '';
+const title = generateGymTitle(gym.name, gym.city, gym.region, editorialRating, streetQualifier || undefined);
 const description = generateGymDescription(
   gym.name,
   gym.city,
@@ -191,9 +194,9 @@ let relatedGyms = allGyms
         width={IMAGE_SIZES.HERO.width}
         height={IMAGE_SIZES.HERO.height}
         srcsetSizes={IMAGE_SIZES.HERO.sizes}
-        sizes="100vw"
+        sizes="(min-width: 1280px) 1280px, 100vw"
         quality={IMAGE_SIZES.HERO.quality}
-        loading="eager"
+        priority={true}
         class="!absolute !inset-0 !h-full !aspect-auto [&>img]:!h-full"
       />
       <div class="absolute inset-0 bg-gradient-to-t from-[#1a1a1a] via-transparent to-transparent"></div>

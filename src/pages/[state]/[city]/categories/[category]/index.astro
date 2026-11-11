@@ -11,23 +11,17 @@ import {
   gymMatchesCategory,
   computeCityCategoryIndex,
   sortGymsForListings,
+  categoryPhrase,
+  cityCategoryCopy,
 } from '../../../../../utils/cityCategory';
 import { writeNoindexManifest } from '../../../../../utils/cityCategoryManifest';
 import { generateItemListSchema, generateFAQSchema } from '../../../../../utils/schema';
+import { countOf } from '../../../../../utils/seo';
 import { hasValue, priceStats, formatPrice, displayRating } from '../../../../../utils/display';
 
 export const prerender = true;
 
 const GYMS_PER_PAGE = 12;
-
-function getCategoryLabel(category) {
-  if (category.slug === 'best-climbing-gyms-for-beginners') return 'Best Climbing Gyms for Beginners';
-  if (category.slug === 'best-bouldering-climbing-gyms') return 'Best Bouldering Climbing Gyms';
-  if (category.slug === 'affordable-climbing-gyms') return 'Affordable Climbing Gyms';
-  if (category.slug.startsWith('climbing-gyms-with-')) return `Climbing Gyms with ${category.name.replace(/^Gyms with /, '')}`;
-  if (category.slug.startsWith('best-') && category.slug.endsWith('-climbing-gyms')) return category.name.replace(/ Gyms$/, ' Climbing Gyms');
-  return category.name;
-}
 
 export async function getStaticPaths() {
   const gymsPerPage = 12;
@@ -78,9 +72,10 @@ const priceRangeStats = priceStats(gyms, 2); // range needs >= 2 priced gyms
 const minPrice = priceRangeStats?.min ?? 0;
 const maxPrice = priceRangeStats?.max ?? 0;
 
-const categoryLabel = getCategoryLabel(category);
-const title = `${categoryLabel} in ${city}, ${region}`;
-const description = `Compare ${gyms.length} ${categoryLabel.toLowerCase()} options in ${city}, ${region}. Ratings, pricing, amenities, and direct gym pages in one place.`;
+const categoryLabel = categoryPhrase(category, gyms.length);
+const copy = cityCategoryCopy(category, gyms.length, city, region);
+const title = copy.title;
+const description = copy.description;
 
 const canonicalUrl = `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/${categorySlug}/`;
 const nextUrl = totalPages > 1 ? `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/${categorySlug}/2/` : undefined;
@@ -102,7 +97,7 @@ const itemListSchema = generateItemListSchema(
 const faqs = [
   {
     question: `How many options are listed for ${categoryLabel.toLowerCase()} in ${city}?`,
-    answer: `This page currently includes ${gyms.length} gyms matching this category in ${city}, ${region}.`,
+    answer: `This page currently includes ${countOf(gyms.length, 'gym')} matching this category in ${city}, ${region}.`,
   },
   {
     question: `How are gyms sorted on this page?`,
@@ -129,7 +124,7 @@ const collectionPageSchema = {
   inLanguage: 'en-US',
   isPartOf: {
     '@type': 'WebSite',
-    name: 'IndoorClimbingGym.com',
+    name: 'IndoorClimbingGym',
     url: 'https://www.indoorclimbinggym.com/',
   },
   about: [
@@ -192,12 +187,12 @@ const categoryIntro = category.type === 'amenity'
         <span class="text-[#2979ff] text-sm font-mono tracking-widest">{region} • {city.toUpperCase()}</span>
       </div>
       <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">
-        {categoryLabel.toUpperCase()}
+        {copy.h1.toUpperCase()}
         <br />
-        <span class="text-white/40">IN {city.toUpperCase()}</span>
+        <span class="text-white/40">{copy.h1Sub.toUpperCase()}</span>
       </h1>
       <p class="text-xl text-white/50 max-w-3xl">
-        Compare ratings, pricing, and amenities across {gyms.length} matching gyms in {city}.
+        {copy.intro}
       </p>
 
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-[#1f1f1f] rounded-2xl p-6 border border-white/10 mt-6">
@@ -234,7 +229,7 @@ const categoryIntro = category.type === 'amenity'
       </p>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {paginatedGyms.map((gym, index) => (
-          <GymCard gym={gym} showCity={false} delay={index * 0.05} />
+          <GymCard gym={gym} showCity={false} delay={index * 0.05} priority={index === 0} />
         ))}
       </div>
 
@@ -311,7 +306,7 @@ const categoryIntro = category.type === 'amenity'
     {topGymsForTable.length > 0 && (
       <section class="mb-12 bg-[#1f1f1f] rounded-2xl border border-white/10 p-8">
         <h2 class="text-3xl font-display font-bold text-white mb-2">
-          Compare Top {categoryLabel} Options in {city}
+          {gyms.length > 1 ? 'Compare ' : ''}{categoryLabel} in {city}
         </h2>
         <p class="text-white/50 mb-6">
           Quick side-by-side view of leading gyms in this category.

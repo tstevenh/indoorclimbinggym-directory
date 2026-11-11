@@ -4,8 +4,18 @@
  * Landing page for gym owners to get verified badge and featured placement
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { fetchGyms } from '../config/api';
 
 export const prerender = true;
+
+let badgeGyms: { slug: string; name: string }[] = [];
+try {
+  const all = await fetchGyms();
+  badgeGyms = all.filter((g: any) => g.slug && g.name).map((g: any) => ({ slug: g.slug, name: g.name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+} catch (e) {
+  badgeGyms = [];
+}
 
 const title = "Get Your FREE Verified Gym Badge | IndoorClimbingGym.com";
 const description = "Display our verified badge on your website and get 6 weeks of FREE featured placement, listing upgrade, and priority in search results. No credit card required.";
@@ -149,6 +159,14 @@ const breadcrumbs = [
         <p class="text-white/70">Select the version that looks best on your website.</p>
       </div>
 
+      <div class="max-w-xl mx-auto mb-12 text-center">
+        <label for="badge-gym" class="block text-white/70 text-sm mb-2">Select your gym so the badge links to your listing on IndoorClimbingGym.com</label>
+        <select id="badge-gym" class="w-full px-4 py-3 rounded-xl bg-[#2d2d2d] text-white border border-white/10">
+          <option value="">Generic badge (links to IndoorClimbingGym.com)</option>
+          {badgeGyms.map((g) => <option value={g.slug}>{g.name}</option>)}
+        </select>
+      </div>
+
       <div class="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
         
         <!-- Dark Badge Option -->
@@ -199,7 +217,7 @@ const breadcrumbs = [
   <!-- Embed Codes (Hidden) -->
   <div class="hidden">
     <textarea id="code-dark" readonly>
-<a href="https://www.indoorclimbinggym.com" target="_blank">
+<a href="https://www.indoorclimbinggym.com/" target="_blank" rel="sponsored noopener">
   <img
     src="https://www.indoorclimbinggym.com/badges/IndoorClimbingGym-Featured-Badge-Dark.svg"
     alt="IndoorClimbingGym Featured Badge"
@@ -207,7 +225,7 @@ const breadcrumbs = [
 </a>
     </textarea>
     <textarea id="code-light" readonly>
-<a href="https://www.indoorclimbinggym.com" target="_blank">
+<a href="https://www.indoorclimbinggym.com/" target="_blank" rel="sponsored noopener">
   <img
     src="https://www.indoorclimbinggym.com/badges/IndoorClimbingGym-Featured-Badge-Light.svg"
     alt="IndoorClimbingGym Featured Badge"
@@ -319,6 +337,12 @@ const breadcrumbs = [
     async function copyCode(type, evt) {
       const codeId = type === 'dark' ? 'code-dark' : 'code-light';
       const textarea = document.getElementById(codeId);
+      const slug = document.getElementById('badge-gym') ? document.getElementById('badge-gym').value : '';
+      const base = 'https://www.indoorclimbinggym.com/';
+      if (!textarea.dataset.template) textarea.dataset.template = textarea.value;
+      textarea.value = slug
+        ? textarea.dataset.template.replace('href="' + base + '"', 'href="' + base + 'gyms/' + slug + '/"')
+        : textarea.dataset.template;
       const code = textarea.value;
 
       // Use modern Clipboard API

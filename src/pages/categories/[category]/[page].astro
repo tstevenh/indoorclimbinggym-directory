@@ -9,7 +9,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import GymCard from '../../../components/GymCard.astro';
 import Pagination from '../../../components/Pagination.astro';
-import { generateSEO, generateCategoryTitle, generateCategoryDescription } from '../../../utils/seo';
+import { generateSEO, generateCategoryTitle, generateCategoryDescription, dedupeWords } from '../../../utils/seo';
 import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
 import { hasValue, priceStats, formatPrice, displayRating } from '../../../utils/display';
 import { fetchGyms } from '../../../config/api';
@@ -267,6 +267,7 @@ if (isSpecial) {
   keywords = [`${formattedValue.toLowerCase()} climbing gyms`, `best ${formattedValue.toLowerCase()} climbing`, `${formattedValue.toLowerCase()} climbing near me`];
 }
 
+pageTitle = dedupeWords(pageTitle);
 const categorySlug = Astro.params.category;
 // Note: this route only builds page 2+ (page 1 lives at /categories/[category]/)
 const baseUrl = `https://www.indoorclimbinggym.com/categories/${categorySlug}/`;
@@ -474,7 +475,7 @@ Beyond physical infrastructure, the best ${formattedValue.toLowerCase()} climbin
       <h2 class="text-3xl font-display font-bold text-white mb-6">{pageTitle} - Page {currentPage}</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {paginatedGyms.map((gym, index) => (
-          <GymCard gym={gym} showCity={true} delay={index * 0.05} />
+          <GymCard gym={gym} showCity={true} delay={index * 0.05} priority={index === 0} />
         ))}
       </div>
 

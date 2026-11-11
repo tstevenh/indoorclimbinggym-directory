@@ -5,6 +5,7 @@
  */
 
 import { createSimpleClient } from '../lib/supabase'
+import { getStateName } from '../utils/states'
 import { getCachedGyms, setCachedGyms } from '../utils/buildCache'
 
 // API Base URL for Next.js dashboard API
@@ -86,6 +87,7 @@ export async function fetchGyms(params?: Record<string, string>) {
 
       return {
         ...gym,
+        region: gym.region ? getStateName(gym.region) : gym.region, // normalize casing ("District of Columbia")
         featured: isFeaturedActive, // Update featured based on expiration
         rating_overall: gym.rating_overall || calculatedOverall, // Use stored or calculated
         rating: gym.rating_overall || calculatedOverall, // Legacy field (drives sort order; may fall back to Google rating)

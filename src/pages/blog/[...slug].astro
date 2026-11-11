@@ -15,6 +15,8 @@ import StickyBlogCTA from '../../components/blog/StickyBlogCTA.astro';
 import SubredditCTA from '../../components/SubredditCTA.astro';
 import AffiliateBlock from '../../components/AffiliateBlock.astro';
 import InternalTrainingCTA from '../../components/InternalTrainingCTA.astro';
+import { getPublicImageSize } from '../../utils/imageSize';
+import { optimizeImageUrl, isCloudinaryUrl } from '../../utils/imageUtils';
 import { generateArticleSchema, generateBreadcrumbSchema, generateFAQSchema, generateHowToSchema, generateVideoSchema } from '../../utils/schema';
 import { generateBlogPostTitle, generateBlogKeywords } from '../../utils/seo';
 
@@ -270,6 +272,14 @@ const categoryColors: { [key: string]: string } = {
   industry: 'bg-[#ff9100]/20 text-[#ff9100] border-[#ff9100]/30',
   gear: 'bg-[#ffea00]/20 text-[#ffea00] border-[#ffea00]/30',
 };
+// Hero image: intrinsic size (local files read at build), Cloudinary gets responsive variants
+const heroRaw = entry.data.heroImage;
+const heroIsCloudinary = isCloudinaryUrl(heroRaw);
+const heroSize = await getPublicImageSize(heroRaw, { width: 1600, height: 900 });
+const heroSrc = heroIsCloudinary ? optimizeImageUrl(heroRaw, 1280, 720) : heroRaw;
+const heroSrcset = heroIsCloudinary
+  ? [480, 640, 960, 1280].map((w) => `${optimizeImageUrl(heroRaw, w, Math.round(w * 0.5625))} ${w}w`).join(', ')
+  : undefined;
 const categoryColor = categoryColors[entry.data.category] || 'bg-white/10 text-white/80 border-white/10';
 ---
 
@@ -344,8 +354,15 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-white/10 text-w
     <!-- Hero Image -->
     <div class="aspect-video w-full overflow-hidden rounded-xl mb-8 border border-white/10 shadow-2xl">
       <img
-        src={entry.data.heroImage}
+        src={heroSrc}
         alt={entry.data.heroImageAlt}
+        width={heroSize.width}
+        height={heroSize.height}
+        srcset={heroSrcset}
+        sizes={heroSrcset ? '(min-width: 1024px) 896px, 100vw' : undefined}
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
         class="w-full h-full object-cover"
       />
     </div>

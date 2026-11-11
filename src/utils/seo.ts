@@ -1,4 +1,5 @@
 import { hasValue, formatPrice, formatRating, joinList } from './display';
+import { getStateCode, getStateName } from './states';
 /**
  * SEO Utility Functions
  * Generates meta tags, Open Graph, Twitter Cards for all pages
@@ -17,18 +18,98 @@ export interface SEOProps {
 
 const RECOMMENDED_TITLE_MAX = 70;
 
-// State abbreviation helper for shorter titles
-function getStateAbbreviation(state: string): string | null {
-  const stateMap: Record<string, string> = {
-    'washington': 'WA', 'california': 'CA', 'texas': 'TX',
-    'colorado': 'CO', 'new york': 'NY', 'florida': 'FL',
-    'oregon': 'OR', 'arizona': 'AZ', 'utah': 'UT', 'nevada': 'NV',
-    'georgia': 'GA', 'north carolina': 'NC', 'virginia': 'VA',
-    'massachusetts': 'MA', 'pennsylvania': 'PA', 'ohio': 'OH',
-    'illinois': 'IL', 'michigan': 'MI', 'minnesota': 'MN',
-    'wisconsin': 'WI', 'tennessee': 'TN', 'missouri': 'MO',
-  };
-  return stateMap[state.toLowerCase()] || null;
+export const TITLE_TARGET = 60;
+export const TITLE_HARD_MAX = 70;
+export const DESCRIPTION_MAX = 160;
+
+/** "1 gym" / "2 gyms". `plural` defaults to singular + "s". */
+export function pluralize(n: number, singular: string, plural?: string): string {
+  return n === 1 ? singular : (plural ?? `${singular}s`);
+}
+
+/** "1 gym" / "3 gyms" (count included). */
+export function countOf(n: number, singular: string, plural?: string): string {
+  return `${n} ${pluralize(n, singular, plural)}`;
+}
+
+/** Collapse accidentally doubled adjacent words ("best best", "Gyms gyms") and extra spaces. */
+export function dedupeWords(text: string): string {
+  return text
+    .replace(/\b([A-Za-z][A-Za-z']*)(\s+)\1\b/gi, '$1')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+/** Strip a leading "Best "/"Top " superlative ("Best Bouldering Gyms" -> "Bouldering Gyms"). */
+export function stripSuperlative(text: string): string {
+  return text.replace(/^(best|top)\s+/i, '');
+}
+
+/** Lowercase the first letter only when the word is not an acronym / proper noun-ish ("Best" -> "best"). */
+function lowerFirst(text: string): string {
+  // Lowercase every plain Capitalized word ("Bouldering Climbing Gyms" -> "bouldering climbing gyms") so the
+  // phrase reads naturally mid-sentence; keep acronyms / mixed-case words (WiFi, BBQ) untouched.
+  return text.replace(/\b[A-Z][a-z]+\b/g, (w) => w.toLowerCase());
+}
+
+/** Cut text at the last word boundary <= max, dropping dangling connectors/punctuation. Never adds an ellipsis. */
+function cutAtWord(text: string, max: number): string {
+  if (text.length <= max) return text;
+  let cut = text.slice(0, max + 1);
+  const space = cut.lastIndexOf(' ');
+  cut = space > 0 ? cut.slice(0, space) : cut.slice(0, max);
+  return cut
+    .replace(/\s+(and|or|the|a|an|in|of|for|with|to|at|by|&|\||-|–|\+)$/i, '')
+    .replace(/[\s,;:|&+\-–(]+$/, '')
+    .trim();
+}
+
+/**
+ * Pick the first candidate title that fits TITLE_TARGET. Candidates must be ordered from most to
+ * least complete (drop optional segments: brand suffix first, then qualifier, then secondary phrases).
+ * Otherwise take the first candidate within the hard max; as a last resort cut the shortest candidate
+ * at a word boundary. Never emits "…" / "...".
+ */
+export function buildTitle(candidates: string[], target = TITLE_TARGET, hardMax = TITLE_HARD_MAX): string {
+  const list = candidates.map(dedupeWords).filter(Boolean);
+  const fit = list.find((t) => t.length <= target);
+  if (fit) return fit;
+  const loose = list.find((t) => t.length <= hardMax);
+  if (loose) return loose;
+  const shortest = [...list].sort((a, b) => a.length - b.length)[0] ?? '';
+  return cutAtWord(shortest, hardMax);
+}
+
+/**
+ * Trim a meta description to <= max chars: keep the whole thing if it fits, else cut at the last
+ * sentence end (if that keeps a reasonable amount of text), else at a word boundary. No ellipsis.
+ */
+export function trimDescription(text: string, max = DESCRIPTION_MAX): string {
+  const clean = text.replace(/\s+/g, ' ').trim();
+  if (clean.length <= max) return clean;
+  const window = clean.slice(0, max + 1);
+  const sentenceEnd = Math.max(window.lastIndexOf('. '), window.lastIndexOf('! '), window.lastIndexOf('? '));
+  if (sentenceEnd >= max * 0.5) return clean.slice(0, sentenceEnd + 1);
+  const cut = cutAtWord(clean, max - 1);
+  return /[.!?]$/.test(cut) ? cut : `${cut}.`;
+}
+
+/** Two-letter state code for titles ("Colorado" -> "CO"; codes pass through). */
+export function stateAbbr(state: string): string {
+  return getStateCode(state) || state;
+}
+
+/** Brand suffix used on pages that have room for it. */
+const BRAND = 'IndoorClimbingGym';
+
+/** City + state qualifier, e.g. "Denver, CO". */
+export function cityStateLabel(city: string, state: string): string {
+  return `${city}, ${stateAbbr(state)}`;
+}
+
+/** True when the gym name already mentions the city (avoid "Foo Denver | Denver Climbing Gym"). */
+function nameMentionsCity(name: string, city: string): boolean {
+  return !!city && name.toLowerCase().includes(city.toLowerCase());
 }
 
 /**
@@ -48,10 +129,8 @@ export function generateSEO(props: SEOProps) {
     nofollow = false,
   } = props;
 
-  // Ensure description is under 160 characters
-  const finalDescription = description.length > 160
-    ? description.substring(0, 157) + '...'
-    : description;
+  // Ensure description is <= 160 characters (cut at a sentence/word boundary, no ellipsis)
+  const finalDescription = trimDescription(description);
 
   // Construct robots meta
   const robotsDirectives = [];
@@ -91,17 +170,21 @@ export function generateGymTitle(
   gymName: string,
   city: string,
   region: string,
-  rating?: number
+  rating?: number,
+  qualifier?: string
 ): string {
-  // Rating-forward formula for higher CTR
-  if (rating && rating > 0) {
-    const ratingStr = rating.toFixed(1);
-    const title = `${ratingStr}★ ${gymName} | ${city} Climbing Gym`;
-    if (title.length <= 60) return title;
-  }
-  // Fallback: shorter format
-  const fallback = `${gymName} | ${city} Climbing Gym`;
-  return fallback.length > 60 ? fallback.substring(0, 57) + '...' : fallback;
+  // `qualifier` (e.g. street) is passed only when two listings share a name in the same city.
+  if (qualifier) gymName = `${gymName} - ${qualifier}`;
+  const ratingStr = rating && rating > 0 ? `${rating.toFixed(1)}★ ` : '';
+  const mentionsCity = nameMentionsCity(gymName, city);
+  const tail = mentionsCity ? 'Climbing Gym' : `${city} Climbing Gym`;
+  const stateTail = mentionsCity ? '' : `${city}, ${stateAbbr(region)}`;
+  return buildTitle([
+    `${ratingStr}${gymName} | ${tail}`,
+    `${gymName} | ${tail}`,
+    stateTail ? `${gymName} | ${stateTail}` : '',
+    gymName,
+  ]);
 }
 
 /**
@@ -126,17 +209,17 @@ export function generateGymDescription(
   const types = joinList(climbingTypes.slice(0, 2).map(t => t.replace(/_/g, ' ')), ' & ');
   let desc = ratingStr ? `Rated ${ratingStr}★ by climbers. ` : '';
   if (types) {
-    desc += `${gymName} offers ${types}`;
+    desc += `${gymName} in ${city} offers ${types}`;
     if (topAmenity) desc += ` + ${topAmenity}`;
   } else if (topAmenity) {
-    desc += `${gymName} offers ${topAmenity}`;
+    desc += `${gymName} in ${city} offers ${topAmenity}`;
   } else {
     desc += `${gymName} is an indoor climbing gym in ${city}`;
   }
   const priceStr = formatPrice(dayPassPrice);
   if (priceStr) desc += `. Day pass from ${priceStr}`;
   desc += `. Hours, directions & photos inside.`;
-  return desc.length > 160 ? desc.substring(0, 157) + '...' : desc;
+  return trimDescription(desc);
 }
 
 /**
@@ -147,12 +230,20 @@ export function generateGymDescription(
  * @returns Optimized title
  */
 export function generateCityTitle(city: string, state: string, count?: number): string {
-  if (count && count > 0) {
-    const stateAbbr = getStateAbbreviation(state) || state;
-    const title = `${count} Best Climbing Gyms in ${city}, ${stateAbbr}`;
-    if (title.length <= 60) return title;
+  const place = cityStateLabel(city, state);
+  const n = count ?? 0;
+  if (n >= 2) {
+    return buildTitle([
+      `${n} Best Climbing Gyms in ${place}`,
+      `Best Climbing Gyms in ${place}`,
+      `Climbing Gyms in ${place}`,
+    ]);
   }
-  return `Best Climbing Gyms in ${city}, ${state}`;
+  // One gym (or unknown count): no superlative, singular noun.
+  return buildTitle([
+    n === 1 ? `Climbing Gym in ${place}` : `Climbing Gyms in ${place}`,
+    `Climbing in ${place}`,
+  ]);
 }
 
 /**
@@ -173,14 +264,21 @@ export function generateCityDescription(
   priceMin?: number,
   priceMax?: number
 ): string {
-  let desc = `Compare ${count} climbing gyms in ${city}.`;
+  const place = cityStateLabel(city, state);
+  let desc = count === 1
+    ? `Find the indoor climbing gym in ${place}.`
+    : `Compare ${count} climbing gyms in ${place}.`;
   const avgStr = formatRating(avgRating);
-  if (avgStr) desc += ` Avg rating ${avgStr}★`;
+  if (avgStr) desc += count === 1 ? ` Rated ${avgStr}★` : ` Avg rating ${avgStr}★`;
   if (hasValue(priceMin) && hasValue(priceMax)) {
-    desc += `. Day passes ${formatPrice(priceMin)}-${formatPrice(priceMax)}`;
+    desc += priceMin === priceMax
+      ? `. Day pass ${formatPrice(priceMin)}`
+      : `. Day passes ${formatPrice(priceMin)}-${formatPrice(priceMax)}`;
   }
-  desc += `. Bouldering, lead & top rope. Find your perfect gym today.`;
-  return desc.length > 160 ? desc.substring(0, 157) + '...' : desc;
+  desc += count === 1
+    ? `. Hours, climbing types & directions.`
+    : `. Bouldering, lead & top rope. Find your perfect gym today.`;
+  return trimDescription(desc.replace(/\.\./g, '.'));
 }
 
 /**
@@ -191,11 +289,16 @@ export function generateCityDescription(
  * @returns Optimized title
  */
 export function generateStateTitle(state: string, gymCount?: number, cityCount?: number): string {
+  const name = state.length === 2 ? (getStateName(state) || state) : state;
   if (gymCount && cityCount && gymCount > 0) {
-    const title = `${gymCount} Climbing Gyms in ${state} | ${cityCount} Cities`;
-    if (title.length <= 60) return title;
+    return buildTitle([
+      `${countOf(gymCount, 'Climbing Gym')} in ${name} | ${countOf(cityCount, 'City', 'Cities')}`,
+      `${countOf(gymCount, 'Climbing Gym')} in ${name}`,
+      `Climbing Gyms in ${name} | Complete Directory`,
+      `Climbing Gyms in ${name}`,
+    ]);
   }
-  return `Climbing Gyms in ${state} | Complete Directory`;
+  return buildTitle([`Climbing Gyms in ${name} | Complete Directory`, `Climbing Gyms in ${name}`]);
 }
 
 /**
@@ -214,12 +317,14 @@ export function generateStateDescription(
   topGymName?: string,
   topGymRating?: number
 ): string {
-  let desc = `Find ${gymCount} climbing gyms across ${cityCount} cities in ${state}`;
+  let desc = cityCount === 1
+    ? `Find ${countOf(gymCount, 'climbing gym')} in ${state}`
+    : `Find ${countOf(gymCount, 'climbing gym')} across ${cityCount} cities in ${state}`;
   if (topGymName && hasValue(topGymRating)) {
     desc += `. Top-rated: ${topGymName} (${topGymRating.toFixed(1)}★)`;
   }
   desc += `. Compare prices, amenities & locations.`;
-  return desc.length > 160 ? desc.substring(0, 157) + '...' : desc;
+  return trimDescription(desc);
 }
 
 /**
@@ -252,8 +357,7 @@ export function generateGymKeywords(
  * @returns Truncated text
  */
 export function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength - 3) + '...';
+  return text.length <= maxLength ? text : cutAtWord(text, maxLength);
 }
 
 /**
@@ -263,17 +367,7 @@ export function truncateText(text: string, maxLength: number): string {
  * @returns Truncated text at word boundary
  */
 export function truncateAtWord(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-
-  const truncated = text.substring(0, maxLength - 3);
-  const lastSpace = truncated.lastIndexOf(' ');
-
-  if (lastSpace === -1 || lastSpace < maxLength * 0.7) {
-    // No space found or space is too early, hard truncate
-    return truncated + '...';
-  }
-
-  return truncated.substring(0, lastSpace) + '...';
+  return text.length <= maxLength ? text : cutAtWord(text, maxLength);
 }
 
 /**
@@ -282,16 +376,9 @@ export function truncateAtWord(text: string, maxLength: number): string {
  * @param brand Brand name (default: IndoorClimbingGym)
  * @returns Title with brand suffix if it fits
  */
-export function addBrandSuffix(title: string, brand: string = 'IndoorClimbingGym'): string {
-  const separator = ' | ';
-  const suffix = `${separator}${brand}`;
-  const withBrand = `${title}${suffix}`;
-
-  if (withBrand.length <= RECOMMENDED_TITLE_MAX) {
-    return withBrand;
-  }
-
-  return title;
+export function addBrandSuffix(title: string, brand: string = BRAND): string {
+  const withBrand = `${title} | ${brand}`;
+  return withBrand.length <= RECOMMENDED_TITLE_MAX ? withBrand : title;
 }
 
 /**
@@ -334,13 +421,7 @@ export function generateBlogPostTitle(
  * @returns Optimized description under 160 chars
  */
 export function generateBlogPostDescription(excerpt: string): string {
-  const maxLength = 160;
-
-  if (excerpt.length <= maxLength) {
-    return excerpt;
-  }
-
-  return excerpt.substring(0, maxLength - 3) + '...';
+  return trimDescription(excerpt);
 }
 
 /**
@@ -368,23 +449,11 @@ export function generateBlogKeywords(tags: string[], category: string): string[]
  * @returns Optimized title with brand suffix
  */
 export function generateCategoryTitle(categoryName: string, currentPage: number = 1): string {
-  const maxLength = 60;
-  const brand = ' | IndoorClimbingGym';
-
-  // Short pagination format to save characters
-  const baseTitle = currentPage > 1
-    ? `${categoryName} (P${currentPage})`
-    : categoryName;
-
-  const withBrand = `${baseTitle}${brand}`;
-
-  if (withBrand.length <= maxLength) {
-    return withBrand;
-  }
-
-  // If it doesn't fit, truncate the category name to fit brand
-  const maxBaseLength = maxLength - brand.length;
-  return truncateAtWord(baseTitle, maxBaseLength) + brand;
+  const page = currentPage > 1 ? ` - Page ${currentPage}` : '';
+  return buildTitle([
+    `${categoryName}${page} | ${BRAND}`,
+    `${categoryName}${page}`,
+  ]);
 }
 
 /**
@@ -395,18 +464,16 @@ export function generateCategoryTitle(categoryName: string, currentPage: number 
  * @returns Optimized description
  */
 export function generateCategoryDescription(categoryName: string, gymCount: number, currentPage: number = 1): string {
-  const maxLength = 160;
-
+  const noun = stripSuperlative(categoryName);
   let description: string;
   if (currentPage > 1) {
-    description = `${categoryName} - Page ${currentPage}. Browse ${gymCount} climbing gyms with detailed reviews, amenities, pricing, and directions.`;
+    description = `${categoryName} - Page ${currentPage}. Browse ${countOf(gymCount, 'climbing gym')} with detailed reviews, amenities, pricing, and directions.`;
+  } else if (gymCount === 1) {
+    description = `Find the ${lowerFirst(noun)} in our directory, with ratings, amenities, prices, and directions.`;
   } else {
-    description = `Find the best ${categoryName.toLowerCase()}. Compare ${gymCount} climbing gyms by ratings, amenities, prices, and location. Expert reviews and directions included.`;
+    description = `Find the best ${lowerFirst(noun)}. Compare ${gymCount} climbing gyms by ratings, amenities, prices, and location. Expert reviews and directions included.`;
   }
-
-  return description.length > maxLength
-    ? truncateAtWord(description, maxLength)
-    : description;
+  return trimDescription(dedupeWords(description));
 }
 
 /**

@@ -559,8 +559,8 @@ The walls may be the obvious focal point, but it's the invisible infrastructure 
 - [Browse climbing gyms by technology features](/search) - Compare facilities with advanced systems
 - [Best bouldering gyms](/categories/best-bouldering-climbing-gyms) - See LED and auto-belay implementations
 - [Beginner-friendly gyms](/categories/best-climbing-gyms-for-beginners) - Technology supporting new climber onboarding
-- [Climbing gym cost guide](/guides/how-much-does-climbing-gym-cost) - Budget planning for gym visits
-- [Complete beginner's guide](/guides/beginners-guide-to-climbing-gyms) - Understanding gym equipment and systems
+- [Climbing gym cost guide](/blog/how-much-does-climbing-gym-cost/) - Budget planning for gym visits
+- [Complete beginner's guide](/blog/beginners-guide-to-climbing-gyms/) - Understanding gym equipment and systems
 
 **Equipment Manufacturer Resources:**
 

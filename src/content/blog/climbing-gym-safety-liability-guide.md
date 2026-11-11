@@ -6,7 +6,7 @@ author: "Indoor Climbing Gym Team"
 category: "guides"
 tags: ["safety", "liability", "gym-management", "best-practices", "operations"]
 featured: true
-heroImage: "images/blog/climbing-gym-safety-liability-guide.webp"
+heroImage: "/images/blog/climbing-gym-safety-liability-guide.webp"
 heroImageAlt: "Professional climbing gym with proper safety equipment and trained staff"
 wordCount: 3200
 readingTime: 13

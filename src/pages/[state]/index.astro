@@ -82,7 +82,7 @@ const itemListSchema = generateItemListSchema(
 const faqs = [
   {
     question: `How many climbing gyms are in ${region}?`,
-    answer: `There are ${stateGyms.length} indoor climbing gyms across ${cities.length} cities in ${region}. These facilities offer bouldering, top rope, lead climbing, and comprehensive training areas.`,
+    answer: `${stateGyms.length === 1 ? 'There is 1 indoor climbing gym' : `There are ${stateGyms.length} indoor climbing gyms`}${cities.length === 1 ? '' : ` across ${cities.length} cities`} in ${region}. These facilities offer bouldering, top rope, lead climbing, and comprehensive training areas.`,
   },
   {
     question: `What cities in ${region} have climbing gyms?`,
@@ -140,7 +140,7 @@ const cityColors = ['#ff2d7a', '#00e676', '#2979ff', '#ffea00', '#ff9100', '#e04
     <!-- Header -->
     <header class="mb-12">
       <div class="mb-2">
-        <span class="text-[#2979ff] text-sm font-mono tracking-widest">{stateCode} • {cities.length} CITIES</span>
+        <span class="text-[#2979ff] text-sm font-mono tracking-widest">{stateCode} • {cities.length} {cities.length === 1 ? 'CITY' : 'CITIES'}</span>
       </div>
       <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
         INDOOR CLIMBING
@@ -148,7 +148,7 @@ const cityColors = ['#ff2d7a', '#00e676', '#2979ff', '#ffea00', '#ff9100', '#e04
         <span class="text-white/40">GYMS IN {region.toUpperCase()}</span>
       </h1>
       <p class="text-xl text-white/50 leading-relaxed mb-6 max-w-3xl">
-        Discover {stateGyms.length} climbing gyms across {cities.length} cities in {region}.
+        Discover {stateGyms.length} climbing {stateGyms.length === 1 ? 'gym' : 'gyms'}{cities.length === 1 ? '' : ` across ${cities.length} cities`} in {region}.
         From bouldering-focused facilities to comprehensive climbing centers, find your perfect spot to climb.
       </p>
 
@@ -267,7 +267,7 @@ const cityColors = ['#ff2d7a', '#00e676', '#2979ff', '#ffea00', '#ff9100', '#e04
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredGyms.slice(0, 9).map((gym, index) => (
-            <GymCard gym={gym} showCity={true} delay={index * 0.05} />
+            <GymCard gym={gym} showCity={true} delay={index * 0.05} priority={index === 0} />
           ))}
         </div>
       </section>

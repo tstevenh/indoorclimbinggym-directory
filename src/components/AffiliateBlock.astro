@@ -97,8 +97,11 @@ const imageContainerClasses = variant === 'vertical'
           <img 
             src={product.imageUrl} 
             alt={product.name} 
+            width="300"
+            height="300"
             class="object-contain h-full w-full group-hover:scale-105 transition-transform duration-300"
             loading="lazy"
+            decoding="async"
           />
           {product.badge && (
             <span class="absolute top-2 right-2 bg-[#00e676] text-black text-[10px] font-bold px-2 py-1 rounded font-mono">

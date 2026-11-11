@@ -148,8 +148,11 @@ const breadcrumbs = [
                     <img 
                       src={product.imageUrl} 
                       alt={product.name} 
+                      width="300"
+                      height="300"
                       class="object-contain max-h-full max-w-full drop-shadow-md group-hover:scale-110 transition-transform duration-500 ease-out"
                       loading="lazy"
+                      decoding="async"
                     />
                     {product.badge && (
                       <span class="absolute top-4 left-4 bg-[#1f1f1f]/90 backdrop-blur-sm text-[#2979ff] text-xs font-bold px-3 py-1.5 rounded-full shadow-sm border border-[#2979ff]/30 flex items-center gap-1">

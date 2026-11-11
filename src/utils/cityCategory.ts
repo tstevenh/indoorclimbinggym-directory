@@ -1,4 +1,5 @@
 import cityCategoryKeep from '../data/cityCategoryKeep.json';
+import { buildTitle, trimDescription, cityStateLabel, dedupeWords } from './seo';
 
 export interface GymLike {
   id: string | number;
@@ -75,7 +76,7 @@ export function getCategoryDefinitions(allGyms: GymLike[]): CategoryDefinition[]
       slug: 'best-climbing-gyms-for-beginners',
       type: 'special',
       value: 'beginners',
-      name: 'Best for Beginners',
+      name: 'Best Climbing Gyms for Beginners',
       description: 'Welcoming gyms with intro classes and supportive settings.',
       color: '#00e676',
     },
@@ -83,7 +84,7 @@ export function getCategoryDefinitions(allGyms: GymLike[]): CategoryDefinition[]
       slug: 'best-bouldering-climbing-gyms',
       type: 'special',
       value: 'bouldering',
-      name: 'Best Bouldering Gyms',
+      name: 'Best Bouldering Climbing Gyms',
       description: 'Top facilities focused on bouldering programs and terrain.',
       color: '#ff2d7a',
     },
@@ -91,7 +92,7 @@ export function getCategoryDefinitions(allGyms: GymLike[]): CategoryDefinition[]
       slug: 'climbing-gyms-with-sauna',
       type: 'special',
       value: 'sauna',
-      name: 'Gyms with Sauna',
+      name: 'Climbing Gyms with Sauna',
       description: 'Recovery-focused gyms that include sauna amenities.',
       color: '#2979ff',
     },
@@ -99,7 +100,7 @@ export function getCategoryDefinitions(allGyms: GymLike[]): CategoryDefinition[]
       slug: 'climbing-gyms-with-kids-zone',
       type: 'special',
       value: 'kids_zone',
-      name: 'Gyms with Kids Zone',
+      name: 'Climbing Gyms with Kids Zone',
       description: 'Family-friendly gyms with dedicated kids areas.',
       color: '#ffea00',
     },
@@ -107,7 +108,7 @@ export function getCategoryDefinitions(allGyms: GymLike[]): CategoryDefinition[]
       slug: 'affordable-climbing-gyms',
       type: 'special',
       value: 'affordable',
-      name: 'Affordable Gyms',
+      name: 'Affordable Climbing Gyms',
       description: 'Budget-friendly day pass options for regular sessions.',
       color: '#ff9100',
     },
@@ -135,7 +136,7 @@ export function getCategoryDefinitions(allGyms: GymLike[]): CategoryDefinition[]
       slug: `climbing-gyms-with-${amenitySlug}`,
       type: 'amenity',
       value: amenity,
-      name: `Gyms with ${formatToken(amenity)}`,
+      name: `Climbing Gyms with ${formatToken(amenity)}`,
       description: `Facilities offering ${formatToken(amenity).toLowerCase()} amenities.`,
       color: '#2979ff',
     });
@@ -153,7 +154,7 @@ export function getCategoryDefinitions(allGyms: GymLike[]): CategoryDefinition[]
       slug: `best-${typeSlug}-climbing-gyms`,
       type: 'climbing_type',
       value: climbingType,
-      name: `Best ${formatToken(climbingType)} Gyms`,
+      name: `Best ${formatToken(climbingType)} Climbing Gyms`,
       description: `Top gyms for ${formatToken(climbingType).toLowerCase()} climbers.`,
       color: '#00e676',
     });
@@ -281,4 +282,60 @@ export function computeCityCategoryIndex(
     const indexableCount = entries.filter((e) => e.indexable).length;
     return { region, city, stateSlug, citySlug, cityGyms, entries, indexableCount, hubIndexable: cityHubIndexable(indexableCount) };
   });
+}
+
+/**
+ * Noun phrase for a category, singular or plural, with no superlative:
+ * "Climbing Gyms with Sauna" / "Climbing Gym with Sauna", "Bouldering Gyms", "Lead Climbing Gyms", ...
+ */
+export function categoryPhrase(category: CategoryDefinition, count = 2): string {
+  const gym = count === 1 ? 'Gym' : 'Gyms';
+  if (category.slug === 'best-climbing-gyms-for-beginners') return `Climbing ${gym} for Beginners`;
+  if (category.slug === 'best-bouldering-climbing-gyms') return `Bouldering ${gym}`;
+  if (category.slug === 'affordable-climbing-gyms') return `Affordable Climbing ${gym}`;
+  if (category.type === 'amenity') return `Climbing ${gym} with ${formatToken(category.value)}`;
+  if (category.type === 'climbing_type') return `${formatToken(category.value)} Climbing ${gym}`;
+  return dedupeWords(category.name.replace(/^best\s+/i, ''));
+}
+
+export interface CityCategoryCopy {
+  /** <title> text */
+  title: string;
+  /** H1 first line (uppercased by the template) */
+  h1: string;
+  /** H1 second line, e.g. "in Denver" */
+  h1Sub: string;
+  description: string;
+  intro: string;
+}
+
+/** Count-aware title / H1 / description for a city x category page (n >= 1; n = 0 pages are not generated). */
+export function cityCategoryCopy(category: CategoryDefinition, count: number, city: string, region: string, page = 1): CityCategoryCopy {
+  const place = cityStateLabel(city, region);
+  const phrase = categoryPhrase(category, count);
+  const pageSuffix = page > 1 ? ` - Page ${page}` : '';
+  const heading = count >= 2 ? `${count} Best ${phrase}` : phrase;
+  const title = buildTitle([
+    `${heading} in ${place}${pageSuffix}`,
+    `${phrase} in ${place}${pageSuffix}`,
+    `${phrase} in ${city}${pageSuffix}`,
+  ]);
+  let description: string;
+  if (page > 1) {
+    description = `Page ${page} of ${phrase.toLowerCase()} listings in ${place}.`;
+  } else if (count === 1) {
+    description = `The only ${phrase.toLowerCase()} option in ${place}. See ratings, pricing, amenities, and directions on its gym page.`;
+  } else {
+    description = `Compare ${count} ${phrase.toLowerCase()} in ${place}. Ratings, pricing, amenities, and direct gym pages in one place.`;
+  }
+  const intro = count === 1
+    ? `Ratings, pricing, and amenities for the climbing gym in ${city} that matches.`
+    : `Compare ratings, pricing, and amenities across ${count} matching gyms in ${city}.`;
+  return {
+    title,
+    h1: count >= 2 ? `${count} Best ${phrase}` : phrase,
+    h1Sub: `in ${city}${page > 1 ? ` (Page ${page})` : ''}`,
+    description: trimDescription(description),
+    intro,
+  };
 }

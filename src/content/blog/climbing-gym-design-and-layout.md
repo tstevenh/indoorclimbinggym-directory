@@ -19,7 +19,7 @@ Step into a modern climbing gym and you'll find yourself in a thoughtfully engin
 
 The evolution from basic plywood walls with bolt-on holds to sophisticated facilities with varied angles, integrated training zones, and smart technology represents more than aesthetic improvement. Thoughtfully designed gyms create welcoming environments that help members progress faster and stay engaged longer.
 
-Whether you're a gym owner planning a renovation, an entrepreneur launching a new facility, or simply curious about what makes exceptional climbing spaces work, understanding the principles of climbing gym design helps you appreciate the complexity behind seemingly simple walls. For those exploring climbing gyms, our [beginner's guide to climbing gyms](/guides/beginners-guide-to-climbing-gyms) offers insight into what makes these spaces welcoming.
+Whether you're a gym owner planning a renovation, an entrepreneur launching a new facility, or simply curious about what makes exceptional climbing spaces work, understanding the principles of climbing gym design helps you appreciate the complexity behind seemingly simple walls. For those exploring climbing gyms, our [beginner's guide to climbing gyms](/blog/beginners-guide-to-climbing-gyms/) offers insight into what makes these spaces welcoming.
 
 This comprehensive guide breaks down the critical elements of climbing gym design: from flow and spatial planning to wall construction, technical infrastructure, and emerging technology trends. Let's explore how the best facilities create environments where climbers thrive.
 
@@ -369,7 +369,7 @@ Smart gym owners maximize value without compromising quality:
 
 **Relationships with vendors:** Long-term partnerships with hold companies, flooring suppliers, and equipment manufacturers often yield 10-20% discounts on large orders.
 
-For those considering gym ownership, understanding operational costs helps too – see our guide on [climbing gym membership costs](/guides/is-climbing-gym-membership-worth-it) for revenue perspectives.
+For those considering gym ownership, understanding operational costs helps too – see our guide on [climbing gym membership costs](/blog/is-climbing-gym-membership-worth-it/) for revenue perspectives.
 
 ## Case Studies: Gym Redesigns That Increased Engagement
 

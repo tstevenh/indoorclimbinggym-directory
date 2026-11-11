@@ -15,7 +15,7 @@ readingTime: 14
 
 Your climbing gym's walls, holds, and location matter—but your team determines whether members return week after week. After visiting hundreds of facilities across the country and speaking with successful gym owners, one pattern emerges consistently: the best climbing gyms aren't defined by their square footage or wall height. They're defined by their people.
 
-Building a high-performance climbing gym team requires more than posting job ads and hoping passionate climbers apply. It demands intentional hiring strategies, comprehensive training systems, compensation structures that retain talent, and a culture that attracts the best staff in a competitive labor market. Whether you're opening your first location or [scaling a multi-unit franchise](/guides/climbing-gym-franchise-scaling-nationwide), your operational systems and team-building approach will determine your success.
+Building a high-performance climbing gym team requires more than posting job ads and hoping passionate climbers apply. It demands intentional hiring strategies, comprehensive training systems, compensation structures that retain talent, and a culture that attracts the best staff in a competitive labor market. Whether you're opening your first location or [scaling a multi-unit franchise](/blog/climbing-gym-franchise-scaling-nationwide/), your operational systems and team-building approach will determine your success.
 
 In this comprehensive guide, we'll walk through the essential elements of climbing gym operations and staffing—from defining key roles and hiring criteria to developing training programs, creating gym culture, implementing operational systems, designing compensation strategies, and scaling your team as you grow. Share your beta with fellow gym owners as we explore how the industry's top operators build teams that deliver exceptional member experiences while driving sustainable business growth.
 
@@ -539,7 +539,7 @@ Opening a second location, expanding facility square footage, or growing members
 
 ### Franchise Model Considerations
 
-If you're considering [franchising your climbing gym concept](/guides/climbing-gym-franchise-scaling-nationwide), team building takes on additional complexity:
+If you're considering [franchising your climbing gym concept](/blog/climbing-gym-franchise-scaling-nationwide/), team building takes on additional complexity:
 
 **Franchisee Selection:** Evaluate potential franchisees based on:
 - Cultural alignment with your brand values
@@ -616,7 +616,7 @@ The climbing gyms that excel at team building don't view labor as a cost to mini
 
 Your walls will age. Your holds will wear out. Your competitors will build bigger facilities. But your team—the humans who greet members warmly, set inspiring routes, teach nervous beginners, and build genuine community—that's your durable competitive advantage.
 
-Ready to explore how successful gyms operate? Browse our directory of [best climbing gyms nationwide](/search), learn from [beginner-friendly facilities](/categories/best-climbing-gyms-for-beginners) excelling at member experience, and check out our guide to [climbing gym franchises](/guides/climbing-gym-franchise-scaling-nationwide) scaling through systematic team development. Share your beta with the community—strong teams win, and we're all learning together.
+Ready to explore how successful gyms operate? Browse our directory of [best climbing gyms nationwide](/search), learn from [beginner-friendly facilities](/categories/best-climbing-gyms-for-beginners) excelling at member experience, and check out our guide to [climbing gym franchises](/blog/climbing-gym-franchise-scaling-nationwide/) scaling through systematic team development. Share your beta with the community—strong teams win, and we're all learning together.
 
 ---
 

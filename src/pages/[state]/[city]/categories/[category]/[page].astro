@@ -9,21 +9,14 @@ import {
   gymMatchesCategory,
   computeCityCategoryIndex,
   sortGymsForListings,
+  categoryPhrase,
+  cityCategoryCopy,
 } from '../../../../../utils/cityCategory';
 import { generateItemListSchema } from '../../../../../utils/schema';
 
 export const prerender = true;
 
 const GYMS_PER_PAGE = 12;
-
-function getCategoryLabel(category) {
-  if (category.slug === 'best-climbing-gyms-for-beginners') return 'Best Climbing Gyms for Beginners';
-  if (category.slug === 'best-bouldering-climbing-gyms') return 'Best Bouldering Climbing Gyms';
-  if (category.slug === 'affordable-climbing-gyms') return 'Affordable Climbing Gyms';
-  if (category.slug.startsWith('climbing-gyms-with-')) return `Climbing Gyms with ${category.name.replace(/^Gyms with /, '')}`;
-  if (category.slug.startsWith('best-') && category.slug.endsWith('-climbing-gyms')) return category.name.replace(/ Gyms$/, ' Climbing Gyms');
-  return category.name;
-}
 
 export async function getStaticPaths() {
   const gymsPerPage = 12;
@@ -70,9 +63,10 @@ const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
 const endIndex = startIndex + GYMS_PER_PAGE;
 const paginatedGyms = gyms.slice(startIndex, endIndex);
 
-const categoryLabel = getCategoryLabel(category);
-const title = `${categoryLabel} in ${city}, ${region} (Page ${currentPage})`;
-const description = `Page ${currentPage} of ${categoryLabel.toLowerCase()} listings in ${city}, ${region}.`;
+const categoryLabel = categoryPhrase(category, gyms.length);
+const copy = cityCategoryCopy(category, gyms.length, city, region, currentPage);
+const title = copy.title;
+const description = copy.description;
 const canonicalUrl = `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/${categorySlug}/${currentPage}/`;
 
 const prevUrl = currentPage === 2
@@ -106,7 +100,7 @@ const collectionPageSchema = {
   inLanguage: 'en-US',
   isPartOf: {
     '@type': 'WebSite',
-    name: 'IndoorClimbingGym.com',
+    name: 'IndoorClimbingGym',
     url: 'https://www.indoorclimbinggym.com/',
   },
   about: [
@@ -149,9 +143,9 @@ const combinedSchema = {
 
     <header class="mb-8">
       <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">
-        {categoryLabel.toUpperCase()}
+        {copy.h1.toUpperCase()}
         <br />
-        <span class="text-white/40">IN {city.toUpperCase()} (PAGE {currentPage})</span>
+        <span class="text-white/40">{copy.h1Sub.toUpperCase()}</span>
       </h1>
       <p class="text-xl text-white/50">
         Browse additional matching gyms in this category.
@@ -161,7 +155,7 @@ const combinedSchema = {
     <section class="mb-12">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {paginatedGyms.map((gym, index) => (
-          <GymCard gym={gym} showCity={false} delay={index * 0.05} />
+          <GymCard gym={gym} showCity={false} delay={index * 0.05} priority={index === 0} />
         ))}
       </div>
 

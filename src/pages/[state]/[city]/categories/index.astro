@@ -2,6 +2,7 @@
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import { fetchGyms } from '../../../../config/api';
 import { getStateSlug } from '../../../../utils/states';
+import { buildTitle, trimDescription, cityStateLabel, countOf } from '../../../../utils/seo';
 import {
   getCategoryDefinitions,
   computeCityCategoryIndex,
@@ -55,8 +56,8 @@ const { state, city: citySlug } = Astro.params;
 const { region, city, cityGymsCount, avgRating, categoryStats, indexable } = Astro.props;
 
 const canonicalUrl = `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/`;
-const title = `Climbing Gym Categories in ${city}, ${region}`;
-const description = `Browse ${categoryStats.length} climbing gym categories in ${city}, ${region}. Compare ${cityGymsCount} gyms by bouldering, sauna, kids zone, beginner-friendly, and more.`;
+const title = buildTitle([`Climbing Gym Categories in ${cityStateLabel(city, region)}`, `Gym Categories in ${cityStateLabel(city, region)}`]);
+const description = trimDescription(`Browse ${countOf(categoryStats.length, 'climbing gym category', 'climbing gym categories')} in ${cityStateLabel(city, region)}. Compare ${countOf(cityGymsCount, 'gym')} by bouldering, sauna, kids zone, beginner-friendly, and more.`);
 // city/category hubs generated only when indexable in getStaticPaths
 
 const breadcrumbs = [
@@ -105,7 +106,7 @@ const collectionPageSchema = {
   inLanguage: 'en-US',
   isPartOf: {
     '@type': 'WebSite',
-    name: 'IndoorClimbingGym.com',
+    name: 'IndoorClimbingGym',
     url: 'https://www.indoorclimbinggym.com/',
   },
   about: [
@@ -185,9 +186,9 @@ const combinedSchema = {
             <div class="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: category.color }}></div>
             <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle at 50% 0%, ${category.color}10 0%, transparent 60%)` }}></div>
 
-            <div class="flex items-center justify-between mb-3 relative z-10">
+            <div class="flex items-center justify-between gap-3 mb-3 relative z-10">
               <h3 class="text-xl font-display font-bold text-white group-hover:text-white transition-colors">{category.name}</h3>
-              <span class="px-3 py-1 text-xs font-mono font-bold rounded-full border uppercase" style={{ background: `${category.color}15`, color: category.color, borderColor: `${category.color}30` }}>
+              <span class="px-3 py-1 text-xs font-mono font-bold rounded-full border uppercase whitespace-nowrap shrink-0" style={{ background: `${category.color}15`, color: category.color, borderColor: `${category.color}30` }}>
                 {category.count} {category.count === 1 ? 'Gym' : 'Gyms'}
               </span>
             </div>

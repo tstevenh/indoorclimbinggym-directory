@@ -14,6 +14,277 @@
       "source": "/categories/:category/1/",
       "destination": "/categories/:category/",
       "permanent": true
+    },
+    {
+      "source": "/guides/:slug*",
+      "destination": "/blog/:slug*/",
+      "permanent": true
+    },
+    {
+      "source": "/al/:path*",
+      "destination": "/alabama/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ak/:path*",
+      "destination": "/alaska/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/az/:path*",
+      "destination": "/arizona/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ar/:path*",
+      "destination": "/arkansas/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ca/:path*",
+      "destination": "/california/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/co/:path*",
+      "destination": "/colorado/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ct/:path*",
+      "destination": "/connecticut/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/de/:path*",
+      "destination": "/delaware/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/fl/:path*",
+      "destination": "/florida/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ga/:path*",
+      "destination": "/georgia/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/hi/:path*",
+      "destination": "/hawaii/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/id/:path*",
+      "destination": "/idaho/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/il/:path*",
+      "destination": "/illinois/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/in/:path*",
+      "destination": "/indiana/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ia/:path*",
+      "destination": "/iowa/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ks/:path*",
+      "destination": "/kansas/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ky/:path*",
+      "destination": "/kentucky/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/la/:path*",
+      "destination": "/louisiana/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/me/:path*",
+      "destination": "/maine/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/md/:path*",
+      "destination": "/maryland/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ma/:path*",
+      "destination": "/massachusetts/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/mi/:path*",
+      "destination": "/michigan/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/mn/:path*",
+      "destination": "/minnesota/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ms/:path*",
+      "destination": "/mississippi/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/mo/:path*",
+      "destination": "/missouri/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/mt/:path*",
+      "destination": "/montana/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ne/:path*",
+      "destination": "/nebraska/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/nv/:path*",
+      "destination": "/nevada/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/nh/:path*",
+      "destination": "/new-hampshire/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/nj/:path*",
+      "destination": "/new-jersey/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/nm/:path*",
+      "destination": "/new-mexico/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ny/:path*",
+      "destination": "/new-york/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/nc/:path*",
+      "destination": "/north-carolina/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/nd/:path*",
+      "destination": "/north-dakota/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/oh/:path*",
+      "destination": "/ohio/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ok/:path*",
+      "destination": "/oklahoma/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/or/:path*",
+      "destination": "/oregon/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/pa/:path*",
+      "destination": "/pennsylvania/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ri/:path*",
+      "destination": "/rhode-island/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/sc/:path*",
+      "destination": "/south-carolina/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/sd/:path*",
+      "destination": "/south-dakota/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/tn/:path*",
+      "destination": "/tennessee/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/tx/:path*",
+      "destination": "/texas/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/ut/:path*",
+      "destination": "/utah/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/vt/:path*",
+      "destination": "/vermont/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/va/:path*",
+      "destination": "/virginia/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/wa/:path*",
+      "destination": "/washington/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/wv/:path*",
+      "destination": "/west-virginia/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/wi/:path*",
+      "destination": "/wisconsin/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/wy/:path*",
+      "destination": "/wyoming/:path*/",
+      "permanent": true
+    },
+    {
+      "source": "/dc/:path*",
+      "destination": "/district-of-columbia/:path*/",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/_astro/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }

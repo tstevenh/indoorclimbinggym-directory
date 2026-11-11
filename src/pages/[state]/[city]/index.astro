@@ -254,15 +254,15 @@ const breadcrumbs = [
     <!-- Header -->
     <header class="mb-8">
       <div class="mb-2">
-        <span class="text-[#2979ff] text-sm font-mono tracking-widest">{region} • {cityGyms.length} GYMS</span>
+        <span class="text-[#2979ff] text-sm font-mono tracking-widest">{region} • {cityGyms.length} {cityGyms.length === 1 ? 'GYM' : 'GYMS'}</span>
       </div>
       <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4">
-        BEST CLIMBING GYMS
+        {cityGyms.length >= 2 ? 'BEST CLIMBING GYMS' : 'CLIMBING GYM'}
         <br />
         <span class="text-white/40">IN {city.toUpperCase()}, {region.toUpperCase()}</span>
       </h1>
       <p class="text-xl text-white/50 leading-relaxed mb-6 max-w-3xl">
-        Discover {cityGyms.length} indoor climbing and bouldering facilities in {city}.
+        {cityGyms.length === 1 ? 'Discover the indoor climbing facility in' : `Discover ${cityGyms.length} indoor climbing and bouldering facilities in`} {city}.
         Compare prices, hours, amenities, and ratings to find your perfect climbing spot.
       </p>
 
@@ -360,7 +360,7 @@ const breadcrumbs = [
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredGyms.map((gym, index) => (
-            <GymCard gym={gym} showCity={false} delay={index * 0.05} />
+            <GymCard gym={gym} showCity={false} delay={index * 0.05} priority={index === 0} />
           ))}
         </div>
       </section>
@@ -377,7 +377,7 @@ const breadcrumbs = [
       </p>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {paginatedGyms.map((gym, index) => (
-          <GymCard gym={gym} showCity={false} delay={index * 0.05} />
+          <GymCard gym={gym} showCity={false} delay={index * 0.05} priority={index === 0 && !(featuredGyms && featuredGyms.length > 0)} />
         ))}
       </div>
 
@@ -572,7 +572,7 @@ const breadcrumbs = [
       <h2 class="text-3xl font-display font-bold text-white mb-6">Helpful Climbing Guides</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <a
-          href="/guides/beginners-guide-to-climbing-gyms/"
+          href="/blog/beginners-guide-to-climbing-gyms/"
           class="bg-[#1f1f1f] p-6 rounded-xl border border-white/5 hover:border-[#00e676]/30 transition-all group"
           style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
         >
@@ -585,7 +585,7 @@ const breadcrumbs = [
         </a>
 
         <a
-          href="/guides/what-to-wear-indoor-rock-climbing/"
+          href="/blog/what-to-wear-indoor-rock-climbing/"
           class="bg-[#1f1f1f] p-6 rounded-xl border border-white/5 hover:border-[#2979ff]/30 transition-all group"
           style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.3)' }}
         >
@@ -598,7 +598,7 @@ const breadcrumbs = [
         </a>
       </div>
       <a
-        href="/guides/"
+        href="/blog/"
         class="block mt-6 text-[#00e676] font-medium hover:text-[#00c853] transition-colors font-mono"
       >
         View all guides →

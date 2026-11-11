@@ -518,7 +518,7 @@ The climbing gym industry is maturing from entrepreneurial infancy to profession
 
 One certainty remains: climbing gym consolidation will continue accelerating through 2030. The only question is how individual stakeholders position themselves within this evolving landscape.
 
-Explore [climbing gyms nationwide](/search) to see how consolidation is reshaping your local market, or learn about [franchise opportunities](/guides/climbing-gym-franchise-scaling-nationwide) if you're considering entering the industry as the consolidation wave continues.
+Explore [climbing gyms nationwide](/search) to see how consolidation is reshaping your local market, or learn about [franchise opportunities](/blog/climbing-gym-franchise-scaling-nationwide/) if you're considering entering the industry as the consolidation wave continues.
 
 ---
 
