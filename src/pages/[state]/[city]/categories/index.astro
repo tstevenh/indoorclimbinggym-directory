@@ -4,10 +4,11 @@ import { fetchGyms } from '../../../../config/api';
 import { getStateSlug } from '../../../../utils/states';
 import {
   getCategoryDefinitions,
-  gymMatchesCategory,
+  computeCityCategoryIndex,
   MIN_GYMS_FOR_INDEXABLE_CITY_HUB,
   sortGymsForListings,
 } from '../../../../utils/cityCategory';
+import { writeNoindexManifest } from '../../../../utils/cityCategoryManifest';
 import { generateFAQSchema } from '../../../../utils/schema';
 
 export const prerender = true;
@@ -15,42 +16,34 @@ export const prerender = true;
 export async function getStaticPaths() {
   const gyms = await fetchGyms();
   const categories = getCategoryDefinitions(gyms);
-  const cityStatePairs = [...new Set(gyms.map((gym) => `${gym.region}|${gym.city}`))];
+  const infos = computeCityCategoryIndex(gyms, categories, getStateSlug);
+  writeNoindexManifest(infos);
 
   const paths = [];
 
-  for (const pair of cityStatePairs) {
-    const [region, city] = pair.split('|');
-    const cityGyms = gyms.filter((gym) => gym.region === region && gym.city === city);
-    const stateSlug = getStateSlug(region);
-    const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+  for (const info of infos) {
+    const { cityGyms } = info;
+    // Hub is still generated (so existing URLs don't 404) under the old criteria; it lists indexable categories only.
+    if (!(cityGyms.length >= MIN_GYMS_FOR_INDEXABLE_CITY_HUB && info.entries.length >= 2)) continue;
 
-    const categoryStats = categories
-      .map((category) => {
-        const matchingGyms = sortGymsForListings(cityGyms.filter((gym) => gymMatchesCategory(gym, category)));
-        return {
-          ...category,
-          count: matchingGyms.length,
-        };
-      })
-      .filter((category) => category.count > 0)
+    const categoryStats = info.entries
+      .filter((e) => e.indexable)
+      .map((e) => ({ ...e.category, count: e.matchingGyms.length }))
       .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 
     const avgRating = cityGyms.length
       ? Number((cityGyms.reduce((sum, gym) => sum + (gym.rating || 0), 0) / cityGyms.length).toFixed(1))
       : 0;
 
-    const shouldIndex = cityGyms.length >= MIN_GYMS_FOR_INDEXABLE_CITY_HUB && categoryStats.length >= 2;
-    if (!shouldIndex) continue;
-
     paths.push({
-      params: { state: stateSlug, city: citySlug },
+      params: { state: info.stateSlug, city: info.citySlug },
       props: {
-        region,
-        city,
+        region: info.region,
+        city: info.city,
         cityGymsCount: cityGyms.length,
         avgRating,
         categoryStats,
+        indexable: info.hubIndexable,
       },
     });
   }
@@ -59,7 +52,7 @@ export async function getStaticPaths() {
 }
 
 const { state, city: citySlug } = Astro.params;
-const { region, city, cityGymsCount, avgRating, categoryStats } = Astro.props;
+const { region, city, cityGymsCount, avgRating, categoryStats, indexable } = Astro.props;
 
 const canonicalUrl = `https://www.indoorclimbinggym.com/${state}/${citySlug}/categories/`;
 const title = `Climbing Gym Categories in ${city}, ${region}`;
@@ -134,6 +127,7 @@ const combinedSchema = {
   canonical={canonicalUrl}
   schema={combinedSchema}
   breadcrumbs={breadcrumbs}
+  noindex={!indexable}
 >
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <nav class="text-sm mb-6" aria-label="Breadcrumb">

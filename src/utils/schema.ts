@@ -3,6 +3,8 @@
  * Creates structured data for all page types per schema.org standards
  */
 
+import { formatRating, stripRatingClaims } from './display';
+
 interface Gym {
   id: number;
   name: string;
@@ -41,7 +43,7 @@ export function generateGymSchema(gym: Gym, pageUrl: string) {
     '@type': ['SportsActivityLocation', 'LocalBusiness'],
     '@id': pageUrl,
     name: gym.name,
-    description: gym.about || gym.description_short,
+    description: stripRatingClaims(gym.about || gym.description_short) || undefined,
     address: {
       '@type': 'PostalAddress',
       streetAddress: gym.full_address,
@@ -71,14 +73,25 @@ export function generateGymSchema(gym: Gym, pageUrl: string) {
 
   if (openingHours.length) schema.openingHoursSpecification = openingHours;
 
-  // Only include aggregateRating if we have reviews (Google requires reviewCount > 0)
-  if (gym.review_count && gym.review_count > 0) {
-    schema.aggregateRating = {
-      '@type': 'AggregateRating',
-      ratingValue: gym.rating_overall || gym.rating,
-      reviewCount: gym.review_count,
-      bestRating: 5,
-      worstRating: 1,
+  // No aggregateRating: the review counts come from Google Maps and the reviews are not hosted on
+  // this site, which Google's review-snippet policy does not allow. Emit one first-party editorial
+  // Review instead, only when an editorial rating exists (the same number the page displays).
+  const editorial = formatRating(gym.rating_editorial);
+  if (editorial) {
+    schema.review = {
+      '@type': 'Review',
+      name: 'IndoorClimbingGym editorial rating',
+      author: {
+        '@type': 'Organization',
+        name: 'IndoorClimbingGym',
+        url: 'https://www.indoorclimbinggym.com/',
+      },
+      reviewRating: {
+        '@type': 'Rating',
+        ratingValue: Number(editorial),
+        bestRating: 5,
+        worstRating: 1,
+      },
     };
   }
 
@@ -126,16 +139,16 @@ export function generateBreadcrumbSchema(
 }
 
 /**
- * Generate ItemList schema for city/state pages showing multiple gyms
- * @param gyms Array of gym objects
- * @param listName Name of the list (e.g., "Climbing Gyms in Seattle")
- * @param pageUrl URL of the page
- * @returns JSON-LD schema object
+ * ItemList for pages that list gyms. Pass ONLY the gyms rendered on this page.
+ * Items are plain ListItems (position + absolute url + name): no nested business type
+ * and no ratings (Google does not support ratings inside list markup).
+ * @param startIndex 0-based offset of the first gym within the full list (pagination)
  */
 export function generateItemListSchema(
   gyms: Gym[],
   listName: string,
-  pageUrl: string
+  pageUrl: string,
+  startIndex = 0
 ) {
   return {
     '@context': 'https://schema.org',
@@ -145,27 +158,30 @@ export function generateItemListSchema(
     numberOfItems: gyms.length,
     itemListElement: gyms.map((gym, index) => ({
       '@type': 'ListItem',
+      position: startIndex + index + 1,
+      url: `https://www.indoorclimbinggym.com/gyms/${gym.slug}/`,
+      name: gym.name,
+    })),
+  };
+}
+
+/** ItemList of plain links (e.g. states) - ListItem with absolute url + name only. */
+export function generateLinkListSchema(
+  items: Array<{ name: string; url: string }>,
+  listName: string,
+  pageUrl: string
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: listName,
+    url: pageUrl,
+    numberOfItems: items.length,
+    itemListElement: items.map((it, index) => ({
+      '@type': 'ListItem',
       position: index + 1,
-      item: {
-        '@type': 'LocalBusiness',
-        name: gym.name,
-        url: `https://www.indoorclimbinggym.com/gyms/${gym.slug}/`,
-        address: {
-          '@type': 'PostalAddress',
-          addressLocality: gym.city,
-          addressRegion: gym.region,
-        },
-        // Only include aggregateRating if we have reviews (Google requires reviewCount > 0)
-        ...(gym.review_count && gym.review_count > 0 && {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: gym.rating_overall || gym.rating,
-            reviewCount: gym.review_count,
-            bestRating: 5,
-            worstRating: 1,
-          },
-        }),
-      },
+      url: it.url,
+      name: it.name,
     })),
   };
 }

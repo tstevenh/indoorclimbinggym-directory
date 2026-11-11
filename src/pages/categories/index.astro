@@ -6,6 +6,7 @@
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { fetchGyms } from '../../config/api';
+import { hasValue } from '../../utils/display';
 
 export const prerender = true;
 
@@ -83,7 +84,7 @@ const staticCategories = [
     name: 'Affordable Gyms',
     slug: 'affordable-climbing-gyms',
     description: 'Budget-friendly climbing gyms with great value',
-    count: gymsData.filter(g => g.day_pass_price_local <= 20).length,
+    count: gymsData.filter(g => hasValue(g.day_pass_price_local) && g.day_pass_price_local <= 20).length,
     category: 'value',
     color: '#ff9100',
   },
@@ -148,7 +149,8 @@ const categories = allCategories.filter(cat => cat.count > 0);
 
 const totalCategories = categories.length;
 const totalGyms = gymsData.length;
-const avgRating = (gymsData.reduce((sum, gym) => sum + gym.rating, 0) / (gymsData.length || 1)).toFixed(1);
+const ratedAll = gymsData.filter(g => hasValue(g.rating));
+const avgRating = ratedAll.length ? (ratedAll.reduce((sum, gym) => sum + gym.rating, 0) / ratedAll.length).toFixed(1) : null;
 
 // SEO
 const pageUrl = 'https://www.indoorclimbinggym.com/categories';
@@ -211,7 +213,7 @@ const breadcrumbs = [
           <div class="text-sm text-white/40 font-mono tracking-wider mt-1">TOTAL GYMS</div>
         </div>
         <div class="text-center">
-          <div class="font-mono font-bold text-4xl text-[#ffea00]">{avgRating}★</div>
+          <div class="font-mono font-bold text-4xl text-[#ffea00]">{avgRating ? `${avgRating}★` : '—'}</div>
           <div class="text-sm text-white/40 font-mono tracking-wider mt-1">AVG RATING</div>
         </div>
         <div class="text-center">

@@ -9,6 +9,7 @@ import GymCard from '../../../components/GymCard.astro';
 import Pagination from '../../../components/Pagination.astro';
 import { generateCategoryTitle, generateCategoryDescription } from '../../../utils/seo';
 import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
+import { hasValue, priceStats, formatPrice, displayRating } from '../../../utils/display';
 import { fetchGyms } from '../../../config/api';
 
 export const prerender = true;
@@ -131,7 +132,7 @@ export async function getStaticPaths() {
     },
     {
       slug: 'affordable-climbing-gyms',
-      filter: (gym) => gym.day_pass_price_local <= 20,
+      filter: (gym) => hasValue(gym.day_pass_price_local) && gym.day_pass_price_local <= 20,
       type: 'special',
       value: 'affordable'
     },
@@ -234,12 +235,12 @@ const nextUrl = totalPages > 1
   : undefined;
 
 // Stats
-const avgRating = (gyms.reduce((sum, gym) => sum + gym.rating, 0) / gyms.length).toFixed(1);
-const avgPrice = Math.round(gyms.reduce((sum, gym) => sum + gym.day_pass_price_local, 0) / gyms.length);
-const priceRange = {
-  min: Math.min(...gyms.map(g => g.day_pass_price_local)),
-  max: Math.max(...gyms.map(g => g.day_pass_price_local)),
-};
+// Only gyms with a real rating / price contribute; missing values are omitted, never shown as 0.
+const ratedGyms = gyms.filter(g => hasValue(g.rating));
+const avgRating = ratedGyms.length ? (ratedGyms.reduce((sum, gym) => sum + gym.rating, 0) / ratedGyms.length).toFixed(1) : null;
+const priceRangeStats = priceStats(gyms, 2); // range/average need >= 2 priced gyms
+const avgPrice = priceRangeStats?.avg ?? null;
+const priceRange = priceRangeStats ? { min: priceRangeStats.min, max: priceRangeStats.max } : null;
 
 // Category accent color
 const getCategoryColor = () => {
@@ -260,7 +261,7 @@ const faqs = isAmenity ? [
   },
   {
     question: `How many climbing gyms offer ${formattedValue.toLowerCase()}?`,
-    answer: `We've identified ${gyms.length} climbing gyms that offer ${formattedValue.toLowerCase()}. These facilities range across different cities and states, with an average rating of ${avgRating} stars. Gyms with ${formattedValue.toLowerCase()} typically charge between $${priceRange.min}-$${priceRange.max} for day passes.`,
+    answer: `We've identified ${gyms.length} climbing gyms that offer ${formattedValue.toLowerCase()}. These facilities range across different cities and states${avgRating ? ', ' : ''}${avgRating ? `with an average rating of ${avgRating} stars` : ''}${avgRating && priceRange ? '. ' : ''}${priceRange ? `Gyms with ${formattedValue.toLowerCase()} typically charge between ${formatPrice(priceRange.min)}-${formatPrice(priceRange.max)} for day passes` : ''}.`,
   },
   {
     question: `Are ${formattedValue.toLowerCase()} included in membership fees?`,
@@ -277,7 +278,7 @@ const faqs = isAmenity ? [
   },
   {
     question: `How many gyms offer ${formattedValue.toLowerCase()} climbing?`,
-    answer: `We've identified ${gyms.length} climbing gyms that offer ${formattedValue.toLowerCase()} climbing. These facilities have an average rating of ${avgRating} stars and day pass prices ranging from $${priceRange.min} to $${priceRange.max}. Most are located in major metropolitan areas with active climbing communities.`,
+    answer: `We've identified ${gyms.length} climbing gyms that offer ${formattedValue.toLowerCase()} climbing. ${avgRating ? `These facilities have an average rating of ${avgRating} stars${priceRange ? ` and day pass prices ranging from ${formatPrice(priceRange.min)} to ${formatPrice(priceRange.max)}` : ''}. ` : (priceRange ? `Day pass prices range from ${formatPrice(priceRange.min)} to ${formatPrice(priceRange.max)}. ` : '')}Most are located in major metropolitan areas with active climbing communities.`,
   },
   {
     question: `Do I need special equipment for ${formattedValue.toLowerCase()} climbing?`,
@@ -289,15 +290,16 @@ const faqs = isAmenity ? [
   },
   {
     question: `What's the average cost for ${formattedValue.toLowerCase()} climbing?`,
-    answer: `Day passes at ${formattedValue.toLowerCase()} climbing gyms average around $${avgPrice}, with prices ranging from $${priceRange.min} to $${priceRange.max}. Monthly memberships typically offer better value for regular climbers. Many gyms also offer student discounts, punch cards, and family packages to make ${formattedValue.toLowerCase()} climbing more affordable.`,
+    answer: !priceRange ? '' : `Day passes at ${formattedValue.toLowerCase()} climbing gyms average around ${formatPrice(avgPrice)}, with prices ranging from ${formatPrice(priceRange.min)} to ${formatPrice(priceRange.max)}. Monthly memberships typically offer better value for regular climbers. Many gyms also offer student discounts, punch cards, and family packages to make ${formattedValue.toLowerCase()} climbing more affordable.`,
   },
-];
+].filter(f => f.answer);
 
 // Generate schemas
 const itemListSchema = generateItemListSchema(
-  gyms,
+  paginatedGyms,
   pageTitle,
-  canonicalUrl
+  canonicalUrl,
+  startIndex
 );
 
 const faqSchema = generateFAQSchema(faqs);
@@ -394,16 +396,16 @@ const seoDescription = generateCategoryDescription(pageTitle, gyms.length, 1);
           <div class="text-sm text-white/40 font-mono tracking-wider mt-1">TOTAL GYMS</div>
         </div>
         <div class="text-center">
-          <div class="font-mono font-bold text-4xl text-[#ffea00]">{avgRating}★</div>
+          <div class="font-mono font-bold text-4xl text-[#ffea00]">{avgRating ? `${avgRating}★` : '—'}</div>
           <div class="text-sm text-white/40 font-mono tracking-wider mt-1">AVERAGE RATING</div>
         </div>
         <div class="text-center">
-          <div class="font-mono font-bold text-4xl text-[#00e676]">${avgPrice}</div>
+          <div class="font-mono font-bold text-4xl text-[#00e676]">{avgPrice ? formatPrice(avgPrice) : '—'}</div>
           <div class="text-sm text-white/40 font-mono tracking-wider mt-1">AVG DAY PASS</div>
         </div>
         <div class="text-center">
           <div class="font-mono font-bold text-4xl text-[#2979ff]">
-            ${priceRange.min}-${priceRange.max}
+            {priceRange ? `${formatPrice(priceRange.min)}-${formatPrice(priceRange.max)}` : '—'}
           </div>
           <div class="text-sm text-white/40 font-mono tracking-wider mt-1">PRICE RANGE</div>
         </div>
@@ -465,8 +467,8 @@ const seoDescription = generateCategoryDescription(pageTitle, gyms.length, 1);
                 <td class="px-6 py-4 text-white/60">
                   {gym.city}, {gym.region}
                 </td>
-                <td class="px-6 py-4 font-mono font-bold text-[#ffea00]">{gym.rating}★</td>
-                <td class="px-6 py-4 text-white/60 font-mono">${gym.day_pass_price_local}</td>
+                <td class="px-6 py-4 font-mono font-bold text-[#ffea00]">{displayRating(gym) ? `${displayRating(gym)!.text}★${displayRating(gym)!.source === 'google' ? ' (Google)' : ''}` : 'Not rated'}</td>
+                <td class="px-6 py-4 text-white/60 font-mono">{formatPrice(gym.day_pass_price_local) ?? 'Not listed'}</td>
                 <td class="px-6 py-4 text-white/60 text-sm">
                   {isAmenity
                     ? gym.amenities?.split('|').filter(a => a !== value).slice(0, 3).map(a => formatText(a)).join(', ')

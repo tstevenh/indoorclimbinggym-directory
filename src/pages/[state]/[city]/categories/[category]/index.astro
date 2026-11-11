@@ -9,10 +9,12 @@ import { getStateSlug } from '../../../../../utils/states';
 import {
   getCategoryDefinitions,
   gymMatchesCategory,
-  MIN_GYMS_FOR_PAGE_GENERATION,
+  computeCityCategoryIndex,
   sortGymsForListings,
 } from '../../../../../utils/cityCategory';
+import { writeNoindexManifest } from '../../../../../utils/cityCategoryManifest';
 import { generateItemListSchema, generateFAQSchema } from '../../../../../utils/schema';
+import { hasValue, priceStats, formatPrice, displayRating } from '../../../../../utils/display';
 
 export const prerender = true;
 
@@ -31,52 +33,33 @@ export async function getStaticPaths() {
   const gymsPerPage = 12;
   const gyms = await fetchGyms();
   const categories = getCategoryDefinitions(gyms);
-  const cityStatePairs = [...new Set(gyms.map((gym) => `${gym.region}|${gym.city}`))];
+  const infos = computeCityCategoryIndex(gyms, categories, getStateSlug);
+  writeNoindexManifest(infos);
 
   const paths = [];
 
-  for (const pair of cityStatePairs) {
-    const [region, city] = pair.split('|');
-    const cityGyms = gyms.filter((gym) => gym.region === region && gym.city === city);
-    const stateSlug = getStateSlug(region);
-    const citySlug = city.toLowerCase().replace(/\s+/g, '-');
-
-    const cityCategoryStats = categories
-      .map((category) => {
-        const matchingGyms = sortGymsForListings(cityGyms.filter((gym) => gymMatchesCategory(gym, category)));
-        return {
-          slug: category.slug,
-          name: category.name,
-          color: category.color,
-          count: matchingGyms.length,
-        };
-      })
-      .filter((category) => category.count > 0)
+  for (const info of infos) {
+    // Siblings: only indexable city x category pages are linked.
+    const siblings = info.entries
+      .filter((e) => e.indexable)
+      .map((e) => ({ slug: e.category.slug, name: e.category.name, count: e.matchingGyms.length, color: e.category.color }))
       .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 
-    const siblings = cityCategoryStats.map((item) => ({
-      slug: item.slug,
-      name: item.name,
-      count: item.count,
-      color: item.color,
-    }));
-
-    for (const category of categories) {
-      const matchedGyms = sortGymsForListings(cityGyms.filter((gym) => gymMatchesCategory(gym, category)));
-      if (matchedGyms.length < MIN_GYMS_FOR_PAGE_GENERATION) continue;
-
-      const totalPages = Math.ceil(matchedGyms.length / gymsPerPage);
+    for (const entry of info.entries) {
+      const totalPages = Math.ceil(entry.matchingGyms.length / gymsPerPage);
 
       paths.push({
-        params: { state: stateSlug, city: citySlug, category: category.slug },
+        params: { state: info.stateSlug, city: info.citySlug, category: entry.category.slug },
         props: {
-          region,
-          city,
-          category,
-          gyms: matchedGyms,
+          region: info.region,
+          city: info.city,
+          category: entry.category,
+          gyms: entry.matchingGyms,
           currentPage: 1,
           totalPages,
           siblings,
+          indexable: entry.indexable,
+          hubIndexable: info.hubIndexable,
         },
       });
     }
@@ -86,13 +69,14 @@ export async function getStaticPaths() {
 }
 
 const { state, city: citySlug, category: categorySlug } = Astro.params;
-const { region, city, category, gyms, currentPage, totalPages, siblings } = Astro.props;
+const { region, city, category, gyms, currentPage, totalPages, siblings, indexable, hubIndexable } = Astro.props;
 
 const paginatedGyms = gyms.slice(0, GYMS_PER_PAGE);
-const avgRating = Number((gyms.reduce((sum, gym) => sum + (gym.rating || 0), 0) / gyms.length).toFixed(1));
-const validPrices = gyms.map((gym) => Number(gym.day_pass_price_local) || 0).filter((price) => price > 0);
-const minPrice = validPrices.length ? Math.min(...validPrices) : 0;
-const maxPrice = validPrices.length ? Math.max(...validPrices) : 0;
+const ratedGyms = gyms.filter((gym) => hasValue(gym.rating));
+const avgRating = ratedGyms.length ? Number((ratedGyms.reduce((sum, gym) => sum + gym.rating, 0) / ratedGyms.length).toFixed(1)) : null;
+const priceRangeStats = priceStats(gyms, 2); // range needs >= 2 priced gyms
+const minPrice = priceRangeStats?.min ?? 0;
+const maxPrice = priceRangeStats?.max ?? 0;
 
 const categoryLabel = getCategoryLabel(category);
 const title = `${categoryLabel} in ${city}, ${region}`;
@@ -130,11 +114,11 @@ const faqs = [
   },
   {
     question: `Can I compare pricing for these gyms?`,
-    answer: minPrice > 0
-      ? `Yes. Current day pass prices on this page range from $${minPrice} to $${maxPrice}, and each gym card links to full details.`
-      : 'Yes. Each gym card links to full details, and pricing appears when available.',
+    answer: priceRangeStats
+      ? `Yes. Current day pass prices on this page range from ${formatPrice(minPrice)} to ${formatPrice(maxPrice)}, and each gym card links to full details.`
+      : '',
   },
-];
+].filter((f) => f.answer);
 const faqSchema = generateFAQSchema(faqs);
 const collectionPageSchema = {
   '@context': 'https://schema.org',
@@ -185,6 +169,7 @@ const categoryIntro = category.type === 'amenity'
   schema={combinedSchema}
   breadcrumbs={breadcrumbs}
   nextUrl={nextUrl}
+  noindex={!indexable}
 >
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <nav class="text-sm mb-6" aria-label="Breadcrumb">
@@ -221,11 +206,11 @@ const categoryIntro = category.type === 'amenity'
           <div class="text-sm text-white/40 font-mono tracking-wider mt-1">MATCHING GYMS</div>
         </div>
         <div class="text-center">
-          <div class="font-mono font-bold text-4xl text-[#2979ff]">{avgRating}★</div>
+          <div class="font-mono font-bold text-4xl text-[#2979ff]">{avgRating ? `${avgRating}★` : '—'}</div>
           <div class="text-sm text-white/40 font-mono tracking-wider mt-1">AVG RATING</div>
         </div>
         <div class="text-center">
-          <div class="font-mono font-bold text-4xl text-[#ff2d7a]">{minPrice > 0 ? `$${minPrice}-${maxPrice}` : 'N/A'}</div>
+          <div class="font-mono font-bold text-4xl text-[#ff2d7a]">{priceRangeStats ? `${formatPrice(minPrice)}-${formatPrice(maxPrice)}` : '—'}</div>
           <div class="text-sm text-white/40 font-mono tracking-wider mt-1">DAY PASS</div>
         </div>
         <div class="text-center">
@@ -305,7 +290,7 @@ const categoryIntro = category.type === 'amenity'
         <div class="bg-[#1f1f1f] rounded-xl border border-white/10 p-5">
           <h3 class="text-xl font-display font-semibold text-white mb-2">2) Compare Pricing Structure</h3>
           <p class="text-white/60">
-            Day pass prices here range {minPrice > 0 ? `from $${minPrice} to $${maxPrice}` : 'across available listings'}. Check membership and discount details on each gym page.
+            {priceRangeStats ? `Day pass prices here range from ${formatPrice(minPrice)} to ${formatPrice(maxPrice)}.` : ''} Check membership and discount details on each gym page.
           </p>
         </div>
         <div class="bg-[#1f1f1f] rounded-xl border border-white/10 p-5">
@@ -346,8 +331,8 @@ const categoryIntro = category.type === 'amenity'
               {topGymsForTable.map((gym) => (
                 <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
                   <td class="py-3 px-4 text-white">{gym.name}</td>
-                  <td class="py-3 px-4 text-white/70 font-mono">{gym.rating ? `${Number(gym.rating).toFixed(1)}★` : 'N/A'}</td>
-                  <td class="py-3 px-4 text-white/70 font-mono">{Number(gym.day_pass_price_local) > 0 ? `$${gym.day_pass_price_local}` : 'N/A'}</td>
+                  <td class="py-3 px-4 text-white/70 font-mono">{displayRating(gym) ? `${displayRating(gym)!.text}★${displayRating(gym)!.source === 'google' ? ' (Google)' : ''}` : 'Not rated'}</td>
+                  <td class="py-3 px-4 text-white/70 font-mono">{formatPrice(gym.day_pass_price_local) ?? 'Not listed'}</td>
                   <td class="py-3 px-4 text-white/60 text-sm">
                     {gym.amenities
                       ? gym.amenities.split('|').slice(0, 3).map((item) => item.replace(/_/g, ' ')).join(', ')
@@ -382,10 +367,12 @@ const categoryIntro = category.type === 'amenity'
           <div class="text-white font-display font-semibold mb-1">All Gyms in {city}</div>
           <div class="text-sm text-white/50">Return to full city listing</div>
         </a>
-        <a href={`/${state}/${citySlug}/categories/`} class="p-4 rounded-xl border border-white/10 bg-[#2d2d2d] hover:border-[#2979ff]/40 transition-colors">
-          <div class="text-white font-display font-semibold mb-1">All City Categories</div>
-          <div class="text-sm text-white/50">Browse every filter in one place</div>
-        </a>
+        {hubIndexable && (
+          <a href={`/${state}/${citySlug}/categories/`} class="p-4 rounded-xl border border-white/10 bg-[#2d2d2d] hover:border-[#2979ff]/40 transition-colors">
+            <div class="text-white font-display font-semibold mb-1">All City Categories</div>
+            <div class="text-sm text-white/50">Browse every filter in one place</div>
+          </a>
+        )}
         <a href={`/search/?city=${encodeURIComponent(city)}`} class="p-4 rounded-xl border border-white/10 bg-[#2d2d2d] hover:border-[#ff2d7a]/40 transition-colors">
           <div class="text-white font-display font-semibold mb-1">Advanced Search</div>
           <div class="text-sm text-white/50">Filter by amenities and pricing</div>

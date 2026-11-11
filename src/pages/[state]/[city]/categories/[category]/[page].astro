@@ -7,7 +7,7 @@ import { getStateSlug } from '../../../../../utils/states';
 import {
   getCategoryDefinitions,
   gymMatchesCategory,
-  MIN_GYMS_FOR_PAGE_GENERATION,
+  computeCityCategoryIndex,
   sortGymsForListings,
 } from '../../../../../utils/cityCategory';
 import { generateItemListSchema } from '../../../../../utils/schema';
@@ -29,38 +29,31 @@ export async function getStaticPaths() {
   const gymsPerPage = 12;
   const gyms = await fetchGyms();
   const categories = getCategoryDefinitions(gyms);
-  const cityStatePairs = [...new Set(gyms.map((gym) => `${gym.region}|${gym.city}`))];
+  const infos = computeCityCategoryIndex(gyms, categories, getStateSlug);
 
   const paths = [];
 
-  for (const pair of cityStatePairs) {
-    const [region, city] = pair.split('|');
-    const cityGyms = gyms.filter((gym) => gym.region === region && gym.city === city);
-    const stateSlug = getStateSlug(region);
-    const citySlug = city.toLowerCase().replace(/\s+/g, '-');
-
-    for (const category of categories) {
-      const matchedGyms = sortGymsForListings(cityGyms.filter((gym) => gymMatchesCategory(gym, category)));
-      if (matchedGyms.length < MIN_GYMS_FOR_PAGE_GENERATION) continue;
-      if (matchedGyms.length <= gymsPerPage) continue;
-
-      const totalPages = Math.ceil(matchedGyms.length / gymsPerPage);
+  for (const info of infos) {
+    for (const entry of info.entries) {
+      if (entry.matchingGyms.length <= gymsPerPage) continue;
+      const totalPages = Math.ceil(entry.matchingGyms.length / gymsPerPage);
 
       for (let pageNum = 2; pageNum <= totalPages; pageNum++) {
         paths.push({
           params: {
-            state: stateSlug,
-            city: citySlug,
-            category: category.slug,
+            state: info.stateSlug,
+            city: info.citySlug,
+            category: entry.category.slug,
             page: String(pageNum),
           },
           props: {
-            region,
-            city,
-            category,
-            gyms: matchedGyms,
+            region: info.region,
+            city: info.city,
+            category: entry.category,
+            gyms: entry.matchingGyms,
             currentPage: pageNum,
             totalPages,
+            indexable: entry.indexable,
           },
         });
       }
@@ -71,7 +64,7 @@ export async function getStaticPaths() {
 }
 
 const { state, city: citySlug, category: categorySlug } = Astro.params;
-const { region, city, category, gyms, currentPage, totalPages } = Astro.props;
+const { region, city, category, gyms, currentPage, totalPages, indexable } = Astro.props;
 
 const startIndex = (currentPage - 1) * GYMS_PER_PAGE;
 const endIndex = startIndex + GYMS_PER_PAGE;
@@ -100,7 +93,8 @@ const breadcrumbs = [
 const itemListSchema = generateItemListSchema(
   paginatedGyms,
   `${categoryLabel} in ${city}, ${region} - Page ${currentPage}`,
-  canonicalUrl
+  canonicalUrl,
+  startIndex
 );
 itemListSchema['@id'] = canonicalUrl + '#itemlist';
 const collectionPageSchema = {
@@ -128,6 +122,7 @@ const combinedSchema = {
 ---
 
 <BaseLayout
+  noindex={!indexable}
   title={title}
   description={description}
   canonical={canonicalUrl}

@@ -311,7 +311,7 @@ const categoryColor = categoryColors[entry.data.category] || 'bg-white/10 text-w
       <span class={`text-sm font-semibold px-3 py-1 rounded-full border ${categoryColor}`}>
         {entry.data.category.charAt(0).toUpperCase() + entry.data.category.slice(1)}
       </span>
-      {entry.data.readingTime && (
+      {(entry.data.readingTime ?? 0) > 0 && (
         <span class="text-sm text-white/50">{entry.data.readingTime} min read</span>
       )}
     </div>

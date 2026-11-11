@@ -1,3 +1,4 @@
+import { hasValue, formatPrice, formatRating, joinList } from './display';
 /**
  * SEO Utility Functions
  * Generates meta tags, Open Graph, Twitter Cards for all pages
@@ -121,11 +122,19 @@ export function generateGymDescription(
   dayPassPrice?: number,
   topAmenity?: string
 ): string {
-  const ratingStr = rating.toFixed(1);
-  const types = climbingTypes.slice(0, 2).map(t => t.replace(/_/g, ' ')).join(' & ');
-  let desc = `Rated ${ratingStr}★ by climbers. ${gymName} offers ${types}`;
-  if (topAmenity) desc += ` + ${topAmenity}`;
-  if (dayPassPrice && dayPassPrice > 0) desc += `. Day pass from $${dayPassPrice}`;
+  const ratingStr = formatRating(rating);
+  const types = joinList(climbingTypes.slice(0, 2).map(t => t.replace(/_/g, ' ')), ' & ');
+  let desc = ratingStr ? `Rated ${ratingStr}★ by climbers. ` : '';
+  if (types) {
+    desc += `${gymName} offers ${types}`;
+    if (topAmenity) desc += ` + ${topAmenity}`;
+  } else if (topAmenity) {
+    desc += `${gymName} offers ${topAmenity}`;
+  } else {
+    desc += `${gymName} is an indoor climbing gym in ${city}`;
+  }
+  const priceStr = formatPrice(dayPassPrice);
+  if (priceStr) desc += `. Day pass from ${priceStr}`;
   desc += `. Hours, directions & photos inside.`;
   return desc.length > 160 ? desc.substring(0, 157) + '...' : desc;
 }
@@ -164,9 +173,11 @@ export function generateCityDescription(
   priceMin?: number,
   priceMax?: number
 ): string {
-  let desc = `Compare ${count} climbing gyms in ${city}. Avg rating ${avgRating.toFixed(1)}★`;
-  if (priceMin && priceMax && priceMin > 0) {
-    desc += `. Day passes $${priceMin}-$${priceMax}`;
+  let desc = `Compare ${count} climbing gyms in ${city}.`;
+  const avgStr = formatRating(avgRating);
+  if (avgStr) desc += ` Avg rating ${avgStr}★`;
+  if (hasValue(priceMin) && hasValue(priceMax)) {
+    desc += `. Day passes ${formatPrice(priceMin)}-${formatPrice(priceMax)}`;
   }
   desc += `. Bouldering, lead & top rope. Find your perfect gym today.`;
   return desc.length > 160 ? desc.substring(0, 157) + '...' : desc;
@@ -204,7 +215,7 @@ export function generateStateDescription(
   topGymRating?: number
 ): string {
   let desc = `Find ${gymCount} climbing gyms across ${cityCount} cities in ${state}`;
-  if (topGymName && topGymRating) {
+  if (topGymName && hasValue(topGymRating)) {
     desc += `. Top-rated: ${topGymName} (${topGymRating.toFixed(1)}★)`;
   }
   desc += `. Compare prices, amenities & locations.`;

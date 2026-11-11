@@ -9,6 +9,7 @@ import GymCard from '../../components/GymCard.astro';
 import InternalTrainingCTA from '../../components/InternalTrainingCTA.astro';
 import { generateItemListSchema, generateFAQSchema } from '../../utils/schema';
 import { generateStateTitle, generateStateDescription } from '../../utils/seo';
+import { hasValue, priceStats, formatPrice, formatRating } from '../../utils/display';
 import { fetchGyms } from '../../config/api';
 import { getStateSlug, getStateCode } from '../../utils/states';
 
@@ -40,9 +41,13 @@ const stateCode = getStateCode(region); // Get 2-letter code (e.g., "TN", "NJ")
 const cities = [...new Set(stateGyms.map(g => g.city))].sort();
 
 // Calculate stats
-const avgRating = (stateGyms.reduce((sum, g) => sum + g.rating, 0) / stateGyms.length).toFixed(1);
-const minPrice = Math.min(...stateGyms.map(g => g.day_pass_price_local));
-const maxPrice = Math.max(...stateGyms.map(g => g.day_pass_price_local));
+// Only gyms with a real rating / price contribute; missing values are omitted, never shown as 0.
+const ratedGyms = stateGyms.filter(g => hasValue(g.rating));
+const avgRating = ratedGyms.length ? (ratedGyms.reduce((sum, g) => sum + g.rating, 0) / ratedGyms.length).toFixed(1) : null;
+const priceRangeStats = priceStats(stateGyms, 2);
+const minPrice = priceRangeStats?.min ?? null;
+const maxPrice = priceRangeStats?.max ?? null;
+const topRatedGym = [...ratedGyms].sort((a, b) => b.rating - a.rating)[0];
 
 // Get featured gyms only (sorted by rating, then alphabetically)
 const featuredGyms = stateGyms
@@ -68,8 +73,8 @@ const pageUrl = `https://www.indoorclimbinggym.com/${stateSlug}`;
 
 // Generate schemas
 const itemListSchema = generateItemListSchema(
-  stateGyms,
-  `Climbing Gyms in ${region}`,
+  featuredGyms.slice(0, 9),
+  `Featured Climbing Gyms in ${region}`,
   pageUrl
 );
 
@@ -85,20 +90,21 @@ const faqs = [
   },
   {
     question: `What's the best climbing gym in ${region}?`,
-    answer: `The highest-rated climbing gym in ${region} is ${[...stateGyms].sort((a, b) => b.rating - a.rating)[0]?.name} with a ${[...stateGyms].sort((a, b) => b.rating - a.rating)[0]?.rating}★ rating. However, the "best" gym depends on your location, climbing style preferences, and desired amenities.`,
+    answer: topRatedGym ? `The highest-rated climbing gym in ${region} is ${topRatedGym.name} with a ${formatRating(topRatedGym.rating)}★ rating. However, the "best" gym depends on your location, climbing style preferences, and desired amenities.` : '',
   },
   {
     question: `How much does it cost to climb in ${region}?`,
-    answer: `Day pass prices in ${region} range from $${minPrice} to $${maxPrice}. Most gyms also offer monthly memberships, punch cards, and student discounts that provide better value for regular climbers.`,
+    answer: priceRangeStats ? `Day pass prices in ${region} range from ${formatPrice(minPrice)} to ${formatPrice(maxPrice)}. Most gyms also offer monthly memberships, punch cards, and student discounts that provide better value for regular climbers.` : '',
   },
   {
     question: `Are there bouldering gyms in ${region}?`,
     answer: `Yes! ${stateGyms.filter(g => g.climbing_types?.includes('bouldering')).length} of ${stateGyms.length} climbing facilities in ${region} offer bouldering. Some gyms are bouldering-only, while others combine bouldering with rope climbing.`,
   },
-];
+].filter(f => f.answer);
 
 const faqSchema = generateFAQSchema(faqs);
-const combinedSchema = [itemListSchema, faqSchema];
+// Only list gyms that are actually rendered (featured section); omit the ItemList when there are none.
+const combinedSchema = featuredGyms.length > 0 ? [itemListSchema, faqSchema] : [faqSchema];
 
 // Breadcrumbs
 const breadcrumbs = [
@@ -157,11 +163,11 @@ const cityColors = ['#ff2d7a', '#00e676', '#2979ff', '#ffea00', '#ff9100', '#e04
           <div class="text-sm text-white/40 font-mono tracking-wider mt-1">CITIES</div>
         </div>
         <div class="text-center">
-          <div class="font-mono font-bold text-4xl text-[#ff2d7a]">{avgRating}★</div>
+          <div class="font-mono font-bold text-4xl text-[#ff2d7a]">{avgRating ? `${avgRating}★` : '—'}</div>
           <div class="text-sm text-white/40 font-mono tracking-wider mt-1">AVG RATING</div>
         </div>
         <div class="text-center">
-          <div class="font-mono font-bold text-4xl text-[#ffea00]">${minPrice}-${maxPrice}</div>
+          <div class="font-mono font-bold text-4xl text-[#ffea00]">{priceRangeStats ? `${formatPrice(minPrice)}-${formatPrice(maxPrice)}` : '—'}</div>
           <div class="text-sm text-white/40 font-mono tracking-wider mt-1">DAY PASS</div>
         </div>
       </div>
@@ -202,7 +208,8 @@ const cityColors = ['#ff2d7a', '#00e676', '#2979ff', '#ffea00', '#ff9100', '#e04
         {cities.map((city, index) => {
           const cityGyms = stateGyms.filter(g => g.city === city);
           const citySlug = city.toLowerCase().replace(/\s+/g, '-');
-          const cityAvgRating = (cityGyms.reduce((sum, g) => sum + g.rating, 0) / cityGyms.length).toFixed(1);
+          const cityRated = cityGyms.filter(g => hasValue(g.rating));
+          const cityAvgRating = cityRated.length ? (cityRated.reduce((sum, g) => sum + g.rating, 0) / cityRated.length).toFixed(1) : null;
           const color = cityColors[index % cityColors.length];
           
           return (
@@ -230,12 +237,12 @@ const cityColors = ['#ff2d7a', '#00e676', '#2979ff', '#ffea00', '#ff9100', '#e04
                       </svg>
                       <span class="font-mono">{cityGyms.length} {cityGyms.length === 1 ? 'Gym' : 'Gyms'}</span>
                   </div>
-                  <div class="flex items-center gap-2 text-white/40 text-sm">
+                  {cityAvgRating && (<div class="flex items-center gap-2 text-white/40 text-sm">
                       <svg class="w-4 h-4 text-[#ffea00]" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                       <span class="font-mono">{cityAvgRating} Average</span>
-                  </div>
+                  </div>)}
               </div>
               
               {/* Arrow indicator */}

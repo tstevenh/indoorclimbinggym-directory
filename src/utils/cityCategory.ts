@@ -1,3 +1,5 @@
+import cityCategoryKeep from '../data/cityCategoryKeep.json';
+
 export interface GymLike {
   id: string | number;
   name: string;
@@ -27,8 +29,13 @@ export interface CategoryDefinition {
 const SKIP_DYNAMIC_AMENITIES = new Set(['sauna', 'kids_zone']);
 const SKIP_DYNAMIC_CLIMBING_TYPES = new Set(['bouldering']);
 
-export const MIN_GYMS_FOR_INDEXABLE_COMBO = 2;
-export const MIN_GYMS_FOR_INDEXABLE_CITY_HUB = 2;
+/** Min matching gyms for a city x category page to be indexable (must also differ from the city page). */
+export const MIN_GYMS_FOR_INDEXABLE_COMBO = 3;
+/** Min matching gyms for a click-earning (keep-list) city x category page. */
+export const MIN_GYMS_FOR_KEEPLIST_COMBO = 2;
+/** Min indexable category pages a city needs for its categories hub to be indexable. */
+export const MIN_INDEXABLE_CATEGORIES_FOR_HUB = 2;
+export const MIN_GYMS_FOR_INDEXABLE_CITY_HUB = 2; // hub generation floor (indexability: MIN_INDEXABLE_CATEGORIES_FOR_HUB)
 export const MIN_GYMS_FOR_PAGE_GENERATION = 1;
 
 function normalizePipeValues(value: string | null | undefined): string[] {
@@ -195,5 +202,83 @@ export function sortGymsForListings(gyms: GymLike[]): GymLike[] {
     const ratingB = Number(b.rating) || 0;
     if (ratingA !== ratingB) return ratingB - ratingA;
     return (a.name || '').localeCompare(b.name || '');
+  });
+}
+
+const CITY_CATEGORY_KEEP = new Set<string>(cityCategoryKeep as string[]);
+
+export function isKeepListed(path: string): boolean {
+  return CITY_CATEGORY_KEEP.has(path);
+}
+
+/**
+ * Single source of truth for city x category index gating.
+ * `url` is the page path, e.g. /colorado/denver/categories/climbing-gyms-with-sauna/
+ * Indexable if the matching set is a strict subset of the city set (differs from the city page) AND
+ *  - >= 3 matching gyms, or
+ *  - >= 2 matching gyms and the URL is on the click-earning keep-list.
+ */
+export function isIndexableCityCategory(cityGyms: GymLike[], matchingGyms: GymLike[], url: string): boolean {
+  const cityIds = new Set(cityGyms.map((g) => String(g.id)));
+  const strictSubset = matchingGyms.every((g) => cityIds.has(String(g.id))) && matchingGyms.length < cityIds.size;
+  if (!strictSubset) return false;
+  if (matchingGyms.length >= MIN_GYMS_FOR_INDEXABLE_COMBO) return true;
+  return matchingGyms.length >= MIN_GYMS_FOR_KEEPLIST_COMBO && isKeepListed(url);
+}
+
+export function cityCategoryPath(stateSlug: string, citySlug: string, categorySlug: string): string {
+  return `/${stateSlug}/${citySlug}/categories/${categorySlug}/`;
+}
+
+export function cityHubIndexable(indexableCategoryCount: number): boolean {
+  return indexableCategoryCount >= MIN_INDEXABLE_CATEGORIES_FOR_HUB;
+}
+
+export interface CityCategoryIndexEntry {
+  category: CategoryDefinition;
+  path: string;
+  matchingGyms: GymLike[];
+  indexable: boolean;
+  keepListed: boolean;
+}
+
+export interface CityIndexInfo {
+  region: string;
+  city: string;
+  stateSlug: string;
+  citySlug: string;
+  cityGyms: GymLike[];
+  entries: CityCategoryIndexEntry[]; // categories with >= 1 matching gym
+  indexableCount: number;
+  hubIndexable: boolean;
+}
+
+/** Computes index gating for every city x category page (page generation keeps all with >= 1 gym). */
+export function computeCityCategoryIndex(
+  gyms: GymLike[],
+  categories: CategoryDefinition[],
+  getStateSlug: (region: string) => string
+): CityIndexInfo[] {
+  const pairs = [...new Set(gyms.map((gym) => `${gym.region}|${gym.city}`))];
+  return pairs.map((pair) => {
+    const [region, city] = pair.split('|');
+    const cityGyms = gyms.filter((gym) => gym.region === region && gym.city === city);
+    const stateSlug = getStateSlug(region);
+    const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+    const entries: CityCategoryIndexEntry[] = [];
+    for (const category of categories) {
+      const matchingGyms = sortGymsForListings(cityGyms.filter((gym) => gymMatchesCategory(gym, category)));
+      if (matchingGyms.length < MIN_GYMS_FOR_PAGE_GENERATION) continue;
+      const path = cityCategoryPath(stateSlug, citySlug, category.slug);
+      entries.push({
+        category,
+        path,
+        matchingGyms,
+        indexable: isIndexableCityCategory(cityGyms, matchingGyms, path),
+        keepListed: isKeepListed(path),
+      });
+    }
+    const indexableCount = entries.filter((e) => e.indexable).length;
+    return { region, city, stateSlug, citySlug, cityGyms, entries, indexableCount, hubIndexable: cityHubIndexable(indexableCount) };
   });
 }

@@ -10,6 +10,7 @@ import Pagination from '../../../components/Pagination.astro';
 import OtherCitiesInState from '../../../components/OtherCitiesInState.astro';
 import { generateItemListSchema, generateFAQSchema } from '../../../utils/schema';
 import { generateCityTitle, generateCityDescription } from '../../../utils/seo';
+import { hasValue, priceStats, formatPrice, formatRating } from '../../../utils/display';
 import { fetchGyms } from '../../../config/api';
 import { getStateSlug } from '../../../utils/states';
 
@@ -97,9 +98,14 @@ const otherCities = Array.from(cityMap.entries())
   .sort((a, b) => a.name.localeCompare(b.name));
 
 // Calculate stats
-const avgRating = (cityGyms.reduce((sum, g) => sum + g.rating, 0) / cityGyms.length).toFixed(1);
-const minPrice = Math.min(...cityGyms.map(g => g.day_pass_price_local));
-const maxPrice = Math.max(...cityGyms.map(g => g.day_pass_price_local));
+// Only gyms with a real rating / price contribute to stats; missing values are omitted, never shown as 0.
+const ratedGyms = cityGyms.filter(g => hasValue(g.rating));
+const avgRating = ratedGyms.length ? (ratedGyms.reduce((sum, g) => sum + g.rating, 0) / ratedGyms.length).toFixed(1) : null;
+const priceRangeStats = priceStats(cityGyms, 2); // range/average need >= 2 priced gyms
+const cheapestStats = priceStats(cityGyms, 1);   // "cheapest" is fine with 1 priced gym
+const minPrice = priceRangeStats?.min ?? null;
+const maxPrice = priceRangeStats?.max ?? null;
+const topRatedGym = [...ratedGyms].sort((a, b) => b.rating - a.rating)[0];
 
 // Get featured gyms only (sorted by rating, then alphabetically)
 const featuredGyms = cityGyms
@@ -114,8 +120,8 @@ const featuredGyms = cityGyms
 const validPrices = cityGyms
   .map(g => g.day_pass_price_local)
   .filter(p => p && p > 0);
-const seoPriceMin = validPrices.length > 0 ? Math.min(...validPrices) : undefined;
-const seoPriceMax = validPrices.length > 0 ? Math.max(...validPrices) : undefined;
+const seoPriceMin = priceRangeStats?.min;
+const seoPriceMax = priceRangeStats?.max;
 
 // Generate SEO data with CTR-optimized parameters
 // Note: this route only builds page 2+ (page 1 lives at /[state]/[city]/)
@@ -128,7 +134,7 @@ const description = generateCityDescription(
   city,
   region,
   cityGyms.length,
-  parseFloat(avgRating),
+  avgRating ? parseFloat(avgRating) : 0,
   seoPriceMin,
   seoPriceMax
 );
@@ -146,9 +152,10 @@ const nextUrl = currentPage < totalPages
 
 // Generate schemas
 const itemListSchema = generateItemListSchema(
-  cityGyms,
+  paginatedGyms,
   `Climbing Gyms in ${city}, ${region}`,
-  pageUrl
+  pageUrl,
+  startIndex
 );
 
 // Generate FAQ
@@ -159,7 +166,7 @@ const faqs = [
   },
   {
     question: `What's the average day pass price in ${city}?`,
-    answer: `Day pass prices in ${city} range from $${minPrice} to $${maxPrice}, with an average of around $${Math.round((minPrice + maxPrice) / 2)}. Many gyms also offer monthly memberships and student discounts.`,
+    answer: priceRangeStats ? `Day pass prices in ${city} range from ${formatPrice(priceRangeStats.min)} to ${formatPrice(priceRangeStats.max)}, with an average of around ${formatPrice(priceRangeStats.avg)} (based on ${priceRangeStats.count} gyms with listed prices). Many gyms also offer monthly memberships and student discounts.` : '',
   },
   {
     question: `Which ${city} gym is best for beginners?`,
@@ -181,7 +188,7 @@ const faqs = [
   },
   {
     question: `What's the cheapest climbing gym in ${city}?`,
-    answer: `The most affordable day pass in ${city} is $${minPrice}. Compare prices across all ${cityGyms.length} gyms below to find the best value for your budget.`,
+    answer: cheapestStats ? `The most affordable listed day pass in ${city} is ${formatPrice(cheapestStats.min)}. Compare prices across all ${cityGyms.length} gyms below to find the best value for your budget.` : '',
   },
   {
     question: `Do ${city} gyms offer student discounts?`,
@@ -197,7 +204,7 @@ const faqs = [
   },
   {
     question: `What's the best climbing gym in ${city}?`,
-    answer: `Based on ratings, ${[...cityGyms].sort((a, b) => b.rating - a.rating)[0]?.name} is the highest-rated climbing gym in ${city} with a ${[...cityGyms].sort((a, b) => b.rating - a.rating)[0]?.rating}★ rating. However, the "best" gym depends on your preferences for climbing style, location, and amenities.`,
+    answer: topRatedGym ? `Based on ratings, ${topRatedGym.name} is the highest-rated climbing gym in ${city} with a ${formatRating(topRatedGym.rating)}★ rating. However, the "best" gym depends on your preferences for climbing style, location, and amenities.` : '',
   },
   {
     question: `Which ${city} gyms have kids zones?`,
@@ -205,7 +212,7 @@ const faqs = [
       ? `${cityGyms.filter(g => g.amenities?.includes('kids_zone')).map(g => g.name).join(', ')} offer dedicated kids zones, making them great family-friendly options in ${city}.`
       : `Check individual gym pages for family-friendly amenities and kids programs.`,
   },
-];
+].filter(f => f.answer);
 
 const faqSchema = generateFAQSchema(faqs);
 const combinedSchema = [itemListSchema, faqSchema];
@@ -260,11 +267,11 @@ const breadcrumbs = [
         <div class="text-sm text-gray-600">Gyms</div>
       </div>
       <div class="text-center">
-        <div class="text-3xl font-bold text-sage">{avgRating}★</div>
+        <div class="text-3xl font-bold text-sage">{avgRating ? `${avgRating}★` : '—'}</div>
         <div class="text-sm text-gray-600">Avg Rating</div>
       </div>
       <div class="text-center">
-        <div class="text-3xl font-bold text-sage">${minPrice}-${maxPrice}</div>
+        <div class="text-3xl font-bold text-sage">{priceRangeStats ? `${formatPrice(minPrice)}-${formatPrice(maxPrice)}` : (cheapestStats ? `From ${formatPrice(cheapestStats.min)}` : '—')}</div>
         <div class="text-sm text-gray-600">Day Pass Range</div>
       </div>
       <div class="text-center">
@@ -356,9 +363,9 @@ const breadcrumbs = [
                   {gym.name}
                 </a>
               </td>
-              <td class="py-3 px-4 font-bold">${gym.day_pass_price_local}</td>
+              <td class="py-3 px-4 font-bold">{formatPrice(gym.day_pass_price_local) ?? 'Not listed'}</td>
               <td class="py-3 px-4">
-                {gym.membership_from_local ? `$${gym.membership_from_local}/mo` : 'N/A'}
+                {formatPrice(gym.membership_from_local) ? `${formatPrice(gym.membership_from_local)}/mo` : 'Not listed'}
               </td>
               <td class="py-3 px-4">
                 {gym.student_discount ? '✓ Yes' : '—'}
@@ -417,7 +424,7 @@ const breadcrumbs = [
         strengthen the local climbing community.
       </p>
       <p>
-        With an average rating of {avgRating} stars, climbers consistently praise {city}'s gyms for
+        {avgRating ? <>With an average rating of {avgRating} stars, climbers</> : <>Climbers</>} consistently praise {city}'s gyms for
         their route quality, friendly atmosphere, and comprehensive amenities. Whether you're a resident
         or just visiting, you'll find excellent climbing options throughout the city.
       </p>

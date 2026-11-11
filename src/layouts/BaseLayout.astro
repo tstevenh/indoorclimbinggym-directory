@@ -121,6 +121,7 @@ const absoluteOgImage = ogImage.startsWith('http')
 const robotsDirectives = [];
 if (noindex) robotsDirectives.push('noindex');
 if (nofollow) robotsDirectives.push('nofollow');
+if (noindex && !nofollow) robotsDirectives.push('follow');
 const robots = robotsDirectives.length > 0 ? robotsDirectives.join(', ') : 'index, follow';
 
 let breadcrumbSchema = null;
@@ -199,8 +200,9 @@ const dashboardUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.
     <meta name="twitter:image" content={absoluteOgImage} />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/logo.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -275,7 +277,9 @@ const dashboardUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.
           <!-- Logo -->
           <a href="/" class="flex items-center gap-3 group">
             <img 
-              src="/logo.svg" 
+              src="/logo-40.webp"
+              srcset="/logo-40.webp 1x, /logo-40@2x.webp 2x"
+              width="40" height="40"
               alt="Indoor Climbing Gym" 
               class="w-10 h-10"
               style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));"
@@ -409,7 +413,10 @@ const dashboardUrl = import.meta.env.PUBLIC_DASHBOARD_URL || 'https://dashboard.
           <div class="lg:col-span-2">
             <a href="/" class="inline-flex items-center gap-3 mb-6">
               <img 
-                src="/logo.svg" 
+                src="/logo-48.webp"
+                srcset="/logo-48.webp 1x, /logo-48@2x.webp 2x"
+                width="48" height="48"
+                loading="lazy"
                 alt="Indoor Climbing Gym" 
                 class="w-12 h-12"
                 style="filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));"

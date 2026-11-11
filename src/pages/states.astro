@@ -6,7 +6,7 @@
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { generateSEO } from '../utils/seo';
-import { generateItemListSchema } from '../utils/schema';
+import { generateLinkListSchema } from '../utils/schema';
 import { fetchGyms } from '../config/api';
 import { getStateCode, getStateSlug, getStateName } from '../utils/states';
 
@@ -60,15 +60,11 @@ const seo = generateSEO({
 });
 
 // Generate ItemList schema showing all states
-const itemListSchema = generateItemListSchema(
+const itemListSchema = generateLinkListSchema(
   statesArray.map(state => ({
-    id: state.slug,
-    name: state.name,
-    slug: state.slug,
-    city: '',
-    region: state.name,
-    rating: 0,
-  })) as any,
+    name: `Climbing Gyms in ${state.name}`,
+    url: `https://www.indoorclimbinggym.com/${state.slug}/`,
+  })),
   'Climbing Gyms by State',
   pageUrl
 );

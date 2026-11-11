@@ -1,6 +1,11 @@
 {
   "redirects": [
     {
+      "source": "/logo.svg",
+      "destination": "/logo.png",
+      "permanent": true
+    },
+    {
       "source": "/:state/:city/1/",
       "destination": "/:state/:city/",
       "permanent": true

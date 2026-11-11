@@ -88,7 +88,9 @@ export async function fetchGyms(params?: Record<string, string>) {
         ...gym,
         featured: isFeaturedActive, // Update featured based on expiration
         rating_overall: gym.rating_overall || calculatedOverall, // Use stored or calculated
-        rating: gym.rating_overall || calculatedOverall, // Legacy field for compatibility
+        rating: gym.rating_overall || calculatedOverall, // Legacy field (drives sort order; may fall back to Google rating)
+        rating_editorial: gym.rating_overall > 0 ? gym.rating_overall : (detailedRatings.length > 0 ? calculatedOverall : 0), // Our editorial rating only
+        google_rating: gym.rating || 0, // Third-party Google Maps rating (raw DB column)
         photo: gym.hero_image || '', // Map hero_image to photo for backwards compatibility
         longtitude: gym.longitude || 0, // Map longitude to longtitude (legacy misspelling)
       }
@@ -184,6 +186,8 @@ export async function fetchGymBySlug(identifier: string) {
       featured: isFeaturedActive,
       rating_overall: gym.rating_overall || calculatedOverall,
       rating: gym.rating_overall || calculatedOverall,
+      rating_editorial: gym.rating_overall > 0 ? gym.rating_overall : (detailedRatings.length > 0 ? calculatedOverall : 0),
+      google_rating: gym.rating || 0,
       photo: gym.hero_image || '', // Map hero_image to photo for backwards compatibility
       longtitude: gym.longitude || 0, // Map longitude to longtitude (legacy misspelling)
     }

@@ -8,9 +8,23 @@ import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 import partytown from '@astrojs/partytown';
 import mdx from '@astrojs/mdx';
+import fs from 'node:fs';
 import remarkAutolinkClimbroMentions from './src/utils/remarkAutolinkClimbroMentions.mjs';
 
 // https://astro.build/config
+// Noindexed city x category pages / hubs are recorded at build time by the pages (src/utils/cityCategoryManifest.ts).
+let cityCategoryNoindexCache;
+function loadCityCategoryNoindex() {
+  if (cityCategoryNoindexCache) return cityCategoryNoindexCache;
+  try {
+    const m = JSON.parse(fs.readFileSync(new URL('./node_modules/.cache/city-category-noindex.json', import.meta.url), 'utf8'));
+    cityCategoryNoindexCache = { prefixes: m.categoryPrefixes, hubs: new Set(m.hubPaths) };
+  } catch {
+    cityCategoryNoindexCache = { prefixes: [], hubs: new Set() };
+  }
+  return cityCategoryNoindexCache;
+}
+
 export default defineConfig({
   site: 'https://www.indoorclimbinggym.com',
   trailingSlash: 'always', // Enforce trailing slashes for canonical URL consistency
@@ -32,6 +46,9 @@ export default defineConfig({
         try {
           const path = new URL(page, 'https://www.indoorclimbinggym.com').pathname;
           if (path.endsWith('/1/')) return false;
+          const noindexed = loadCityCategoryNoindex();
+          if (noindexed.hubs.has(path)) return false;
+          if (noindexed.prefixes.some((prefix) => path.startsWith(prefix))) return false;
           if (path === '/privacy/' || path === '/terms/' || path === '/404/') return false;
           return true;
         } catch {

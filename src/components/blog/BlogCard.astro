@@ -64,7 +64,7 @@ const categoryColor = categoryColors[category] || 'bg-white/10 text-white/80 bor
       <span class={`text-xs font-semibold px-3 py-1 rounded-full border ${categoryColor}`}>
         {category.charAt(0).toUpperCase() + category.slice(1)}
       </span>
-      {readingTime && (
+      {(readingTime ?? 0) > 0 && (
         <span class="text-xs text-white/50">
           {readingTime} min read
         </span>

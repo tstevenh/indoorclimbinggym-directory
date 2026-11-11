@@ -1,8 +1,12 @@
 import { fetchGyms } from '../config/api';
+import { hasValue, formatPrice } from './display';
 import {
   getCategoryDefinitions,
   gymMatchesCategory,
   MIN_GYMS_FOR_INDEXABLE_CITY_HUB,
+  isIndexableCityCategory,
+  cityCategoryPath,
+  cityHubIndexable,
   sortGymsForListings,
   type CategoryDefinition,
   type GymLike,
@@ -255,16 +259,20 @@ export async function getDirectoryLlmPages(): Promise<LlmPage[]> {
       }))
       .filter((category) => category.matchingGyms.length > 0);
 
-    if (cityGyms.length >= MIN_GYMS_FOR_INDEXABLE_CITY_HUB && categoryStats.length >= 2) {
+    // Only indexable city x category pages (and hubs with >= 2 of them) are listed.
+    const indexableStats = categoryStats.filter((category) =>
+      isIndexableCityCategory(cityGyms, category.matchingGyms, cityCategoryPath(stateSlug, citySlug(city), category.slug))
+    );
+    if (cityGyms.length >= MIN_GYMS_FOR_INDEXABLE_CITY_HUB && cityHubIndexable(indexableStats.length)) {
       pages.push({
         title: `Climbing Gym Categories in ${city}, ${state}`,
         url: `${cityPath}categories/`,
-        description: `City category hub covering ${categoryStats.length} climbing gym categories in ${city}, ${state}.`,
+        description: `City category hub covering ${indexableStats.length} climbing gym categories in ${city}, ${state}.`,
         section: 'City Category Pages',
       });
     }
 
-    for (const category of categoryStats) {
+    for (const category of indexableStats) {
       const title = `${getCategoryTitle(category)} in ${city}, ${state}`;
       const path = `${cityPath}categories/${category.slug}/`;
       pages.push({
@@ -307,8 +315,8 @@ export async function getDirectoryLlmPages(): Promise<LlmPage[]> {
 
   for (const gym of gyms) {
     const climbingTypes = gym.climbing_types?.split('|').filter(Boolean).map(formatToken).join(', ') || 'indoor climbing';
-    const price = gym.day_pass_price_local ? ` Day pass price: $${gym.day_pass_price_local}.` : '';
-    const rating = gym.rating ? ` Rating: ${gym.rating}.` : '';
+    const price = formatPrice(gym.day_pass_price_local) ? ` Day pass price: ${formatPrice(gym.day_pass_price_local)}.` : '';
+    const rating = hasValue(gym.rating) ? ` Rating: ${gym.rating}.` : '';
     pages.push({
       title: gym.name,
       url: `/gyms/${gym.slug}/`,

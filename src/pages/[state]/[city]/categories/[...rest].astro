@@ -1,0 +1,16 @@
+---
+// SSR catch-all: city x category URLs (and hubs) that are no longer prerendered 301 to the city page.
+// Prerendered pages are served from the filesystem first on Vercel, so this only sees misses.
+import { resolveVanishedRedirect } from '../../../../utils/vanishedRedirect';
+
+export const prerender = false;
+
+const target = resolveVanishedRedirect(Astro.url.pathname);
+if (target) {
+  return new Response(null, { status: 301, headers: { Location: target, 'Cache-Control': 'public, max-age=86400, s-maxage=86400' } });
+}
+return new Response('<!doctype html><title>404 Not Found</title><h1>404 Not Found</h1>', {
+  status: 404,
+  headers: { 'Content-Type': 'text/html; charset=utf-8' },
+});
+---
