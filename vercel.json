@@ -16,263 +16,523 @@
       "permanent": true
     },
     {
-      "source": "/guides/:slug*",
-      "destination": "/blog/:slug*/",
+      "source": "/guides",
+      "destination": "/blog/",
       "permanent": true
     },
     {
-      "source": "/al/:path*",
-      "destination": "/alabama/:path*/",
+      "source": "/guides/:path(.*)",
+      "destination": "/blog/:path",
       "permanent": true
     },
     {
-      "source": "/ak/:path*",
-      "destination": "/alaska/:path*/",
+      "source": "/al",
+      "destination": "/alabama/",
       "permanent": true
     },
     {
-      "source": "/az/:path*",
-      "destination": "/arizona/:path*/",
+      "source": "/al/:path(.*)",
+      "destination": "/alabama/:path",
       "permanent": true
     },
     {
-      "source": "/ar/:path*",
-      "destination": "/arkansas/:path*/",
+      "source": "/ak",
+      "destination": "/alaska/",
       "permanent": true
     },
     {
-      "source": "/ca/:path*",
-      "destination": "/california/:path*/",
+      "source": "/ak/:path(.*)",
+      "destination": "/alaska/:path",
       "permanent": true
     },
     {
-      "source": "/co/:path*",
-      "destination": "/colorado/:path*/",
+      "source": "/az",
+      "destination": "/arizona/",
       "permanent": true
     },
     {
-      "source": "/ct/:path*",
-      "destination": "/connecticut/:path*/",
+      "source": "/az/:path(.*)",
+      "destination": "/arizona/:path",
       "permanent": true
     },
     {
-      "source": "/de/:path*",
-      "destination": "/delaware/:path*/",
+      "source": "/ar",
+      "destination": "/arkansas/",
       "permanent": true
     },
     {
-      "source": "/fl/:path*",
-      "destination": "/florida/:path*/",
+      "source": "/ar/:path(.*)",
+      "destination": "/arkansas/:path",
       "permanent": true
     },
     {
-      "source": "/ga/:path*",
-      "destination": "/georgia/:path*/",
+      "source": "/ca",
+      "destination": "/california/",
       "permanent": true
     },
     {
-      "source": "/hi/:path*",
-      "destination": "/hawaii/:path*/",
+      "source": "/ca/:path(.*)",
+      "destination": "/california/:path",
       "permanent": true
     },
     {
-      "source": "/id/:path*",
-      "destination": "/idaho/:path*/",
+      "source": "/co",
+      "destination": "/colorado/",
       "permanent": true
     },
     {
-      "source": "/il/:path*",
-      "destination": "/illinois/:path*/",
+      "source": "/co/:path(.*)",
+      "destination": "/colorado/:path",
       "permanent": true
     },
     {
-      "source": "/in/:path*",
-      "destination": "/indiana/:path*/",
+      "source": "/ct",
+      "destination": "/connecticut/",
       "permanent": true
     },
     {
-      "source": "/ia/:path*",
-      "destination": "/iowa/:path*/",
+      "source": "/ct/:path(.*)",
+      "destination": "/connecticut/:path",
       "permanent": true
     },
     {
-      "source": "/ks/:path*",
-      "destination": "/kansas/:path*/",
+      "source": "/de",
+      "destination": "/delaware/",
       "permanent": true
     },
     {
-      "source": "/ky/:path*",
-      "destination": "/kentucky/:path*/",
+      "source": "/de/:path(.*)",
+      "destination": "/delaware/:path",
       "permanent": true
     },
     {
-      "source": "/la/:path*",
-      "destination": "/louisiana/:path*/",
+      "source": "/fl",
+      "destination": "/florida/",
       "permanent": true
     },
     {
-      "source": "/me/:path*",
-      "destination": "/maine/:path*/",
+      "source": "/fl/:path(.*)",
+      "destination": "/florida/:path",
       "permanent": true
     },
     {
-      "source": "/md/:path*",
-      "destination": "/maryland/:path*/",
+      "source": "/ga",
+      "destination": "/georgia/",
       "permanent": true
     },
     {
-      "source": "/ma/:path*",
-      "destination": "/massachusetts/:path*/",
+      "source": "/ga/:path(.*)",
+      "destination": "/georgia/:path",
       "permanent": true
     },
     {
-      "source": "/mi/:path*",
-      "destination": "/michigan/:path*/",
+      "source": "/hi",
+      "destination": "/hawaii/",
       "permanent": true
     },
     {
-      "source": "/mn/:path*",
-      "destination": "/minnesota/:path*/",
+      "source": "/hi/:path(.*)",
+      "destination": "/hawaii/:path",
       "permanent": true
     },
     {
-      "source": "/ms/:path*",
-      "destination": "/mississippi/:path*/",
+      "source": "/id",
+      "destination": "/idaho/",
       "permanent": true
     },
     {
-      "source": "/mo/:path*",
-      "destination": "/missouri/:path*/",
+      "source": "/id/:path(.*)",
+      "destination": "/idaho/:path",
       "permanent": true
     },
     {
-      "source": "/mt/:path*",
-      "destination": "/montana/:path*/",
+      "source": "/il",
+      "destination": "/illinois/",
       "permanent": true
     },
     {
-      "source": "/ne/:path*",
-      "destination": "/nebraska/:path*/",
+      "source": "/il/:path(.*)",
+      "destination": "/illinois/:path",
       "permanent": true
     },
     {
-      "source": "/nv/:path*",
-      "destination": "/nevada/:path*/",
+      "source": "/in",
+      "destination": "/indiana/",
       "permanent": true
     },
     {
-      "source": "/nh/:path*",
-      "destination": "/new-hampshire/:path*/",
+      "source": "/in/:path(.*)",
+      "destination": "/indiana/:path",
       "permanent": true
     },
     {
-      "source": "/nj/:path*",
-      "destination": "/new-jersey/:path*/",
+      "source": "/ia",
+      "destination": "/iowa/",
       "permanent": true
     },
     {
-      "source": "/nm/:path*",
-      "destination": "/new-mexico/:path*/",
+      "source": "/ia/:path(.*)",
+      "destination": "/iowa/:path",
       "permanent": true
     },
     {
-      "source": "/ny/:path*",
-      "destination": "/new-york/:path*/",
+      "source": "/ks",
+      "destination": "/kansas/",
       "permanent": true
     },
     {
-      "source": "/nc/:path*",
-      "destination": "/north-carolina/:path*/",
+      "source": "/ks/:path(.*)",
+      "destination": "/kansas/:path",
       "permanent": true
     },
     {
-      "source": "/nd/:path*",
-      "destination": "/north-dakota/:path*/",
+      "source": "/ky",
+      "destination": "/kentucky/",
       "permanent": true
     },
     {
-      "source": "/oh/:path*",
-      "destination": "/ohio/:path*/",
+      "source": "/ky/:path(.*)",
+      "destination": "/kentucky/:path",
       "permanent": true
     },
     {
-      "source": "/ok/:path*",
-      "destination": "/oklahoma/:path*/",
+      "source": "/la",
+      "destination": "/louisiana/",
       "permanent": true
     },
     {
-      "source": "/or/:path*",
-      "destination": "/oregon/:path*/",
+      "source": "/la/:path(.*)",
+      "destination": "/louisiana/:path",
       "permanent": true
     },
     {
-      "source": "/pa/:path*",
-      "destination": "/pennsylvania/:path*/",
+      "source": "/me",
+      "destination": "/maine/",
       "permanent": true
     },
     {
-      "source": "/ri/:path*",
-      "destination": "/rhode-island/:path*/",
+      "source": "/me/:path(.*)",
+      "destination": "/maine/:path",
       "permanent": true
     },
     {
-      "source": "/sc/:path*",
-      "destination": "/south-carolina/:path*/",
+      "source": "/md",
+      "destination": "/maryland/",
       "permanent": true
     },
     {
-      "source": "/sd/:path*",
-      "destination": "/south-dakota/:path*/",
+      "source": "/md/:path(.*)",
+      "destination": "/maryland/:path",
       "permanent": true
     },
     {
-      "source": "/tn/:path*",
-      "destination": "/tennessee/:path*/",
+      "source": "/ma",
+      "destination": "/massachusetts/",
       "permanent": true
     },
     {
-      "source": "/tx/:path*",
-      "destination": "/texas/:path*/",
+      "source": "/ma/:path(.*)",
+      "destination": "/massachusetts/:path",
       "permanent": true
     },
     {
-      "source": "/ut/:path*",
-      "destination": "/utah/:path*/",
+      "source": "/mi",
+      "destination": "/michigan/",
       "permanent": true
     },
     {
-      "source": "/vt/:path*",
-      "destination": "/vermont/:path*/",
+      "source": "/mi/:path(.*)",
+      "destination": "/michigan/:path",
       "permanent": true
     },
     {
-      "source": "/va/:path*",
-      "destination": "/virginia/:path*/",
+      "source": "/mn",
+      "destination": "/minnesota/",
       "permanent": true
     },
     {
-      "source": "/wa/:path*",
-      "destination": "/washington/:path*/",
+      "source": "/mn/:path(.*)",
+      "destination": "/minnesota/:path",
       "permanent": true
     },
     {
-      "source": "/wv/:path*",
-      "destination": "/west-virginia/:path*/",
+      "source": "/ms",
+      "destination": "/mississippi/",
       "permanent": true
     },
     {
-      "source": "/wi/:path*",
-      "destination": "/wisconsin/:path*/",
+      "source": "/ms/:path(.*)",
+      "destination": "/mississippi/:path",
       "permanent": true
     },
     {
-      "source": "/wy/:path*",
-      "destination": "/wyoming/:path*/",
+      "source": "/mo",
+      "destination": "/missouri/",
       "permanent": true
     },
     {
-      "source": "/dc/:path*",
-      "destination": "/district-of-columbia/:path*/",
+      "source": "/mo/:path(.*)",
+      "destination": "/missouri/:path",
+      "permanent": true
+    },
+    {
+      "source": "/mt",
+      "destination": "/montana/",
+      "permanent": true
+    },
+    {
+      "source": "/mt/:path(.*)",
+      "destination": "/montana/:path",
+      "permanent": true
+    },
+    {
+      "source": "/ne",
+      "destination": "/nebraska/",
+      "permanent": true
+    },
+    {
+      "source": "/ne/:path(.*)",
+      "destination": "/nebraska/:path",
+      "permanent": true
+    },
+    {
+      "source": "/nv",
+      "destination": "/nevada/",
+      "permanent": true
+    },
+    {
+      "source": "/nv/:path(.*)",
+      "destination": "/nevada/:path",
+      "permanent": true
+    },
+    {
+      "source": "/nh",
+      "destination": "/new-hampshire/",
+      "permanent": true
+    },
+    {
+      "source": "/nh/:path(.*)",
+      "destination": "/new-hampshire/:path",
+      "permanent": true
+    },
+    {
+      "source": "/nj",
+      "destination": "/new-jersey/",
+      "permanent": true
+    },
+    {
+      "source": "/nj/:path(.*)",
+      "destination": "/new-jersey/:path",
+      "permanent": true
+    },
+    {
+      "source": "/nm",
+      "destination": "/new-mexico/",
+      "permanent": true
+    },
+    {
+      "source": "/nm/:path(.*)",
+      "destination": "/new-mexico/:path",
+      "permanent": true
+    },
+    {
+      "source": "/ny",
+      "destination": "/new-york/",
+      "permanent": true
+    },
+    {
+      "source": "/ny/:path(.*)",
+      "destination": "/new-york/:path",
+      "permanent": true
+    },
+    {
+      "source": "/nc",
+      "destination": "/north-carolina/",
+      "permanent": true
+    },
+    {
+      "source": "/nc/:path(.*)",
+      "destination": "/north-carolina/:path",
+      "permanent": true
+    },
+    {
+      "source": "/nd",
+      "destination": "/north-dakota/",
+      "permanent": true
+    },
+    {
+      "source": "/nd/:path(.*)",
+      "destination": "/north-dakota/:path",
+      "permanent": true
+    },
+    {
+      "source": "/oh",
+      "destination": "/ohio/",
+      "permanent": true
+    },
+    {
+      "source": "/oh/:path(.*)",
+      "destination": "/ohio/:path",
+      "permanent": true
+    },
+    {
+      "source": "/ok",
+      "destination": "/oklahoma/",
+      "permanent": true
+    },
+    {
+      "source": "/ok/:path(.*)",
+      "destination": "/oklahoma/:path",
+      "permanent": true
+    },
+    {
+      "source": "/or",
+      "destination": "/oregon/",
+      "permanent": true
+    },
+    {
+      "source": "/or/:path(.*)",
+      "destination": "/oregon/:path",
+      "permanent": true
+    },
+    {
+      "source": "/pa",
+      "destination": "/pennsylvania/",
+      "permanent": true
+    },
+    {
+      "source": "/pa/:path(.*)",
+      "destination": "/pennsylvania/:path",
+      "permanent": true
+    },
+    {
+      "source": "/ri",
+      "destination": "/rhode-island/",
+      "permanent": true
+    },
+    {
+      "source": "/ri/:path(.*)",
+      "destination": "/rhode-island/:path",
+      "permanent": true
+    },
+    {
+      "source": "/sc",
+      "destination": "/south-carolina/",
+      "permanent": true
+    },
+    {
+      "source": "/sc/:path(.*)",
+      "destination": "/south-carolina/:path",
+      "permanent": true
+    },
+    {
+      "source": "/sd",
+      "destination": "/south-dakota/",
+      "permanent": true
+    },
+    {
+      "source": "/sd/:path(.*)",
+      "destination": "/south-dakota/:path",
+      "permanent": true
+    },
+    {
+      "source": "/tn",
+      "destination": "/tennessee/",
+      "permanent": true
+    },
+    {
+      "source": "/tn/:path(.*)",
+      "destination": "/tennessee/:path",
+      "permanent": true
+    },
+    {
+      "source": "/tx",
+      "destination": "/texas/",
+      "permanent": true
+    },
+    {
+      "source": "/tx/:path(.*)",
+      "destination": "/texas/:path",
+      "permanent": true
+    },
+    {
+      "source": "/ut",
+      "destination": "/utah/",
+      "permanent": true
+    },
+    {
+      "source": "/ut/:path(.*)",
+      "destination": "/utah/:path",
+      "permanent": true
+    },
+    {
+      "source": "/vt",
+      "destination": "/vermont/",
+      "permanent": true
+    },
+    {
+      "source": "/vt/:path(.*)",
+      "destination": "/vermont/:path",
+      "permanent": true
+    },
+    {
+      "source": "/va",
+      "destination": "/virginia/",
+      "permanent": true
+    },
+    {
+      "source": "/va/:path(.*)",
+      "destination": "/virginia/:path",
+      "permanent": true
+    },
+    {
+      "source": "/wa",
+      "destination": "/washington/",
+      "permanent": true
+    },
+    {
+      "source": "/wa/:path(.*)",
+      "destination": "/washington/:path",
+      "permanent": true
+    },
+    {
+      "source": "/wv",
+      "destination": "/west-virginia/",
+      "permanent": true
+    },
+    {
+      "source": "/wv/:path(.*)",
+      "destination": "/west-virginia/:path",
+      "permanent": true
+    },
+    {
+      "source": "/wi",
+      "destination": "/wisconsin/",
+      "permanent": true
+    },
+    {
+      "source": "/wi/:path(.*)",
+      "destination": "/wisconsin/:path",
+      "permanent": true
+    },
+    {
+      "source": "/wy",
+      "destination": "/wyoming/",
+      "permanent": true
+    },
+    {
+      "source": "/wy/:path(.*)",
+      "destination": "/wyoming/:path",
+      "permanent": true
+    },
+    {
+      "source": "/dc",
+      "destination": "/district-of-columbia/",
+      "permanent": true
+    },
+    {
+      "source": "/dc/:path(.*)",
+      "destination": "/district-of-columbia/:path",
       "permanent": true
     }
   ],
